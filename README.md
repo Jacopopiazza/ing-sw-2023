@@ -1,1 +1,7 @@
-# ing-sw-2023-piazzalunga-romano-piccinato-rita
+# MyShelfie but better
+
+## Team
+Jacopo Piazzalunga<br>
+Mattia Piccinato<br>
+Francesco Rita<br>
+Simone Romanò<br>

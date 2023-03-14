@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Game {
     private GameBoard board;
-    private Player[] players;
+    private Player[] players; // to be filled through addPlayer()
     private PublicGoal[] goals;
     private int currentPlayer;
     private TilesSack sack;

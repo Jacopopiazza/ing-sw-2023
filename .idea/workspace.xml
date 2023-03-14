@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e772326-3ab3-4d7b-9037-b3341e20de59" name="Changes" comment="Created PublicGaol classes and few others">
+    <list default="true" id="5e772326-3ab3-4d7b-9037-b3341e20de59" name="Changes" comment="fixed wrong abstract keyword">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Tile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/TileColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/TileColor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +63,7 @@
       <workItem from="1677162557947" duration="30000" />
       <workItem from="1677162676168" duration="502000" />
       <workItem from="1677592939659" duration="425000" />
-      <workItem from="1678785153942" duration="4052000" />
+      <workItem from="1678785153942" duration="6179000" />
     </task>
     <task id="LOCAL-00001" summary="Project">
       <created>1677161948594</created>
@@ -98,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678788193191</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="fixed wrong abstract keyword">
+      <created>1678793116794</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1678793116794</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -121,6 +130,7 @@
     <MESSAGE value="Created structure for Model classes" />
     <MESSAGE value="Created files of different classes for Model" />
     <MESSAGE value="Created PublicGaol classes and few others" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created PublicGaol classes and few others" />
+    <MESSAGE value="fixed wrong abstract keyword" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed wrong abstract keyword" />
   </component>
 </project>

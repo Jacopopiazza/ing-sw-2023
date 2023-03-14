@@ -6,13 +6,9 @@ public abstract class PublicGoal {
 
     private Stack<Integer> scores;
 
-    public boolean check(Shelf shelf){
-    }
+    abstract public boolean check(Shelf shelf);
 
-    public int getScore(){
-
-
-    }
+    abstract public int getScore();
 
 
 }

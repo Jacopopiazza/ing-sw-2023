@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Model;
 
 public class Coordinates {
-    // Coordinates of the tile in the shelf and others
+    // Coordinates of the tile in the shelf and more
     private final int x;
     private final int y;
 

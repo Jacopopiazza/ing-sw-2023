@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e772326-3ab3-4d7b-9037-b3341e20de59" name="Changes" comment="Modified Game class">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Player.java" afterDir="false" />
-    </list>
+    <list default="true" id="5e772326-3ab3-4d7b-9037-b3341e20de59" name="Changes" comment="Modified Player class" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -98,7 +95,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678797022316</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Modified Player class">
+      <created>1678797481267</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1678797481267</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -121,6 +125,7 @@
     <MESSAGE value="Created structure for Model classes" />
     <MESSAGE value="Created files of different classes for Model" />
     <MESSAGE value="Modified Game class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modified Game class" />
+    <MESSAGE value="Modified Player class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Modified Player class" />
   </component>
 </project>

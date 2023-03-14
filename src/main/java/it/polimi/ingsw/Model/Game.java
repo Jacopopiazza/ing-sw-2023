@@ -46,7 +46,7 @@ public class Game {
 
     }
 
-    public void setTileFromBoard(Coordinates c, Tile t){
+    public void setTileOnBoard(Coordinates c, Tile t){
 
     }
 

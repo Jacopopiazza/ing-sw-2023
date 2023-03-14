@@ -8,7 +8,9 @@ public abstract class PublicGoal {
 
     abstract public boolean check(Shelf shelf);
 
-    abstract public int getScore();
+    public int getScore(){
+
+    }
 
 
 }

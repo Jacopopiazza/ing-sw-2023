@@ -4,8 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e772326-3ab3-4d7b-9037-b3341e20de59" name="Changes" comment="Config">
+    <list default="true" id="5e772326-3ab3-4d7b-9037-b3341e20de59" name="Changes" comment="Created files of different classes for Model">
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/Angles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/Couples.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/Diagonal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/DifferentColumns.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/DifferentLines.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/EightTiles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/EqualColumns.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/EqualLines.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/FourTiles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/Square.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/Stair.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoals/XShape.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/BoardGoal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/BoardGoal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Coordinates.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/Coordinates.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/polimi/ingsw/Model/PublicGoal.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -26,25 +40,28 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectId" id="2M8uxg22fk3JhDg4x5y7kNAgu1a" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
-    <option name="flattenPackages" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
-    <option name="showMembers" value="true" />
-    <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/picci/OneDrive/Desktop/Uni/CS/Progetti/ing-sw-2023-piazzalunga-romano-piccinato-rita",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="it.polimi.ingsw.Model.PublicGoals" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -58,13 +75,7 @@
       <workItem from="1677162557947" duration="30000" />
       <workItem from="1677162676168" duration="502000" />
       <workItem from="1677592939659" duration="425000" />
-      <workItem from="1678785153942" duration="380000" />
-      <workItem from="1678785878251" duration="1286000" />
-      <workItem from="1678787846374" duration="323000" />
-      <workItem from="1678788190221" duration="203000" />
-      <workItem from="1678788405054" duration="16000" />
-      <workItem from="1678788435894" duration="1635000" />
-      <workItem from="1678792272621" duration="531000" />
+      <workItem from="1678785153942" duration="2850000" />
     </task>
     <task id="LOCAL-00001" summary="Project">
       <created>1677161948594</created>
@@ -80,7 +91,21 @@
       <option name="project" value="LOCAL" />
       <updated>1677162280418</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Created structure for Model classes">
+      <created>1678785841441</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1678785841441</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Created files of different classes for Model">
+      <created>1678786453163</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1678786453163</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -91,19 +116,7 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="HEAD" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -112,6 +125,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Project" />
     <MESSAGE value="Config" />
-    <option name="LAST_COMMIT_MESSAGE" value="Config" />
+    <MESSAGE value="Created structure for Model classes" />
+    <MESSAGE value="Created files of different classes for Model" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created files of different classes for Model" />
   </component>
 </project>

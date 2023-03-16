@@ -5,14 +5,8 @@ import it.polimi.ingsw.Model.Shelf;
 
 public class FourTiles extends PublicGoal {
 
-    public FourTiles() {
-    }
-
     @Override
-    public boolean check(Shelf shelf){
+    public boolean check(Shelf s) {
 
     }
-
-
-
 }

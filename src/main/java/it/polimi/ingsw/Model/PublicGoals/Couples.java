@@ -5,15 +5,8 @@ import it.polimi.ingsw.Model.Shelf;
 
 public class Couples extends PublicGoal {
 
-    public Couples() {
-    }
-
     @Override
-    public boolean check(Shelf shelf){
+    public boolean check(Shelf s) {
 
     }
-
-
-
-
 }

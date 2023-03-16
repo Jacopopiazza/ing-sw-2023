@@ -17,4 +17,8 @@ public class Angles extends PublicGoal {
 
 
 
+    @Override
+    public boolean check(Shelf s) {
+
+    }
 }

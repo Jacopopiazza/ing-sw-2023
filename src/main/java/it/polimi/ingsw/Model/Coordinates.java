@@ -29,4 +29,24 @@ public class Coordinates {
     public int getY() {
         return y;
     }
+    private final int x;
+    private final int y;
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public int hashCode(){
+
+    }
+
+    @Override
+    public boolean equals(Object o){
+
+    }
 }

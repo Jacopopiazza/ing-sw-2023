@@ -1,14 +1,13 @@
 package it.polimi.ingsw.Model;
 
-import java.util.Optional;
 import java.util.Set;
 
 public class Game {
     private GameBoard board;
-    private Player[] players; // to be filled through addPlayer()
+    private Player[] players;
     private PublicGoal[] goals;
     private int currentPlayer;
-    private TilesSack sack;
+    private TileSack sack;
 
     public Game() {
 
@@ -18,7 +17,7 @@ public class Game {
 
     }
 
-    public void setCurrentPlayer(){
+    public void setCurrentPlayer(int cp){
 
     }
 
@@ -30,7 +29,7 @@ public class Game {
 
     }
 
-    public void checkPublicGoals(){
+    public boolean checkPublicGoals(){
 
     }
 
@@ -38,11 +37,11 @@ public class Game {
 
     }
 
-    public Set<Coordinates> getNumberOfTilesFromBoard(){
+    public Set<Coordinates> getCoordsFromBoard(){
 
     }
 
-    public Optional<Tile> getTileFromBoard(Coordinates c){
+    public Tile getTileFromBoard(Coordinates c){
 
     }
 
@@ -50,14 +49,11 @@ public class Game {
 
     }
 
-    public Optional<Tile> pickTileFromBoard(Coordinates c){
+    public Tile pickTileFromBoard(Coordinates c){
 
     }
 
-    private void pickTwoPublicGoals(){
+    private PublicGoal[] pickTwoPublicGoals(){
 
     }
-
-
-
 }

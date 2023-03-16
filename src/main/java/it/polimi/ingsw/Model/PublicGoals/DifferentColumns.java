@@ -5,14 +5,8 @@ import it.polimi.ingsw.Model.Shelf;
 
 public class DifferentColumns extends PublicGoal {
 
-    public DifferentColumns() {
-    }
-
     @Override
-    public boolean check(Shelf shelf){
+    public boolean check(Shelf s) {
 
     }
-
-
-
 }

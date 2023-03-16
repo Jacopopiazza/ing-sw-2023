@@ -17,17 +17,15 @@ public class Player {
 
     }
 
-    public void setScore(){
+    public void setScore(int s){
 
     }
 
-    //not sure that we need this one
     public Shelf getShelf(){
 
     }
 
-    //checks the boardGoal and its privateGoal, may use further private methods(?)
-    public void finalCheck(){
+    public boolean privateGoalCheck(){
 
     }
 

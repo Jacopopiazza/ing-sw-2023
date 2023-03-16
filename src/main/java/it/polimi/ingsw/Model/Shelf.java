@@ -1,30 +1,29 @@
 package it.polimi.ingsw.Model;
 
-import java.util.Optional;
-
-//to re-use a Shelf, it needs to be emptied through the empty() method
 public class Shelf {
-    private final Optional<Tile>[][];
-    private final int columns;
-    private final int rows;
+    private final Tile[][] SHELF;
+    private static final int COLUMNS = 6;
+    private static final int ROWS = 5;
 
-    public void addTile(Tile tile, int column){
+    public Shelf(){
 
     }
 
-    public Optional<Tile> getTile(Coordinates c){
+    public void addTile(Tile t, int c){
+
+    }
+
+    public Tile getTile(Coordinates c){
 
     }
 
     public int getColumns(){
-        return columns;
+
     }
 
     public int getRows(){
-        return rows;
-    }
-
-    public void empty(){
 
     }
+
 }
+

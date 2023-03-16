@@ -1,5 +1,13 @@
 package it.polimi.ingsw.Model;
 
-public abstract class PublicGoal {
+import java.util.Stack;
 
+public abstract class PublicGoal {
+    private Stack<Integer> scores;
+
+    public abstract boolean check(Shelf s);
+
+    public int popScore(){
+
+    }
 }

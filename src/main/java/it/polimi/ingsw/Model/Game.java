@@ -17,7 +17,7 @@ public class Game {
 
     }
 
-    public void setCurrentPlayer(){
+    public void setCurrentPlayer(int cp){
 
     }
 
@@ -29,7 +29,7 @@ public class Game {
 
     }
 
-    public void checkPublicGoals(){
+    public boolean checkPublicGoals(){
 
     }
 
@@ -37,7 +37,7 @@ public class Game {
 
     }
 
-    public Set<Coordinates> getNumberOfTilesFromBoard(){
+    public Set<Coordinates> getCoordsFromBoard(){
 
     }
 
@@ -53,7 +53,7 @@ public class Game {
 
     }
 
-    private void pickTwoPublicGoals(){
+    private PublicGoal[] pickTwoPublicGoals(){
 
     }
 }

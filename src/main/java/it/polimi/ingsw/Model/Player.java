@@ -17,7 +17,7 @@ public class Player {
 
     }
 
-    public void setScore(){
+    public void setScore(int s){
 
     }
 
@@ -25,7 +25,7 @@ public class Player {
 
     }
 
-    public void finalCheck(){
+    public boolean privateGoalCheck(){
 
     }
 

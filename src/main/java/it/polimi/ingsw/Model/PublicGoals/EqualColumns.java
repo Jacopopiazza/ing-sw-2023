@@ -7,7 +7,7 @@ public class EqualColumns extends PublicGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if(s==NULL) throw new MissingShelfException;
+        if(s==NULL) throw new MissingShelfException();
         int r=s.getRows();
         int c=s.getColumns;
         int correctC=0;

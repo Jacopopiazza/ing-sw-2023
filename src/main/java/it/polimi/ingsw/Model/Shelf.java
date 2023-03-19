@@ -37,5 +37,13 @@ public class Shelf implements Cloneable{
         return ROWS;
     }
 
+    @Override
+    protected Shelf clone() throws CloneNotSupportedException {
+        return (Shelf) super.clone();
+    }
+
+    public Shelf getShelf() throws CloneNotSupportedException {
+        return this.clone();
+    }
 }
 

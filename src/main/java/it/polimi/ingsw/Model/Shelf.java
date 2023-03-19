@@ -2,8 +2,8 @@ package it.polimi.ingsw.Model;
 
 public class Shelf implements Cloneable{
     private final Tile[][] SHELF;
-    private static final int COLUMNS = 6;
-    private static final int ROWS = 5;
+    private static final int COLUMNS = 5;
+    private static final int ROWS = 6;
 
     public Shelf(){
         // initialize the matrix with null values

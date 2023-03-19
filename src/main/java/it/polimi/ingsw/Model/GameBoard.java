@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Model;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -99,7 +100,8 @@ public class GameBoard {
     }
 
     public Set<Coordinates> getCoords(){
-        return board.keySet();
+
+        return Collections.unmodifiableSet(board.keySet());
     }
 
     public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
@@ -107,7 +109,15 @@ public class GameBoard {
             throw InvalidCoordinatesForCurrentGameException;
         }
 
-        return board.get(c);
+        Tile newTile;
+        try {
+            newTile = (Tile)board.get(c).clone();
+        } catch (CloneNotSupportedException cnse) {
+            cnse.printStackTrace();
+            return null;
+        }
+
+        return newTile;
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{

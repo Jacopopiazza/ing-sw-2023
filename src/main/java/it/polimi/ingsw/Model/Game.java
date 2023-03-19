@@ -1,14 +1,13 @@
 package it.polimi.ingsw.Model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import it.polimi.ingsw.Model.GlobalGoals.*;
+
+import java.util.*;
 
 public class Game {
     private GameBoard board;
     private List<Player> players;
-    private PublicGoal[] goals;
+    private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
 
@@ -30,6 +29,7 @@ public class Game {
         board = GameBoard.getGameBoard(players.size());
         sack = new TileSack();
         currentPlayer = new Random().nextInt(players.size());
+        goals = pickTwoPublicGoals();
     }
 
     public int getCurrentPlayer(){
@@ -76,7 +76,30 @@ public class Game {
         return board.pickTile(c);
     }
 
-    private PublicGoal[] pickTwoPublicGoals(){
+    private static GlobalGoal[] pickTwoPublicGoals(){
+        List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
+
+        goals.add( new Angles() );
+        goals.add( new Couples() );
+        goals.add( new Diagonal() );
+        goals.add( new DifferentColumns() );
+        goals.add( new DifferentLines() );
+        goals.add( new EightTiles() );
+        goals.add( new EqualColumns() );
+        goals.add( new EqualLines() );
+        goals.add( new FourTiles() );
+        goals.add( new Square() );
+        goals.add( new Stair() );
+        goals.add( new XShape() );
+
+        Collections.shuffle(goals);
+
+        GlobalGoal[] returned = new GlobalGoal[2];
+        for(int i = 0; i < returned.length; i++){
+            returned[i] = goals.get(i);
+        }
+
+        return returned;
 
     }
 }

@@ -138,7 +138,6 @@ public class GameBoard {
         return t;
     }
 
-    //To be moved in the controller???
     public int checkBoardGoal(Shelf s){
 
     }

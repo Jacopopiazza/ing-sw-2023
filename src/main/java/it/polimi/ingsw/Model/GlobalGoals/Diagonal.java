@@ -6,7 +6,9 @@ import it.polimi.ingsw.Model.Shelf;
 public class Diagonal extends GlobalGoal {
 
     @Override
-    public boolean check(Shelf s) {
+    public boolean check(Shelf s)  throws MissingShelfException {
+        if(s==null) throw new MissingShelfException();
+
 
     }
 }

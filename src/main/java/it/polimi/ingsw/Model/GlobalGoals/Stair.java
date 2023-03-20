@@ -11,7 +11,9 @@ public class Stair extends GlobalGoal {
     // every next column must have one more tile.
     // The tiles can have different colors.
     @Override
-    public boolean check(Shelf s) {
+    public boolean check(Shelf s) throws MissingShelfException {
+        if(s==null) throw new MissingShelfException();
+
         int tileCounter;
         boolean stair = true;
 

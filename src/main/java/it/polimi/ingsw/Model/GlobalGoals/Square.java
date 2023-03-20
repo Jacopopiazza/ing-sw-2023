@@ -6,7 +6,8 @@ public class Square extends GlobalGoal {
 
     // 2 separated groups of 2x2 Tiles of the same color
     @Override
-    public boolean check(Shelf s) {
+    public boolean check(Shelf s) throws MissingShelfException {
+        if(s==null) throw new MissingShelfException();
         int c = s.getColumns();
         int r = s.getRows();
         Coordinates firstSquare = null;

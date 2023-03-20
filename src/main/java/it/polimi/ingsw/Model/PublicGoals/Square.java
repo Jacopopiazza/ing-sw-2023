@@ -10,11 +10,11 @@ public class Square extends PublicGoal {
         int c = s.getColumns();
         int r = s.getRows();
         Coordinates firstSquare=null;
-        TileColor color=null;
+        TileColor color =null;
         for(int i = 0; i < r - 1; i++){
             for(int j = 0; j < c - 1; j++){
-                Coordinates coord = new Coordinates(i,j);
-                Tile temp= s.getTile(coord);
+                Coordinates coord = new Coordinates(i, j);
+                Tile temp = s.getTile(coord);
                 if(temp != null && (firstSquare == null ||
                         (color == temp.getColor()
                             && (!coord.equals(new Coordinates(firstSquare.getX() + 1, firstSquare.getY())))

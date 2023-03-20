@@ -9,8 +9,8 @@ public class Square extends PublicGoal {
     public boolean check(Shelf s) {
         int c = s.getColumns();
         int r = s.getRows();
-        Coordinates firstSquare=null;
-        TileColor color =null;
+        Coordinates firstSquare = null;
+        TileColor color = null;
         for(int i = 0; i < r - 1; i++){
             for(int j = 0; j < c - 1; j++){
                 Coordinates coord = new Coordinates(i, j);

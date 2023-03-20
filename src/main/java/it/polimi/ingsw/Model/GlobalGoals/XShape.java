@@ -1,11 +1,11 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.PublicGoal;
+import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
 
-public class XShape extends PublicGoal {
+public class XShape extends GlobalGoal {
 
     // Five tiles of the same color that create the shape of an 'X'
     @Override

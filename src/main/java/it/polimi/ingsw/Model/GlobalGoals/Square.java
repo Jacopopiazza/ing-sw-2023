@@ -2,7 +2,7 @@ package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.*;
 
-public class Square extends PublicGoal {
+public class Square extends GlobalGoal {
 
     // 2 separated groups of 2x2 Tiles of the same color
     @Override

@@ -1,10 +1,10 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.PublicGoal;
+import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 
-public class Stair extends PublicGoal {
+public class Stair extends GlobalGoal {
 
     // Five columns with asc/desc height:
     // starting from the first column to the left or right

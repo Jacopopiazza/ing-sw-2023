@@ -4,6 +4,8 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
+import it.polimi.ingsw.Exceptions.*;
+
 
 public class XShape extends GlobalGoal {
 

@@ -1,4 +1,6 @@
 package it.polimi.ingsw.Model;
+import it.polimi.ingsw.Exceptions.*;
+
 
 public class Tile {
     private final TileColor COLOR;

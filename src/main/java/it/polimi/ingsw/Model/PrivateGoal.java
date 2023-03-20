@@ -1,4 +1,5 @@
 package it.polimi.ingsw.Model;
+import it.polimi.ingsw.Exceptions.*;
 
 public final class PrivateGoal {
     private Coordinates[] coords;

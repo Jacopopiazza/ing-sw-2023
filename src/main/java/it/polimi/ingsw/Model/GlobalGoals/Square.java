@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.*;
+import it.polimi.ingsw.Exceptions.*;
+
 
 public class Square extends GlobalGoal {
 

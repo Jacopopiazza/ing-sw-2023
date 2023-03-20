@@ -110,7 +110,7 @@ public class GameBoard {
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
-        return board.get(c).clone();
+        return (Tile)board.get(c).clone();
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
@@ -118,7 +118,7 @@ public class GameBoard {
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
-        board.put(c,t.clone());
+        board.put(c,(Tile)t.clone());
     }
 
     public Tile pickTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{

@@ -5,7 +5,7 @@ import java.util.Set;
 public class Game {
     private GameBoard board;
     private Player[] players;
-    private PublicGoal[] goals;
+    private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
 
@@ -29,7 +29,7 @@ public class Game {
 
     }
 
-    public boolean checkPublicGoals(){
+    public boolean checkGlobalGoals(){
 
     }
 
@@ -53,7 +53,7 @@ public class Game {
 
     }
 
-    private PublicGoal[] pickTwoPublicGoals(){
+    private GlobalGoal[] pickTwoGlobalGoals(){
 
     }
 }

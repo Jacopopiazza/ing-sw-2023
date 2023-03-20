@@ -23,9 +23,8 @@ public class Player implements Cloneable{
         this.globalGoalAccomplished = globalGoalAccomplished.clone();
     }
 
-    public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException{
+    public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException,  IllegalColumnInsertionException{
         if(t==null || t[0]==null) throw new NoTilesException();
-        if(column<0 || column>shelf.getColumns()) throw new ColumnOutOfBoundsException();
         for(int i=0;i<t.length && t[i]!=null;i++) shelf.addTile(t[i],column);
     }
 

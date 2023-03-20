@@ -7,12 +7,19 @@ public class Shelf implements Cloneable{
     private static final int COLUMNS = 5;
     private static final int ROWS = 6;
 
+    private Shelf(Tile[][] shelf){
+        this.SHELF = shelf.clone();
+    }
+
     public Shelf(){
         // initialize the matrix with null values
         SHELF = new Tile[ROWS][COLUMNS];
     }
 
-    public void addTile(Tile t, int column){
+    public void addTile(Tile t, int column) throws IllegalColumnInsertionException, ColumnOutOfBoundsException{
+
+        if(column < 0 || column >= COLUMNS) throw new ColumnOutOfBoundsException();
+
         // If the first row is already filled with a tile, the column is fully filled
         if(SHELF[0][column] != null)
             throw new IllegalColumnInsertionException();
@@ -23,11 +30,12 @@ public class Shelf implements Cloneable{
             row--;
         }
 
-        // Todo: Do i have to pass the reference or a copy?
-        SHELF[row][column] = t;
+        SHELF[row][column] = t.clone();
     }
 
-    public Tile getTile(Coordinates c){
+    public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
+        if(c.getX() < 0 || c.getY() < 0 || c.getX() >= ROWS || c.getY() >= COLUMNS) throw new  throws ColumnOutOfBoundsException();
+
         return SHELF[c.getX()][c.getY()];
     }
 
@@ -40,12 +48,9 @@ public class Shelf implements Cloneable{
     }
 
     @Override
-    protected Shelf clone() throws CloneNotSupportedException {
-        return (Shelf) super.clone();
+    protected Object clone() {
+        return new Shelf(this.SHELF);
     }
 
-    public Shelf getShelf() throws CloneNotSupportedException {
-        return this.clone();
-    }
 }
 

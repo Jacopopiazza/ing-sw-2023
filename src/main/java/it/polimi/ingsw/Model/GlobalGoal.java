@@ -25,7 +25,7 @@ public abstract class GlobalGoal {
 
     }
 
-    public abstract boolean check(Shelf s);
+    public abstract boolean check(Shelf s) throws ColumnOutOfBoundsException;
 
     public int popScore() throws EmptyStackException{
         return scores.pop();

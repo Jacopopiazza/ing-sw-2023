@@ -1,10 +1,10 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import it.polimi.ingsw.Model.Utilities.IslandCounter;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameBoard {
     private Map<Coordinates,Tile> board;
@@ -131,10 +131,24 @@ public class GameBoard {
         return t;
     }
 
-    // Da Implementare a casa
     public int checkBoardGoal(Shelf s){
 
+        List<Integer> results = IslandCounter.countIslands(s)
+                .stream().filter(num -> num >= 3).collect(Collectors.toList());
 
-        return 0;
+        int totalScore = 0;
+
+        for (Integer islandOf : results){
+            if(islandOf >= 6){
+                totalScore += 8;
+            } else if (islandOf == 5) {
+                totalScore += 5;
+            } else if(islandOf == 4){
+                totalScore += 3;
+            }
+            totalScore += 2;
+        }
+
+        return totalScore;
     }
 }

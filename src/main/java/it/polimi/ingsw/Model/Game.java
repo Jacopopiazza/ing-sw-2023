@@ -29,7 +29,7 @@ public class Game {
         board = GameBoard.getGameBoard(players.size());
         sack = new TileSack();
         currentPlayer = new Random().nextInt(players.size());
-        goals = pickTwoPublicGoals();
+        goals = pickTwoGlobalGoals();
     }
 
     public int getCurrentPlayer(){
@@ -52,7 +52,7 @@ public class Game {
         players.add(p);
     }
 
-    public boolean checkPublicGoals(){
+    public boolean checkGlobalGoals(){
 
     }
 
@@ -76,7 +76,7 @@ public class Game {
         return board.pickTile(c);
     }
 
-    private static GlobalGoal[] pickTwoPublicGoals(){
+    private static GlobalGoal[] pickTwoGlobalGoals(){
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
 
         goals.add( new Angles() );

@@ -1,13 +1,13 @@
-package it.polimi.ingsw.Model.PublicGoals;
+package it.polimi.ingsw.Model.GlobalGoals;
 
-import it.polimi.ingsw.Model.PublicGoal;
+import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 
-public class EqualColumns extends PublicGoal {
+public class EqualColumns extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if(s==NULL) throw new MissingShelfException();
+        if(s==null) throw new MissingShelfException();
         int r=s.getRows();
         int c=s.getColumns;
         int correctC=0;
@@ -16,7 +16,7 @@ public class EqualColumns extends PublicGoal {
             TileColor[] availableColors = new TileColor[3];
             int currentHead;
             temp=s.getTile(new Coordinates(0,i));
-            if(temp!=NULL){
+            if(temp!=null){
                 availableColors[0]=temp.getColor();
                 currentHead=1;
             }

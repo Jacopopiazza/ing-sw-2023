@@ -20,9 +20,9 @@ public class Player implements Cloneable{
     }
 
     public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException{
-        if(t==NULL || t[0]==NULL) throw new NoTilesException();
+        if(t==null || t[0]==null) throw new NoTilesException();
         if(column<0 || column>shelf.getColumns()) throw new ColumnOutOfBoundsException();
-        for(int i=0;i<t.length && t[i]!=NULL;i++) shelf.addTile(t[i],column);
+        for(int i=0;i<t.length && t[i]!=null;i++) shelf.addTile(t[i],column);
     }
 
     public int getScore(){

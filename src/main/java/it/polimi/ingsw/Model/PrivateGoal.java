@@ -3,9 +3,8 @@ import it.polimi.ingsw.Exceptions.*;
 
 public final class PrivateGoal {
     private Coordinates[] coords;
-
-    public PrivateGoal(Coordinates[] coords) {  //coords parameter?
-
+    public PrivateGoal() {
+        //Implementa con JSON
     }
 
     public int check(Shelf shelf) throws MissingShelfException{

@@ -13,13 +13,13 @@ public abstract class GlobalGoal {
 
         scores = new Stack<Integer>();
 
-        if(persone >= 4) { score.push(2); }
+        if(persone >= 4) { scores.push(2); }
 
-        score.push(4);
+        scores.push(4);
 
-        if (persone >= 3) { score.push(6); }
+        if (persone >= 3) { scores.push(6); }
 
-        score.push(8);
+        scores.push(8);
 
     }
 

@@ -1,14 +1,34 @@
-package it.polimi.ingsw.Model.Utilities.*;
+package it.polimi.ingsw.Model;
+import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Random;
 
 public final class PrivateGoal {
     private Coordinates[] coords;
-    public PrivateGoal() {
+    public PrivateGoal(Coordinates[] coords) {
         //Implementa con JSON
+        /*
+        //ToRead form JSON
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/PrivateGoals.json"));
+
+        Coordinates[][] allPrivateGoals = gson.fromJson(reader, Coordinates[][].class);
+
+        coords = allPrivateGoals[new Random().nextInt(allPrivateGoals.length)];
+        */
+
+        this.coords = coords.clone();
+
     }
 
+
+
     public int check(Shelf shelf) throws MissingShelfException{
-        if(shelf==null) throw new MissingShelfException();
+        if(shelf==null) throw new MissingShelfException("Missing shelf");
         int numOfCorrectTiles=0;
         Tile temp;
         for(int i=0;i<coords.length;i++){

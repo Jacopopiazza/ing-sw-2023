@@ -1,4 +1,6 @@
-package it.polimi.ingsw.Model.*;
+package it.polimi.ingsw.Model;
+
+import it.polimi.ingsw.Exceptions.MissingShelfException;
 
 public class Player implements Cloneable{
 
@@ -8,16 +10,16 @@ public class Player implements Cloneable{
 
     private boolean[] globalGoalAccomplished;
 
-    public Player(){
-        score=0;
-        shelf=new Shelf();
-        goal=new PrivateGoal();
-        globalGoalAccomplished = {false, false};
+    public Player(PrivateGoal privateGoal){
+        score = 0;
+        shelf = new Shelf();
+        goal = privateGoal;
+        globalGoalAccomplished = new boolean[]{false, false};
     }
 
     //private constructor made for the clone method
     private Player(int sc, Shelf s, PrivateGoal pg, boolean[] globalGoalAccomplished){
-        score=sc,
+        score=sc;
         shelf=(Shelf)s.clone();
         goal=pg;
         this.globalGoalAccomplished = globalGoalAccomplished.clone();
@@ -53,8 +55,8 @@ public class Player implements Cloneable{
         return (Shelf) shelf.clone();
     }
 
-    public boolean privateGoalCheck(){
-        int res=goal.check((Shelf)shelf.clone());
+    public boolean privateGoalCheck() throws MissingShelfException {
+        int res = goal.check((Shelf)shelf.clone());
         score+=res;
         if(res>0) return true;
         return false;

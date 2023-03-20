@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Model.Utilities;
 
+import it.polimi.ingsw.Model.TileColor;
+
 import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;

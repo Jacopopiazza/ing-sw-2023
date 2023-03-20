@@ -1,34 +1,28 @@
 package it.polimi.ingsw.Model;
-
 import it.polimi.ingsw.Model.GlobalGoals.*;
 
 import java.util.*;
 
 public class Game {
     private GameBoard board;
-    private List<Player> players;
+    private Player[] players;
     private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
 
+
     public static final int maxNumberOfPlayers = 4;
 
-    public Game() {
-        board = null;
-        sack = null;
-        goals = null;
-        players = new ArrayList<Player>();
-        currentPlayer = -1;
-    }
+    public Game(Player[] players) throws InvalidNumberOfPlayersException{
 
-    public void newGame() throws InvalidNumberOfPlayersException{
         if(players.size() < 2 || players.size() > maxNumberOfPlayers){
             throw InvalidNumberOfPlayersException;
         }
 
-        board = GameBoard.getGameBoard(players.size());
+        this.players = players.clone();
+        board = GameBoard.getGameBoard(this.players.size());
         sack = new TileSack();
-        currentPlayer = new Random().nextInt(players.size());
+        currentPlayer = new Random().nextInt(this.players.size());
         goals = pickTwoGlobalGoals();
     }
 
@@ -36,24 +30,39 @@ public class Game {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(int cp){
+    public void setCurrentPlayer(int cp) throws InvalidIndexException{
+
+        if(cp < 0 || cp >= players.length){
+            throw new InvalidIndexException();
+        }
+
         currentPlayer = cp;
     }
 
-    public Player getPlayer(int p){
-        return players.get(p);
-    }
-
-    public void addPlayer(Player p) throws MaximumPlayersInGameException{
-        if (players.size() == maxNumberOfPlayers){
-            return MaximumPlayersInGameException;
+    public Player getPlayer(int p) throws InvalidIndexException{
+        if(p < 0 || p >= players.length){
+            throw new InvalidIndexException();
         }
-
-        players.add(p);
+        return players[p];
     }
 
     public boolean checkGlobalGoals(){
 
+        boolean retValue = false;
+        int currentScore = players[currentPlayer].getScore();
+
+        for(int i=0;i<goals.length;i++){
+
+            if(!players[currentPlayer].getGlobalGoalAccomplished[i] && goals[i].check(players[currentPlayer].getShelf())){
+                players[currentPlayer].setGlobalGoalAccomplishedTrue(i);
+                currentScore += goals[i].popScore();
+                retValue = true;
+            }
+
+        }
+
+        players[currentPlayer].setScore(currentScore);
+        return retValue;
     }
 
     public Tile popFromSack(){

@@ -2,7 +2,7 @@ package it.polimi.ingsw.Model;
 import it.polimi.ingsw.Exceptions.*;
 
 
-public class Tile {
+public class Tile implements Clonable{
     private final TileColor COLOR;
     private final int ID;
     private static int nextId[] = {0};
@@ -13,6 +13,11 @@ public class Tile {
         nextId[COLOR.ordinal()]++;
     }
 
+    private Tile(TileColor color, int ID){
+        this.COLOR = color;
+        this.ID = ID;
+    }
+
     public TileColor getColor() {
         return COLOR;
     }
@@ -20,5 +25,12 @@ public class Tile {
     public int getId() {
         return ID;
     }
+
+    @Override
+    public Object clone(){
+        return new Tile(this.COLOR,this.ID);
+    }
+
+
 }
 

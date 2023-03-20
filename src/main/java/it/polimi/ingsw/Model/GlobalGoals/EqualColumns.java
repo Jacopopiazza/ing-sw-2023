@@ -11,7 +11,7 @@ public class EqualColumns extends GlobalGoal {
     public boolean check(Shelf s) throws MissingShelfException {
         if(s==null) throw new MissingShelfException();
         int r=s.getRows();
-        int c=s.getColumns;
+        int c=s.getColumns();
         int correctC=0;
         Tile temp;
         for(int i=0;i<c && correctC<3;i++){

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model;
+package it.polimi.ingsw.Model.Utilities.*;
 import it.polimi.ingsw.Exceptions.*;
 
 public final class PrivateGoal {

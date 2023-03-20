@@ -30,11 +30,11 @@ public class Shelf implements Cloneable{
             row--;
         }
 
-        SHELF[row][column] = t.clone();
+        SHELF[row][column] = (Tile)t.clone();
     }
 
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
-        if(c.getX() < 0 || c.getY() < 0 || c.getX() >= ROWS || c.getY() >= COLUMNS) throw new  throws ColumnOutOfBoundsException();
+        if(c.getX() < 0 || c.getY() < 0 || c.getX() >= ROWS || c.getY() >= COLUMNS) throw new ColumnOutOfBoundsException();
 
         return SHELF[c.getX()][c.getY()];
     }

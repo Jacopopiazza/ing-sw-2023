@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Model;
 
-import it.polimi.ingsw.Exceptions.MissingShelfException;
+import it.polimi.ingsw.Exceptions.*;
 
 public class Player implements Cloneable{
 
@@ -25,7 +25,7 @@ public class Player implements Cloneable{
         this.globalGoalAccomplished = globalGoalAccomplished.clone();
     }
 
-    public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException,  IllegalColumnInsertionException{
+    public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
         if(t==null || t[0]==null) throw new NoTilesException();
         for(int i=0;i<t.length && t[i]!=null;i++) shelf.addTile(t[i],column);
     }
@@ -55,7 +55,7 @@ public class Player implements Cloneable{
         return (Shelf) shelf.clone();
     }
 
-    public boolean privateGoalCheck() throws MissingShelfException {
+    public boolean privateGoalCheck() throws MissingShelfException, ColumnOutOfBoundsException {
         int res = goal.check((Shelf)shelf.clone());
         score+=res;
         if(res>0) return true;

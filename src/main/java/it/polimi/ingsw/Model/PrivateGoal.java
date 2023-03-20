@@ -27,7 +27,7 @@ public final class PrivateGoal {
 
 
 
-    public int check(Shelf shelf) throws MissingShelfException{
+    public int check(Shelf shelf) throws MissingShelfException, ColumnOutOfBoundsException{
         if(shelf==null) throw new MissingShelfException("Missing shelf");
         int numOfCorrectTiles=0;
         Tile temp;

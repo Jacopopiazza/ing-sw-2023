@@ -6,4 +6,8 @@ public class MissingShelfException extends Exception{
         super(errorMessage);
     }
 
+    public MissingShelfException() {
+
+    }
+
 }

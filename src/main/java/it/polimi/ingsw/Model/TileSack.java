@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Model;
 
+import it.polimi.ingsw.Exceptions.*;
+
 import java.util.Arrays;
 import java.util.Random;
 

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Model;
 
+import it.polimi.ingsw.Exceptions.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +13,9 @@ public class GameBoard {
 
     }
 
-    public static GameBoard getGameBoard(int persone) throws InvalidNumberOfPlayersException{
+    public static GameBoard getGameBoard(int persone) throws InvalidNumberOfPlayersException {
         if(persone > Game.maxNumberOfPlayers){
-            throw InvalidNumberOfPlayersException;
+            throw new InvalidNumberOfPlayersException();
         }
 
         GameBoard gb = new GameBoard();
@@ -106,7 +107,7 @@ public class GameBoard {
 
     public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
-            throw InvalidCoordinatesForCurrentGameException;
+            throw new InvalidCoordinatesForCurrentGameException();
         }
 
         return board.get(c).clone();
@@ -114,7 +115,7 @@ public class GameBoard {
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
-            throw InvalidCoordinatesForCurrentGameException;
+            throw new InvalidCoordinatesForCurrentGameException();
         }
 
         board.put(c,t.clone());
@@ -122,7 +123,7 @@ public class GameBoard {
 
     public Tile pickTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
-            throw InvalidCoordinatesForCurrentGameException;
+            throw new InvalidCoordinatesForCurrentGameException();
         }
 
         Tile t = board.get(c);
@@ -134,6 +135,6 @@ public class GameBoard {
     public int checkBoardGoal(Shelf s){
 
 
-
+        return 0;
     }
 }

@@ -1,4 +1,6 @@
-package it.polimi.ingsw.Model.*;
+package it.polimi.ingsw.Model;
+
+import it.polimi.ingsw.Exceptions.*;
 
 import java.util.Stack;
 
@@ -7,7 +9,7 @@ public abstract class GlobalGoal {
 
     public GlobalGoal(int persone) throws InvalidNumberOfPlayersException{
 
-        if(persone < 0 || persone >= Game.maxNumberOfPlayers){
+        if(persone < 0 || persone > Game.maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();
         }
 

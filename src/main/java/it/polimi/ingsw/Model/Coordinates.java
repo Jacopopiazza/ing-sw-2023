@@ -1,25 +1,12 @@
-package it.polimi.ingsw.Model;
+import java.util.Objects;
 
 public class Coordinates {
-    // Coordinates of the tile in the shelf and more
     private final int x;
     private final int y;
 
-    public Coordinates(int x, int y){
+    public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    @Override
-    public boolean equals(Object o){
-        if(o == this){
-            return true;
-        }
-        if(!(o instanceof Coordinates)){
-            return false;
-        }
-        Coordinates coords = (Coordinates) o;
-        return this.x == coords.x && this.y == coords.y;
     }
 
     public int getX() {
@@ -28,5 +15,20 @@ public class Coordinates {
 
     public int getY() {
         return y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || this.getClass() != o.getClass())
+            return false;
+        Coordinates temp = (Coordinates) o;
+        return x == temp.x && y == temp.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

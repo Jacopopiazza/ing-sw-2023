@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.PublicGoals;
+package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.PublicGoal;
 import it.polimi.ingsw.Model.Shelf;

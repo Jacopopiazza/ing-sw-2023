@@ -8,12 +8,12 @@ public final class PrivateGoal {
     }
 
     public int check(Shelf shelf) throws MissingShelfException{
-        if(shelf==NULL) throw new MissingShelfException();
+        if(shelf==null) throw new MissingShelfException();
         int numOfCorrectTiles=0;
         Tile temp;
         for(int i=0;i<coords.length;i++){
             temp=shelf.getTile(coords[i]);
-            if(temp!=NULL && temp.getColor().ordinal()==i) numOfCorrectTiles++;
+            if(temp!=null && temp.getColor().ordinal()==i) numOfCorrectTiles++;
         }
 
         switch (numOfCorrectTiles){

@@ -9,6 +9,16 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public final class PrivateGoal {
+
+    /*
+    * Colors at given index in Coordinates
+    * index 0 -> White
+    * index 1 -> Fuchsia
+    * index 2 -> Blue
+    * index 3 -> Cyan
+    * index 4 -> Yellow
+    * index 5 -> Green
+    * */
     private Coordinates[] coords;
     private PrivateGoal(Coordinates[] coords) {
         this.coords = coords.clone();

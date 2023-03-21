@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CouplesTest extends TestCase {
+public class TwoTilesTest extends TestCase {
 
     @Test
     public void popScore() {

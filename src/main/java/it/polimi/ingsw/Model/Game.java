@@ -1,9 +1,13 @@
 package it.polimi.ingsw.Model;
+
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.GlobalGoals.*;
-
-import java.util.*;
+import java.lang.String;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class Game {
     private final GameBoard board;
@@ -81,7 +85,6 @@ public class Game {
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
 
         goals.add( new Angles() );
-        goals.add( new Couples() );
         goals.add( new Diagonal() );
         goals.add( new DifferentColumns() );
         goals.add( new DifferentLines() );
@@ -91,6 +94,7 @@ public class Game {
         goals.add( new FourTiles() );
         goals.add( new Square() );
         goals.add( new Stair() );
+        goals.add( new TwoTiles() );
         goals.add( new XShape() );
 
         Collections.shuffle(goals);

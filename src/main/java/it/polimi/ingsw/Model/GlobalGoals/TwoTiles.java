@@ -4,9 +4,9 @@ import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 
-public class Couples extends GlobalGoal {
+public class TwoTiles extends GlobalGoal {
 
-    public Couples(int people) throws InvalidNumberOfPlayersException {
+    public TwoTiles(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
 

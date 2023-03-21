@@ -79,7 +79,7 @@ public class GameBoard {
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
-        return (Tile)board.get(c).clone();
+        return board.get(c) != null ? (Tile)board.get(c).clone() : null;
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{

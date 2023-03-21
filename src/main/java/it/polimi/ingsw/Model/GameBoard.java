@@ -1,8 +1,11 @@
 package it.polimi.ingsw.Model;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.JSONModels.JSONGameBoard;
+import it.polimi.ingsw.Model.Parser.CoordinatesParser;
 import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.IslandCounter;
 
@@ -22,28 +25,30 @@ public class GameBoard {
             throw new InvalidNumberOfPlayersException();
         }
 
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(GameBoard.class.getResourceAsStream("/GameBoard.json"));
-        JSONGameBoard[] gameBoardConfigsFromFile = gson.fromJson(reader, JSONGameBoard[].class);
-
+        // Parse json file and create an instance
         GameBoard gb = new GameBoard();
 
-        // for each gameBoardConfig read from the file
-        // add its cells to the HashMap
-        for(int i = 0; i<gameBoardConfigsFromFile.length; i++){
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(GameBoard.class.getResourceAsStream("/GameBoard.json"));
 
-            // Once added the cells for the requested amount of people stop
-            if(gameBoardConfigsFromFile[i].people() > people){
-                break;
+        JsonArray array = gson.fromJson(reader, JsonArray.class);
+        for (JsonElement elem : array){
+            JsonObject obj = elem.getAsJsonObject();
+
+            int peopleOfCurrentConfig = obj.get("people").getAsInt();
+
+            if(peopleOfCurrentConfig > people){
+                continue;
             }
 
-            // Add all the cells for the current config in the HashMap
-            for (Coordinates c : gameBoardConfigsFromFile[i].cells()) {
+            JsonArray jsonCells = obj.get("cells").getAsJsonArray();
+
+            for (JsonElement jsonCell : jsonCells) {
+                Coordinates c = CoordinatesParser.coordinatesParser(jsonCell);
                 gb.board.put(c, null);
             }
 
         }
-
 
         return gb;
 

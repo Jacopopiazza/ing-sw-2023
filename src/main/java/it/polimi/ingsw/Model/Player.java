@@ -7,10 +7,11 @@ public class Player{
     private int score;
     private Shelf shelf;
     private PrivateGoal goal;
-
+    private final String nickname;
     private boolean[] globalGoalAccomplished;
 
-    public Player(PrivateGoal privateGoal) {
+    public Player(PrivateGoal privateGoal, String nick) {
+        nickname=nick;
         score = 0;
         shelf = new Shelf();
         goal = privateGoal;

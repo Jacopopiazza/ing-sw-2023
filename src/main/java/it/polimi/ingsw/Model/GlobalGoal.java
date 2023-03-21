@@ -7,19 +7,19 @@ import java.util.Stack;
 public abstract class GlobalGoal {
     private Stack<Integer> scores;
 
-    public GlobalGoal(int persone) throws InvalidNumberOfPlayersException{
+    public GlobalGoal(int people) throws InvalidNumberOfPlayersException{
 
-        if(persone < 0 || persone > Game.maxNumberOfPlayers){
+        if(people < 0 || people > Game.maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();
         }
 
         scores = new Stack<Integer>();
 
-        if(persone >= 4) { scores.push(2); }
+        if(people >= 4) { scores.push(2); }
 
         scores.push(4);
 
-        if (persone >= 3) { scores.push(6); }
+        if (people >= 3) { scores.push(6); }
 
         scores.push(8);
 

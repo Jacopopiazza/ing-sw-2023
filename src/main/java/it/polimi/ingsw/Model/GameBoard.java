@@ -13,8 +13,8 @@ public class GameBoard {
 
     }
 
-    public static GameBoard getGameBoard(int persone) throws InvalidNumberOfPlayersException {
-        if(persone > Game.maxNumberOfPlayers){
+    public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
+        if(people > Game.maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();
         }
 
@@ -58,7 +58,7 @@ public class GameBoard {
         gb.board.put(new Coordinates(7,4),null);
         gb.board.put(new Coordinates(7,5),null);
 
-        if(persone > 2){
+        if(people > 2){
 
             gb.board.put(new Coordinates(0,3),null);
 
@@ -76,7 +76,7 @@ public class GameBoard {
 
         }
 
-        if(persone > 3){
+        if(people > 3){
 
             gb.board.put(new Coordinates(0,4),null);
 

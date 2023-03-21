@@ -15,13 +15,19 @@ public class Game {
 
     public static final int maxNumberOfPlayers = 4;
 
-    public Game(Player[] players) throws InvalidNumberOfPlayersException{
+    public Game(String[] nicknames) throws InvalidNumberOfPlayersException{
 
-        if(players.length < 2 || players.length > maxNumberOfPlayers){
+        if(nicknames.length < 2 || nicknames.length > maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();
         }
 
-        this.players = players.clone();
+        Coordinates[][] privateGoals = PrivateGoal.privateGoalsForNPeople(nicknames.length);
+        this.players = new Player[nicknames.length];
+        for(int i=0;i<players.length;i++){
+            players[i] = new Player(new PrivateGoal(privateGoals[i]),nicknames[i]);
+        }
+
+
         board = GameBoard.getGameBoard(this.players.length);
         sack = new TileSack();
         currentPlayer = new Random().nextInt(this.players.length);

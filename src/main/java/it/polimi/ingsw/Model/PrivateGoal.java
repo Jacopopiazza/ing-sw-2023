@@ -1,28 +1,44 @@
 package it.polimi.ingsw.Model;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Random;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public final class PrivateGoal {
     private Coordinates[] coords;
     public PrivateGoal(Coordinates[] coords) {
-        //Implementa con JSON
-        /*
-        //ToRead form JSON
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/PrivateGoals.json"));
-
-        Coordinates[][] allPrivateGoals = gson.fromJson(reader, Coordinates[][].class);
-
-        coords = allPrivateGoals[new Random().nextInt(allPrivateGoals.length)];
-        */
 
         this.coords = coords.clone();
 
+    }
+
+    public static Coordinates[][] privateGoalsForNPeople(int people) throws InvalidNumberOfPlayersException{
+
+        if( people <= 0 || people > Game.maxNumberOfPlayers){
+            throw new InvalidNumberOfPlayersException();
+        }
+
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/PrivateGoals.json"));
+        Type listOfMyClassObject = new TypeToken<ArrayList<Coordinates[]>>() {}.getType();
+
+        List<Coordinates[]> allPrivateGoals = gson.fromJson(reader, listOfMyClassObject);
+
+        Collections.shuffle(allPrivateGoals);
+
+        Coordinates[][] retValue = new Coordinates[people][TileColor.values().length];
+
+        for(int i = 0;i < people; i++){
+            retValue[i] = allPrivateGoals.get(i);
+        }
+
+        return  retValue;
     }
 
 

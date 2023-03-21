@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 public final class PrivateGoal {
     private Coordinates[] coords;
     private PrivateGoal(Coordinates[] coords) {
-
         this.coords = coords.clone();
+    }
 
+    public Coordinates[] getCoordinates() {
+        return coords;
     }
 
     public static PrivateGoal[] privateGoalsForNPeople(int people) throws InvalidNumberOfPlayersException{

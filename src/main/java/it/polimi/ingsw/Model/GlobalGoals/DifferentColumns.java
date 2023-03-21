@@ -11,6 +11,10 @@ import java.util.HashSet;
 
 public class DifferentColumns extends GlobalGoal {
 
+    public DifferentColumns(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     // requires allowed configuration of Shelf s
     @Override
     public boolean check( Shelf s )  throws MissingShelfException {

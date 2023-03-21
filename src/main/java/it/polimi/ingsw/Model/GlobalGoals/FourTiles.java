@@ -9,6 +9,10 @@ import it.polimi.ingsw.Model.Tile;
 
 public class FourTiles extends GlobalGoal {
 
+    public FourTiles(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if(s==null) throw new MissingShelfException();

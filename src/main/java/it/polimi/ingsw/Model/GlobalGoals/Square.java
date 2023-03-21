@@ -6,6 +6,10 @@ import it.polimi.ingsw.Exceptions.*;
 
 public class Square extends GlobalGoal {
 
+    public Square(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     // 2 separated groups of 2x2 Tiles of the same color
     @Override
     public boolean check(Shelf s) throws MissingShelfException {

@@ -6,6 +6,11 @@ import it.polimi.ingsw.Exceptions.*;
 
 public class EqualColumns extends GlobalGoal {
 
+
+    public EqualColumns(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     @Override
     public boolean check(Shelf s) throws MissingShelfException, ColumnOutOfBoundsException {
         if(s==null) throw new MissingShelfException();

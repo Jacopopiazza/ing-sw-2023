@@ -6,6 +6,10 @@ import it.polimi.ingsw.Exceptions.*;
 
 public class EqualLines extends GlobalGoal {
 
+    public EqualLines(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     @Override
     public boolean check(Shelf s) throws MissingShelfException{
         if(s==null) throw new MissingShelfException();

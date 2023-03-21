@@ -11,6 +11,10 @@ import java.util.HashSet;
 
 public class DifferentLines extends GlobalGoal {
 
+    public DifferentLines(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {
         HashSet<TileColor> foundColors;

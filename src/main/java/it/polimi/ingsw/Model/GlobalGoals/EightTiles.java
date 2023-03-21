@@ -9,6 +9,10 @@ import it.polimi.ingsw.Model.TileColor;
 
 public class EightTiles extends GlobalGoal {
 
+    public EightTiles(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {
         int[] counters = new int[TileColor.values().length];

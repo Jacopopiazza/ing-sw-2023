@@ -9,6 +9,10 @@ import it.polimi.ingsw.Exceptions.*;
 
 public class XShape extends GlobalGoal {
 
+    public XShape(int people) throws InvalidNumberOfPlayersException {
+        super(people);
+    }
+
     // Five tiles of the same color that create the shape of an 'X'
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {

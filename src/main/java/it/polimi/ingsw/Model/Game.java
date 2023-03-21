@@ -21,10 +21,10 @@ public class Game {
             throw new InvalidNumberOfPlayersException();
         }
 
-        Coordinates[][] privateGoals = PrivateGoal.privateGoalsForNPeople(nicknames.length);
+        PrivateGoal[] privateGoals = PrivateGoal.privateGoalsForNPeople(nicknames.length);
         this.players = new Player[nicknames.length];
         for(int i=0;i<players.length;i++){
-            players[i] = new Player(new PrivateGoal(privateGoals[i]),nicknames[i]);
+            players[i] = new Player(privateGoals[i],nicknames[i]);
         }
 
 

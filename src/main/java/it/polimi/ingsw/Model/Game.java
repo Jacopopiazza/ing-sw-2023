@@ -2,9 +2,7 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
-import it.polimi.ingsw.Model.GlobalGoals.*;
 import java.lang.String;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -54,7 +52,7 @@ public class Game {
         return players[p];
     }
 
-    public boolean checkGlobalGoals() throws EmptyStackException, NonValidScoreException, InvalidIndexException {
+    public boolean checkGlobalGoals() throws EmptyStackException, NonValidScoreException, InvalidIndexException, MissingShelfException {
 
         boolean retValue = false;
         int currentScore = players[currentPlayer].getScore();
@@ -81,24 +79,10 @@ public class Game {
         return board;
     }
 
-    private GlobalGoal[] pickTwoGlobalGoals(){
-        List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
-
-        goals.add( new Angles() );
-        goals.add( new Diagonal() );
-        goals.add( new DifferentColumns() );
-        goals.add( new DifferentLines() );
-        goals.add( new EightTiles() );
-        goals.add( new EqualColumns() );
-        goals.add( new EqualLines() );
-        goals.add( new FourTiles() );
-        goals.add( new Square() );
-        goals.add( new Stair() );
-        goals.add( new TwoTiles() );
-        goals.add( new XShape() );
+    private GlobalGoal[] pickTwoGlobalGoals() throws InvalidNumberOfPlayersException {
+        List<GlobalGoal> goals = GlobalGoal.getOneForEachChild(players.length);
 
         Collections.shuffle(goals);
-
         GlobalGoal[] returned = new GlobalGoal[2];
         for(int i = 0; i < returned.length; i++){
             returned[i] = goals.get(i);

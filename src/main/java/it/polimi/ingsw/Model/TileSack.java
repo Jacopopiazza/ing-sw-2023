@@ -15,7 +15,7 @@ public class TileSack {
     }
 
     // Generate a Tile with a random color and pops it from the sack
-    public Tile pop() throws InvalidColorException {
+    public Tile pop(){
         int random_color_index = 0;
         // Generate a number from 0 to 'remaining Tiles' - 1
         random_color_index = new Random().nextInt(Arrays.stream(remaining).sum());
@@ -23,16 +23,11 @@ public class TileSack {
         int top_bound = 0, bottom_bound = 0;
         for (int i = 0; i < LEN; i++) {
             top_bound += remaining[i];
-            if (random_color_index >= bottom_bound &&
-                    random_color_index < top_bound) {
-                try {
-                    // Pop that color from the tileSack
-                    remaining[i]--;
-                    // Return the corresponding Tile
-                    return new Tile(TileColor.values()[i]);
-                } catch (InvalidColorException ex) {
-                    System.out.println(ex.getMessage());
-                }
+            if (random_color_index >= bottom_bound && random_color_index < top_bound) {
+                // Pop that color from the tileSack
+                remaining[i]--;
+                // Return the corresponding Tile
+                return new Tile(TileColor.values()[i]);
             } else {
                 bottom_bound += remaining[i];
             }

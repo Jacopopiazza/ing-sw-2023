@@ -1,4 +1,6 @@
 package it.polimi.ingsw.Model;
+import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.GlobalGoals.*;
 
 import java.util.*;
@@ -13,16 +15,22 @@ public class Game {
 
     public static final int maxNumberOfPlayers = 4;
 
-    public Game(Player[] players) throws InvalidNumberOfPlayersException{
+    public Game(String[] nicknames) throws InvalidNumberOfPlayersException{
 
-        if(players.size() < 2 || players.size() > maxNumberOfPlayers){
-            throw InvalidNumberOfPlayersException;
+        if(nicknames.length < 2 || nicknames.length > maxNumberOfPlayers){
+            throw new InvalidNumberOfPlayersException();
         }
 
-        this.players = players.clone();
-        board = GameBoard.getGameBoard(this.players.size());
+        PrivateGoal[] privateGoals = PrivateGoal.privateGoalsForNPeople(nicknames.length);
+        this.players = new Player[nicknames.length];
+        for(int i=0;i<players.length;i++){
+            players[i] = new Player(privateGoals[i],nicknames[i]);
+        }
+
+
+        board = GameBoard.getGameBoard(this.players.length);
         sack = new TileSack();
-        currentPlayer = new Random().nextInt(this.players.size());
+        currentPlayer = new Random().nextInt(this.players.length);
         goals = pickTwoGlobalGoals();
     }
 
@@ -46,14 +54,14 @@ public class Game {
         return players[p];
     }
 
-    public boolean checkGlobalGoals(){
+    public boolean checkGlobalGoals() throws EmptyStackException, NonValidScoreException, InvalidIndexException {
 
         boolean retValue = false;
         int currentScore = players[currentPlayer].getScore();
 
         for(int i=0;i<goals.length;i++){
 
-            if(!players[currentPlayer].getGlobalGoalAccomplished[i] && goals[i].check(players[currentPlayer].getShelf())){
+            if(!players[currentPlayer].getGlobalGoalAccomplished()[i] && goals[i].check(players[currentPlayer].getShelf())){
                 players[currentPlayer].setGlobalGoalAccomplishedTrue(i);
                 currentScore += goals[i].popScore();
                 retValue = true;

@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Model;
 import it.polimi.ingsw.Exceptions.*;
+import java.util.*;
 
-
-public class Tile implements Clonable{
+public class Tile implements Cloneable{
     private final TileColor COLOR;
     private final int ID;
     private static int nextId[] = {0};

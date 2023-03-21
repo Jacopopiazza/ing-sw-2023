@@ -1,14 +1,13 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
-import it.polimi.ingsw.Model.GlobalGoal;
-import it.polimi.ingsw.Model.Shelf;
+import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Exceptions.*;
 
 
 public class EqualColumns extends GlobalGoal {
 
     @Override
-    public boolean check(Shelf s) throws MissingShelfException {
+    public boolean check(Shelf s) throws MissingShelfException, ColumnOutOfBoundsException {
         if(s==null) throw new MissingShelfException();
         int r=s.getRows();
         int c=s.getColumns();

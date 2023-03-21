@@ -8,7 +8,12 @@ public class Shelf implements Cloneable{
     private static final int ROWS = 6;
 
     private Shelf(Tile[][] shelf){
-        this.SHELF = shelf.clone();
+        this.SHELF = new Tile[ROWS][COLUMNS];
+        for(int i=0;i<ROWS;i++){
+            for(int j=0;j<COLUMNS;j++){
+                this.SHELF[i][j] = (Tile) shelf[i][j].clone();
+            }
+        }
     }
 
     public Shelf(){
@@ -30,25 +35,25 @@ public class Shelf implements Cloneable{
             row--;
         }
 
-        SHELF[row][column] = t.clone();
+        SHELF[row][column] = (Tile)t.clone();
     }
 
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
-        if(c.getX() < 0 || c.getY() < 0 || c.getX() >= ROWS || c.getY() >= COLUMNS) throw new  throws ColumnOutOfBoundsException();
+        if(c.getX() < 0 || c.getY() < 0 || c.getX() >= ROWS || c.getY() >= COLUMNS) throw new ColumnOutOfBoundsException();
 
         return SHELF[c.getX()][c.getY()];
     }
 
-    public int getColumns(){
+    public static int getColumns(){
         return COLUMNS;
     }
 
-    public int getRows(){
+    public static int getRows(){
         return ROWS;
     }
 
     @Override
-    protected Object clone() {
+    public Object clone() {
         return new Shelf(this.SHELF);
     }
 

@@ -1,9 +1,10 @@
 package it.polimi.ingsw.Model;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.IslandCounter;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameBoard {
     private Map<Coordinates,Tile> board;
@@ -12,9 +13,9 @@ public class GameBoard {
 
     }
 
-    public static GameBoard getGameBoard(int persone) throws InvalidNumberOfPlayersException{
-        if(persone > Game.maxNumberOfPlayers){
-            throw InvalidNumberOfPlayersException;
+    public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
+        if(people > Game.maxNumberOfPlayers){
+            throw new InvalidNumberOfPlayersException();
         }
 
         GameBoard gb = new GameBoard();
@@ -57,7 +58,7 @@ public class GameBoard {
         gb.board.put(new Coordinates(7,4),null);
         gb.board.put(new Coordinates(7,5),null);
 
-        if(persone > 2){
+        if(people > 2){
 
             gb.board.put(new Coordinates(0,3),null);
 
@@ -75,7 +76,7 @@ public class GameBoard {
 
         }
 
-        if(persone > 3){
+        if(people > 3){
 
             gb.board.put(new Coordinates(0,4),null);
 
@@ -106,23 +107,23 @@ public class GameBoard {
 
     public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
-            throw InvalidCoordinatesForCurrentGameException;
+            throw new InvalidCoordinatesForCurrentGameException();
         }
 
-        return board.get(c).clone();
+        return (Tile)board.get(c).clone();
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
-            throw InvalidCoordinatesForCurrentGameException;
+            throw new InvalidCoordinatesForCurrentGameException();
         }
 
-        board.put(c,t.clone());
+        board.put(c,(Tile)t.clone());
     }
 
     public Tile pickTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
-            throw InvalidCoordinatesForCurrentGameException;
+            throw new InvalidCoordinatesForCurrentGameException();
         }
 
         Tile t = board.get(c);
@@ -130,10 +131,24 @@ public class GameBoard {
         return t;
     }
 
-    // Da Implementare a casa
     public int checkBoardGoal(Shelf s){
 
+        List<Integer> results = IslandCounter.countIslands(s)
+                .stream().filter(num -> num >= 3).collect(Collectors.toList());
 
+        int totalScore = 0;
 
+        for (Integer islandOf : results){
+            if(islandOf >= 6){
+                totalScore += 8;
+            } else if (islandOf == 5) {
+                totalScore += 5;
+            } else if(islandOf == 4){
+                totalScore += 3;
+            }
+            totalScore += 2;
+        }
+
+        return totalScore;
     }
 }

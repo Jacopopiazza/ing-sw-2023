@@ -1,3 +1,5 @@
+package it.polimi.ingsw.Model;
+
 import java.util.Objects;
 
 public class Coordinates {

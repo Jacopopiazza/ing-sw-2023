@@ -1,13 +1,16 @@
 package it.polimi.ingsw.Model.Utilities;
 
-import java.sql.Array;
+import it.polimi.ingsw.Model.Coordinates;
+import it.polimi.ingsw.Model.Shelf;
+import it.polimi.ingsw.Model.TileColor;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-class IslandCounter {
+public class IslandCounter {
 
-        static final int R = 6;
-        static final int C = 5;
+        static final int R = Shelf.getRows();
+        static final int C = Shelf.getColumns();
 
         static class pair {
             int first, second;
@@ -43,15 +46,16 @@ class IslandCounter {
         // A function to check if a given position
         // (i, j) is valid for the Shelf, and its tile
         // is of the same color of the initial cell
-        static boolean isSafe(TileColor mat[][], int i, int j,
+        static boolean isSafe(Shelf shelf, int i, int j,
                               boolean vis[][], TileColor color) {
             return (i >= 0) && (i < R) &&
                     (j >= 0) && (j < C) &&
-                    (mat[i][j] == color && !vis[i][j]);
+                    (shelf.getTile(new Coordinates(i,j)) != null &&
+                            shelf.getTile(new Coordinates(i,j)).getColor() == color &&
+                            !vis[i][j]);
         }
 
-        static void BFS(TileColor mat[][], boolean vis[][],
-                        int si, int sj,RefInteger compostaDa) {
+        static void BFS(Shelf shelf, boolean vis[][], int si, int sj, RefInteger cont) {
 
             // These arrays are used to get row and
             // column numbers of 8 neighbours of
@@ -76,11 +80,11 @@ class IslandCounter {
 
                 // Go through all 8 adjacent
                 for (int k = 0; k < 8; k++) {
-                    if (isSafe(mat, i + row[k],
-                            j + col[k], vis, mat[i][j])) {
+                    if (isSafe(shelf, i + row[k],
+                            j + col[k], vis, shelf.getTile(new Coordinates(i,j)).getColor())) {
                         vis[i + row[k]][j + col[k]] = true;
                         q.add(new pair(i + row[k], j + col[k]));
-                        compostaDa.increment();
+                        cont.increment();
                     }
                 }
             }
@@ -90,24 +94,23 @@ class IslandCounter {
         // components) in a graph. It simply works as
         // BFS for disconnected graph and returns count
         // of BFS calls.
-        static List<Integer> countIslands(TileColor mat[][]) {
+        public static List<Integer> countIslands(Shelf shelf) {
             // Mark all cells as not visited
             boolean[][] vis = new boolean[R][C];
 
-            // Each element of the list is and island
-            // the value at i-th position tell us the
+            // The value at i-th position tells us the
             // amount of tiles the island is made of
             List<RefInteger> islands = new ArrayList<RefInteger>();
 
-            // Call BFS for every unvisited vertex
+            // Calls BFS for every unvisited vertex
             // Whenever it finds an unvisited vertex
-            // it means there is a new island
+            // a new island was found
             for (int i = 0; i < R; i++) {
                 for (int j = 0; j < C; j++) {
-                    if (mat[i][j] != null && !vis[i][j]) {
-                        RefInteger compostaDa = new RefInteger(1);
-                        BFS(mat, vis, i, j,compostaDa);
-                        islands.add(compostaDa);
+                    if (shelf.getTile(new Coordinates(i,j)) != null && !vis[i][j]) {
+                        RefInteger cont = new RefInteger(1);
+                        BFS(shelf, vis, i, j,cont);
+                        islands.add(cont);
                     }
                 }
             }

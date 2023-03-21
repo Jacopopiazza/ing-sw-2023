@@ -6,7 +6,16 @@ public class JSONConfig{
 
     }
 
+    public record GlobalGoalPoint(int players, int points, boolean alwaysPresent) { }
+
+
     private PrivateGoalPoint[] privateGoals;
+
+    public GlobalGoalPoint[] getGlobalGoals() {
+        return globalGoals;
+    }
+
+    private GlobalGoalPoint[] globalGoals;
 
     public PrivateGoalPoint[] getPrivateGoals() {
         return privateGoals;

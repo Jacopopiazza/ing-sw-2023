@@ -1,30 +1,40 @@
 package it.polimi.ingsw.Model;
 
+import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.GlobalGoals.*;
+import it.polimi.ingsw.Model.Utilities.JSONConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.*;
 
 public abstract class GlobalGoal {
     private Stack<Integer> scores;
 
-    public GlobalGoal(int people) throws InvalidNumberOfPlayersException{
+    public GlobalGoal(int people) throws InvalidNumberOfPlayersException {
 
-        if(people < 0 || people > Game.maxNumberOfPlayers){
+        if (people < 0 || people > Game.maxNumberOfPlayers) {
             throw new InvalidNumberOfPlayersException();
         }
 
         scores = new Stack<Integer>();
 
-        if(people >= 4) { scores.push(2); }
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(GlobalGoal.class.getResourceAsStream("/config.json"));
+        JSONConfig config = gson.fromJson(reader, JSONConfig.class);
 
-        scores.push(4);
+        // Get a copy of the array sorted by points so the
+        // smaller rewards goes to the bottom of the stack
+        JSONConfig.GlobalGoalPoint[] globalGoalPoints = Arrays.stream(config.getGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.points(),g2.points()))
+                .toArray(JSONConfig.GlobalGoalPoint[]::new);
 
-        if (people >= 3) { scores.push(6); }
-
-        scores.push(8);
+        for(JSONConfig.GlobalGoalPoint ggp : globalGoalPoints){
+            if(ggp.alwaysPresent() || people >= ggp.players() ){
+                scores.push(ggp.points());
+            }
+        }
 
     }
 

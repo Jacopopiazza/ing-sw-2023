@@ -8,7 +8,12 @@ public class Shelf implements Cloneable{
     private static final int ROWS = 6;
 
     private Shelf(Tile[][] shelf){
-        this.SHELF = shelf.clone();
+        this.SHELF = new Tile[ROWS][COLUMNS];
+        for(int i=0;i<ROWS;i++){
+            for(int j=0;j<COLUMNS;j++){
+                this.SHELF[i][j] = (Tile) shelf[i][j].clone();
+            }
+        }
     }
 
     public Shelf(){
@@ -48,7 +53,7 @@ public class Shelf implements Cloneable{
     }
 
     @Override
-    protected Object clone() {
+    public Object clone() {
         return new Shelf(this.SHELF);
     }
 

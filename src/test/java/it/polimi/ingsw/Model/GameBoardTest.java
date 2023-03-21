@@ -8,11 +8,14 @@ import java.io.FileNotFoundException;
 
 import static org.junit.Assert.*;
 
-public class GameBoardTest extends TestCase {
+public class GameBoardTest{
+
+    GameBoard gameBoard;
 
     @Before
     public void setUp() throws FileNotFoundException {
-
+        // open the file and initiate the gameBoard
+        // assert all the unwanted Tiles are null
     }
 
     @Test

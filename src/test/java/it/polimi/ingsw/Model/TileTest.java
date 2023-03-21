@@ -9,19 +9,20 @@ import static org.junit.Assert.*;
 
 public class TileTest extends TestCase {
 
+    Tile tile;
+
     @Before
     public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
+        tile = new Tile(TileColor.BLUE);
     }
 
     @Test
     public void getColor() {
+        assertEquals(tile.getColor(), TileColor.BLUE);
     }
 
     @Test
     public void getId() {
+        assertEquals(tile.getId(), 0);
     }
 }

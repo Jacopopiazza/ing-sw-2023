@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 public final class PrivateGoal {
     private Coordinates[] coords;
-    public PrivateGoal(Coordinates[] coords) {
+    private PrivateGoal(Coordinates[] coords) {
 
         this.coords = coords.clone();
 
     }
 
-    public static Coordinates[][] privateGoalsForNPeople(int people) throws InvalidNumberOfPlayersException{
+    public static PrivateGoal[] privateGoalsForNPeople(int people) throws InvalidNumberOfPlayersException{
 
         if( people <= 0 || people > Game.maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();
@@ -32,13 +32,13 @@ public final class PrivateGoal {
 
         Collections.shuffle(allPrivateGoals);
 
-        Coordinates[][] retValue = new Coordinates[people][TileColor.values().length];
+        PrivateGoal[] retValue = new PrivateGoal[people];
 
         for(int i = 0;i < people; i++){
-            retValue[i] = allPrivateGoals.get(i);
+            retValue[i] = new PrivateGoal(allPrivateGoals.get(i));
         }
 
-        return  retValue;
+        return retValue;
     }
 
 

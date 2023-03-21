@@ -4,14 +4,13 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
 
-import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class IslandCounter {
 
-        static final int R = 6;
-        static final int C = 5;
+        static final int R = Shelf.getRows();
+        static final int C = Shelf.getColumns();
 
         static class pair {
             int first, second;
@@ -56,8 +55,7 @@ public class IslandCounter {
                             !vis[i][j]);
         }
 
-        static void BFS(Shelf shelf, boolean vis[][],
-                        int si, int sj, RefInteger compostaDa) {
+        static void BFS(Shelf shelf, boolean vis[][], int si, int sj, RefInteger cont) {
 
             // These arrays are used to get row and
             // column numbers of 8 neighbours of
@@ -86,7 +84,7 @@ public class IslandCounter {
                             j + col[k], vis, shelf.getTile(new Coordinates(i,j)).getColor())) {
                         vis[i + row[k]][j + col[k]] = true;
                         q.add(new pair(i + row[k], j + col[k]));
-                        compostaDa.increment();
+                        cont.increment();
                     }
                 }
             }
@@ -100,20 +98,19 @@ public class IslandCounter {
             // Mark all cells as not visited
             boolean[][] vis = new boolean[R][C];
 
-            // Each element of the list is and island
-            // the value at i-th position tell us the
+            // The value at i-th position tells us the
             // amount of tiles the island is made of
             List<RefInteger> islands = new ArrayList<RefInteger>();
 
-            // Call BFS for every unvisited vertex
+            // Calls BFS for every unvisited vertex
             // Whenever it finds an unvisited vertex
-            // it means there is a new island
+            // a new island was found
             for (int i = 0; i < R; i++) {
                 for (int j = 0; j < C; j++) {
                     if (shelf.getTile(new Coordinates(i,j)) != null && !vis[i][j]) {
-                        RefInteger compostaDa = new RefInteger(1);
-                        BFS(shelf, vis, i, j,compostaDa);
-                        islands.add(compostaDa);
+                        RefInteger cont = new RefInteger(1);
+                        BFS(shelf, vis, i, j,cont);
+                        islands.add(cont);
                     }
                 }
             }

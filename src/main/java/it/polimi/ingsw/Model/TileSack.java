@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class TileSack {
-    private int[] remaining;    // Index is the corresponding color in TileColor
+    private int[] remaining;                                    // Index is the corresponding color in TileColor
     private final static int LEN = TileColor.values().length;   // length of the array
     private final static int NUM_OF_TILES_PER_COLOR = 22;
 

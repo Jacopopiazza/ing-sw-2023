@@ -44,11 +44,11 @@ public class Shelf implements Cloneable{
         return SHELF[c.getX()][c.getY()];
     }
 
-    public int getColumns(){
+    public static int getColumns(){
         return COLUMNS;
     }
 
-    public int getRows(){
+    public static int getRows(){
         return ROWS;
     }
 

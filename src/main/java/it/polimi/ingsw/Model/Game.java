@@ -6,11 +6,11 @@ import it.polimi.ingsw.Model.GlobalGoals.*;
 import java.util.*;
 
 public class Game {
-    private GameBoard board;
-    private Player[] players;
-    private GlobalGoal[] goals;
+    private final GameBoard board;
+    private final Player[] players;
+    private final GlobalGoal[] goals;
     private int currentPlayer;
-    private TileSack sack;
+    private final TileSack sack;
 
 
     public static final int maxNumberOfPlayers = 4;
@@ -31,20 +31,16 @@ public class Game {
         board = GameBoard.getGameBoard(this.players.length);
         sack = new TileSack();
         currentPlayer = new Random().nextInt(this.players.length);
-        goals = pickTwoGlobalGoals();
+        goals = this.pickTwoGlobalGoals();
     }
 
     public int getCurrentPlayer(){
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(int cp) throws InvalidIndexException{
+    public void nextPlayer(){
 
-        if(cp < 0 || cp >= players.length){
-            throw new InvalidIndexException();
-        }
-
-        currentPlayer = cp;
+        currentPlayer = (currentPlayer+1)%players.length;
     }
 
     public Player getPlayer(int p) throws InvalidIndexException{
@@ -73,27 +69,15 @@ public class Game {
         return retValue;
     }
 
-    public Tile popFromSack(){
-        return sack.pop();
+    public TileSack getTileSack(){
+        return sack;
     }
 
-    public Set<Coordinates> getCoordsFromBoard(){
-        return board.getCoords();
+    public GameBoard getGameBoard(){
+        return board;
     }
 
-    public Tile getTileFromBoard(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
-        return board.getTile(c);
-    }
-
-    public void setTileOnBoard(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
-        board.setTile(c,t);
-    }
-
-    public Tile pickTileFromBoard(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
-        return board.pickTile(c);
-    }
-
-    private static GlobalGoal[] pickTwoGlobalGoals(){
+    private GlobalGoal[] pickTwoGlobalGoals(){
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
 
         goals.add( new Angles() );

@@ -90,16 +90,6 @@ public class GameBoard {
         board.put(c,(Tile)t.clone());
     }
 
-    public Tile pickTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
-        if(!board.containsKey(c)){
-            throw new InvalidCoordinatesForCurrentGameException();
-        }
-
-        Tile t = board.get(c);
-        board.put(c,null);
-        return t;
-    }
-
     public int checkBoardGoal(Shelf s){
 
         List<Integer> results = IslandCounter.countIslands(s)

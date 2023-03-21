@@ -3,12 +3,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class PrivateGoal {
     private Coordinates[] coords;
@@ -43,7 +41,18 @@ public final class PrivateGoal {
         return retValue;
     }
 
+    private static class JSONConfig{
 
+        private record PrivateGoalPoint(int correctPosition, int points) {
+
+        }
+
+        private PrivateGoalPoint[] privateGoals;
+
+        public PrivateGoalPoint[] getPrivateGoals() {
+            return privateGoals;
+        }
+    }
 
     public int check(Shelf shelf) throws MissingShelfException, ColumnOutOfBoundsException{
         if(shelf==null) throw new MissingShelfException("Missing shelf");
@@ -54,14 +63,11 @@ public final class PrivateGoal {
             if(temp!=null && temp.getColor().ordinal()==i) numOfCorrectTiles++;
         }
 
-        switch (numOfCorrectTiles){
-            case 0: return 0;
-            case 1: return 1;
-            case 2: return 2;
-            case 3: return 4;
-            case 4: return 6;
-            case 5: return 9;
-            default: return 12;
-        }
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/Config.json"));
+        final int numOfTiles = numOfCorrectTiles;
+        JSONConfig config = gson.fromJson(reader,JSONConfig.class);
+        return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition == numOfTiles).mapToInt(g -> g.points).findFirst().getAsInt();
+
     }
 }

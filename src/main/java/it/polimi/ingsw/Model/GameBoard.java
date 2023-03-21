@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.JSONModels.JSONGameBoard;
 import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.IslandCounter;
 
@@ -12,31 +13,9 @@ import java.util.stream.Collectors;
 
 public class GameBoard {
 
-    private static class GameBoardFromJson{
-        public int getPeople() {
-            return people;
-        }
-
-        public Coordinates[] getCells() {
-            return cells;
-        }
-
-        private int people;
-
-        private Coordinates[] cells;
-
-        public GameBoardFromJson(int people, Coordinates[] cells){
-            this.people = people;
-            this.cells = cells.clone();
-        }
-
-    }
     private Map<Coordinates,Tile> board;
 
-    private GameBoard(){
-
-    }
-
+    private GameBoard(){ }
 
     public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
         if(people > Config.getInstance().getMaxNumberOfPlayers()){
@@ -45,7 +24,7 @@ public class GameBoard {
 
         Gson gson = new Gson();
         Reader reader = new InputStreamReader(GameBoard.class.getResourceAsStream("/GameBoard.json"));
-        GameBoardFromJson[] gameBoardConfigsFromFile = gson.fromJson(reader, GameBoardFromJson[].class);
+        JSONGameBoard[] gameBoardConfigsFromFile = gson.fromJson(reader, JSONGameBoard[].class);
 
         GameBoard gb = new GameBoard();
 
@@ -54,12 +33,12 @@ public class GameBoard {
         for(int i = 0; i<gameBoardConfigsFromFile.length; i++){
 
             // Once added the cells for the requested amount of people stop
-            if(gameBoardConfigsFromFile[i].getPeople() > people){
+            if(gameBoardConfigsFromFile[i].people() > people){
                 break;
             }
 
             // Add all the cells for the current config in the HashMap
-            for (Coordinates c : gameBoardConfigsFromFile[i].getCells()) {
+            for (Coordinates c : gameBoardConfigsFromFile[i].cells()) {
                 gb.board.put(c, null);
             }
 

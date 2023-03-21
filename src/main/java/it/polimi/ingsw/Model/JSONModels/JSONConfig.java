@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Utilities;
+package it.polimi.ingsw.Model.JSONModels;
 
 public class JSONConfig{
 

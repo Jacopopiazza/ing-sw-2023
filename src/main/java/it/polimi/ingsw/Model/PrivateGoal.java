@@ -3,7 +3,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.Model.Utilities.JSONConfig;
+import it.polimi.ingsw.Model.JSONModels.JSONConfig;
 
 import java.io.InputStreamReader;
 import java.io.Reader;

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model.Utilities;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.Model.JSONModels.JSONConfig;
 
 import java.io.InputStreamReader;
 import java.io.Reader;

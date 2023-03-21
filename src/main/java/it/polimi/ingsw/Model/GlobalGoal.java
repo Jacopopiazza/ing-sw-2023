@@ -1,14 +1,11 @@
 package it.polimi.ingsw.Model;
 
-import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.GlobalGoals.*;
 import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.Model.Utilities.JSONConfig;
+import it.polimi.ingsw.Model.JSONModels.JSONConfig;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 
 public abstract class GlobalGoal {

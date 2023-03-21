@@ -48,13 +48,16 @@ public class GameBoard {
 
         GameBoard gb = new GameBoard();
 
-
+        // for each gameBoardConfig read from the file
+        // add its cells to the HashMap
         for(int i = 0; i<gameBoardConfigsFromFile.length; i++){
 
+            // Once added the cells for the requested amount of people stop
             if(gameBoardConfigsFromFile[i].getPeople() > people){
                 break;
             }
 
+            // Add all the cells for the current config in the HashMap
             for (Coordinates c : gameBoardConfigsFromFile[i].getCells()) {
                 gb.board.put(c, null);
             }

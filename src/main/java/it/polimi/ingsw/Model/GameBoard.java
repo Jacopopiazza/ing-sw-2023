@@ -37,7 +37,6 @@ public class GameBoard {
     }
 
 
-
     public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
         if(people > Game.maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();

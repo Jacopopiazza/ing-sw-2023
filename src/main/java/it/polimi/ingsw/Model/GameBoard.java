@@ -90,10 +90,9 @@ public class GameBoard {
         board.put(c,(Tile)t.clone());
     }
 
-    public int checkBoardGoal(Shelf s){
+    public static int checkBoardGoal(Shelf s){
 
-        List<Integer> results = IslandCounter.countIslands(s)
-                .stream().filter(num -> num >= 3).collect(Collectors.toList());
+        List<Integer> results = IslandCounter.countIslands(s).stream().filter(num -> num >= 3).collect(Collectors.toList());
 
         int totalScore = 0;
 

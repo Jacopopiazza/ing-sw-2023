@@ -34,20 +34,20 @@ public abstract class GlobalGoal {
         return scores.pop();
     }
 
-    public static List<GlobalGoal> getOneForEachChild(int nofpeople) throws InvalidNumberOfPlayersException {
+    public static List<GlobalGoal> getOneForEachChild(int people) throws InvalidNumberOfPlayersException {
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
-        goals.add( new Angles(nofpeople) );
-        goals.add( new Diagonal(nofpeople) );
-        goals.add( new DifferentColumns(nofpeople) );
-        goals.add( new DifferentLines(nofpeople) );
-        goals.add( new EightTiles(nofpeople) );
-        goals.add( new EqualColumns(nofpeople) );
-        goals.add( new EqualLines(nofpeople) );
-        goals.add( new FourTiles(nofpeople) );
-        goals.add( new Square(nofpeople) );
-        goals.add( new Stair(nofpeople) );
-        goals.add( new TwoTiles(nofpeople) );
-        goals.add( new XShape(nofpeople) );
+        goals.add( new Angles(people) );
+        goals.add( new Diagonal(people) );
+        goals.add( new DifferentColumns(people) );
+        goals.add( new DifferentLines(people) );
+        goals.add( new EightTiles(people) );
+        goals.add( new EqualColumns(people) );
+        goals.add( new EqualLines(people) );
+        goals.add( new FourTiles(people) );
+        goals.add( new Square(people) );
+        goals.add( new Stair(people) );
+        goals.add( new TwoTiles(people) );
+        goals.add( new XShape(people) );
         return goals;
     }
 }

@@ -2,6 +2,8 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
+import it.polimi.ingsw.Model.Utilities.Config;
+
 import java.lang.String;
 import java.util.Collections;
 import java.util.List;
@@ -14,12 +16,9 @@ public class Game {
     private int currentPlayer;
     private final TileSack sack;
 
-
-    public static final int maxNumberOfPlayers = 4;
-
     public Game(String[] nicknames) throws InvalidNumberOfPlayersException{
 
-        if(nicknames.length < 2 || nicknames.length > maxNumberOfPlayers){
+        if(nicknames.length < 2 || nicknames.length > Config.getInstance().getMaxNumberOfPlayers()){
             throw new InvalidNumberOfPlayersException();
         }
 

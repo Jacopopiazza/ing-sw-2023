@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.GlobalGoals.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.JSONConfig;
 
 import java.io.InputStreamReader;
@@ -15,15 +16,13 @@ public abstract class GlobalGoal {
 
     public GlobalGoal(int people) throws InvalidNumberOfPlayersException {
 
-        if (people < 0 || people > Game.maxNumberOfPlayers) {
+        if (people < 0 || people > Config.getInstance().getMaxNumberOfPlayers()) {
             throw new InvalidNumberOfPlayersException();
         }
 
         scores = new Stack<Integer>();
 
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(GlobalGoal.class.getResourceAsStream("/config.json"));
-        JSONConfig config = gson.fromJson(reader, JSONConfig.class);
+        JSONConfig config = Config.getInstance();
 
         // Get a copy of the array sorted by points so the
         // smaller rewards goes to the bottom of the stack

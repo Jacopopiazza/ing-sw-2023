@@ -1,4 +1,6 @@
 {
+  "maxNumberOfPlayers" : 4,
+
   "privateGoals" : [
     {"correctPosition": 0, "points":  0},
     {"correctPosition": 1, "points":  1},

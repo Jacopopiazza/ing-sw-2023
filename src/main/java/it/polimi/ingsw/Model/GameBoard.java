@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.IslandCounter;
 
 import java.io.InputStreamReader;
@@ -38,7 +39,7 @@ public class GameBoard {
 
 
     public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
-        if(people > Game.maxNumberOfPlayers){
+        if(people > Config.getInstance().getMaxNumberOfPlayers()){
             throw new InvalidNumberOfPlayersException();
         }
 

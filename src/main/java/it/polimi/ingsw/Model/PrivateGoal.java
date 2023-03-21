@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.JSONConfig;
 
 import java.io.InputStreamReader;
@@ -31,7 +32,7 @@ public final class PrivateGoal {
 
     public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException{
 
-        if( people <= 0 || people > Game.maxNumberOfPlayers){
+        if( people <= 0 || people > Config.getInstance().getMaxNumberOfPlayers()){
             throw new InvalidNumberOfPlayersException();
         }
 
@@ -63,10 +64,9 @@ public final class PrivateGoal {
             if(temp!=null && temp.getColor().ordinal()==i) numOfCorrectTiles++;
         }
 
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/Config.json"));
+        JSONConfig config = Config.getInstance();
         final int numOfTiles = numOfCorrectTiles;
-        JSONConfig config = gson.fromJson(reader,JSONConfig.class);
+
         return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.points()).findFirst().getAsInt();
 
     }

@@ -3,7 +3,6 @@ package it.polimi.ingsw.Model;
 import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.IslandCounter;
-import org.example.App;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -36,6 +35,8 @@ public class GameBoard {
     private GameBoard(){
 
     }
+
+
 
     public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
         if(people > Game.maxNumberOfPlayers){
@@ -119,5 +120,23 @@ public class GameBoard {
         }
 
         return totalScore;
+    }
+
+    public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
+
+        if(!board.containsKey(c)) throw new InvalidCoordinatesForCurrentGameException();
+
+        int[] adjacentX = new int[]{-1,0,0,+1};
+        int[] adjacentY = new int[]{0,+1,-1,0};
+
+        for(int i=0;i<adjacentX.length;i++){
+            if(!board.containsKey(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) ||
+                board.get(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) == null){
+                return true;
+            }
+        }
+
+
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.JSONConfig;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -51,18 +52,7 @@ public final class PrivateGoal {
         return retValue;
     }
 
-    private static class JSONConfig{
 
-        private record PrivateGoalPoint(int correctPosition, int points) {
-
-        }
-
-        private PrivateGoalPoint[] privateGoals;
-
-        public PrivateGoalPoint[] getPrivateGoals() {
-            return privateGoals;
-        }
-    }
 
     public int check(Shelf shelf) throws MissingShelfException, ColumnOutOfBoundsException{
         if(shelf==null) throw new MissingShelfException("Missing shelf");
@@ -77,7 +67,7 @@ public final class PrivateGoal {
         Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/Config.json"));
         final int numOfTiles = numOfCorrectTiles;
         JSONConfig config = gson.fromJson(reader,JSONConfig.class);
-        return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition == numOfTiles).mapToInt(g -> g.points).findFirst().getAsInt();
+        return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.points()).findFirst().getAsInt();
 
     }
 }

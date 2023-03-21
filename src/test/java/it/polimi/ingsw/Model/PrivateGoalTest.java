@@ -36,7 +36,7 @@ public class PrivateGoalTest {
     @Test
     public void testGetRightPrivateGoals() throws InvalidNumberOfPlayersException {
         for(int people = 2; people < 4; people++) {
-            privateGoals = PrivateGoal.privateGoalsForNPeople(people);
+            privateGoals = PrivateGoal.getPrivateGoals(people);
             assertEquals(privateGoals.length, people);
             for (int i = 0; i < people; i++) {
                 assertEquals(privateGoals[i].getCoordinates().length, TileColor.values().length);

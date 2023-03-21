@@ -23,7 +23,7 @@ public class Game {
             throw new InvalidNumberOfPlayersException();
         }
 
-        PrivateGoal[] privateGoals = PrivateGoal.privateGoalsForNPeople(nicknames.length);
+        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
         this.players = new Player[nicknames.length];
         for(int i=0;i<players.length;i++){
             players[i] = new Player(privateGoals[i],nicknames[i]);

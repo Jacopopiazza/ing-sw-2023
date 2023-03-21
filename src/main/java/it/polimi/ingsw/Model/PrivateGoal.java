@@ -29,7 +29,7 @@ public final class PrivateGoal {
         return coords;
     }
 
-    public static PrivateGoal[] privateGoalsForNPeople(int people) throws InvalidNumberOfPlayersException{
+    public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException{
 
         if( people <= 0 || people > Game.maxNumberOfPlayers){
             throw new InvalidNumberOfPlayersException();

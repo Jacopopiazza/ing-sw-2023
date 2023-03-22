@@ -4,7 +4,6 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.GlobalGoals.*;
 import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.Model.JSONModels.JSONConfig;
 
 import java.util.*;
 
@@ -19,14 +18,14 @@ public abstract class GlobalGoal {
 
         scores = new Stack<Integer>();
 
-        JSONConfig config = Config.getInstance();
+        Config config = Config.getInstance();
 
         // Get a copy of the array sorted by points so the
         // smaller rewards goes to the bottom of the stack
-        JSONConfig.GlobalGoalPoint[] globalGoalPoints = Arrays.stream(config.getGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.points(),g2.points()))
-                .toArray(JSONConfig.GlobalGoalPoint[]::new);
+        Config.GlobalGoalPoint[] globalGoalPoints = Arrays.stream(config.getGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.points(),g2.points()))
+                .toArray(Config.GlobalGoalPoint[]::new);
 
-        for(JSONConfig.GlobalGoalPoint ggp : globalGoalPoints){
+        for(Config.GlobalGoalPoint ggp : globalGoalPoints){
             if(ggp.alwaysPresent() || people >= ggp.players() ){
                 scores.push(ggp.points());
             }

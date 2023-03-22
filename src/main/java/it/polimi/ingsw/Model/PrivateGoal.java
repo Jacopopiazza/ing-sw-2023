@@ -3,7 +3,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.Model.JSONModels.JSONConfig;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -64,7 +63,7 @@ public final class PrivateGoal {
             if(temp!=null && temp.getColor().ordinal()==i) numOfCorrectTiles++;
         }
 
-        JSONConfig config = Config.getInstance();
+        Config config = Config.getInstance();
         final int numOfTiles = numOfCorrectTiles;
 
         return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.points()).findFirst().getAsInt();

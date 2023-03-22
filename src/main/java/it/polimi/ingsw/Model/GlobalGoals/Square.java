@@ -16,29 +16,60 @@ public class Square extends GlobalGoal {
         if (s == null) throw new MissingShelfException();
         int c = s.getColumns();
         int r = s.getRows();
-        Coordinates[] firstSquare = new Coordinates[TileColor.values().length];
+        Coordinates firstSquare = null;
         for (int i = 0; i < r - 1; i++) {
             for (int j = 0; j < c - 1; j++) {
                 Coordinates coord = new Coordinates(i, j);
                 Tile temp = s.getTile(coord);
-                if (temp != null && (firstSquare[temp.getColor().ordinal()] == null ||
+                //here I will check if there is a Tile at this coordinates and, if this is the case,
+                //I will check whether that Tile is not contained in the first found square (if it was already found)
+                if (temp != null && (firstSquare == null ||
                         (
-                                (!coord.equals(new Coordinates(firstSquare[temp.getColor().ordinal()].getX() + 1, firstSquare[temp.getColor().ordinal()].getY())))
-                             && (!coord.equals(new Coordinates(firstSquare[temp.getColor().ordinal()].getX() + 1, firstSquare[temp.getColor().ordinal()].getY() + 1)))
-                             && (!coord.equals(new Coordinates(firstSquare[temp.getColor().ordinal()].getX(), firstSquare[temp.getColor().ordinal()].getY() + 1)))
+                                (!coord.equals(new Coordinates(firstSquare.getX() + 1, firstSquare.getY())))
+                             && (!coord.equals(new Coordinates(firstSquare.getX() + 1, firstSquare.getY() + 1)))
+                             && (!coord.equals(new Coordinates(firstSquare.getX(), firstSquare.getY() + 1)))
                         )
                 )
                 ) {
-                    // then check for the color of all the other tiles
-                    if (s.getTile(new Coordinates(i + 1, j)).getColor().equals(temp.getColor())
+                    // here I will check if there is a square around this Tile
+                    if (
+                               s.getTile(new Coordinates(i + 1, j)).getColor().equals(temp.getColor())
                             && s.getTile(new Coordinates(i + 1, j + 1)).getColor().equals(temp.getColor())
                             && s.getTile(new Coordinates(i, j + 1)).getColor().equals(temp.getColor())
                     ) {
-                        // found a square for this color
-                        if (firstSquare[temp.getColor().ordinal()] == null) {
-                            firstSquare[temp.getColor().ordinal()] = coord;
-                        } else {
-                            return true;
+                        // here I will check whether the Tiles around the square have a different color
+                        if(
+                                (
+                                        i - 1 < 0 || (
+                                                   (s.getTile(new Coordinates(i - 1, j)) == null  || !s.getTile(new Coordinates(i - 1, j)).getColor().equals(temp.getColor()))
+                                                && (s.getTile(new Coordinates(i - 1, j + 1)) == null  || !s.getTile(new Coordinates(i - 1, j + 1)).getColor().equals(temp.getColor()))
+                                        )
+                                ) &&
+                                (
+                                        j - 1 < 0 || (
+                                                   (s.getTile(new Coordinates(i, j - 1)) == null  || !s.getTile(new Coordinates(i, j - 1)).getColor().equals(temp.getColor()))
+                                                && (s.getTile(new Coordinates(i + 1, j - 1)) == null  || !s.getTile(new Coordinates(i + 1, j - 1)).getColor().equals(temp.getColor()))
+                                        )
+                                ) &&
+                                (
+                                        i + 2 >= r || (
+                                                   (s.getTile(new Coordinates(i + 2, j)) == null  || !s.getTile(new Coordinates(i + 2, j)).getColor().equals(temp.getColor()))
+                                                && (s.getTile(new Coordinates(i + 2, j + 1)) == null  || !s.getTile(new Coordinates(i + 2, j + 1)).getColor().equals(temp.getColor()))
+                                        )
+                                ) &&
+                                (
+                                        j + 2 >= c || (
+                                                   (s.getTile(new Coordinates(i, j + 2)) == null  || !s.getTile(new Coordinates(i, j + 2)).getColor().equals(temp.getColor()))
+                                                && (s.getTile(new Coordinates(i + 1, j + 2)) == null  || !s.getTile(new Coordinates(i + 1, j + 2)).getColor().equals(temp.getColor()))
+                                        )
+                                )
+
+                        ) {
+                            if (firstSquare == null) {
+                                firstSquare = coord;
+                            } else {
+                                return true;
+                            }
                         }
                     }
                 }

@@ -66,7 +66,7 @@ public final class PrivateGoal {
         Config config = Config.getInstance();
         final int numOfTiles = numOfCorrectTiles;
 
-        return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.points()).findFirst().getAsInt();
+        return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.score()).findFirst().getAsInt();
 
     }
 }

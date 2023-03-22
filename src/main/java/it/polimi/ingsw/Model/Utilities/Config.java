@@ -7,8 +7,8 @@ import java.io.Reader;
 
 public class Config {
 
-    public record PrivateGoalPoint(int correctPosition, int points) { }
-    public record GlobalGoalPoint(int players, int points) { }
+    public record PrivateGoalPoint(int correctPosition, int score) { }
+    public record GlobalGoalPoint(int players, int score) { }
 
     private static Config instance;
     private int maxNumberOfPlayers;

@@ -5,20 +5,20 @@
   "numOfTilesPerColor": 22,
 
   "privateGoals" : [
-    {"correctPosition": 0, "points":  0},
-    {"correctPosition": 1, "points":  1},
-    {"correctPosition": 2, "points":  2},
-    {"correctPosition": 3, "points":  4},
-    {"correctPosition": 4, "points":  6},
-    {"correctPosition": 5, "points":  9},
-    {"correctPosition": 6, "points":  12}
+    {"correctPosition": 0, "score":  0},
+    {"correctPosition": 1, "score":  1},
+    {"correctPosition": 2, "score":  2},
+    {"correctPosition": 3, "score":  4},
+    {"correctPosition": 4, "score":  6},
+    {"correctPosition": 5, "score":  9},
+    {"correctPosition": 6, "score":  12}
   ],
 
   "globalGoals": [
-    {"players": 4, "points": 2},
-    {"players": 2, "points": 4},
-    {"players": 3, "points": 6},
-    {"players": 2, "points": 8}
+    {"players": 4, "score": 2},
+    {"players": 2, "score": 4},
+    {"players": 3, "score": 6},
+    {"players": 2, "score": 8}
   ]
 
 

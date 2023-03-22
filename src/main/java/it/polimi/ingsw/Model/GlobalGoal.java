@@ -20,14 +20,14 @@ public abstract class GlobalGoal {
 
         Config config = Config.getInstance();
 
-        // Get a copy of the array sorted by points so the
+        // Get a copy of the array sorted by score so the
         // smaller rewards goes to the bottom of the stack
-        Config.GlobalGoalPoint[] globalGoalPoints = Arrays.stream(config.getGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.points(),g2.points()))
+        Config.GlobalGoalPoint[] globalGoalPoints = Arrays.stream(config.getGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.score(),g2.score()))
                 .toArray(Config.GlobalGoalPoint[]::new);
 
         for(Config.GlobalGoalPoint ggp : globalGoalPoints){
             if(people >= ggp.players() ){
-                scores.push(ggp.points());
+                scores.push(ggp.score());
             }
         }
 

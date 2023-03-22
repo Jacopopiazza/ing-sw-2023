@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -8,12 +9,11 @@ import java.util.Random;
 public class TileSack {
     private int[] remaining;                                    // Index is the corresponding color in TileColor
     private final static int LEN = TileColor.values().length;   // length of the array
-    private final static int NUM_OF_TILES_PER_COLOR = 22;
 
     public TileSack(){
         // initialize the array with the maximum value for every element
         for(int i = 0; i < LEN; i++)
-            remaining[i] = NUM_OF_TILES_PER_COLOR;
+            remaining[i] = Config.getInstance().getNumOfTilesPerColor();
     }
 
     // Generate a Tile with a random color and pops it from the sack

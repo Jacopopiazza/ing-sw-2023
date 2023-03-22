@@ -26,7 +26,7 @@ public abstract class GlobalGoal {
                 .toArray(Config.GlobalGoalPoint[]::new);
 
         for(Config.GlobalGoalPoint ggp : globalGoalPoints){
-            if(ggp.alwaysPresent() || people >= ggp.players() ){
+            if(people >= ggp.players() ){
                 scores.push(ggp.points());
             }
         }

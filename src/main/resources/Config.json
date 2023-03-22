@@ -1,5 +1,8 @@
 {
   "maxNumberOfPlayers" : 4,
+  "shelfRows" : 6,
+  "shelfColumns" : 5,
+  "numOfTilesPerColor": 22,
 
   "privateGoals" : [
     {"correctPosition": 0, "points":  0},
@@ -12,10 +15,10 @@
   ],
 
   "globalGoals": [
-    {"players": 4, "points": 2, "alwaysPresent":  false},
-    {"players": 0, "points": 4, "alwaysPresent":  true},
-    {"players": 3, "points": 6, "alwaysPresent":  false},
-    {"players": 0, "points": 8, "alwaysPresent":  true}
+    {"players": 4, "points": 2},
+    {"players": 2, "points": 4},
+    {"players": 3, "points": 6},
+    {"players": 2, "points": 8}
   ]
 
 

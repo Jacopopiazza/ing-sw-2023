@@ -8,17 +8,25 @@ import java.io.Reader;
 public class Config {
 
     public record PrivateGoalPoint(int correctPosition, int points) { }
-    public record GlobalGoalPoint(int players, int points, boolean alwaysPresent) { }
+    public record GlobalGoalPoint(int players, int points) { }
 
     private static Config instance;
     private int maxNumberOfPlayers;
+    private int shelfRows;
+    private int shelfColumns;
+
+    private int numOfTilesPerColor;
+
     private PrivateGoalPoint[] privateGoals;
     private GlobalGoalPoint[] globalGoals;
 
-    private Config(int maxNumberOfPlayers, PrivateGoalPoint[] privateGoals, GlobalGoalPoint[] globalGoals){
+    private Config(int maxNumberOfPlayers, int shelfRows, int shelfColumns, int numOfTilesPerColor, PrivateGoalPoint[] privateGoals, GlobalGoalPoint[] globalGoals){
         this.maxNumberOfPlayers = maxNumberOfPlayers;
         this.privateGoals = privateGoals;
         this.globalGoals = globalGoals;
+        this.shelfRows = shelfRows;
+        this.shelfColumns = shelfColumns;
+        this.numOfTilesPerColor = numOfTilesPerColor;
     }
 
     public PrivateGoalPoint[] getPrivateGoals() {
@@ -33,6 +41,18 @@ public class Config {
         return maxNumberOfPlayers;
     }
 
+    public int getShelfRows() {
+        return shelfRows;
+    }
+
+    public int getShelfColumns() {
+        return shelfColumns;
+    }
+
+    public int getNumOfTilesPerColor() {
+        return numOfTilesPerColor;
+    }
+
     public static synchronized Config getInstance(){
         if(instance == null){
 
@@ -44,7 +64,8 @@ public class Config {
             PrivateGoalPoint[] privateGoals = gson.fromJson(jsonConfig.get("privateGoals"), PrivateGoalPoint[].class);
             GlobalGoalPoint[] globalGoals = gson.fromJson(jsonConfig.get("globalGoals"), GlobalGoalPoint[].class);
 
-            instance = new Config(jsonConfig.get("maxNumberOfPlayers").getAsInt(),privateGoals,globalGoals);
+            instance = new Config(jsonConfig.get("maxNumberOfPlayers").getAsInt(),jsonConfig.get("shelfRows").getAsInt(),
+                    jsonConfig.get("shelfColumns").getAsInt(),jsonConfig.get("numOfTilesPerColor").getAsInt(),privateGoals,globalGoals);
         }
         return instance;
     }

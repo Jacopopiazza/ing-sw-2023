@@ -19,51 +19,29 @@ public class Stair extends GlobalGoal {
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if(s==null) throw new MissingShelfException();
-
+        int r=s.getRows();
+        int c=s.getColumns();
         int tileCounter;
-        boolean stair = true;
-
-        // asc. order: starts from the first column
-        for(int column = 0; column < s.getColumns(); column++){
-            tileCounter = 0;
-            for(int row = s.getRows() - 1; row >= 0; row--){
-                if(s.getTile(new Coordinates(row, column)) != null){
-                    tileCounter++;
-                }else{
-                    //interrupt the inner cycle if there are no more tiles in that column
-                    break;
-                }
+        boolean stair;
+        //checking if there is an asc stair
+        for(int i=4; i<r-1; i++){
+            stair=true;
+            for(int k=0;k<5 && stair;k++){
+                if(s.getTile(new Coordinates(i-k,k)) == null) stair=false;
+                else if(i-k-1>=0 && s.getTile(new Coordinates(i-k-1,k)) != null) stair=false;
             }
-            // if there is not an asc. stair, check for the desc. stair
-            if(tileCounter != (column + 1)){
-                stair = false;
-                break;
-            }
+            if(stair) return true;
         }
 
-        // if there is an asc. stair, return true
-        if(stair)
-            return true;
-        stair = true;
-
-        //desc order: starts from the last column
-        for(int column = s.getColumns() - 1; column >= 0; column--){
-            tileCounter = 0;
-            for(int row = s.getRows() - 1; row >= 0; row--){
-                if(s.getTile(new Coordinates(row, column)) != null){
-                    tileCounter++;
-                }else{
-                    //interrupt the inner cycle if there are no more tiles in that column
-                    break;
-                }
+        //checking if there is a desc stair
+        for(int i=4; i<r-1; i++){
+            stair=true;
+            for(int k=0;k<5 && stair;k++){
+                if(s.getTile(new Coordinates(i-k,c-1-k)) == null) stair=false;
+                else if(i-k-1>=0 && s.getTile(new Coordinates(i-k-1,c-1-k)) != null) stair=false;
             }
-            // if there is not an asc. stair, check for the desc. stair
-            if(tileCounter != (column + 1)){
-                stair = false;
-                break;
-            }
+            if(stair) return true;
         }
-
-        return stair;
+    return false;
     }
 }

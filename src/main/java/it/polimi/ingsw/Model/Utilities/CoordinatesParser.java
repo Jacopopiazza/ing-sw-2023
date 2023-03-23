@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Parser;
+package it.polimi.ingsw.Model.Utilities;
 
 import com.google.gson.JsonElement;
 import it.polimi.ingsw.Model.Coordinates;

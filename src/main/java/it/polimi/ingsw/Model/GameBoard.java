@@ -5,14 +5,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.Parser.CoordinatesParser;
+import it.polimi.ingsw.Model.Utilities.CoordinatesParser;
 import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.Model.Utilities.IslandCounter;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameBoard {
 

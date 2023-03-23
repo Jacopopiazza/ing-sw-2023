@@ -22,19 +22,21 @@ public class DifferentColumns extends GlobalGoal {
         int count;
         boolean goOn;
 
-        if( s == null ) throw new MissingShelfException();
+        if( s == null ){
+            throw new MissingShelfException();
+        }
 
         count = 0;
-        for( int j = 0; j<s.getColumns(); j++ ){
+        for( int j = 0; j<Shelf.getColumns(); j++ ){
             foundColors = new HashSet<TileColor>();
             goOn = true;
-            for( int i = 0; i<s.getRows() && goOn; i++ ){
+            for( int i = 0; i<Shelf.getRows() && goOn; i++ ){
                 Coordinates c = new Coordinates(i,j);
                 if( s.getTile(c) == null ) goOn = false;
                 else if( foundColors.contains( s.getTile(c).getColor()) ) goOn = false;
                 else foundColors.add( s.getTile(c).getColor() );
             }
-            if( foundColors.size() == s.getRows() ){
+            if( foundColors.size() == Shelf.getRows() ){
                 if( ++count == 2 ) return true;
             }
         }

@@ -12,9 +12,12 @@ public class Diagonal extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {
-        if(s==null) throw new MissingShelfException();
-        int r=s.getRows();
-        int c=s.getColumns();
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+
+        if( s == null ){
+            throw new MissingShelfException();
+        }
 
         for(int i=0;i<r-4;i++){
             for(int j=0;j<c-4;j++){

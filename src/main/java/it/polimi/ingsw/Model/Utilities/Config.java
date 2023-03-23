@@ -7,33 +7,33 @@ import java.io.Reader;
 
 public class Config {
 
-    public record PrivateGoalPoint(int correctPosition, int score) { }
-    public record GlobalGoalPoint(int players, int score) { }
-
+    public record PrivateGoalScore(int correctPosition, int score) { }
+    public record GlobalGoalScore(int players, int score) { }
     private static Config instance;
-    private int maxNumberOfPlayers;
-    private int shelfRows;
-    private int shelfColumns;
+    private final int maxNumberOfPlayers;
+    private final int shelfRows;
+    private final int shelfColumns;
+    private final int numOfTilesPerColor;
+    private final PrivateGoalScore[] privateGoals;
+    private final GlobalGoalScore[] globalGoals;
 
-    private int numOfTilesPerColor;
-
-    private PrivateGoalPoint[] privateGoals;
-    private GlobalGoalPoint[] globalGoals;
-
-    private Config(int maxNumberOfPlayers, int shelfRows, int shelfColumns, int numOfTilesPerColor, PrivateGoalPoint[] privateGoals, GlobalGoalPoint[] globalGoals){
-        this.maxNumberOfPlayers = maxNumberOfPlayers;
-        this.privateGoals = privateGoals;
-        this.globalGoals = globalGoals;
-        this.shelfRows = shelfRows;
-        this.shelfColumns = shelfColumns;
-        this.numOfTilesPerColor = numOfTilesPerColor;
+    private Config(){
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/config.json"));
+        JsonObject jsonConfig = gson.fromJson(reader, JsonObject.class);
+        privateGoals = gson.fromJson(jsonConfig.get("privateGoals"), PrivateGoalScore[].class);
+        globalGoals = gson.fromJson(jsonConfig.get("globalGoals"), GlobalGoalScore[].class);
+        shelfRows = gson.fromJson(jsonConfig.get("shelfRows"), JsonObject.class).getAsInt();
+        shelfColumns = gson.fromJson(jsonConfig.get("shelfColumns"), JsonObject.class).getAsInt();
+        numOfTilesPerColor = gson.fromJson(jsonConfig.get("numOfTilesPerColor"), JsonObject.class).getAsInt();
+        maxNumberOfPlayers = gson.fromJson(jsonConfig.get("maxNumberOfPlayers"), JsonObject.class).getAsInt();
     }
 
-    public PrivateGoalPoint[] getPrivateGoals() {
+    public PrivateGoalScore[] getPrivateGoals() {
         return privateGoals;
     }
 
-    public GlobalGoalPoint[] getGlobalGoals() {
+    public GlobalGoalScore[] getUnsortedGlobalGoals() {
         return globalGoals;
     }
 
@@ -54,19 +54,7 @@ public class Config {
     }
 
     public static synchronized Config getInstance(){
-        if(instance == null){
-
-            Gson gson = new Gson();
-            Reader reader = new InputStreamReader(Config.class.getResourceAsStream("/config.json"));
-
-            JsonObject jsonConfig = gson.fromJson(reader, JsonObject.class);
-
-            PrivateGoalPoint[] privateGoals = gson.fromJson(jsonConfig.get("privateGoals"), PrivateGoalPoint[].class);
-            GlobalGoalPoint[] globalGoals = gson.fromJson(jsonConfig.get("globalGoals"), GlobalGoalPoint[].class);
-
-            instance = new Config(jsonConfig.get("maxNumberOfPlayers").getAsInt(),jsonConfig.get("shelfRows").getAsInt(),
-                    jsonConfig.get("shelfColumns").getAsInt(),jsonConfig.get("numOfTilesPerColor").getAsInt(),privateGoals,globalGoals);
-        }
+        if( instance == null ) instance = new Config();
         return instance;
     }
 }

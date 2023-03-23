@@ -6,7 +6,7 @@ import it.polimi.ingsw.Model.Coordinates;
 public class CoordinatesParser {
 
     private CoordinatesParser() {
-        throw new IllegalStateException("Utility class");
+
     }
 
     public static Coordinates coordinatesParser(JsonElement jsonCoordinates) {

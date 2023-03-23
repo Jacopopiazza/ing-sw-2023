@@ -8,9 +8,9 @@ public class Shelf implements Cloneable{
     private final Tile[][] SHELF;
 
     private Shelf(Tile[][] shelf){
-        this.SHELF = new Tile[Config.getInstance().getShelfRows()][Config.getInstance().getShelfColumns()];
-        for(int i=0;i<Config.getInstance().getShelfRows();i++){
-            for(int j=0;j<Config.getInstance().getShelfColumns();j++){
+        this.SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
+        for( int i=0; i<Shelf.getRows(); i++ ){
+            for( int j=0; j<Shelf.getColumns(); j++ ){
                 this.SHELF[i][j] = (Tile) shelf[i][j].clone();
             }
         }
@@ -18,19 +18,18 @@ public class Shelf implements Cloneable{
 
     public Shelf(){
         // initialize the matrix with null values
-        SHELF = new Tile[Config.getInstance().getShelfRows()][Config.getInstance().getShelfColumns()];
+        SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
     }
 
     public void addTile(Tile t, int column) throws IllegalColumnInsertionException, ColumnOutOfBoundsException{
 
-        if(column < 0 || column >= Config.getInstance().getShelfColumns()) throw new ColumnOutOfBoundsException();
+        if( ( column < 0 ) || ( column >= Shelf.getColumns() ) ) throw new ColumnOutOfBoundsException();
 
         // If the first row is already filled with a tile, the column is fully filled
-        if(SHELF[0][column] != null)
-            throw new IllegalColumnInsertionException();
+        if(SHELF[0][column] != null) throw new IllegalColumnInsertionException();
 
         // start analysing from the bottom
-        int row = Config.getInstance().getShelfRows() - 1;
+        int row = Shelf.getRows() - 1;
         while(SHELF[row][column] != null && row >= 0){
             row--;
         }
@@ -39,8 +38,7 @@ public class Shelf implements Cloneable{
     }
 
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
-        if(c.getX() < 0 || c.getY() < 0 || c.getX() >= Config.getInstance().getShelfRows() || c.getY() >= Config.getInstance().getShelfColumns()) throw new ColumnOutOfBoundsException();
-
+        if( ( c.getX() < 0 ) || ( c.getY() < 0 ) || ( c.getX() >= Shelf.getRows() ) || ( c.getY() >= Shelf.getColumns() ) ) throw new ColumnOutOfBoundsException();
         return SHELF[c.getX()][c.getY()];
     }
 

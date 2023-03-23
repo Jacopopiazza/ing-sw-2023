@@ -17,17 +17,15 @@ public class Game {
     private final TileSack sack;
 
     public Game(String[] nicknames) throws InvalidNumberOfPlayersException{
+        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
 
-        if(nicknames.length < 2 || nicknames.length > Config.getInstance().getMaxNumberOfPlayers()){
+        if( ( nicknames.length < 2 ) || ( nicknames.length > Config.getInstance().getMaxNumberOfPlayers() ) ){
             throw new InvalidNumberOfPlayersException();
         }
 
-        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
         this.players = new Player[nicknames.length];
-        for(int i=0;i<players.length;i++){
+        for( int i=0; i<players.length; i++)
             players[i] = new Player(privateGoals[i],nicknames[i]);
-        }
-
 
         board = GameBoard.getGameBoard(this.players.length);
         sack = new TileSack();

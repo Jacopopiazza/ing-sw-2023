@@ -15,10 +15,14 @@ public class FourTiles extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if(s==null) throw new MissingShelfException();
-        int r=s.getRows();
-        int c=s.getColumns();
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
         boolean[][] checked= new boolean[r][c];
+
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
         for(int i=0;i<r;i++){
             for(int j=0;j<c;j++){
                 checked[i][j]=false;
@@ -40,8 +44,8 @@ public class FourTiles extends GlobalGoal {
 
     private int checkFromThisTile(Shelf s,Coordinates coord, boolean[][] checked){
         Tile t=s.getTile(coord);
-        int r=Shelf.getRows();
-        int c=Shelf.getColumns();
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
         int i=coord.getX();
         int j=coord.getY();
         checked[i][j]=true;

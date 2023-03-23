@@ -28,10 +28,7 @@ public class Player{
     }
 
     public void setGlobalGoalAccomplishedTrue(int i) throws InvalidIndexException {
-        if (i < 0 || i >= this.globalGoalAccomplished.length) {
-            throw new InvalidIndexException();
-        }
-
+        if ( ( i < 0 ) || ( i >= this.globalGoalAccomplished.length ) ) throw new InvalidIndexException();
         this.globalGoalAccomplished[i] = true;
     }
 
@@ -40,7 +37,7 @@ public class Player{
     }
 
     public void setScore(int s) throws NonValidScoreException {
-        if (s < 0) throw new NonValidScoreException();
+        if ( s < 0 ) throw new NonValidScoreException();
         score = s;
     }
 

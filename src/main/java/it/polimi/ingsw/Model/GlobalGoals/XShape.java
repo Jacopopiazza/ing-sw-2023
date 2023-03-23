@@ -16,10 +16,13 @@ public class XShape extends GlobalGoal {
     // Five tiles of the same color that create the shape of an 'X'
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {
-        if(s==null) throw new MissingShelfException();
 
-        for(int row = 0; row < s.getRows() - 2; row++){
-            for(int column = 0; column < s.getColumns() - 2; column++){
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
+        for(int row = 0; row < Shelf.getRows() - 2; row++){
+            for(int column = 0; column < Shelf.getColumns() - 2; column++){
                 // check if there is an 'X' shape of tiles
                 if( s.getTile(new Coordinates(row, column)) != null
                         && s.getTile(new Coordinates(row, column + 2)) != null

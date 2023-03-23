@@ -18,11 +18,14 @@ public class Stair extends GlobalGoal {
     // The tiles can have different colors.
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if(s==null) throw new MissingShelfException();
-        int r=s.getRows();
-        int c=s.getColumns();
-        int tileCounter;
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
         boolean stair;
+
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
         //checking if there is an asc stair
         for(int i=4; i<r-1; i++){
             stair=true;

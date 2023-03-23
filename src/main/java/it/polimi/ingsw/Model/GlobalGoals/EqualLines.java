@@ -12,12 +12,16 @@ public class EqualLines extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException{
-        if(s==null) throw new MissingShelfException();
-        int r=s.getRows();
-        int c=s.getColumns();
-        int correctR=0;
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        int correctR = 0;
         Tile temp;
-        for(int i=0;i<r && correctR<4;i++){
+
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
+        for( int i=0; i<r && correctR<4; i++ ){
             TileColor[] availableColors = new TileColor[3];
             int currentHead;
             temp=s.getTile(new Coordinates(i,0));

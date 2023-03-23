@@ -13,17 +13,20 @@ public class EqualColumns extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException, ColumnOutOfBoundsException {
-        if(s==null) throw new MissingShelfException();
-        int r=s.getRows();
-        int c=s.getColumns();
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
         int correctC=0;
-        Tile temp;
-        for(int i=0;i<c && correctC<3;i++){
+
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
+        for( int i=0; i<c && correctC<3; i++ ){
             TileColor[] availableColors = new TileColor[3];
             int currentHead;
-            temp=s.getTile(new Coordinates(0,i));
-            if(temp!=null){
-                availableColors[0]=temp.getColor();
+
+            if(s.getTile(new Coordinates(0,i)) !=null ){
+                availableColors[0]=s.getTile(new Coordinates(0,i)).getColor();
                 currentHead=1;
             }
             else currentHead=4; //doing this the check will be false for this column, because at least one tile is missing

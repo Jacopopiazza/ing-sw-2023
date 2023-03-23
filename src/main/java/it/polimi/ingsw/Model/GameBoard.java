@@ -75,24 +75,74 @@ public class GameBoard {
         board.put(c,(Tile)t.clone());
     }
 
-    public static int checkBoardGoal(Shelf s){
-
-        List<Integer> results = IslandCounter.countIslands(s).stream().filter(num -> num >= 3).collect(Collectors.toList());
-
+    public static int checkBoardGoal(Shelf s) throws MissingShelfException{
+        if(s==null) throw new MissingShelfException();
+        int r=s.getRows();
+        int c=s.getColumns();
+        boolean[][] checked= new boolean[r][c];
+        for(int i=0;i<r;i++){
+            for(int j=0;j<c;j++){
+                checked[i][j]=false;
+            }
+        }
         int totalScore = 0;
 
-        for (Integer islandOf : results){
-            if(islandOf >= 6){
-                totalScore += 8;
-            } else if (islandOf == 5) {
-                totalScore += 5;
-            } else if(islandOf == 4){
-                totalScore += 3;
+        for(int i=0;i<r;i++){
+            for(int j=0;j<c;j++){
+                if(checked[i][j]==false){
+                    int currentGroup=checkFromThisTile(s,new Coordinates(i,j),c,r,checked);
+                    if(currentGroup >= 6){
+                        totalScore += 8;
+                    } else if (currentGroup == 5) {
+                        totalScore += 5;
+                    } else if(currentGroup == 4){
+                        totalScore += 3;
+                    } else if(currentGroup == 3){
+                        totalScore += 2;
+                    }
+
+                }
             }
-            totalScore += 2;
         }
 
         return totalScore;
+    }
+
+    private static int checkFromThisTile(Shelf s,Coordinates coord, int c, int r, boolean[][] checked){
+        Tile t=s.getTile(coord);
+
+        int i=coord.getX();
+        int j=coord.getY();
+        checked[i][j]=true;
+        if(t==null) return 0;
+        int res=1;
+        Tile temp;
+
+        //checking the Tile above this one
+        if(i>0 && checked[i-1][j]==false){
+            temp=s.getTile(new Coordinates(i-1,j));
+            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i-1,j),c,r,checked);
+        }
+
+        //checking the Tile under this one
+        if(i<r-1 && checked[i+1][j]==false){
+            temp=s.getTile(new Coordinates(i+1,j));
+            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i+1,j),c,r,checked);
+        }
+
+        //checking the Tile to the left of this one
+        if(j>0 && checked[i][j-1]==false){
+            temp=s.getTile(new Coordinates(i,j-1));
+            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i,j-1),c,r,checked);
+        }
+
+        //checking the Tile to the right of this one
+        if(j<c-1 && checked[i][j+1]==false){
+            temp=s.getTile(new Coordinates(i,j+1));
+            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i,j+1),c,r,checked);
+        }
+
+        return res;
     }
 
     public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {

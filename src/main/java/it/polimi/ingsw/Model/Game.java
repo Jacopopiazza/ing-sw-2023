@@ -5,6 +5,7 @@ import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.lang.String;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -37,8 +38,14 @@ public class Game {
         return currentPlayer;
     }
 
-    public void nextPlayer(){
+    public GlobalGoal[] getGoals() throws CloneNotSupportedException {
+        GlobalGoal[] temp = new GlobalGoal[this.goals.length];
+        for( int i=0; i<this.goals.length; i++ )
+            temp[i] = (GlobalGoal) goals[i].clone();
+        return temp;
+    }
 
+    public void nextPlayer(){
         currentPlayer = (currentPlayer+1)%players.length;
     }
 

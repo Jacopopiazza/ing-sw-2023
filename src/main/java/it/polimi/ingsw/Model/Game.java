@@ -5,7 +5,6 @@ import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.lang.String;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;

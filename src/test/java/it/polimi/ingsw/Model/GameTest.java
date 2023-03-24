@@ -30,6 +30,10 @@ public class GameTest extends TestCase {
     }
 
     @Test
+    public void getGlobalGoals(){
+    }
+
+    @Test
     public void checkGlobalGoals() {
     }
 

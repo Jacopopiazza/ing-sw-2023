@@ -18,6 +18,10 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
+    public void getNickname() {
+    }
+
+    @Test
     public void getScore() {
     }
 
@@ -28,6 +32,11 @@ public class PlayerTest extends TestCase {
     @Test
     public void getShelf() {
     }
+
+    @Test
+    public void getPrivateGoal() {
+    }
+
 
     @Test
     public void privateGoalCheck() {

@@ -23,6 +23,10 @@ public class Player{
         for (int i = 0; i < t.length && t[i] != null; i++) shelf.addTile(t[i], column);
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     public boolean[] getAchievedGlobalGoals() {
         return this.achievedGlobalGoals.clone();
     }
@@ -43,6 +47,10 @@ public class Player{
 
     public Shelf getShelf() {
         return (Shelf) shelf.clone();
+    }
+
+    public PrivateGoal getPrivateGoal() {
+        return goal;
     }
 
     public boolean privateGoalCheck() throws MissingShelfException, ColumnOutOfBoundsException {

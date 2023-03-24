@@ -7,7 +7,7 @@ import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.util.*;
 
-public abstract class GlobalGoal {
+public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;
 
     public GlobalGoal(int people) throws InvalidNumberOfPlayersException {
@@ -32,6 +32,13 @@ public abstract class GlobalGoal {
 
     public int popScore() throws EmptyStackException{
         return scores.pop();
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        GlobalGoal gg = (GlobalGoal) super.clone();
+        gg.scores = (Stack<Integer>) scores.clone();
+        return gg;
     }
 
     public static List<GlobalGoal> getOneForEachChild(int people) throws InvalidNumberOfPlayersException {

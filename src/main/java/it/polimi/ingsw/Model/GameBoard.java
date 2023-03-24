@@ -63,6 +63,13 @@ public class GameBoard {
         board.put(c,(Tile)t.clone());
     }
 
+    public boolean toRefill(){
+        for( Coordinates c : board.keySet() ){
+            if( board.get(c) != null ) return false;
+        }
+        return true;
+    }
+
     public static int checkBoardGoal(Shelf s) throws MissingShelfException{
         int r = Shelf.getRows();
         int c = Shelf.getColumns();

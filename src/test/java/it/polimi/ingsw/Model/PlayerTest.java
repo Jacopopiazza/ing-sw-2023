@@ -10,11 +10,11 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
-    public void getAchievedGlobalGoals() {
+    public void getAccomplishedGlobalGoals() {
     }
 
     @Test
-    public void setAchievedGlobalGoal() {
+    public void setAccomplishedGlobalGoal() {
     }
 
     @Test

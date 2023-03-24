@@ -16,14 +16,10 @@ public class GameBoard {
 
     private Map<Coordinates,Tile> board;
 
-    private GameBoard(){ }
-
-    public static GameBoard getGameBoard(int people) throws InvalidNumberOfPlayersException {
-        // Parse json file and create an instance
-        GameBoard gb = new GameBoard();
+    public GameBoard(int people) throws InvalidNumberOfPlayersException{
 
         Gson gson = new Gson();
-        Reader reader = new InputStreamReader(GameBoard.class.getResourceAsStream("/GameBoard.json"));
+        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/GameBoard.json"));
         int peopleOfCurrentConfig;
         JsonArray array;
 
@@ -43,17 +39,13 @@ public class GameBoard {
 
             for (JsonElement jsonCell : jsonCells) {
                 Coordinates c = CoordinatesParser.coordinatesParser(jsonCell);
-                gb.board.put(c, null);
+                this.board.put(c, null);
             }
 
         }
-
-        return gb;
-
     }
 
     public Set<Coordinates> getCoords(){
-
         return Collections.unmodifiableSet(board.keySet());
     }
 
@@ -87,16 +79,17 @@ public class GameBoard {
                 checked[i][j] = false;
             }
         }
-        totalScore = 0;
 
+        totalScore = 0;
         for( int i=0; i<r; i++ ){
             for( int j=0; j<c; j++ ){
                 if( checked[i][j] == false ){
                     currentGroup = checkFromThisTile(s, new Coordinates(i,j), checked);
-                    if( currentGroup >= 6 ) totalScore += 8;
-                    else if ( currentGroup == 5 ) totalScore += 5;
-                    else if( currentGroup == 4 ) totalScore += 3;
-                    else if( currentGroup == 3 ) totalScore += 2;
+                    for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ){
+                        if( currentGroup == t.tiles() ) totalScore += t.score();
+                    }
+                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[Config.getInstance().getSortedBoardGoals().length - 1].tiles())
+                        totalScore += Config.getInstance().getSortedBoardGoals()[Config.getInstance().getSortedBoardGoals().length - 1].score();
                 }
             }
         }
@@ -105,38 +98,39 @@ public class GameBoard {
     }
 
     private static int checkFromThisTile(Shelf s,Coordinates coord, boolean[][] checked){
-        Tile t=s.getTile(coord);
-        int r=Shelf.getRows();
-        int c=Shelf.getColumns();
-        int i=coord.getX();
-        int j=coord.getY();
-        checked[i][j]=true;
-        if(t==null) return 0;
-        int res=1;
+        Tile t = s.getTile(coord);
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        int i = coord.getX();
+        int j = coord.getY();
+        checked[i][j] = true;
+        int res = 1;
         Tile temp;
 
+        if( t == null ) return 0;
+
         //checking the Tile above this one
-        if(i>0 && checked[i-1][j]==false){
-            temp=s.getTile(new Coordinates(i-1,j));
-            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i-1,j),checked);
+        if( i>0 && ( checked[i-1][j] == false ) ){
+            temp = s.getTile(new Coordinates(i-1,j));
+            if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i-1,j),checked);
         }
 
         //checking the Tile under this one
-        if(i<r-1 && checked[i+1][j]==false){
-            temp=s.getTile(new Coordinates(i+1,j));
-            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i+1,j),checked);
+        if( ( i < r-1 ) && ( checked[i+1][j] == false ) ){
+            temp = s.getTile(new Coordinates(i+1,j));
+            if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i+1,j),checked);
         }
 
         //checking the Tile to the left of this one
-        if(j>0 && checked[i][j-1]==false){
-            temp=s.getTile(new Coordinates(i,j-1));
-            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i,j-1),checked);
+        if( j>0 && checked[i][j-1] == false ){
+            temp = s.getTile(new Coordinates(i,j-1));
+            if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i,j-1),checked);
         }
 
         //checking the Tile to the right of this one
-        if(j<c-1 && checked[i][j+1]==false){
-            temp=s.getTile(new Coordinates(i,j+1));
-            if(temp!=null && temp.getColor().equals(t.getColor())) res+=checkFromThisTile(s,new Coordinates(i,j+1),checked);
+        if( ( j < c-1 ) && ( checked[i][j+1] == false ) ){
+            temp = s.getTile(new Coordinates(i,j+1));
+            if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i,j+1),checked);
         }
 
         return res;

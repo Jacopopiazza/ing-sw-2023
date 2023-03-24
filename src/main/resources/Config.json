@@ -19,9 +19,13 @@
     {"players": 2, "score": 4},
     {"players": 3, "score": 6},
     {"players": 2, "score": 8}
-  ]
+  ],
 
-
-
+  "boardGoals": [
+    {"tiles": 3, "score": 2},
+    {"tiles": 4, "score": 4},
+    {"tiles": 5, "score": 6},
+    {"tiles": 6, "score": 8}
+  ],
 
 }

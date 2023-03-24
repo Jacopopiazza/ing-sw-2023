@@ -27,7 +27,7 @@ public class Game {
         for( int i=0; i<players.length; i++)
             players[i] = new Player(privateGoals[i],nicknames[i]);
 
-        board = GameBoard.getGameBoard(this.players.length);
+        board = new GameBoard(players.length);
         sack = new TileSack();
         currentPlayer = new Random().nextInt(this.players.length);
         goals = this.pickTwoGlobalGoals();

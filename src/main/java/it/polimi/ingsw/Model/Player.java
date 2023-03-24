@@ -8,14 +8,14 @@ public class Player{
     private Shelf shelf;
     private PrivateGoal goal;
     private final String nickname;
-    private boolean[] globalGoalAccomplished;
+    private boolean[] achievedGlobalGoals;
 
     public Player(PrivateGoal privateGoal, String nick) {
         nickname=nick;
         score = 0;
         shelf = new Shelf();
         goal = privateGoal;
-        globalGoalAccomplished = new boolean[]{false, false};
+        achievedGlobalGoals = new boolean[]{false, false};
     }
 
     public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
@@ -23,13 +23,13 @@ public class Player{
         for (int i = 0; i < t.length && t[i] != null; i++) shelf.addTile(t[i], column);
     }
 
-    public boolean[] getGlobalGoalAccomplished() {
-        return this.globalGoalAccomplished.clone();
+    public boolean[] getAchievedGlobalGoals() {
+        return this.achievedGlobalGoals.clone();
     }
 
-    public void setGlobalGoalAccomplishedTrue(int i) throws InvalidIndexException {
-        if ( ( i < 0 ) || ( i >= this.globalGoalAccomplished.length ) ) throw new InvalidIndexException();
-        this.globalGoalAccomplished[i] = true;
+    public void setAchievedGlobalGoal(int i) throws InvalidIndexException {
+        if ( ( i < 0 ) || ( i >= this.achievedGlobalGoals.length ) ) throw new InvalidIndexException();
+        this.achievedGlobalGoals[i] = true;
     }
 
     public int getScore() {

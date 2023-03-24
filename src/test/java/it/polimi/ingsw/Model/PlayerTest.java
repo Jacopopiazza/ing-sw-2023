@@ -3,8 +3,6 @@ package it.polimi.ingsw.Model;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class PlayerTest extends TestCase {
 
     @Test
@@ -12,11 +10,11 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
-    public void getGlobalGoalAccomplished() {
+    public void getAchievedGlobalGoals() {
     }
 
     @Test
-    public void setGlobalGoalAccomplishedTrue() {
+    public void setAchievedGlobalGoal() {
     }
 
     @Test

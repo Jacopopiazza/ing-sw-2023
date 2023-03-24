@@ -62,8 +62,8 @@ public class Game {
 
         for(int i=0;i<goals.length;i++){
 
-            if(!players[currentPlayer].getGlobalGoalAccomplished()[i] && goals[i].check(players[currentPlayer].getShelf())){
-                players[currentPlayer].setGlobalGoalAccomplishedTrue(i);
+            if(!players[currentPlayer].getAchievedGlobalGoals()[i] && goals[i].check(players[currentPlayer].getShelf())){
+                players[currentPlayer].setAchievedGlobalGoal(i);
                 currentScore += goals[i].popScore();
                 retValue = true;
             }

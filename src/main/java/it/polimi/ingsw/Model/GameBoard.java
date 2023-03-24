@@ -67,6 +67,7 @@ public class GameBoard {
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
         int totalScore, currentGroup;
+        int indexOfLastCheck;
 
         boolean[][] checked = new boolean[r][c];
 
@@ -88,8 +89,9 @@ public class GameBoard {
                     for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ){
                         if( currentGroup == t.tiles() ) totalScore += t.score();
                     }
-                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[Config.getInstance().getSortedBoardGoals().length - 1].tiles())
-                        totalScore += Config.getInstance().getSortedBoardGoals()[Config.getInstance().getSortedBoardGoals().length - 1].score();
+                    indexOfLastCheck = Config.getInstance().getSortedBoardGoals().length - 1;
+                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].tiles())
+                        totalScore += Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].score();
                 }
             }
         }

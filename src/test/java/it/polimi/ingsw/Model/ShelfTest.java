@@ -22,4 +22,8 @@ public class ShelfTest extends TestCase {
     @Test
     public void getRows() {
     }
+
+    @Test
+    public void isFull(){
+    }
 }

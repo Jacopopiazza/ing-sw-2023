@@ -42,6 +42,15 @@ public class Shelf implements Cloneable{
         return SHELF[c.getX()][c.getY()];
     }
 
+    public boolean isFull(){
+        for( int i=0; i<getRows(); i++ ){
+            for( int j=0; j<getColumns(); j++ ){
+                if( SHELF[i][j] == null ) return false;
+            }
+        }
+        return true;
+    }
+
     public static int getColumns(){
         return Config.getInstance().getShelfColumns();
     }

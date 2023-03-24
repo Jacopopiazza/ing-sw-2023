@@ -23,10 +23,10 @@ public class Config {
         JsonObject jsonConfig = gson.fromJson(reader, JsonObject.class);
         privateGoals = gson.fromJson(jsonConfig.get("privateGoals"), PrivateGoalScore[].class);
         globalGoals = gson.fromJson(jsonConfig.get("globalGoals"), GlobalGoalScore[].class);
-        shelfRows = gson.fromJson(jsonConfig.get("shelfRows"), JsonObject.class).getAsInt();
-        shelfColumns = gson.fromJson(jsonConfig.get("shelfColumns"), JsonObject.class).getAsInt();
-        numOfTilesPerColor = gson.fromJson(jsonConfig.get("numOfTilesPerColor"), JsonObject.class).getAsInt();
-        maxNumberOfPlayers = gson.fromJson(jsonConfig.get("maxNumberOfPlayers"), JsonObject.class).getAsInt();
+        shelfRows = jsonConfig.get("shelfRows").getAsInt();
+        shelfColumns = jsonConfig.get("shelfColumns").getAsInt();
+        numOfTilesPerColor = jsonConfig.get("numOfTilesPerColor").getAsInt();
+        maxNumberOfPlayers = jsonConfig.get("maxNumberOfPlayers").getAsInt();
     }
 
     public PrivateGoalScore[] getPrivateGoals() {

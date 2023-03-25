@@ -39,6 +39,6 @@ public class PlayerTest extends TestCase {
 
 
     @Test
-    public void privateGoalCheck() {
+    public void checkPrivateGoal() {
     }
 }

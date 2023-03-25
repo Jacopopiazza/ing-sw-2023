@@ -3,7 +3,6 @@ package it.polimi.ingsw.Model;
 import it.polimi.ingsw.Exceptions.*;
 
 public class Player{
-
     private int score;
     private Shelf shelf;
     private PrivateGoal goal;
@@ -53,7 +52,7 @@ public class Player{
         return goal;
     }
 
-    public boolean privateGoalCheck() throws MissingShelfException, ColumnOutOfBoundsException {
+    public boolean checkPrivateGoal() throws MissingShelfException, ColumnOutOfBoundsException {
         int res = goal.check((Shelf) shelf.clone());
         score += res;
         if (res > 0) return true;

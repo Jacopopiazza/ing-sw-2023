@@ -29,7 +29,7 @@ public class DifferentLines extends GlobalGoal {
         for( int i = 0; i<Shelf.getRows(); i++ ){
             goOn = true;
             foundColors = new HashSet<TileColor>();
-            for( int j = 0; j<Shelf.getColumns() && goOn; j++ ){
+            for( int j = 0; ( j<Shelf.getColumns() ) && goOn; j++ ){
                 Coordinates c = new Coordinates(i,j);
                 if( s.getTile(c) == null ) goOn = false;
                 else if( foundColors.contains( s.getTile(c).getColor()) ) goOn = false;

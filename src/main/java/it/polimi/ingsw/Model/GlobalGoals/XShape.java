@@ -21,26 +21,30 @@ public class XShape extends GlobalGoal {
             throw new MissingShelfException();
         }
 
-        for(int row = 0; row < Shelf.getRows() - 2; row++){
-            for(int column = 0; column < Shelf.getColumns() - 2; column++){
+        for( int row = 0; row < Shelf.getRows()-2; row++ ){
+            for( int column = 0; column < Shelf.getColumns()-2; column++ ){
                 // check if there is an 'X' shape of tiles
-                if( s.getTile(new Coordinates(row, column)) != null
-                        && s.getTile(new Coordinates(row, column + 2)) != null
-                        && s.getTile(new Coordinates(row + 2, column)) != null
-                        && s.getTile(new Coordinates(row + 2, column + 2)) != null
-                        && s.getTile(new Coordinates(row + 1, column + 1)) != null ){
+                if( ( s.getTile(new Coordinates(row, column)) != null )
+                        && ( s.getTile(new Coordinates(row, column + 2)) != null )
+                        && ( s.getTile(new Coordinates(row + 2, column)) != null )
+                        && ( s.getTile(new Coordinates(row + 2, column + 2)) != null )
+                        && ( s.getTile(new Coordinates(row + 1, column + 1)) != null ) ){
+
                     // then check if the 'X' shape Tiles have the same color
                     TileColor color = s.getTile(new Coordinates(row, column)).getColor();
-                    if( s.getTile(new Coordinates(row, column + 2)).getColor().equals(color)
+
+                    if( ( s.getTile(new Coordinates(row, column + 2)).getColor().equals(color)
                             && s.getTile(new Coordinates(row + 2, column)).getColor().equals(color)
-                            && s.getTile(new Coordinates(row + 2, column)).getColor().equals(color)
+                            && s.getTile(new Coordinates(row + 2, column)).getColor().equals(color) )
                             && s.getTile(new Coordinates(row + 2, column + 2)).getColor().equals(color)
-                            && s.getTile(new Coordinates(row + 1, column + 1)).getColor().equals(color) ){
-                        return true;
-                    }
+                            && s.getTile(new Coordinates(row + 1, column + 1)).getColor().equals(color) )
+                    return true;
+
                 }
+
             }
         }
+
         return false;
     }
 }

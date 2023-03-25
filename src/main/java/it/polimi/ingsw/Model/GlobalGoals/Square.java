@@ -36,8 +36,7 @@ public class Square extends GlobalGoal {
                 )
                 ) {
                     // here I will check if there is a square around this Tile
-                    if (
-                               s.getTile(new Coordinates(i + 1, j)).getColor().equals(temp.getColor())
+                    if (       s.getTile(new Coordinates(i + 1, j)).getColor().equals(temp.getColor())
                             && s.getTile(new Coordinates(i + 1, j + 1)).getColor().equals(temp.getColor())
                             && s.getTile(new Coordinates(i, j + 1)).getColor().equals(temp.getColor())
                     ) {

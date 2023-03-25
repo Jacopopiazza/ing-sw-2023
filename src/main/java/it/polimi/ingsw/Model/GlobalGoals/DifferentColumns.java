@@ -30,7 +30,7 @@ public class DifferentColumns extends GlobalGoal {
         for( int j = 0; j<Shelf.getColumns(); j++ ){
             foundColors = new HashSet<TileColor>();
             goOn = true;
-            for( int i = 0; i<Shelf.getRows() && goOn; i++ ){
+            for( int i = 0; ( i<Shelf.getRows() ) && goOn; i++ ){
                 Coordinates c = new Coordinates(i,j);
                 if( s.getTile(c) == null ) goOn = false;
                 else if( foundColors.contains( s.getTile(c).getColor()) ) goOn = false;

@@ -19,26 +19,27 @@ public class Diagonal extends GlobalGoal {
             throw new MissingShelfException();
         }
 
-        for(int i=0;i<r-4;i++){
-            for(int j=0;j<c-4;j++){
-                if(s.getTile(new Coordinates(i,j))!=null){
-                    boolean diagonalFound = true;
-                    for(int k=0;k<4 && diagonalFound;k++){
-                        if(!s.getTile(new Coordinates(i+k,j+k)).getColor().equals(s.getTile(new Coordinates(i+k+1,j+k+1)).getColor())) diagonalFound=false;
+        boolean diagonalFound;
+        for( int i=0; i<r-4; i++ ){
+            for( int j=0; j<c-4; j++ ){
+                if( s.getTile(new Coordinates(i,j)) != null ){
+                    diagonalFound = true;
+                    for( int k=0; ( k<4 ) && diagonalFound; k++ ){
+                        if( !s.getTile( new Coordinates(i+k,j+k)).getColor().equals(s.getTile(new Coordinates(i+k+1,j+k+1)).getColor()) ) diagonalFound = false;
                     }
-                    if(diagonalFound) return true;
+                    if( diagonalFound ) return true;
                 }
             }
         }
 
-        for(int i=4;i<r;i++){
-            for(int j=0;j<c-4;j++){
-                if(s.getTile(new Coordinates(i,j))!=null){
-                    boolean diagonalFound = true;
-                    for(int k=0;k<4 && diagonalFound;k++){
-                        if(!s.getTile(new Coordinates(i-k,j+k)).getColor().equals(s.getTile(new Coordinates(i-k-1,j+k+1)).getColor())) diagonalFound=false;
+        for( int i=4; i<r ;i++ ){
+            for( int j=0; j<c-4; j++ ){
+                if( s.getTile(new Coordinates(i,j)) != null ){
+                    diagonalFound = true;
+                    for( int k=0; ( k<4 ) && diagonalFound; k++ ){
+                        if( !s.getTile(new Coordinates(i-k,j+k)).getColor().equals(s.getTile(new Coordinates(i-k-1,j+k+1)).getColor()) ) diagonalFound = false;
                     }
-                    if(diagonalFound) return true;
+                    if( diagonalFound ) return true;
                 }
             }
         }

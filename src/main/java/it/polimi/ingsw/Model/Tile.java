@@ -3,17 +3,10 @@ package it.polimi.ingsw.Model;
 public class Tile implements Cloneable{
     private final TileColor COLOR;
     private final int ID;
-    private static int nextId[] = {0};
 
-    public Tile(TileColor color) {
+    public Tile(TileColor color, int id) {
         this.COLOR = color;
-        this.ID = nextId[COLOR.ordinal()];
-        nextId[COLOR.ordinal()]++;
-    }
-
-    private Tile(TileColor color, int ID){
-        this.COLOR = color;
-        this.ID = ID;
+        this.ID = id;
     }
 
     public TileColor getColor() {

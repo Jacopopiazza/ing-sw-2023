@@ -159,21 +159,22 @@ public class GameBoard {
     }
 
     public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
-        int[] adjacentX = new int[]{-1,0,0,+1};
-        int[] adjacentY = new int[]{0,+1,-1,0};
-
         if(!board.containsKey(c)){
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
+        Coordinates up, down, right, left;
+        up = new Coordinates(c.getX(), c.getY() - 1);
+        down = new Coordinates(c.getX(), c.getY() + 1);
+        right = new Coordinates(c.getX() + 1, c.getY());
+        left = new Coordinates(c.getX() - 1, c.getY());
+
         if( board.get(c) == null ) return false;
 
-        for( int i=0; i<adjacentX.length; i++ ){
-            if(!board.containsKey(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) ||
-                board.get(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) == null){
-                return true;
-            }
-        }
+        if( !board.containsKey(up) || ( board.get(up) == null ) ) return true;
+        if( !board.containsKey(down) || ( board.get(down) == null ) ) return true;
+        if( !board.containsKey(right) || ( board.get(right) == null ) ) return true;
+        if( !board.containsKey(left) || ( board.get(left) == null ) ) return true;
 
         return false;
     }

@@ -34,4 +34,8 @@ public class TileSack {
         return null;
     }
 
+    public int[] getRemaining(){
+        return this.remaining;
+    }
+
 }

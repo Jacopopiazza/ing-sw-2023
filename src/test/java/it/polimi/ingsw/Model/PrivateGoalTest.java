@@ -15,8 +15,6 @@ import static org.junit.Assert.*;
 public class PrivateGoalTest {
 
     PrivateGoal privateGoals[];
-    int exampleShelf[][] = new int[5][6];   // generate a shelf of int prebuilt
-
 
     @Before
     public void setUp() throws FileNotFoundException {
@@ -34,7 +32,7 @@ public class PrivateGoalTest {
     }
 
     @Test
-    public void testGetRightPrivateGoals() throws InvalidNumberOfPlayersException {
+    public void testGetNoDuplicatePrivateGoals() throws InvalidNumberOfPlayersException {
         for(int people = 2; people < 4; people++) {
             privateGoals = PrivateGoal.getPrivateGoals(people);
             assertEquals(privateGoals.length, people);
@@ -46,7 +44,21 @@ public class PrivateGoalTest {
         }
     }
 
+    @Test (expected = InvalidNumberOfPlayersException.class)
+    public void testCheck_CorrectlyThrowsInvalidNumberOfPlayersException() throws InvalidNumberOfPlayersException {
+        privateGoals = PrivateGoal.getPrivateGoals(-1);
+    }
+
     @Test
-    public void check() throws MissingShelfException, ColumnOutOfBoundsException, InvalidNumberOfPlayersException {
+    public void testCheckMaximumPoints() throws InvalidNumberOfPlayersException, MissingShelfException {
+        Shelf shelfToTest = new Shelf();
+        Coordinates coord[] = PrivateGoal.getPrivateGoals(2)[0].getCoordinates();
+
+        for(int i = 0; i < coord.length; i++){
+            shelfToTest.setTile(coord[i], TileColor.values()[i]);
+        }
+
+        assertEquals(privateGoals[0].check(shelfToTest), 12);
+
     }
 }

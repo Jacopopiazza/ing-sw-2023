@@ -8,19 +8,21 @@ import static org.junit.Assert.*;
 
 public class CoordinatesTest {
 
+    private Coordinates coordinates;
+
     @Before
     public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
+        coordinates = new Coordinates(0, 0);
     }
 
     @Test
-    public void getX() {
+    public void testGetX() {
+        assertEquals(coordinates.getX(), 0);
     }
 
     @Test
-    public void getY() {
+    public void testGetY() {
+        assertEquals(coordinates.getY(), 0);
     }
+
 }

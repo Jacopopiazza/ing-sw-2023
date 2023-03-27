@@ -35,8 +35,10 @@ public class PrivateGoalTest {
     public void testGetNoDuplicatePrivateGoals() throws InvalidNumberOfPlayersException {
         for(int people = 2; people < 4; people++) {
             privateGoals = PrivateGoal.getPrivateGoals(people);
+            assertNotNull(privateGoals);
             assertEquals(privateGoals.length, people);
             for (int i = 0; i < people; i++) {
+                assertNotNull(privateGoals[i]);
                 assertEquals(privateGoals[i].getCoordinates().length, TileColor.values().length);
                 // checks there are no duplicate
                 assertFalse(hasDuplicates(privateGoals[i].getCoordinates()));

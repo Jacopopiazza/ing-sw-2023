@@ -1,14 +1,10 @@
 package it.polimi.ingsw.Model;
 
-import com.sun.jdi.event.ExceptionEvent;
-import it.polimi.ingsw.Exceptions.InvalidIndexException;
-import it.polimi.ingsw.Exceptions.MissingShelfException;
-import it.polimi.ingsw.Exceptions.NonValidScoreException;
+import it.polimi.ingsw.Exceptions.*;
 import junit.framework.TestCase;
+import junit.framework.TestResult;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 public class PlayerTest extends TestCase {
 
@@ -22,7 +18,7 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
-    public void testGettersAndSetScore() {
+    public void testGettersAndSetScore() throws InvalidIndexException {
         assertEquals(p.getNickname(),"nickname");
         assertEquals(p.getScore(),0);
         p.setScore(10);
@@ -38,6 +34,12 @@ public class PlayerTest extends TestCase {
         p.setWinner(true);
         assertTrue(p.isWinner());
 
+       for(int i = 0;i < p.getAccomplishedGlobalGoals().length; i++) {
+           assertFalse(p.getAccomplishedGlobalGoals()[i]);
+           p.setAccomplishedGlobalGoal(i);
+           assertTrue(p.getAccomplishedGlobalGoals()[i]);
+       }
+
         Shelf s = new Shelf();
         assertEquals(p.getShelf(), s);
 
@@ -51,6 +53,11 @@ public class PlayerTest extends TestCase {
         assertEquals(p.getShelf(),s);
     }
 
+    @Test (expected = InvalidIndexException.class)
+    public void setAccomplishedGoals() throws InvalidIndexException{
+        p.setAccomplishedGlobalGoal(-1);
+    }
+
     @Test (expected = NonValidScoreException.class)
     public void setScoreNegativeScore() {
         p.setScore(-1);
@@ -61,17 +68,15 @@ public class PlayerTest extends TestCase {
         p.setShelf(null);
     }
 
-    @Test
-    public void insert() {
-
+    @Test (expected = NoTileException.class)
+    public void insertNullTiles() throws NoTileException, IllegalColumnInsertionException {
+        p.insert(null,0);
     }
 
-    @Test
-    public void getAccomplishedGlobalGoals() {
-    }
-
-    @Test (expected = InvalidIndexException.class)
-    public void setAccomplishedGlobalGoal() {
+    @Test (expected = IllegalColumnInsertionException.class)
+    public void insertInvalidColumn() throws NoTileException, IllegalColumnInsertionException {
+        Tile[] tiles = new Tile[]{};
+        p.insert(tiles,-1);
     }
 
     @Test

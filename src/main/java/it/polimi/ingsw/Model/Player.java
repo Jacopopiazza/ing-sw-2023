@@ -22,8 +22,8 @@ public class Player{
         active = true;
     }
 
-    public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
-        if (t == null || t[0] == null) throw new NoTilesException();
+    public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
+        if (t == null || t.length == 0) throw new NoTileException();
         for (int i = 0; i < t.length && t[i] != null; i++) shelf.addTile(t[i], column);
     }
 
@@ -53,6 +53,7 @@ public class Player{
         return (Shelf) shelf.clone();
     }
 
+    //Method added just for testing purposes
     public void setShelf(Shelf shelf) throws MissingShelfException{
 
         if(shelf == null) throw new MissingShelfException();
@@ -66,10 +67,6 @@ public class Player{
 
     public void setGoal(PrivateGoal goal) {
         this.goal = goal;
-    }
-
-    public void setAccomplishedGlobalGoals(boolean[] accomplishedGlobalGoals) {
-        this.accomplishedGlobalGoals = accomplishedGlobalGoals;
     }
 
     public boolean isActive() {

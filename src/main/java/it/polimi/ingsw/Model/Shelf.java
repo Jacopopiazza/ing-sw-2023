@@ -23,7 +23,7 @@ public class Shelf implements Cloneable{
 
     // Added just for testing
     public void setTile(Coordinates c, TileColor color){
-        SHELF[c.getX()][c.getY()] = new Tile(color);
+        SHELF[c.getX()][c.getY()] = new Tile(color, 0);
     }
 
     public void addTile(Tile t, int column) throws IllegalColumnInsertionException, ColumnOutOfBoundsException{

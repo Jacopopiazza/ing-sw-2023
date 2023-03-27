@@ -22,6 +22,16 @@ public class Tile implements Cloneable{
         return new Tile(this.COLOR,this.ID);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || this.getClass() != o.getClass())
+            return false;
+        Tile tile = (Tile) o;
+        return tile.ID == this.ID && tile.COLOR == this.COLOR;
+    }
+
 
 }
 

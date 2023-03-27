@@ -14,12 +14,12 @@ public class Angles extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {
-        int r = Shelf.getRows();
-        int c = Shelf.getColumns();
-
         if( s == null ){
             throw new MissingShelfException();
         }
+
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
 
         if( ( s.getTile(new Coordinates(0,0)) == null )
                 || ( s.getTile(new Coordinates(0,c-1)) == null )

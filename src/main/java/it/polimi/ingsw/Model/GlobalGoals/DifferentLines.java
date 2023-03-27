@@ -17,26 +17,24 @@ public class DifferentLines extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s)  throws MissingShelfException {
-        HashSet<TileColor> foundColors;
-        int count;
-        boolean goOn;
-
         if( s == null ){
             throw new MissingShelfException();
         }
 
-        count = 0;
-        for( int i = 0; i<Shelf.getRows(); i++ ){
-            goOn = true;
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        int numOfDifferentRows = 2;
+        int numOfDifferentTilesPerRow = Shelf.getColumns();
+        HashSet<TileColor> foundColors;
+        int count=0;
+
+        for( int i = 0; i<r; i++ ){
             foundColors = new HashSet<TileColor>();
-            for( int j = 0; ( j<Shelf.getColumns() ) && goOn; j++ ){
-                Coordinates c = new Coordinates(i,j);
-                if( s.getTile(c) == null ) goOn = false;
-                else if( foundColors.contains( s.getTile(c).getColor()) ) goOn = false;
-                else foundColors.add( s.getTile(c).getColor() );
+            for( int j = 0; j<c; j++ ){
+                if( s.getTile(new Coordinates(i,j)) != null ) foundColors.add( s.getTile(new Coordinates(i,j)).getColor() );
             }
-            if( foundColors.size() == Shelf.getColumns() ){
-                if( ++count == 2 ) return true;
+            if( foundColors.size() == numOfDifferentTilesPerRow ){
+                if( ++count == numOfDifferentRows ) return true;
             }
         }
         return false;

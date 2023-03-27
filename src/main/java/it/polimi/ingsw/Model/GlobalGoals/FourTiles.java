@@ -15,29 +15,26 @@ public class FourTiles extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        int r = Shelf.getRows();
-        int c = Shelf.getColumns();
-        boolean[][] checked= new boolean[r][c];
-
         if( s == null ){
             throw new MissingShelfException();
         }
 
-        for( int i=0; i<r; i++ ){
-            for( int j=0; j<c; j++ ){
-                checked[i][j] = false;
-            }
-        }
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        int GroupDim = 4;
+        int numOfGroups = 4;
+        boolean[][] checked = new boolean[r][c];
         int currentG = 0;
 
-        for( int i=0; ( i<r ) && ( currentG<4 ); i++ ){
-            for( int j=0; ( j<c ) && ( currentG<4 ) ; j++ ){
-                if( checked[i][j] == false ){
-                    if( checkFromThisTile(s,new Coordinates(i,j),checked) >= 4 ) currentG++;
+        for( int i=0; i<r; i++ ){
+            for( int j=0; j<c ; j++ ){
+                if( !checked[i][j] ){
+                    if( checkFromThisTile(s,new Coordinates(i,j),checked) >= GroupDim ){
+                        if( ++currentG == numOfGroups ) return true;
+                    }
                 }
             }
         }
-        if( currentG == 4 ) return true;
         return false;
     }
 
@@ -53,25 +50,25 @@ public class FourTiles extends GlobalGoal {
         Tile temp;
 
         //checking the Tile above this one
-        if( ( i>0 ) && ( checked[i-1][j] == false ) ){
+        if( ( i>0 ) && ( !checked[i-1][j] ) ){
             temp = s.getTile(new Coordinates(i-1,j));
             if( ( temp != null ) && temp.getColor().equals(t.getColor()) ) res += checkFromThisTile(s,new Coordinates(i-1,j),checked);
         }
 
         //checking the Tile under this one
-        if( ( i < r-1 ) && ( checked[i+1][j] == false ) ){
+        if( ( i < r-1 ) && ( !checked[i+1][j] ) ){
             temp=s.getTile(new Coordinates(i+1,j));
             if( ( temp != null ) && temp.getColor().equals(t.getColor()) ) res += checkFromThisTile(s,new Coordinates(i+1,j),checked);
         }
 
         //checking the Tile to the left of this one
-        if( ( j>0 ) && ( checked[i][j-1] == false ) ){
+        if( ( j>0 ) && ( !checked[i][j-1] ) ){
             temp=s.getTile(new Coordinates(i,j-1));
             if( ( temp != null ) && temp.getColor().equals(t.getColor())) res += checkFromThisTile(s,new Coordinates(i,j-1),checked);
         }
 
         //checking the Tile to the right of this one
-        if( ( j < c-1 ) && ( checked[i][j+1] == false ) ){
+        if( ( j < c-1 ) && ( !checked[i][j+1] ) ){
             temp=s.getTile(new Coordinates(i,j+1));
             if( ( temp != null ) && temp.getColor().equals(t.getColor()) ) res += checkFromThisTile(s,new Coordinates(i,j+1),checked);
         }

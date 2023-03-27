@@ -9,12 +9,17 @@ public class Player{
     private final String nickname;
     private boolean[] accomplishedGlobalGoals;
 
+    private boolean active;
+    private boolean winner;
+
     public Player(PrivateGoal privateGoal, String nick) {
         nickname=nick;
         score = 0;
         shelf = new Shelf();
         goal = privateGoal;
         accomplishedGlobalGoals = new boolean[]{false, false};
+        winner = false;
+        active = true;
     }
 
     public void insert(Tile t[], int column) throws NoTilesException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
@@ -46,6 +51,41 @@ public class Player{
 
     public Shelf getShelf() {
         return (Shelf) shelf.clone();
+    }
+
+    public void setShelf(Shelf shelf) throws MissingShelfException{
+
+        if(shelf == null) throw new MissingShelfException();
+
+        this.shelf = (Shelf) shelf.clone();
+    }
+
+    public PrivateGoal getGoal() {
+        return goal;
+    }
+
+    public void setGoal(PrivateGoal goal) {
+        this.goal = goal;
+    }
+
+    public void setAccomplishedGlobalGoals(boolean[] accomplishedGlobalGoals) {
+        this.accomplishedGlobalGoals = accomplishedGlobalGoals;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isWinner() {
+        return winner;
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
     }
 
     public PrivateGoal getPrivateGoal() {

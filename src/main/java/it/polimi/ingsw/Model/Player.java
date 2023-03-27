@@ -77,6 +77,10 @@ public class Player{
         this.active = active;
     }
 
+    public void first() {
+        this.score++;
+    }
+
     public boolean isWinner() {
         return winner;
     }

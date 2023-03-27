@@ -14,7 +14,7 @@ public class TileSackTest extends TestCase {
     private int sackSize;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         sack = new TileSack();
         int[] remaining = sack.getRemaining();
         sackSize = 0;
@@ -25,18 +25,17 @@ public class TileSackTest extends TestCase {
 
     @Test
     public void pop() {
+        int tmp = 0;
+        int[] remaining = sack.getRemaining();
+
         assertNotNull(sack.pop());
         assertNotNull(sack.pop().getColor());
         assertTrue(Arrays.stream(TileColor.values()).collect(Collectors.toList()).contains(sack.pop().getColor()));
-    }
 
-    @After
-    public void testTileActuallyPopped(){
-        int tmp = 0;
-        int[] remaining = sack.getRemaining();
         for(int i = 0; i < remaining.length; i++){
             tmp += remaining[i];
         }
         assertEquals(sackSize - 1, tmp);
     }
+
 }

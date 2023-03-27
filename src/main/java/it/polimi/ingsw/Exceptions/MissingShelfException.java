@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Exceptions;
 
-public class MissingShelfException extends Exception{
+public class MissingShelfException extends RuntimeException{
 
     public MissingShelfException(String errorMessage) {
         super(errorMessage);

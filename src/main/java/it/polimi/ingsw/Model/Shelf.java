@@ -26,8 +26,9 @@ public class Shelf implements Cloneable{
         SHELF[c.getX()][c.getY()] = new Tile(color, 0);
     }
 
-    public void addTile(Tile t, int column) throws IllegalColumnInsertionException, ColumnOutOfBoundsException{
+    public void addTile(Tile t, int column) throws NoTileException, IllegalColumnInsertionException, ColumnOutOfBoundsException{
 
+        if ( t == null ) throw new NoTileException();
         if( ( column < 0 ) || ( column >= Shelf.getColumns() ) ) throw new ColumnOutOfBoundsException();
 
         // If the first row is already filled with a tile, the column is fully filled

@@ -63,9 +63,22 @@ public class GameBoard {
         board.put(c,(Tile)t.clone());
     }
 
-    public boolean toRefill(){
-        for( Coordinates c : board.keySet() ){
-            if( board.get(c) != null ) return false;
+    public boolean toRefill() throws InvalidCoordinatesForCurrentGameException {
+        Coordinates up, down, right, left;
+        boolean notYet;
+        for( Coordinates c : board.keySet() ) {
+            if( isPickable(c) ) {
+                up = new Coordinates(c.getX(), c.getY() - 1);
+                down = new Coordinates(c.getX(), c.getY() + 1);
+                right = new Coordinates(c.getX() + 1, c.getY());
+                left = new Coordinates(c.getX() - 1, c.getY());
+                notYet = false;
+                notYet = notYet || ( board.containsKey(up) && isPickable(up) );
+                notYet = notYet || ( board.containsKey(down) && isPickable(down) );
+                notYet = notYet || ( board.containsKey(right) && isPickable(right) );
+                notYet = notYet || ( board.containsKey(left) && isPickable(left) );
+                if ( notYet  ) return false;
+            }
         }
         return true;
     }
@@ -153,7 +166,9 @@ public class GameBoard {
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
-        for(int i=0;i<adjacentX.length;i++){
+        if( board.get(c) == null ) return false;
+
+        for( int i=0; i<adjacentX.length; i++ ){
             if(!board.containsKey(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) ||
                 board.get(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) == null){
                 return true;

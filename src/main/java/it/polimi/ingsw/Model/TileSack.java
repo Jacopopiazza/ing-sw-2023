@@ -10,6 +10,7 @@ public class TileSack {
     private final static int LEN = TileColor.values().length;   // length of the array
 
     public TileSack(){
+        remaining = new int[LEN];
         // initialize the array with the maximum value for every element
         for( int i = 0; i < LEN; i++ ) remaining[i] = Config.getInstance().getNumOfTilesPerColor();
     }
@@ -27,7 +28,7 @@ public class TileSack {
                 // Pop that color from the tileSack
                 remaining[i]--;
                 // Return the corresponding Tile
-                return new Tile(TileColor.values()[i]);
+                return new Tile(TileColor.values()[i], Config.getInstance().getNumOfTilesPerColor()-22);
             }
             else bottom_bound += remaining[i];
         }

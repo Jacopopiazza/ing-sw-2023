@@ -13,7 +13,7 @@ public class TileTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        tile = new Tile(TileColor.BLUE);
+        tile = new Tile(TileColor.BLUE, 0);
     }
 
     @Test

@@ -35,9 +35,9 @@ public abstract class GlobalGoal implements Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public GlobalGoal clone() throws CloneNotSupportedException {
         GlobalGoal gg = (GlobalGoal) super.clone();
-        gg.scores = (Stack<Integer>) scores.clone();
+        gg.scores = (Stack) scores.clone();
         return gg;
     }
 

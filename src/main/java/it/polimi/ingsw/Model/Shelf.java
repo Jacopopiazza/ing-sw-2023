@@ -11,7 +11,7 @@ public class Shelf implements Cloneable{
         this.SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
         for( int i=0; i<Shelf.getRows(); i++ ){
             for( int j=0; j<Shelf.getColumns(); j++ ){
-                this.SHELF[i][j] = shelf[i][j] == null ? null : (Tile) shelf[i][j].clone();
+                this.SHELF[i][j] = shelf[i][j] == null ? null : shelf[i][j].clone();
             }
         }
     }
@@ -40,7 +40,7 @@ public class Shelf implements Cloneable{
             row--;
         }
 
-        SHELF[row][column] = (Tile)t.clone();
+        SHELF[row][column] = t.clone();
     }
 
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
@@ -66,7 +66,7 @@ public class Shelf implements Cloneable{
     }
 
     @Override
-    public Object clone() {
+    public Shelf clone() {
         return new Shelf(this.SHELF);
     }
 

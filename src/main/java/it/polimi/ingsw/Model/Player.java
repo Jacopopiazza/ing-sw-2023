@@ -50,7 +50,7 @@ public class Player{
     }
 
     public Shelf getShelf() {
-        return (Shelf) shelf.clone();
+        return shelf.clone();
     }
 
     //Method added just for testing purposes
@@ -58,7 +58,7 @@ public class Player{
 
         if(shelf == null) throw new MissingShelfException();
 
-        this.shelf = (Shelf) shelf.clone();
+        this.shelf = shelf.clone();
     }
 
     public PrivateGoal getGoal() {
@@ -90,7 +90,7 @@ public class Player{
     }
 
     public boolean checkPrivateGoal() throws MissingShelfException, ColumnOutOfBoundsException {
-        int res = goal.check((Shelf) shelf.clone());
+        int res = goal.check(shelf.clone());
         score += res;
         if (res > 0) return true;
         return false;

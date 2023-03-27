@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.junit.Before;
@@ -13,7 +14,7 @@ public class PlayerTest extends TestCase {
 
     @Before
     public void setUp(){
-        pg = PrivateGoal.getPrivateGoals(1)[0];
+        pg = PrivateGoal.getPrivateGoals(2)[0];
         p = new Player(pg, "nickname");
     }
 
@@ -21,6 +22,12 @@ public class PlayerTest extends TestCase {
     public void testGettersAndSetScore() throws InvalidIndexException {
         assertEquals(p.getNickname(),"nickname");
         assertEquals(p.getScore(),0);
+
+        assertEquals(p.getGoal(),pg);
+        pg = PrivateGoal.getPrivateGoals(2)[0];
+        p.setGoal(pg);
+        assertEquals(p.getGoal(),pg);
+
         p.setScore(10);
         assertEquals(p.getScore(),10);
         assertEquals(p.getPrivateGoal(),pg);
@@ -41,7 +48,11 @@ public class PlayerTest extends TestCase {
        }
 
         Shelf s = new Shelf();
-        assertEquals(p.getShelf(), s);
+        for(int i = 0; i < Shelf.getRows(); i++) {
+            for(int j = 0; j< Shelf.getColumns(); j++) {
+                assertEquals(p.getShelf().getTile(new Coordinates(i,j)), s.getTile(new Coordinates(i,j)) );
+            }
+        }
 
         s.setTile(new Coordinates(0,0) , TileColor.BLUE);
         s.setTile(new Coordinates(1,0) , TileColor.CYAN);
@@ -50,7 +61,11 @@ public class PlayerTest extends TestCase {
         s.setTile(new Coordinates(4,0) , TileColor.GREEN);
 
         p.setShelf(s);
-        assertEquals(p.getShelf(),s);
+        for(int i = 0; i < Shelf.getRows(); i++) {
+            for(int j = 0; j< Shelf.getColumns(); j++) {
+                assertEquals(p.getShelf().getTile(new Coordinates(i,j)), s.getTile(new Coordinates(i,j)) );
+            }
+        }
     }
 
     @Test (expected = InvalidIndexException.class)

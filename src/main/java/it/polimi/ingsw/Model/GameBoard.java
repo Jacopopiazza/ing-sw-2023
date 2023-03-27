@@ -53,14 +53,14 @@ public class GameBoard {
         if(!board.containsKey(c)){
             throw new InvalidCoordinatesForCurrentGameException();
         }
-        return board.get(c) != null ? (Tile)board.get(c).clone() : null;
+        return board.get(c) != null ? board.get(c).clone() : null;
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
         if(!board.containsKey(c)){
             throw new InvalidCoordinatesForCurrentGameException();
         }
-        board.put(c,(Tile)t.clone());
+        board.put(c, t.clone());
     }
 
     public boolean toRefill() throws InvalidCoordinatesForCurrentGameException {

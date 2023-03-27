@@ -40,7 +40,7 @@ public class Game {
     public GlobalGoal[] getGoals() throws CloneNotSupportedException {
         GlobalGoal[] temp = new GlobalGoal[this.goals.length];
         for( int i=0; i<this.goals.length; i++ )
-            temp[i] = (GlobalGoal) goals[i].clone();
+            temp[i] = goals[i].clone();
         return temp;
     }
 

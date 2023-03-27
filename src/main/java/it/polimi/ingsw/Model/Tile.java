@@ -18,7 +18,7 @@ public class Tile implements Cloneable{
     }
 
     @Override
-    public Object clone(){
+    public Tile clone(){
         return new Tile(this.COLOR,this.ID);
     }
 

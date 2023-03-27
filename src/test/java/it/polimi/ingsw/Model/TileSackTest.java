@@ -14,7 +14,7 @@ public class TileSackTest extends TestCase {
     private int sackSize;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         sack = new TileSack();
         int[] remaining = sack.getRemaining();
         sackSize = 0;

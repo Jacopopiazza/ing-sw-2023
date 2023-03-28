@@ -21,20 +21,19 @@ public final class PrivateGoal {
     }
 
     public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException {
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/PrivateGoals.json"));
-        Type listOfMyClassObject = new TypeToken<ArrayList<Coordinates[]>>() {
-        }.getType();
-        List<Coordinates[]> allPrivateGoals = gson.fromJson(reader, listOfMyClassObject);
-        PrivateGoal[] retValue = new PrivateGoal[people];
-
         if (people <= 0 || people > Config.getInstance().getMaxNumberOfPlayers()) {
             throw new InvalidNumberOfPlayersException();
         }
 
+        Gson gson = new Gson();
+        Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/PrivateGoals.json"));
+        Type listOfMyClassObject = new TypeToken<ArrayList<Coordinates[]>>(){}.getType();
+        List<Coordinates[]> allPrivateGoals = gson.fromJson(reader, listOfMyClassObject);
+        PrivateGoal[] retValue = new PrivateGoal[people];
+
         Collections.shuffle(allPrivateGoals);
 
-        for (int i = 0; i < people; i++) {
+        for ( int i = 0; i < people; i++ ) {
             retValue[i] = new PrivateGoal(allPrivateGoals.get(i));
         }
 
@@ -43,12 +42,12 @@ public final class PrivateGoal {
 
 
     public int check(Shelf shelf) throws MissingShelfException, ColumnOutOfBoundsException {
-        int numOfCorrectTiles = 0;
-        final int numOfTiles;
-
-        if (shelf == null) {
+        if( shelf == null ) {
             throw new MissingShelfException("Missing shelf");
         }
+
+        int numOfCorrectTiles = 0;
+        final int numOfTiles;
 
         for (int i = 0; i < coords.length; i++) {
             if ((shelf.getTile(coords[i]) != null) && (shelf.getTile(coords[i]).getColor().ordinal() == i))

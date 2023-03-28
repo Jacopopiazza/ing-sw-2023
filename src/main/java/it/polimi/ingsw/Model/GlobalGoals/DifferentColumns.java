@@ -6,11 +6,9 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.Model.Coordinates;
 
-
 import java.util.HashSet;
 
 public class DifferentColumns extends GlobalGoal {
-
     public DifferentColumns(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
@@ -31,8 +29,8 @@ public class DifferentColumns extends GlobalGoal {
 
         for( int j = 0; j<c; j++ ){
             foundColors = new HashSet<TileColor>();
-            for( int i = 0; i<r; i++ ){
-                if( s.getTile(new Coordinates(i,j)) != null ) foundColors.add( s.getTile(new Coordinates(i,j)).getColor() );
+            for( int i = 0; i < r; i++ ){
+                if( s.getTile(new Coordinates(i,j)) != null ) foundColors.add(s.getTile(new Coordinates(i,j)).getColor());
             }
             if( foundColors.size() == numOfDifferentTilesPerColumn ){
                 if( ++count == numOfDifferentColumns ) return true;
@@ -40,5 +38,6 @@ public class DifferentColumns extends GlobalGoal {
         }
         return false;
     }
+
 }
 

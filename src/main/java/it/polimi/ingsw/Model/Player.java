@@ -23,8 +23,12 @@ public class Player{
     }
 
     public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
-        if (t == null || t.length == 0) throw new NoTileException();
-        for (int i = 0; i < t.length && t[i] != null; i++) shelf.addTile(t[i], column);
+        if ( ( t == null ) || ( t.length == 0 ) ){
+            throw new NoTileException();
+        }
+        for ( int i = 0; ( i < t.length ) && ( t[i] != null ) ; i++){
+            shelf.addTile(t[i], column);
+        }
     }
 
     public String getNickname() {
@@ -36,7 +40,9 @@ public class Player{
     }
 
     public void setAccomplishedGlobalGoal(int i) throws InvalidIndexException {
-        if ( ( i < 0 ) || ( i >= this.accomplishedGlobalGoals.length ) ) throw new InvalidIndexException();
+        if ( ( i < 0 ) || ( i >= this.accomplishedGlobalGoals.length ) ){
+            throw new InvalidIndexException();
+        }
         this.accomplishedGlobalGoals[i] = true;
     }
 
@@ -45,7 +51,9 @@ public class Player{
     }
 
     public void setScore(int s) throws NonValidScoreException {
-        if ( s < 0 ) throw new NonValidScoreException();
+        if ( s < 0 ){
+            throw new NonValidScoreException();
+        }
         score = s;
     }
 
@@ -53,11 +61,11 @@ public class Player{
         return shelf.clone();
     }
 
-    //Method added just for testing purposes
-    public void setShelf(Shelf shelf) throws MissingShelfException{
-
-        if(shelf == null) throw new MissingShelfException();
-
+    // Test purpose
+    protected void setShelf(Shelf shelf) throws MissingShelfException{
+        if( shelf == null ){
+            throw new MissingShelfException();
+        }
         this.shelf = shelf.clone();
     }
 

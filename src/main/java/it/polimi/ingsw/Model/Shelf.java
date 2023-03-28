@@ -21,22 +21,27 @@ public class Shelf implements Cloneable{
         SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
     }
 
-    // Added just for testing
-    public void setTile(Coordinates c, TileColor color){
+    // Test purpose
+    protected void setTile(Coordinates c, TileColor color){
         SHELF[c.getX()][c.getY()] = new Tile(color, 0);
     }
 
     public void addTile(Tile t, int column) throws NoTileException, IllegalColumnInsertionException, ColumnOutOfBoundsException{
-
-        if ( t == null ) throw new NoTileException();
-        if( ( column < 0 ) || ( column >= Shelf.getColumns() ) ) throw new ColumnOutOfBoundsException();
+        if( t == null ){
+            throw new NoTileException();
+        }
+        if( ( column < 0 ) || ( column >= Shelf.getColumns() ) ){
+            throw new ColumnOutOfBoundsException();
+        }
 
         // If the first row is already filled with a tile, the column is fully filled
-        if(SHELF[0][column] != null) throw new IllegalColumnInsertionException();
+        if( SHELF[0][column] != null ){
+            throw new IllegalColumnInsertionException();
+        }
 
         // start analysing from the bottom
         int row = Shelf.getRows() - 1;
-        while(SHELF[row][column] != null && row >= 0){
+        while( ( SHELF[row][column] != null ) && ( row >= 0 ) ){
             row--;
         }
 
@@ -44,7 +49,9 @@ public class Shelf implements Cloneable{
     }
 
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
-        if( ( c.getX() < 0 ) || ( c.getY() < 0 ) || ( c.getX() >= Shelf.getRows() ) || ( c.getY() >= Shelf.getColumns() ) ) throw new ColumnOutOfBoundsException();
+        if( ( c.getX() < 0 ) || ( c.getY() < 0 ) || ( c.getX() >= Shelf.getRows() ) || ( c.getY() >= Shelf.getColumns() ) ){
+            throw new ColumnOutOfBoundsException();
+        }
         return SHELF[c.getX()][c.getY()];
     }
 

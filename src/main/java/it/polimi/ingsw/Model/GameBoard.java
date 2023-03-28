@@ -17,15 +17,14 @@ public class GameBoard {
     private Map<Coordinates,Tile> board;
 
     public GameBoard(int people) throws InvalidNumberOfPlayersException{
+        if( people > Config.getInstance().getMaxNumberOfPlayers() ){
+            throw new InvalidNumberOfPlayersException();
+        }
 
         Gson gson = new Gson();
         Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/GameBoard.json"));
         int peopleOfCurrentConfig;
         JsonArray array;
-
-        if( people > Config.getInstance().getMaxNumberOfPlayers() ){
-            throw new InvalidNumberOfPlayersException();
-        }
 
         array = gson.fromJson(reader, JsonArray.class);
         for ( JsonElement elem : array ){
@@ -50,14 +49,14 @@ public class GameBoard {
     }
 
     public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
-        if(!board.containsKey(c)){
+        if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
         return board.get(c) != null ? board.get(c).clone() : null;
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
-        if(!board.containsKey(c)){
+        if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
         board.put(c, t.clone());
@@ -84,16 +83,16 @@ public class GameBoard {
     }
 
     public static int checkBoardGoal(Shelf s) throws MissingShelfException{
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
         int totalScore, currentGroup;
         int indexOfLastCheck;
 
         boolean[][] checked = new boolean[r][c];
-
-        if( s == null ){
-            throw new MissingShelfException();
-        }
 
         for( int i=0; i<r; i++ ){
             for( int j=0; j<c; j++ ){
@@ -159,7 +158,7 @@ public class GameBoard {
     }
 
     public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
-        if(!board.containsKey(c)){
+        if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
 

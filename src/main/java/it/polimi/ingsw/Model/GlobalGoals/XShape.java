@@ -6,9 +6,7 @@ import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.Exceptions.*;
 
-
 public class XShape extends GlobalGoal {
-
     public XShape(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
@@ -35,18 +33,18 @@ public class XShape extends GlobalGoal {
                     // then check if the 'X' shape Tiles have the same color
                     TileColor color = s.getTile(new Coordinates(row, column)).getColor();
 
-                    if( ( s.getTile(new Coordinates(row, column + 2)).getColor().equals(color)
+                    if( s.getTile(new Coordinates(row, column + 2)).getColor().equals(color)
                             && s.getTile(new Coordinates(row + 2, column)).getColor().equals(color)
-                            && s.getTile(new Coordinates(row + 2, column)).getColor().equals(color) )
+                            && s.getTile(new Coordinates(row + 2, column)).getColor().equals(color)
                             && s.getTile(new Coordinates(row + 2, column + 2)).getColor().equals(color)
                             && s.getTile(new Coordinates(row + 1, column + 1)).getColor().equals(color) )
                     return true;
 
                 }
-
             }
         }
 
         return false;
     }
+
 }

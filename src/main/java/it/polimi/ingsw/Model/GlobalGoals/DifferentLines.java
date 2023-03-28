@@ -8,9 +8,7 @@ import it.polimi.ingsw.Model.TileColor;
 
 import java.util.HashSet;
 
-
 public class DifferentLines extends GlobalGoal {
-
     public DifferentLines(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
@@ -26,11 +24,11 @@ public class DifferentLines extends GlobalGoal {
         int numOfDifferentRows = 2;
         int numOfDifferentTilesPerRow = Shelf.getColumns();
         HashSet<TileColor> foundColors;
-        int count=0;
+        int count = 0;
 
-        for( int i = 0; i<r; i++ ){
+        for( int i = 0; i < r; i++ ){
             foundColors = new HashSet<TileColor>();
-            for( int j = 0; j<c; j++ ){
+            for( int j = 0; j < c; j++ ){
                 if( s.getTile(new Coordinates(i,j)) != null ) foundColors.add( s.getTile(new Coordinates(i,j)).getColor() );
             }
             if( foundColors.size() == numOfDifferentTilesPerRow ){
@@ -39,4 +37,5 @@ public class DifferentLines extends GlobalGoal {
         }
         return false;
     }
+
 }

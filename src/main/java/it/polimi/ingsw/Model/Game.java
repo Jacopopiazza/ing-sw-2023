@@ -17,11 +17,11 @@ public class Game {
     private final TileSack sack;
 
     public Game(String[] nicknames) throws InvalidNumberOfPlayersException{
-        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
-
         if( ( nicknames.length < 2 ) || ( nicknames.length > Config.getInstance().getMaxNumberOfPlayers() ) ){
             throw new InvalidNumberOfPlayersException();
         }
+
+        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
 
         this.players = new Player[nicknames.length];
         for( int i=0; i<players.length; i++)
@@ -49,20 +49,18 @@ public class Game {
     }
 
     public Player getPlayer(int p) throws InvalidIndexException{
-        if(p < 0 || p >= players.length){
+        if( ( p < 0 ) || ( p >= players.length ) ){
             throw new InvalidIndexException();
         }
         return players[p];
     }
 
     public boolean checkGlobalGoals() throws EmptyStackException, NonValidScoreException, InvalidIndexException, MissingShelfException {
-
         boolean retValue = false;
         int currentScore = players[currentPlayer].getScore();
 
-        for(int i=0;i<goals.length;i++){
-
-            if(!players[currentPlayer].getAccomplishedGlobalGoals()[i] && goals[i].check(players[currentPlayer].getShelf())){
+        for( int i=0; i<goals.length; i++ ){
+            if( !players[currentPlayer].getAccomplishedGlobalGoals()[i] && goals[i].check(players[currentPlayer].getShelf()) ){
                 players[currentPlayer].setAccomplishedGlobalGoal(i);
                 currentScore += goals[i].popScore();
                 retValue = true;

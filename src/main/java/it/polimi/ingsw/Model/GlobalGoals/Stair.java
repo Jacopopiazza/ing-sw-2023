@@ -7,7 +7,6 @@ import it.polimi.ingsw.Exceptions.*;
 
 
 public class Stair extends GlobalGoal {
-
     public Stair(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
@@ -28,10 +27,10 @@ public class Stair extends GlobalGoal {
         boolean stair;
 
         //checking if there is an asc stair
-        for( int i=stairLength-1; i<r; i++ ){
-            for(int j=0; j<=c-stairLength;j++){
+        for( int i = stairLength-1; i < r; i++ ){
+            for( int j = 0; j <= c-stairLength; j++ ){
                 stair = true;
-                for( int k=0; ( k<stairLength ) && stair; k++ ){
+                for( int k=0; ( k < stairLength ) && stair; k++ ){
                     if( s.getTile(new Coordinates(i-k,j+k)) == null ) stair = false;
                     else if( ( i-k-1 >= 0 ) && ( s.getTile(new Coordinates(i-k-1,j+k)) != null ) ) stair = false;
                 }
@@ -40,10 +39,10 @@ public class Stair extends GlobalGoal {
         }
 
         //checking if there is a desc stair
-        for( int i=stairLength-1; i<r; i++ ){
-            for(int j=stairLength-1; j<c; j++){
+        for( int i = stairLength-1; i < r; i++ ){
+            for( int j = stairLength-1; j < c; j++){
                 stair = true;
-                for( int k=0; k<stairLength && stair; k++ ){
+                for( int k=0; ( k < stairLength ) && stair; k++ ){
                     if( s.getTile(new Coordinates(i-k,j-k)) == null ) stair = false;
                     else if( ( i-k-1 >= 0 ) && ( s.getTile(new Coordinates(i-k-1,j-k)) != null ) ) stair = false;
                 }
@@ -52,4 +51,5 @@ public class Stair extends GlobalGoal {
         }
     return false;
     }
+
 }

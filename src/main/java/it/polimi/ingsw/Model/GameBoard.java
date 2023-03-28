@@ -13,7 +13,6 @@ import java.io.Reader;
 import java.util.*;
 
 public class GameBoard {
-
     private Map<Coordinates,Tile> board;
 
     public GameBoard(int people) throws InvalidNumberOfPlayersException{
@@ -27,16 +26,16 @@ public class GameBoard {
         JsonArray array;
 
         array = gson.fromJson(reader, JsonArray.class);
-        for ( JsonElement elem : array ){
+        for( JsonElement elem : array ){
             JsonObject obj = (JsonObject) elem.getAsJsonObject();
 
             peopleOfCurrentConfig = obj.get("people").getAsInt();
 
-            if(peopleOfCurrentConfig > people) continue;
+            if( peopleOfCurrentConfig > people ) continue;
 
             JsonArray jsonCells = obj.get("cells").getAsJsonArray();
 
-            for (JsonElement jsonCell : jsonCells) {
+            for( JsonElement jsonCell : jsonCells ){
                 Coordinates c = CoordinatesParser.coordinatesParser(jsonCell);
                 this.board.put(c, null);
             }
@@ -65,7 +64,7 @@ public class GameBoard {
     public boolean toRefill() throws InvalidCoordinatesForCurrentGameException {
         Coordinates up, down, right, left;
         boolean notYet;
-        for( Coordinates c : board.keySet() ) {
+        for( Coordinates c : board.keySet() ){
             if( isPickable(c) ) {
                 up = new Coordinates(c.getX(), c.getY() - 1);
                 down = new Coordinates(c.getX(), c.getY() + 1);
@@ -94,22 +93,22 @@ public class GameBoard {
 
         boolean[][] checked = new boolean[r][c];
 
-        for( int i=0; i<r; i++ ){
-            for( int j=0; j<c; j++ ){
+        for( int i = 0; i < r; i++ ){
+            for( int j = 0; j < c; j++ ){
                 checked[i][j] = false;
             }
         }
 
         totalScore = 0;
-        for( int i=0; i<r; i++ ){
-            for( int j=0; j<c; j++ ){
+        for( int i = 0; i < r; i++ ){
+            for( int j = 0; j < c; j++ ){
                 if( checked[i][j] == false ){
                     currentGroup = checkFromThisTile(s, new Coordinates(i,j), checked);
                     for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ){
                         if( currentGroup == t.tiles() ) totalScore += t.score();
                     }
                     indexOfLastCheck = Config.getInstance().getSortedBoardGoals().length - 1;
-                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].tiles())
+                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].tiles() )
                         totalScore += Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].score();
                 }
             }
@@ -177,4 +176,5 @@ public class GameBoard {
 
         return false;
     }
+
 }

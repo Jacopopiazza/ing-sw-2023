@@ -24,7 +24,7 @@ public class Game {
         PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
 
         this.players = new Player[nicknames.length];
-        for( int i=0; i<players.length; i++)
+        for( int i = 0; i < players.length; i++ )
             players[i] = new Player(privateGoals[i],nicknames[i]);
 
         board = new GameBoard(players.length);
@@ -39,13 +39,13 @@ public class Game {
 
     public GlobalGoal[] getGoals() throws CloneNotSupportedException {
         GlobalGoal[] temp = new GlobalGoal[this.goals.length];
-        for( int i=0; i<this.goals.length; i++ )
+        for( int i = 0; i < this.goals.length; i++ )
             temp[i] = goals[i].clone();
         return temp;
     }
 
     public void nextPlayer(){
-        currentPlayer = (currentPlayer+1)%players.length;
+        currentPlayer = (currentPlayer+1) % players.length;
     }
 
     public Player getPlayer(int p) throws InvalidIndexException{
@@ -59,7 +59,7 @@ public class Game {
         boolean retValue = false;
         int currentScore = players[currentPlayer].getScore();
 
-        for( int i=0; i<goals.length; i++ ){
+        for( int i = 0; i < goals.length; i++ ){
             if( !players[currentPlayer].getAccomplishedGlobalGoals()[i] && goals[i].check(players[currentPlayer].getShelf()) ){
                 players[currentPlayer].setAccomplishedGlobalGoal(i);
                 currentScore += goals[i].popScore();
@@ -85,11 +85,11 @@ public class Game {
 
         Collections.shuffle(goals);
         GlobalGoal[] returned = new GlobalGoal[2];
-        for(int i = 0; i < returned.length; i++){
+        for( int i = 0; i < returned.length; i++ ){
             returned[i] = goals.get(i);
         }
 
         return returned;
-
     }
+
 }

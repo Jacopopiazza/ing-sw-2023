@@ -21,7 +21,7 @@ public final class PrivateGoal {
     }
 
     public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException {
-        if (people <= 0 || people > Config.getInstance().getMaxNumberOfPlayers()) {
+        if( ( people <= 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ){
             throw new InvalidNumberOfPlayersException();
         }
 
@@ -49,17 +49,14 @@ public final class PrivateGoal {
         int numOfCorrectTiles = 0;
         final int numOfTiles;
 
-        for (int i = 0; i < coords.length; i++) {
-            if ((shelf.getTile(coords[i]) != null) && (shelf.getTile(coords[i]).getColor().ordinal() == i))
+        for( int i = 0; i < coords.length; i++ ){
+            if( (shelf.getTile(coords[i]) != null) && (shelf.getTile(coords[i]).getColor().ordinal() == i ) )
                 numOfCorrectTiles++;
         }
         Config config = Config.getInstance();
         numOfTiles = numOfCorrectTiles;
 
         return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.score()).findFirst().getAsInt();
-
     }
-
-
 
 }

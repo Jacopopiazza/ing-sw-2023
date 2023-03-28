@@ -9,8 +9,8 @@ public class Shelf implements Cloneable{
 
     private Shelf(Tile[][] shelf){
         this.SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
-        for( int i=0; i<Shelf.getRows(); i++ ){
-            for( int j=0; j<Shelf.getColumns(); j++ ){
+        for( int i = 0; i<Shelf.getRows(); i++ ){
+            for( int j = 0; j<Shelf.getColumns(); j++ ){
                 this.SHELF[i][j] = shelf[i][j] == null ? null : shelf[i][j].clone();
             }
         }
@@ -41,9 +41,8 @@ public class Shelf implements Cloneable{
 
         // start analysing from the bottom
         int row = Shelf.getRows() - 1;
-        while( ( SHELF[row][column] != null ) && ( row >= 0 ) ){
-            row--;
-        }
+
+        while( ( SHELF[row][column] != null ) && ( row >= 0 ) ) row--;
 
         SHELF[row][column] = t.clone();
     }
@@ -56,8 +55,8 @@ public class Shelf implements Cloneable{
     }
 
     public boolean isFull(){
-        for( int i=0; i<getRows(); i++ ){
-            for( int j=0; j<getColumns(); j++ ){
+        for( int i = 0; i < getRows(); i++ ){
+            for( int j = 0; j < getColumns(); j++ ){
                 if( SHELF[i][j] == null ) return false;
             }
         }

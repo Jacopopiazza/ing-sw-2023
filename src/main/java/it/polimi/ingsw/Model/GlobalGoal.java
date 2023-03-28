@@ -57,4 +57,5 @@ public abstract class GlobalGoal implements Cloneable {
         goals.add(new XShape(people));
         return goals;
     }
+
 }

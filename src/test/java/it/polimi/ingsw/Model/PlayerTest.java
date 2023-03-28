@@ -1,9 +1,11 @@
 package it.polimi.ingsw.Model;
 
+
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +21,7 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
-    public void testGettersAndSetScore() throws InvalidIndexException {
+    public void testGettersAndSetScore() throws InvalidIndexException, NoTileException, IllegalColumnInsertionException {
         assertEquals(p.getNickname(),"nickname");
         assertEquals(p.getScore(),0);
 
@@ -66,36 +68,64 @@ public class PlayerTest extends TestCase {
                 assertEquals(p.getShelf().getTile(new Coordinates(i,j)), s.getTile(new Coordinates(i,j)) );
             }
         }
-    }
 
-    @Test (expected = InvalidIndexException.class)
-    public void setAccomplishedGoals() throws InvalidIndexException{
-        p.setAccomplishedGlobalGoal(-1);
-    }
+        p.setShelf(new Shelf());
+        Tile t = new Tile(TileColor.BLUE,123);
+        p.insert(new Tile[]{t},0);
 
-    @Test (expected = NonValidScoreException.class)
-    public void setScoreNegativeScore() {
-        p.setScore(-1);
-    }
+        assertEquals(p.getShelf().getTile(new Coordinates(Shelf.getRows()-1,0)), t);
 
-    @Test (expected = MissingShelfException.class)
-    public void testMissingShelfInSetShelf(){
-        p.setShelf(null);
-    }
 
-    @Test (expected = NoTileException.class)
-    public void insertNullTiles() throws NoTileException, IllegalColumnInsertionException {
-        p.insert(null,0);
-    }
-
-    @Test (expected = IllegalColumnInsertionException.class)
-    public void insertInvalidColumn() throws NoTileException, IllegalColumnInsertionException {
-        Tile[] tiles = new Tile[]{};
-        p.insert(tiles,-1);
     }
 
     @Test
-    public void checkPrivateGoal() throws MissingShelfException {
+    public void testSetAccomplishedGoals() throws InvalidIndexException{
+        Assert.assertThrows(InvalidIndexException.class, () -> p.setAccomplishedGlobalGoal(-1));
+    }
+
+    @Test
+    public void testSetScoreNegativeScore() throws NonValidScoreException {
+        Assert.assertThrows(NonValidScoreException.class, () -> p.setScore(-1));
+    }
+
+    @Test
+    public void testMissingShelfInSetShelf() {
+        Assert.assertThrows(MissingShelfException.class, () -> p.setShelf(null));
+    }
+
+    @Test
+    public void testInsertNullTiles() throws NoTileException, IllegalColumnInsertionException {
+        Assert.assertThrows(NoTileException.class, () -> p.insert(null,0));
+    }
+
+    @Test
+    public void testInsertOutOfBoundsColumn() throws NoTileException, IllegalColumnInsertionException, ColumnOutOfBoundsException {
+        Tile[] tiles = new Tile[]{ new Tile(TileColor.BLUE, 123)};
+        Assert.assertThrows(ColumnOutOfBoundsException.class, () -> p.insert(tiles,-1));
+    }
+
+    @Test
+    public void testInsertInFullColumn() throws NoTileException, IllegalColumnInsertionException, ColumnOutOfBoundsException {
+        Tile[] tiles = new Tile[]{ new Tile(TileColor.BLUE, 123),
+                new Tile(TileColor.YELLOW, 234),
+                new Tile(TileColor.CYAN, 345),
+                new Tile(TileColor.FUCHSIA, 456),
+                new Tile(TileColor.GREEN, 567),
+                new Tile(TileColor.WHITE, 789),
+                new Tile(TileColor.WHITE, 899)
+        };
+        Assert.assertThrows(IllegalColumnInsertionException.class, () -> p.insert(tiles,0));
+    }
+
+    @Test
+    public void testFirstPlayer(){
+        int score = p.getScore();
+        p.first();
+        assertEquals(score+1,p.getScore());
+    }
+
+    @Test
+    public void testCheckPrivateGoal() throws MissingShelfException {
 
         assertEquals(p.checkPrivateGoal(), false);
 

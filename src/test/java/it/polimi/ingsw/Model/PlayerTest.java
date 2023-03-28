@@ -25,14 +25,14 @@ public class PlayerTest extends TestCase {
         assertEquals(p.getNickname(),"nickname");
         assertEquals(p.getScore(),0);
 
-        assertEquals(p.getGoal(),pg);
+        assertEquals(p.getPrivateGoal(),pg);
         pg = PrivateGoal.getPrivateGoals(2)[0];
         p.setGoal(pg);
-        assertEquals(p.getGoal(),pg);
+        assertEquals(p.getPrivateGoal(),pg);
 
         p.setScore(10);
         assertEquals(p.getScore(),10);
-        assertEquals(p.getPrivateGoal(),pg);
+
 
         assertTrue(p.isActive());
         assertFalse(p.isWinner());
@@ -56,11 +56,11 @@ public class PlayerTest extends TestCase {
             }
         }
 
-        s.setTile(new Coordinates(0,0) , TileColor.BLUE);
-        s.setTile(new Coordinates(1,0) , TileColor.CYAN);
-        s.setTile(new Coordinates(2,0) , TileColor.FUCHSIA);
-        s.setTile(new Coordinates(3,0) , TileColor.YELLOW);
-        s.setTile(new Coordinates(4,0) , TileColor.GREEN);
+        s.addTile(new Tile(TileColor.BLUE, 0), 0);
+        s.addTile(new Tile(TileColor.CYAN, 0), 0);
+        s.addTile(new Tile(TileColor.FUCHSIA, 0), 0);
+        s.addTile(new Tile(TileColor.YELLOW, 0), 0);
+        s.addTile(new Tile(TileColor.GREEN, 0), 0);
 
         p.setShelf(s);
         for(int i = 0; i < Shelf.getRows(); i++) {
@@ -125,20 +125,29 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
-    public void testCheckPrivateGoal() throws MissingShelfException {
+    public void testCheckPrivateGoal() throws MissingShelfException, IllegalColumnInsertionException, NoTileException {
 
         assertEquals(p.checkPrivateGoal(), false);
 
-        Shelf shelf = p.getShelf();
-        Coordinates[] coords = pg.getCoordinates();
+        boolean flag;
+        Shelf shelfToTest = p.getShelf();
+        Coordinates[] coord = pg.getCoordinates();
 
-        for(int i = 0;i< coords.length; i++){
-            Coordinates c = coords[i];
-            TileColor color = TileColor.values()[i];
-            shelf.setTile(c,color);
+        // from bottom left, row by row, adds every tile
+        for( int i = 0; i < Shelf.getRows()*Shelf.getColumns(); i++ ){
+            flag = false;
+            // for each Coordinate in the PrivateGoal, if present I add such tile (with color TileColor.values()[j])
+            for( int j = 0; j < coord.length && !flag; j++ ) {
+                if ( ( coord[j].getY() == i % Shelf.getColumns() ) && ( coord[j].getX() == Shelf.getRows() - 1 - (i / Shelf.getRows()) ) ) {
+                    shelfToTest.addTile(new Tile(TileColor.values()[j], 0), coord[j].getY());
+                    flag = true;
+                }
+            }
+            // otherwise adds a blue Tile (doesn't matter)
+            if( !flag ) shelfToTest.addTile(new Tile(TileColor.BLUE, 0), i % Shelf.getColumns());
         }
 
-        p.setShelf(shelf);
+        p.setShelf(shelfToTest);
         assertEquals(p.checkPrivateGoal(), true);
     }
 }

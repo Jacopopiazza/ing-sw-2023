@@ -21,11 +21,6 @@ public class Shelf implements Cloneable{
         SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
     }
 
-    // Test purpose
-    protected void setTile(Coordinates c, TileColor color){
-        SHELF[c.getX()][c.getY()] = new Tile(color, 0);
-    }
-
     public void addTile(Tile t, int column) throws NoTileException, IllegalColumnInsertionException, ColumnOutOfBoundsException{
         if( t == null ){
             throw new NoTileException();

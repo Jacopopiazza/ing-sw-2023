@@ -1,53 +1,66 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.Tile;
 import it.polimi.ingsw.Model.TileColor;
-import org.junit.Assert;
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Random;
+
+import static org.junit.Assert.*;
+
 public class EightTilesTest {
-    private EightTiles goal;
-    private Shelf shelf;
-    // Eight tiles of the same color
+    Shelf passShelf;
+    Shelf dontPassShelf;
+
     @Before
-    public void setUp(){
-        shelf = new Shelf();
-        goal = new EightTiles(2);
+    public void setUp() throws NoTileException, IllegalColumnInsertionException {
+
+        Gson gson = new Gson();
+        TileColor[][] falseMatrix;
+        TileColor[][] trueMatrix;
+
+        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/ShelfConfig.json"));
+        JsonObject obj = gson.fromJson(reader , JsonObject.class);
+        trueMatrix = gson.fromJson(obj.get("testTrueEightTiles"), TileColor[][].class);
+        falseMatrix = gson.fromJson(obj.get("testFalseEightTiles"), TileColor[][].class);
+
+        passShelf = new Shelf();
+        dontPassShelf = new Shelf();
+
+        for(int i = trueMatrix.length-1; i >= 0;i--){
+            for(int j = 0; j < trueMatrix[i].length; j++){
+                if(trueMatrix[i][j] != null){
+                    passShelf.addTile(new Tile(trueMatrix[i][j],new Random(150).nextInt()), j);
+                }
+                if(falseMatrix[i][j] != null){
+                    dontPassShelf.addTile(new Tile(falseMatrix[i][j],new Random(160).nextInt()), j);
+                }
+            }
+        }
+
     }
 
     @Test
-    public void popScore() throws EmptyStackException {
-        Assert.assertEquals(goal.popScore(), 8);
+    public void testPopScore() throws EmptyStackException {
+
+        EightTiles goal = new EightTiles(4);
+        assertEquals(goal.popScore(), 8);
     }
 
     @Test
-    public void check() throws IllegalColumnInsertionException, NoTileException {
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 0);
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 0);
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 0);
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 0);
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 0);
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 0);
-        shelf.addTile(new Tile(TileColor.YELLOW, 0), 1);
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 1);
-        Assert.assertFalse(goal.check(shelf));
-        shelf.addTile(new Tile(TileColor.BLUE, 0), 1);
-        Assert.assertTrue(goal.check(shelf));
-
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 1);
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 1);
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 1);
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 2);
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 2);
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 2);
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 2);
-        Assert.assertTrue(goal.check(shelf));
-        shelf.addTile(new Tile(TileColor.GREEN, 0), 2);
-        Assert.assertTrue(goal.check(shelf));
+    public void testCheck() throws IllegalColumnInsertionException, NoTileException {
+        EightTiles test = new EightTiles(2);
+        assertTrue(test.check(passShelf));
+        assertFalse(test.check(dontPassShelf));
     }
 }

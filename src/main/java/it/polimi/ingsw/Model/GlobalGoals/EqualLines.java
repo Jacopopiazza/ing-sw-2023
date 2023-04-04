@@ -3,52 +3,36 @@ package it.polimi.ingsw.Model.GlobalGoals;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Exceptions.*;
 
+import java.util.HashSet;
 
 public class EqualLines extends GlobalGoal {
-
     public EqualLines(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
 
     @Override
-    public boolean check(Shelf s) throws MissingShelfException{
-        int r = Shelf.getRows();
-        int c = Shelf.getColumns();
-        int correctR = 0;
-        Tile temp;
-
+    public boolean check(Shelf s)  throws MissingShelfException {
         if( s == null ){
             throw new MissingShelfException();
         }
 
-        boolean present;
-        for( int i=0; ( i<r ) && ( correctR<4 ); i++ ){
-            TileColor[] availableColors = new TileColor[3];
-            int currentHead;
-            temp = s.getTile(new Coordinates(i,0));
-            if( temp != null ){
-                availableColors[0] = temp.getColor();
-                currentHead = 1;
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        int numOfEqualRows = 4;
+        int differentTilesPerRow = 3;
+        HashSet<TileColor> foundColors;
+        int count=0;
+
+        for( int i = 0; i < r; i++ ){
+            foundColors = new HashSet<TileColor>();
+            for( int j = 0; j < c; j++ ){
+                if( s.getTile(new Coordinates(i,j)) != null ) foundColors.add(s.getTile(new Coordinates(i,j)).getColor());
             }
-            else currentHead = 4; // this way the check will be false because of this row: a tile is missing
-            for( int j=1; ( j<c ) && ( currentHead<=3 ); j++ ){
-                temp = s.getTile(new Coordinates(i,j));
-                if( temp != null ){
-                    TileColor tc = temp.getColor();
-                    present = false;
-                    for( int k=0; ( k < currentHead ) && ( present == false ); k++ ){
-                        if( tc.equals(availableColors[k]) ) present = true;
-                    }
-                    if( present == false ){
-                        if( currentHead<3 ) availableColors[currentHead] = tc;
-                        currentHead++;
-                    }
-                }
-                else currentHead = 4; //doing this the check will be false for this row, because a tile is missing
+            if( foundColors.size() <= differentTilesPerRow ){
+                if( ++count == numOfEqualRows ) return true;
             }
-            if( currentHead <= 3 ) correctR++;
         }
-        if( correctR == 4 ) return true;
         return false;
     }
+
 }

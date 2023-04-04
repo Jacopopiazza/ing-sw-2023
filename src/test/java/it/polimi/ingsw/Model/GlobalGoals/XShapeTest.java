@@ -1,15 +1,12 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
-import it.polimi.ingsw.Exceptions.EmptyStackException;
-import it.polimi.ingsw.Exceptions.InvalidNumberOfPlayersException;
-import it.polimi.ingsw.Exceptions.MissingShelfException;
-import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.Shelf;
-import it.polimi.ingsw.Model.TileColor;
-import it.polimi.ingsw.Model.TileSack;
+import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.*;
 import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -19,14 +16,8 @@ public class XShapeTest extends TestCase {
     private XShape goal;
 
     @Before
-    public void setUp() throws MissingShelfException, InvalidNumberOfPlayersException {
+    public void setUp(){
         shelf = new Shelf();
-        shelf.setTile(new Coordinates(2,2), TileColor.BLUE);
-        shelf.setTile(new Coordinates(2, 4), TileColor.BLUE);
-        shelf.setTile(new Coordinates(4,2), TileColor.BLUE);
-        shelf.setTile(new Coordinates(4, 4), TileColor.BLUE);
-        shelf.setTile(new Coordinates(3, 3), TileColor.BLUE);
-
         goal = new XShape(2);
     }
 
@@ -36,7 +27,19 @@ public class XShapeTest extends TestCase {
     }
 
     @Test
-    public void testCheck() throws MissingShelfException {
+    public void testCheck() throws MissingShelfException, IllegalColumnInsertionException, NoTileException {
+        for( int i=0; i<9; i++ ){
+            if( i%3 == 2 ) shelf.addTile(new Tile(TileColor.BLUE, 0), i%3 );
+            else shelf.addTile(new Tile(TileColor.GREEN, 0), i%3);
+        }
+        assertFalse(goal.check(shelf));
+
+        for( int i=0; i<6; i++ ) shelf.addTile(new Tile(TileColor.BLUE, 0), 3+i%2 );
         assertTrue(goal.check(shelf));
+    }
+
+    @Test (expected = MissingShelfException.class)
+    public void testCheck_CorrectlyThrowsMissingShelfException() throws MissingShelfException, IllegalColumnInsertionException, NoTileException {
+        Assert.assertThrows(MissingShelfException.class, () -> goal.check(null));
     }
 }

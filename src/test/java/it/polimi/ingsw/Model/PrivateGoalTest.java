@@ -1,8 +1,6 @@
 package it.polimi.ingsw.Model;
 
-import it.polimi.ingsw.Exceptions.ColumnOutOfBoundsException;
-import it.polimi.ingsw.Exceptions.InvalidNumberOfPlayersException;
-import it.polimi.ingsw.Exceptions.MissingShelfException;
+import it.polimi.ingsw.Exceptions.*;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,14 +50,24 @@ public class PrivateGoalTest {
     }
 
     @Test
-    public void testCheckMaximumPoints() throws InvalidNumberOfPlayersException, MissingShelfException {
+    public void testCheckMaximumPoints() throws InvalidNumberOfPlayersException, MissingShelfException, IllegalColumnInsertionException, NoTileException {
         Shelf shelfToTest = new Shelf();
         Coordinates coord[] = PrivateGoal.getPrivateGoals(2)[0].getCoordinates();
+        boolean flag;
 
-        for(int i = 0; i < coord.length; i++){
-            shelfToTest.setTile(coord[i], TileColor.values()[i]);
+        // from bottom left, row by row, adds every tile
+        for( int i = 0; i < Shelf.getRows()*Shelf.getColumns(); i++ ){
+            flag = false;
+            // for each Coordinate in the PrivateGoal, if present I add such tile (with color TileColor.values()[j])
+            for( int j = 0; j < coord.length && !flag; j++ ) {
+                if ( ( coord[j].getY() == i % Shelf.getColumns() ) && ( coord[j].getX() == Shelf.getRows() - 1 - (i / Shelf.getRows()) ) ) {
+                    shelfToTest.addTile(new Tile(TileColor.values()[j], 0), coord[j].getY());
+                    flag = true;
+                }
+            }
+            // otherwise adds a blue Tile (doesn't matter)
+            if( !flag ) shelfToTest.addTile(new Tile(TileColor.BLUE, 0), i % Shelf.getColumns());
         }
-
         assertEquals(privateGoals[0].check(shelfToTest), 12);
 
     }

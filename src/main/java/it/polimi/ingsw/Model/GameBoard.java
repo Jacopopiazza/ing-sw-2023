@@ -13,31 +13,29 @@ import java.io.Reader;
 import java.util.*;
 
 public class GameBoard {
-
     private Map<Coordinates,Tile> board;
 
     public GameBoard(int people) throws InvalidNumberOfPlayersException{
+        if( people > Config.getInstance().getMaxNumberOfPlayers() ){
+            throw new InvalidNumberOfPlayersException();
+        }
 
         Gson gson = new Gson();
         Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/GameBoard.json"));
         int peopleOfCurrentConfig;
         JsonArray array;
 
-        if( people > Config.getInstance().getMaxNumberOfPlayers() ){
-            throw new InvalidNumberOfPlayersException();
-        }
-
         array = gson.fromJson(reader, JsonArray.class);
-        for ( JsonElement elem : array ){
+        for( JsonElement elem : array ){
             JsonObject obj = (JsonObject) elem.getAsJsonObject();
 
             peopleOfCurrentConfig = obj.get("people").getAsInt();
 
-            if(peopleOfCurrentConfig > people) continue;
+            if( peopleOfCurrentConfig > people ) continue;
 
             JsonArray jsonCells = obj.get("cells").getAsJsonArray();
 
-            for (JsonElement jsonCell : jsonCells) {
+            for( JsonElement jsonCell : jsonCells ){
                 Coordinates c = CoordinatesParser.coordinatesParser(jsonCell);
                 this.board.put(c, null);
             }
@@ -50,14 +48,14 @@ public class GameBoard {
     }
 
     public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
-        if(!board.containsKey(c)){
+        if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
         return board.get(c) != null ? board.get(c).clone() : null;
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
-        if(!board.containsKey(c)){
+        if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
         board.put(c, t.clone());
@@ -66,7 +64,7 @@ public class GameBoard {
     public boolean toRefill() throws InvalidCoordinatesForCurrentGameException {
         Coordinates up, down, right, left;
         boolean notYet;
-        for( Coordinates c : board.keySet() ) {
+        for( Coordinates c : board.keySet() ){
             if( isPickable(c) ) {
                 up = new Coordinates(c.getX(), c.getY() - 1);
                 down = new Coordinates(c.getX(), c.getY() + 1);
@@ -84,6 +82,10 @@ public class GameBoard {
     }
 
     public static int checkBoardGoal(Shelf s) throws MissingShelfException{
+        if( s == null ){
+            throw new MissingShelfException();
+        }
+
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
         int totalScore, currentGroup;
@@ -91,26 +93,22 @@ public class GameBoard {
 
         boolean[][] checked = new boolean[r][c];
 
-        if( s == null ){
-            throw new MissingShelfException();
-        }
-
-        for( int i=0; i<r; i++ ){
-            for( int j=0; j<c; j++ ){
+        for( int i = 0; i < r; i++ ){
+            for( int j = 0; j < c; j++ ){
                 checked[i][j] = false;
             }
         }
 
         totalScore = 0;
-        for( int i=0; i<r; i++ ){
-            for( int j=0; j<c; j++ ){
+        for( int i = 0; i < r; i++ ){
+            for( int j = 0; j < c; j++ ){
                 if( checked[i][j] == false ){
                     currentGroup = checkFromThisTile(s, new Coordinates(i,j), checked);
                     for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ){
                         if( currentGroup == t.tiles() ) totalScore += t.score();
                     }
                     indexOfLastCheck = Config.getInstance().getSortedBoardGoals().length - 1;
-                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].tiles())
+                    if( currentGroup > Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].tiles() )
                         totalScore += Config.getInstance().getSortedBoardGoals()[indexOfLastCheck].score();
                 }
             }
@@ -159,22 +157,24 @@ public class GameBoard {
     }
 
     public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
-        int[] adjacentX = new int[]{-1,0,0,+1};
-        int[] adjacentY = new int[]{0,+1,-1,0};
-
-        if(!board.containsKey(c)){
+        if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
+        Coordinates up, down, right, left;
+        up = new Coordinates(c.getX(), c.getY() - 1);
+        down = new Coordinates(c.getX(), c.getY() + 1);
+        right = new Coordinates(c.getX() + 1, c.getY());
+        left = new Coordinates(c.getX() - 1, c.getY());
+
         if( board.get(c) == null ) return false;
 
-        for( int i=0; i<adjacentX.length; i++ ){
-            if(!board.containsKey(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) ||
-                board.get(new Coordinates(c.getX()+adjacentX[i],c.getY()+adjacentY[i])) == null){
-                return true;
-            }
-        }
+        if( !board.containsKey(up) || ( board.get(up) == null ) ) return true;
+        if( !board.containsKey(down) || ( board.get(down) == null ) ) return true;
+        if( !board.containsKey(right) || ( board.get(right) == null ) ) return true;
+        if( !board.containsKey(left) || ( board.get(left) == null ) ) return true;
 
         return false;
     }
+
 }

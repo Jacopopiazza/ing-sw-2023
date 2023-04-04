@@ -25,9 +25,9 @@ public class TileSack {
         random_color_index = new Random().nextInt(Arrays.stream(remaining).sum());
 
         int top_bound = 0, bottom_bound = 0;
-        for ( int i = 0; i < LEN; i++ ) {
+        for( int i = 0; i < LEN; i++ ){
             top_bound += remaining[i];
-            if (random_color_index >= bottom_bound && random_color_index < top_bound) {
+            if( ( random_color_index >= bottom_bound ) && ( random_color_index < top_bound ) ){
                 // Pop that color from the tileSack
                 remaining[i]--;
                 // Return the corresponding Tile

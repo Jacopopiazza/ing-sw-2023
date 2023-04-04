@@ -7,7 +7,6 @@ import it.polimi.ingsw.Exceptions.*;
 
 
 public class Stair extends GlobalGoal {
-
     public Stair(int people) throws InvalidNumberOfPlayersException {
         super(people);
     }
@@ -18,33 +17,39 @@ public class Stair extends GlobalGoal {
     // The tiles can have different colors.
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        int r = Shelf.getRows();
-        int c = Shelf.getColumns();
-        boolean stair;
-
         if( s == null ){
             throw new MissingShelfException();
         }
 
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        int stairLength = 5;
+        boolean stair;
+
         //checking if there is an asc stair
-        for( int i=4; i < r-1; i++ ){
-            stair = true;
-            for( int k=0; ( k<5 ) && stair; k++ ){
-                if( s.getTile(new Coordinates(i-k,k)) == null ) stair = false;
-                else if( ( i-k-1 >= 0 ) && ( s.getTile(new Coordinates(i-k-1,k)) != null ) ) stair = false;
+        for( int i = stairLength-1; i < r; i++ ){
+            for( int j = 0; j <= c-stairLength; j++ ){
+                stair = true;
+                for( int k=0; ( k < stairLength ) && stair; k++ ){
+                    if( s.getTile(new Coordinates(i-k,j+k)) == null ) stair = false;
+                    else if( ( i-k-1 >= 0 ) && ( s.getTile(new Coordinates(i-k-1,j+k)) != null ) ) stair = false;
+                }
+                if( stair ) return true;
             }
-            if( stair ) return true;
         }
 
         //checking if there is a desc stair
-        for( int i=4; i < r-1; i++ ){
-            stair = true;
-            for( int k=0; k<5 && stair; k++ ){
-                if( s.getTile(new Coordinates(i-k,c-1-k)) == null ) stair = false;
-                else if( ( i-k-1 >= 0 ) && ( s.getTile(new Coordinates(i-k-1,c-1-k)) != null ) ) stair = false;
+        for( int i = stairLength-1; i < r; i++ ){
+            for( int j = stairLength-1; j < c; j++){
+                stair = true;
+                for( int k=0; ( k < stairLength ) && stair; k++ ){
+                    if( s.getTile(new Coordinates(i-k,j-k)) == null ) stair = false;
+                    else if( ( i-k-1 >= 0 ) && ( s.getTile(new Coordinates(i-k-1,j-k)) != null ) ) stair = false;
+                }
+                if( stair ) return true;
             }
-            if( stair ) return true;
         }
     return false;
     }
+
 }

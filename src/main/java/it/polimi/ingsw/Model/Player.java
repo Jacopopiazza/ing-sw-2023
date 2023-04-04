@@ -12,7 +12,7 @@ public class Player{
     private boolean winner;
 
     public Player(PrivateGoal privateGoal, String nick) {
-        nickname=nick;
+        nickname = nick;
         score = 0;
         shelf = new Shelf();
         goal = privateGoal;
@@ -22,8 +22,12 @@ public class Player{
     }
 
     public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
-        if (t == null || t.length == 0) throw new NoTileException();
-        for (int i = 0; i < t.length && t[i] != null; i++) shelf.addTile(t[i], column);
+        if ( ( t == null ) || ( t.length == 0 ) ){
+            throw new NoTileException();
+        }
+        for ( int i = 0; ( i < t.length ) && ( t[i] != null ) ; i++){
+            shelf.addTile(t[i], column);
+        }
     }
 
     public String getNickname() {
@@ -55,7 +59,7 @@ public class Player{
     //Method added just for testing purposes
     public void setShelf(Shelf shelf) throws MissingShelfException{
 
-        if(shelf == null) throw new MissingShelfException();
+        if( shelf == null ) throw new MissingShelfException();
 
         this.shelf = shelf.clone();
     }
@@ -76,6 +80,10 @@ public class Player{
         this.active = active;
     }
 
+    public void first() {
+        this.score++;
+    }
+
     public boolean isWinner() {
         return winner;
     }
@@ -91,7 +99,8 @@ public class Player{
     public boolean checkPrivateGoal() throws MissingShelfException, ColumnOutOfBoundsException {
         int res = goal.check(shelf.clone());
         score += res;
-        if (res > 0) return true;
+        if ( res > 0 ) return true;
         return false;
     }
+
 }

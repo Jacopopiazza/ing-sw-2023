@@ -11,14 +11,14 @@ public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;
 
     public GlobalGoal(int people) throws InvalidNumberOfPlayersException {
+        if ( ( people < 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
+            throw new InvalidNumberOfPlayersException();
+        }
+
         Config config = Config.getInstance();
 
         // Get a copy of the array, sorted by score so that the smaller rewards go to the bottom of the stack
         Config.GlobalGoalScore[] globalGoalScores = Arrays.stream(config.getUnsortedGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.score(),g2.score())).toArray(Config.GlobalGoalScore[]::new);
-
-        if ( ( people < 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
-            throw new InvalidNumberOfPlayersException();
-        }
 
         scores = new Stack<Integer>();
 
@@ -57,4 +57,5 @@ public abstract class GlobalGoal implements Cloneable {
         goals.add(new XShape(people));
         return goals;
     }
+
 }

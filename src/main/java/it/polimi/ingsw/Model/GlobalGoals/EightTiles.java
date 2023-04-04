@@ -22,12 +22,16 @@ public class EightTiles extends GlobalGoal {
         int numOfEqualTiles = 8;
         int[] counters = new int[TileColor.values().length];
 
-        for( int i=0; i < r; i++ ){
-            for( int j=0; j < c; j++ ){
-                Coordinates coord = new Coordinates(i,j);
+        for( int i = 0; i < r; i++ ){
+            for( int j = 0; j < c; j++ ){
+                Coordinates coord = new Coordinates(i, j);
                 //if not null, counting one more tile of its color
-                if( s.getTile(coord) != null ) counters[s.getTile(coord).getColor().ordinal()]++;
-                if( counters[ s.getTile(coord).getColor().ordinal() ] >= numOfEqualTiles ) return true;
+                if( s.getTile(coord) != null ){
+                    counters[s.getTile(coord).getColor().ordinal()]++;
+                    if( counters[ s.getTile(coord).getColor().ordinal() ] >= numOfEqualTiles )
+                        return true;
+                }
+
             }
         }
         return false;

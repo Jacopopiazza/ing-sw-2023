@@ -28,13 +28,13 @@ public class XShapeTest extends TestCase {
 
     @Test
     public void testCheck() throws MissingShelfException, IllegalColumnInsertionException, NoTileException {
-        for( int i=0; i<9; i++ ){
-            if( i%3 == 2 ) shelf.addTile(new Tile(TileColor.BLUE, 0), i%3 );
-            else shelf.addTile(new Tile(TileColor.GREEN, 0), i%3);
+        for( int i = 0; i < 9; i++ ){
+            if( i % 3 == 2 ) shelf.addTile(new Tile(TileColor.BLUE, 0), i%3 );
+            else shelf.addTile(new Tile(TileColor.GREEN, 0),  i % 3);
         }
         assertFalse(goal.check(shelf));
 
-        for( int i=0; i<6; i++ ) shelf.addTile(new Tile(TileColor.BLUE, 0), 3+i%2 );
+        for( int i = 0; i < 6; i++ ) shelf.addTile(new Tile(TileColor.BLUE, 0), 3 + i % 2 );
         assertTrue(goal.check(shelf));
     }
 

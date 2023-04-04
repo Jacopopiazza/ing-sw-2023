@@ -8,7 +8,6 @@ public class Player{
     private PrivateGoal goal;
     private final String nickname;
     private boolean[] accomplishedGlobalGoals;
-
     private boolean active;
     private boolean winner;
 

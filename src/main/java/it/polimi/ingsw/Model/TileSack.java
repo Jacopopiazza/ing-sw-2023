@@ -28,7 +28,7 @@ public class TileSack {
                 // Pop that color from the tileSack
                 remaining[i]--;
                 // Return the corresponding Tile
-                return new Tile(TileColor.values()[i], Config.getInstance().getNumOfTilesPerColor()-22);
+                return new Tile(TileColor.values()[i], Config.getInstance().getNumOfTilesPerColor()-remaining[i]-1);
             }
             else bottom_bound += remaining[i];
         }

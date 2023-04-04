@@ -24,13 +24,15 @@ public class TileSackTest extends TestCase {
     }
 
     @Test
-    public void pop() {
+    public void testPop() {
         int tmp = 0;
         int[] remaining = sack.getRemaining();
 
-        assertNotNull(sack.pop());
-        assertNotNull(sack.pop().getColor());
-        assertTrue(Arrays.stream(TileColor.values()).collect(Collectors.toList()).contains(sack.pop().getColor()));
+        Tile tile = sack.pop();
+
+        assertNotNull(tile);
+        assertNotNull(tile.getColor());
+        assertTrue(Arrays.stream(TileColor.values()).collect(Collectors.toList()).contains(tile.getColor()));
 
         for(int i = 0; i < remaining.length; i++){
             tmp += remaining[i];

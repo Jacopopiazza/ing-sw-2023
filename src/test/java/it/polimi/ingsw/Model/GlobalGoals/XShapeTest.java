@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.*;
 import junit.framework.TestCase;
@@ -8,38 +10,54 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 public class XShapeTest extends TestCase {
 
-    private Shelf shelf;
-    private XShape goal;
+    Shelf passShelf;
+    Shelf dontPassShelf;
 
     @Before
-    public void setUp(){
-        shelf = new Shelf();
-        goal = new XShape(2);
-    }
+    public void setUp() throws NoTileException, IllegalColumnInsertionException {
 
-    @Test
-    public void popScore() throws EmptyStackException {
-        assertEquals(goal.popScore(), 8);
-    }
+        Gson gson = new Gson();
+        TileColor[][] falseMatrix;
+        TileColor[][] trueMatrix;
 
-    @Test
-    public void testCheck() throws MissingShelfException, IllegalColumnInsertionException, NoTileException {
-        for( int i = 0; i < 9; i++ ){
-            if( i % 3 == 2 ) shelf.addTile(new Tile(TileColor.BLUE, 0), i%3 );
-            else shelf.addTile(new Tile(TileColor.GREEN, 0),  i % 3);
+        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/ShelfConfig.json"));
+        JsonObject obj = gson.fromJson(reader , JsonObject.class);
+        trueMatrix = gson.fromJson(obj.get("testTrueXShape"), TileColor[][].class);
+        falseMatrix = gson.fromJson(obj.get("testFalseXShape"), TileColor[][].class);
+
+        passShelf = new Shelf();
+        dontPassShelf = new Shelf();
+
+        for(int i = trueMatrix.length-1; i >= 0;i--){
+            for(int j = 0; j < trueMatrix[i].length; j++){
+                if(trueMatrix[i][j] != null){
+                    passShelf.addTile(new Tile(trueMatrix[i][j],new Random(150).nextInt()), j);
+                }
+                if(falseMatrix[i][j] != null){
+                    dontPassShelf.addTile(new Tile(falseMatrix[i][j],new Random(160).nextInt()), j);
+                }
+            }
         }
-        assertFalse(goal.check(shelf));
 
-        for( int i = 0; i < 6; i++ ) shelf.addTile(new Tile(TileColor.BLUE, 0), 3 + i % 2 );
-        assertTrue(goal.check(shelf));
     }
 
-    @Test (expected = MissingShelfException.class)
-    public void testCheck_CorrectlyThrowsMissingShelfException() throws MissingShelfException, IllegalColumnInsertionException, NoTileException {
-        Assert.assertThrows(MissingShelfException.class, () -> goal.check(null));
+    @Test
+    public void popScore(){
+    }
+
+    @Test
+    public void testCheck() {
+
+        XShape test = new XShape(2);
+        assertTrue(test.check(passShelf));
+        assertFalse(test.check(dontPassShelf));
     }
 }

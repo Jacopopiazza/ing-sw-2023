@@ -75,7 +75,7 @@ public class GameBoard {
                 notYet = notYet || ( board.containsKey(down) && isPickable(down) );
                 notYet = notYet || ( board.containsKey(right) && isPickable(right) );
                 notYet = notYet || ( board.containsKey(left) && isPickable(left) );
-                if ( notYet  ) return false;
+                if ( notYet ) return false;
             }
         }
         return true;

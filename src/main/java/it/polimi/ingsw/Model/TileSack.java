@@ -18,6 +18,9 @@ public class TileSack {
     // Generate a Tile with a random color and pops it from the sack
     public Tile pop(){
         int random_color_index = 0;
+
+        if(Arrays.stream(remaining).sum() == 0) return null;
+
         // Generate a number from 0 to 'remaining Tiles' - 1
         random_color_index = new Random().nextInt(Arrays.stream(remaining).sum());
 

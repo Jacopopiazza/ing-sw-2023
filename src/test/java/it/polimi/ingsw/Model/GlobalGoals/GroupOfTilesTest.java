@@ -17,10 +17,12 @@ import java.util.Random;
 
 import static org.junit.Assert.*;
 
-public class FourTilesTest extends TestCase {
+public class GroupOfTilesTest extends TestCase {
 
-    Shelf passShelf;
-    Shelf dontPassShelf;
+    Shelf passShelfFour;
+    Shelf dontPassShelfFour;
+    Shelf passShelfTwo;
+    Shelf dontPassShelfTwo;
 
     @Before
     public void setUp() throws NoTileException, IllegalColumnInsertionException {
@@ -34,16 +36,33 @@ public class FourTilesTest extends TestCase {
         trueMatrix = gson.fromJson(obj.get("testTrueFourTiles"), TileColor[][].class);
         falseMatrix = gson.fromJson(obj.get("testFalseFourTiles"), TileColor[][].class);
 
-        passShelf = new Shelf();
-        dontPassShelf = new Shelf();
+        passShelfFour = new Shelf();
+        dontPassShelfFour = new Shelf();
 
         for(int i = trueMatrix.length-1; i >= 0;i--){
             for(int j = 0; j < trueMatrix[i].length; j++){
                 if(trueMatrix[i][j] != null){
-                    passShelf.addTile(new Tile(trueMatrix[i][j],new Random(150).nextInt()), j);
+                    passShelfFour.addTile(new Tile(trueMatrix[i][j],new Random(150).nextInt()), j);
                 }
                 if(falseMatrix[i][j] != null){
-                    dontPassShelf.addTile(new Tile(falseMatrix[i][j],new Random(160).nextInt()), j);
+                    dontPassShelfFour.addTile(new Tile(falseMatrix[i][j],new Random(160).nextInt()), j);
+                }
+            }
+        }
+
+        trueMatrix = gson.fromJson(obj.get("testTrueTwoTiles"), TileColor[][].class);
+        falseMatrix = gson.fromJson(obj.get("testFalseTwoTiles"), TileColor[][].class);
+
+        passShelfTwo = new Shelf();
+        dontPassShelfTwo = new Shelf();
+
+        for(int i = trueMatrix.length-1; i >= 0;i--){
+            for(int j = 0; j < trueMatrix[i].length; j++){
+                if(trueMatrix[i][j] != null){
+                    passShelfTwo.addTile(new Tile(trueMatrix[i][j],new Random(150).nextInt()), j);
+                }
+                if(falseMatrix[i][j] != null){
+                    dontPassShelfTwo.addTile(new Tile(falseMatrix[i][j],new Random(160).nextInt()), j);
                 }
             }
         }
@@ -56,8 +75,11 @@ public class FourTilesTest extends TestCase {
     @Test
     public void testCheck() {
 
-        FourTiles test = new FourTiles(2);
-        assertTrue(test.check(passShelf));
-        assertFalse(test.check(dontPassShelf));
+        GroupOfTiles test = new GroupOfTiles(2,4,4);
+        assertTrue(test.check(passShelfFour));
+        assertFalse(test.check(dontPassShelfFour));
+        test = new GroupOfTiles(2,2,6);
+        assertTrue(test.check(passShelfTwo));
+        assertFalse(test.check(dontPassShelfTwo));
     }
 }

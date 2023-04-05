@@ -50,10 +50,10 @@ public abstract class GlobalGoal implements Cloneable {
         goals.add(new EightTiles(people));
         goals.add(new EqualColumns(people));
         goals.add(new EqualLines(people));
-        goals.add(new FourTiles(people));
+        goals.add(new GroupOfTiles(people,4,4));
         goals.add(new Square(people));
         goals.add(new Stair(people));
-        goals.add(new TwoTiles(people));
+        goals.add(new GroupOfTiles(people,2,6));
         goals.add(new XShape(people));
         return goals;
     }

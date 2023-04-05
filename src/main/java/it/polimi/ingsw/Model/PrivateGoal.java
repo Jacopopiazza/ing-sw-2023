@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Model;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
@@ -27,8 +29,16 @@ public final class PrivateGoal {
 
         Gson gson = new Gson();
         Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/PrivateGoals.json"));
-        Type listOfMyClassObject = new TypeToken<ArrayList<Coordinates[]>>(){}.getType();
-        List<Coordinates[]> allPrivateGoals = gson.fromJson(reader, listOfMyClassObject);
+
+        JsonArray baseArray = gson.fromJson(reader, JsonArray.class);
+        List<Coordinates[]> allPrivateGoals = new ArrayList<Coordinates[]>();
+
+        for (JsonElement jsonPrivateGaol : baseArray) {
+            JsonArray prvGoal = jsonPrivateGaol.getAsJsonArray();
+            Coordinates[] coords = gson.fromJson(prvGoal, Coordinates[].class);
+            allPrivateGoals.add(coords);
+        }
+
         PrivateGoal[] retValue = new PrivateGoal[people];
 
         Collections.shuffle(allPrivateGoals);

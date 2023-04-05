@@ -17,12 +17,12 @@ public class TileTest extends TestCase {
     }
 
     @Test
-    public void getColor() {
+    public void testGetColor() {
         assertEquals(tile.getColor(), TileColor.BLUE);
     }
 
     @Test
-    public void getId() {
+    public void testGetId() {
         assertEquals(tile.getId(), 0);
     }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,20 +81,18 @@ public class PrivateGoalTest {
 
             if(lastColumn != column) {
                 lastColumn = column;
-                lastRow = 0;
+                lastRow = Config.getInstance().getShelfRows()-1;
             }
             else{
-                lastRow += 1;
+                lastRow -= 1;
             }
             //Add casual tiles of casual color to reach the right row
-            for(int i = lastRow; i < row;i++){
+            for(int i = lastRow; i > row;i--){
                 shelfToTest.addTile(new Tile(TileColor.BLUE, new Random(120).nextInt()),column);
             }
             //Add current tile of the correct color in the correct row
             shelfToTest.addTile(new Tile(map.get(c), new Random(120).nextInt()), column);
             lastRow = row;
-
-
 
         }
 

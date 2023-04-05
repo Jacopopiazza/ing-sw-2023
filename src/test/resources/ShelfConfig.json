@@ -263,7 +263,7 @@
       "WHITE"
     ]
   ],
-  "testTrueDifferentLines": [
+  "testTrueDifferentRows": [
     [
       "BLUE",
       "BLUE",
@@ -307,7 +307,7 @@
       "WHITE"
     ]
   ],
-  "testFalseDifferentLines" : [
+  "testFalseDifferentRows" : [
     [
       "BLUE",
       "WHITE",
@@ -527,7 +527,7 @@
       "CYAN"
     ]
   ],
-  "testTrueEqualLines" : [
+  "testTrueEqualRows" : [
     [
       "BLUE",
       "WHITE",
@@ -571,7 +571,7 @@
       "CYAN"
     ]
   ],
-  "testFalseEqualLines": [
+  "testFalseEqualRows": [
     [
       "BLUE",
       "FUCHSIA",

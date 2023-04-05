@@ -45,10 +45,10 @@ public abstract class GlobalGoal implements Cloneable {
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
         goals.add(new Angles(people));
         goals.add(new Diagonal(people));
-        goals.add(new DifferentColumns(people));
+        goals.add(new Columns(2, false, 2, Shelf.getRows()));
         goals.add(new DifferentLines(people));
         goals.add(new EightTiles(people));
-        goals.add(new EqualColumns(people));
+        goals.add(new Columns(2, true, 3, 3));
         goals.add(new EqualLines(people));
         goals.add(new GroupOfTiles(people,4,4));
         goals.add(new Square(people));

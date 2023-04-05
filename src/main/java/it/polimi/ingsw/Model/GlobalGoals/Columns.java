@@ -5,9 +5,17 @@ import it.polimi.ingsw.Exceptions.*;
 
 import java.util.HashSet;
 
-public class EqualColumns extends GlobalGoal {
-    public EqualColumns(int people) throws InvalidNumberOfPlayersException {
+public class Columns extends GlobalGoal {
+
+    private final boolean equal;
+    private final int numOfColumns;
+    private final int differentTilesPerColumn;
+
+    public Columns(int people, boolean equal, int numOfColumns, int differentTilesPerColumn) throws InvalidNumberOfPlayersException {
         super(people);
+        this.equal=equal;
+        this.numOfColumns=numOfColumns;
+        this.differentTilesPerColumn=differentTilesPerColumn;
     }
 
     @Override
@@ -18,8 +26,6 @@ public class EqualColumns extends GlobalGoal {
 
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
-        int numOfEqualColumns = 3;
-        int differentTilesPerColumn = 3;
         HashSet<TileColor> foundColors;
         int count=0;
 
@@ -28,8 +34,11 @@ public class EqualColumns extends GlobalGoal {
             for( int i = 0; i<r; i++ ){
                 if( s.getTile(new Coordinates(i,j)) != null ) foundColors.add(s.getTile(new Coordinates(i,j)).getColor());
             }
-            if( foundColors.size() <= differentTilesPerColumn ){
-                if( ++count == numOfEqualColumns ) return true;
+            if( equal && foundColors.size() <= differentTilesPerColumn ){
+                if( ++count == numOfColumns ) return true;
+            }
+            if( !equal && foundColors.size() >= differentTilesPerColumn ){
+                if( ++count == numOfColumns ) return true;
             }
         }
         return false;

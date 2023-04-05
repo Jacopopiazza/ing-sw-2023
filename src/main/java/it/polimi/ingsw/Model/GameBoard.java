@@ -26,6 +26,9 @@ public class GameBoard {
         JsonArray array;
 
         array = gson.fromJson(reader, JsonArray.class);
+
+        this.board = new HashMap<Coordinates,Tile>();
+
         for( JsonElement elem : array ){
             JsonObject obj = (JsonObject) elem.getAsJsonObject();
 

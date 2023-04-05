@@ -64,12 +64,15 @@ public class GameBoardTest{
         Assert.assertTrue(coordinatesSetToTest.containsAll(coordinatesSet));
 
         // Is this necessary?
-        Coordinates c;
+
         for(int i = 0; i < 9; i++){
             for(int k = 0; k < 9; k++){
-                c = new Coordinates(i, k);
+                Coordinates c = new Coordinates(i, k);
                 if(!coordinatesSet.contains(c))
-                    Assert.assertNull(gameBoard.getTile(c));
+                    //Assert.assertNull(gameBoard.getTile(c));
+                    Assert.assertThrows(InvalidCoordinatesForCurrentGameException.class, () -> {
+                        gameBoard.getTile(c);
+                    });
             }
         }
     }
@@ -82,7 +85,7 @@ public class GameBoardTest{
         Assert.assertEquals(gameBoard.getTile(c), t);
     }
 
-    @Test (expected = InvalidCoordinatesForCurrentGameException.class)
+    @Test
     public void testSetTile_ThrowsInvalidCoordinatesForCurrentGameException() {
         Coordinates coordToFail = new Coordinates(0, 0);
         Tile t = new Tile(TileColor.CYAN, 0);
@@ -99,9 +102,9 @@ public class GameBoardTest{
         // Need to know how the board is composed
     }
 
-    @Test (expected = MissingShelfException.class)
+    @Test
     public void testCheckBoardGoal_ThrowsMissingShelfException(){
-        Assert.assertThrows(MissingShelfException.class, () -> GameBoard.checkBoardGoal(null));
+        Assert.assertThrows(MissingShelfException.class, () -> { GameBoard.checkBoardGoal(null); });
     }
 
     @Test

@@ -1,11 +1,11 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.lang.String;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Random;
 

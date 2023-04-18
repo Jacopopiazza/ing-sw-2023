@@ -2,18 +2,17 @@ package it.polimi.ingsw.Model.GlobalGoals;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.Exceptions.EmptyStackException;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.Tile;
 import it.polimi.ingsw.Model.TileColor;
-import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.EmptyStackException;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -52,9 +51,18 @@ public class EightTilesTest {
 
     @Test
     public void testPopScore() throws EmptyStackException {
-
         EightTiles goal = new EightTiles(4);
         assertEquals(goal.popScore(), 8);
+    }
+
+    @Test
+    public void testPopScore_ThrowsEmptyStackException() throws EmptyStackException {
+        EightTiles goal = new EightTiles(4);
+        goal.popScore();
+        goal.popScore();
+        goal.popScore();
+        goal.popScore();
+        assertThrows(EmptyStackException.class, () -> goal.popScore());
     }
 
     @Test

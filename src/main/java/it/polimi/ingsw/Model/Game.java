@@ -57,12 +57,14 @@ public class Game {
 
     public boolean checkGlobalGoals() throws EmptyStackException, NonValidScoreException, InvalidIndexException, MissingShelfException {
         boolean retValue = false;
+        int token;
         int currentScore = players[currentPlayer].getScore();
 
         for( int i = 0; i < goals.length; i++ ){
-            if( !players[currentPlayer].getAccomplishedGlobalGoals()[i] && goals[i].check(players[currentPlayer].getShelf()) ){
-                players[currentPlayer].setAccomplishedGlobalGoal(i);
-                currentScore += goals[i].popScore();
+            if( ( players[currentPlayer].getAccomplishedGlobalGoals()[i] == 0 ) && goals[i].check(players[currentPlayer].getShelf()) ){
+                token = goals[i].popScore();
+                players[currentPlayer].setAccomplishedGlobalGoal(i, token);
+                currentScore += token;
                 retValue = true;
             }
 

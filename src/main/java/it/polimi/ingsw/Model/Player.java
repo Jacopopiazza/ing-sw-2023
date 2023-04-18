@@ -7,7 +7,7 @@ public class Player{
     private Shelf shelf;
     private PrivateGoal goal;
     private final String nickname;
-    private boolean[] accomplishedGlobalGoals;
+    private int[] accomplishedGlobalGoals;
     private boolean active;
     private boolean winner;
 
@@ -16,7 +16,7 @@ public class Player{
         score = 0;
         shelf = new Shelf();
         goal = privateGoal;
-        accomplishedGlobalGoals = new boolean[]{false, false};
+        accomplishedGlobalGoals = new int[]{0, 0};
         winner = false;
         active = true;
     }
@@ -34,13 +34,13 @@ public class Player{
         return nickname;
     }
 
-    public boolean[] getAccomplishedGlobalGoals() {
+    public int[] getAccomplishedGlobalGoals() {
         return this.accomplishedGlobalGoals.clone();
     }
 
-    public void setAccomplishedGlobalGoal(int i) throws InvalidIndexException {
+    public void setAccomplishedGlobalGoal( int i, int token ) throws InvalidIndexException {
         if ( ( i < 0 ) || ( i >= this.accomplishedGlobalGoals.length ) ) throw new InvalidIndexException();
-        this.accomplishedGlobalGoals[i] = true;
+        this.accomplishedGlobalGoals[i] = token;
     }
 
     public int getScore() {

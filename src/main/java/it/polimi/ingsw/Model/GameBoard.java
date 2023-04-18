@@ -120,7 +120,7 @@ public class GameBoard {
         return totalScore;
     }
 
-    private static int checkFromThisTile(Shelf s,Coordinates coord, boolean[][] checked){
+    private static int checkFromThisTile(Shelf s, Coordinates coord, boolean[][] checked){
         Tile t = s.getTile(coord);
         int r = Shelf.getRows();
         int c = Shelf.getColumns();

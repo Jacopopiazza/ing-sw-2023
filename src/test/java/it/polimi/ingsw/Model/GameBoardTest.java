@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Exceptions.MissingShelfException;
 import it.polimi.ingsw.Model.Utilities.CoordinatesParser;
+import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 
-public class GameBoardTest{
+public class GameBoardTest extends TestCase {
 
     GameBoard gameBoard;
 
@@ -93,8 +94,18 @@ public class GameBoardTest{
     }
 
     @Test
-    public void testToRefill(){
-        // Need to know how the board is composed
+    public void testToRefill() throws InvalidCoordinatesForCurrentGameException {
+        assertTrue(gameBoard.toRefill());
+        for ( Coordinates c: gameBoard.getCoords() ) {
+            gameBoard.setTile(c,new Tile(TileColor.BLUE,0));
+        }
+        assertFalse(gameBoard.toRefill());
+        boolean flag = true;
+        for ( Coordinates c: gameBoard.getCoords() ) {
+            if(!flag) gameBoard.setTile(c,null);
+            if(flag) flag = false;
+        }
+        assertTrue(gameBoard.toRefill());
     }
 
     @Test

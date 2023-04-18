@@ -61,24 +61,31 @@ public class GameBoard {
         if( !board.containsKey(c) ){
             throw new InvalidCoordinatesForCurrentGameException();
         }
-        board.put(c, t.clone());
+        board.put(c, ( t == null ) ? null : t.clone() );
     }
 
-    public boolean toRefill() throws InvalidCoordinatesForCurrentGameException {
+    public boolean toRefill() {
         Coordinates up, down, right, left;
         boolean notYet;
         for( Coordinates c : board.keySet() ){
-            if( isPickable(c) ) {
-                up = new Coordinates(c.getX(), c.getY() - 1);
-                down = new Coordinates(c.getX(), c.getY() + 1);
-                right = new Coordinates(c.getX() + 1, c.getY());
-                left = new Coordinates(c.getX() - 1, c.getY());
-                notYet = false;
-                notYet = notYet || ( board.containsKey(up) && isPickable(up) );
-                notYet = notYet || ( board.containsKey(down) && isPickable(down) );
-                notYet = notYet || ( board.containsKey(right) && isPickable(right) );
-                notYet = notYet || ( board.containsKey(left) && isPickable(left) );
-                if ( notYet ) return false;
+            try {
+                if (isPickable(c)) {
+                    up = new Coordinates(c.getX(), c.getY() - 1);
+                    down = new Coordinates(c.getX(), c.getY() + 1);
+                    right = new Coordinates(c.getX() + 1, c.getY());
+                    left = new Coordinates(c.getX() - 1, c.getY());
+                    notYet = false;
+                    notYet = notYet || (board.containsKey(up) && isPickable(up));
+                    notYet = notYet || (board.containsKey(down) && isPickable(down));
+                    notYet = notYet || (board.containsKey(right) && isPickable(right));
+                    notYet = notYet || (board.containsKey(left) && isPickable(left));
+                    if (notYet) return false;
+                }
+            }
+            //this exception should never be caught
+            catch (InvalidCoordinatesForCurrentGameException ex){
+                System.out.println("Something went wrong");
+                return false;
             }
         }
         return true;

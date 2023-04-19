@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Config {
@@ -43,7 +44,9 @@ public class Config {
     }
 
     public BoardGoalScore[] getSortedBoardGoals() {
-        return (BoardGoalScore[]) Arrays.stream(boardGoals).sorted((t1,t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList()).toArray();
+        //return (BoardGoalScore[]) Arrays.stream(boardGoals).sorted((t1,t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList()).toArray();
+        List<BoardGoalScore> l = Arrays.stream(boardGoals).sorted((t1, t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList());
+        return l.toArray(new BoardGoalScore[l.size()]);
     }
 
     public int getMaxNumberOfPlayers() {

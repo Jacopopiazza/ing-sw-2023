@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Exceptions.MissingShelfException;
+import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Model.Utilities.CoordinatesParser;
 import junit.framework.TestCase;
 import org.junit.Assert;
@@ -22,7 +24,6 @@ import java.util.Set;
 
 
 public class GameBoardTest extends TestCase {
-
     GameBoard gameBoard;
 
     @Before
@@ -119,7 +120,13 @@ public class GameBoardTest extends TestCase {
     }
 
     @Test
-    public void testCheckBoardGoal() {
-
+    public void testCheckBoardGoal() throws IllegalColumnInsertionException, NoTileException {
+        Shelf s = new Shelf();
+        for( int i=0; i<Shelf.getColumns(); i++ ){
+            for( int j=0; j<Shelf.getRows(); j++ ) {
+                s.addTile(new Tile(TileColor.values()[i], 0), i);
+            }
+        };
+        assertEquals(40, GameBoard.checkBoardGoal(s) );
     }
 }

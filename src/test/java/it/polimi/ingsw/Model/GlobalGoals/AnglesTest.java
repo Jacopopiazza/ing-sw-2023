@@ -18,13 +18,11 @@ import java.util.Random;
 import static org.junit.Assert.*;
 
 public class AnglesTest extends TestCase {
-
     Shelf passShelf;
     Shelf dontPassShelf;
 
     @Before
     public void setUp() throws NoTileException, IllegalColumnInsertionException {
-
         Gson gson = new Gson();
         TileColor[][] falseMatrix;
         TileColor[][] trueMatrix;
@@ -56,7 +54,6 @@ public class AnglesTest extends TestCase {
 
     @Test
     public void testCheck() {
-
         Angles angles = new Angles(2);
         assertTrue(angles.check(passShelf));
         assertFalse(angles.check(dontPassShelf));

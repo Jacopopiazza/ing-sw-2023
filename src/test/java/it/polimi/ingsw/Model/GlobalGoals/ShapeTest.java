@@ -77,26 +77,28 @@ public class ShapeTest extends TestCase {
     @Test
     public void testCheck() {
 
-        List<List<Coordinates>> diagonal= new ArrayList<List<Coordinates>>();
+        List<List<Coordinates>> diagonal = new ArrayList<List<Coordinates>>();
         List<Coordinates> temp = new ArrayList<Coordinates>();
-        for(int i=0;i<5;i++) temp.add(new Coordinates(i,i));
+        for( int i = 0; i<5; i++ ) temp.add(new Coordinates(i, i));
         diagonal.add(temp);
         temp = new ArrayList<Coordinates>();
-        for(int i=0;i<5;i++) temp.add(new Coordinates(4-i,i));
+        for( int i = 0; i<5; i++ ) temp.add(new Coordinates(4-i, i));
         diagonal.add(temp);
 
-        Shape test = new Shape(2,diagonal);
+        Shape test = new Shape(2, diagonal);
+
         assertTrue(test.check(passShelfDiagonal));
         assertFalse(test.check(dontPassShelfDiagonal));
 
         List<List<Coordinates>> xShape= new ArrayList<List<Coordinates>>();
         temp = new ArrayList<Coordinates>();
-        for(int i=0;i<3;i++) temp.add(new Coordinates(i,i));
-        temp.add(new Coordinates(0,2));
-        temp.add(new Coordinates(2,0));
-        diagonal.add(temp);
+        for( int i = 0; i<3; i++ ) temp.add(new Coordinates(i, i));
+        temp.add(new Coordinates(0, 2));
+        temp.add(new Coordinates(2, 0));
+        xShape.add(temp);
 
         test = new Shape(2,xShape);
+
         assertTrue(test.check(passShelfXShape));
         assertFalse(test.check(dontPassShelfXShape));
     }

@@ -68,7 +68,7 @@ public abstract class GlobalGoal implements Cloneable {
         for(int i=0;i<3;i++) temp.add(new Coordinates(i,i));
         temp.add(new Coordinates(0,2));
         temp.add(new Coordinates(2,0));
-        diagonal.add(temp);
+        xShape.add(temp);
 
         goals.add(new Shape(people,xShape));
         return goals;

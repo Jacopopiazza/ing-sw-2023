@@ -36,31 +36,32 @@ public class Shape extends GlobalGoal {
         int r = Shelf.getRows();
         boolean found;
         TileColor col;
-        int x,y;
+        int x, y;
 
-        for(int i=0; i<r; i++){
-            for(int j=0;j<c;j++){
-                for(List<Coordinates> shape: shapes){
+        for( int i=0; i<r; i++ ){
+            for( int j=0; j<c; j++ ){
+                for( List<Coordinates> shape : shapes ){
                     found = true;
-                    x=shape.get(0).getX();
-                    y=shape.get(0).getY();
-
-                    if(i+x<r && j+y<c){
-                        col=s.getTile(new Coordinates(i+x,j+y)).getColor();
-                        for(Coordinates coord: shape){
-                            x=coord.getX();
-                            y=coord.getY();
-                            if(i+x>=r || j+y>=c || !s.getTile(new Coordinates(i+x,j+y)).getColor().equals(col)) found = false;
-                            if(!found) break;
+                    // if the first of the shape's tiles is inside the shelf (it does not need to be the first one)
+                    if( ( i+shape.get(0).getX() < r ) && ( j+shape.get(0).getY() < c ) ){
+                        // get its color
+                        col = s.getTile(new Coordinates(i+shape.get(0).getX(),j+shape.get(0).getY())).getColor();
+                        // and check if every shape's tile is inside the shelf and has the same color
+                        for( Coordinates coord : shape ) {
+                            x = coord.getX();
+                            y = coord.getY();
+                            if ( ( i+x >= r ) || ( j+y >= c ) || !s.getTile(new Coordinates(i+x, j+y)).getColor().equals(col)){
+                                found = false;
+                                break;
+                            }
                         }
                     }
                     else found = false;
 
-                    if(found) return true;
+                    if( found ) return true;
                 }
             }
         }
-
         return false;
     }
 

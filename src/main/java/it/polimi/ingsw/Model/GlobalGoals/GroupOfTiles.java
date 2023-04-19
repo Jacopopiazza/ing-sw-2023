@@ -46,8 +46,8 @@ public class GroupOfTiles extends GlobalGoal {
 
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
-        int i = coord.getX();
-        int j = coord.getY();
+        int i = coord.getROW();
+        int j = coord.getCOL();
         int res=1;
         Tile temp;
 

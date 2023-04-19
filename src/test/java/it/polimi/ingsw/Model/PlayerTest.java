@@ -138,8 +138,8 @@ public class PlayerTest extends TestCase {
             flag = false;
             // for each Coordinate in the PrivateGoal, if present I add such tile (with color TileColor.values()[j])
             for( int j = 0; j < coord.length && !flag; j++ ) {
-                if ( ( coord[j].getY() == i % Shelf.getColumns() ) && ( coord[j].getX() == Shelf.getRows() - 1 - (i / Shelf.getRows()) ) ) {
-                    shelfToTest.addTile(new Tile(TileColor.values()[j], 0), coord[j].getY());
+                if ( ( coord[j].getCOL() == i % Shelf.getColumns() ) && ( coord[j].getROW() == Shelf.getRows() - 1 - (i / Shelf.getRows()) ) ) {
+                    shelfToTest.addTile(new Tile(TileColor.values()[j], 0), coord[j].getCOL());
                     flag = true;
                 }
             }

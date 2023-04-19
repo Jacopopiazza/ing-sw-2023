@@ -70,10 +70,10 @@ public class GameBoard {
         for( Coordinates c : board.keySet() ){
             try {
                 if (isPickable(c)) {
-                    up = new Coordinates(c.getX(), c.getY() - 1);
-                    down = new Coordinates(c.getX(), c.getY() + 1);
-                    right = new Coordinates(c.getX() + 1, c.getY());
-                    left = new Coordinates(c.getX() - 1, c.getY());
+                    up = new Coordinates(c.getROW(), c.getCOL() - 1);
+                    down = new Coordinates(c.getROW(), c.getCOL() + 1);
+                    right = new Coordinates(c.getROW() + 1, c.getCOL());
+                    left = new Coordinates(c.getROW() - 1, c.getCOL());
                     notYet = false;
                     notYet = notYet || (board.containsKey(up) && isPickable(up));
                     notYet = notYet || (board.containsKey(down) && isPickable(down));
@@ -131,8 +131,8 @@ public class GameBoard {
         Tile t = s.getTile(coord);
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
-        int i = coord.getX();
-        int j = coord.getY();
+        int i = coord.getROW();
+        int j = coord.getCOL();
         checked[i][j] = true;
         int res = 1;
         Tile temp;
@@ -172,10 +172,10 @@ public class GameBoard {
         }
 
         Coordinates up, down, right, left;
-        up = new Coordinates(c.getX(), c.getY() - 1);
-        down = new Coordinates(c.getX(), c.getY() + 1);
-        right = new Coordinates(c.getX() + 1, c.getY());
-        left = new Coordinates(c.getX() - 1, c.getY());
+        up = new Coordinates(c.getROW(), c.getCOL() - 1);
+        down = new Coordinates(c.getROW(), c.getCOL() + 1);
+        right = new Coordinates(c.getROW() + 1, c.getCOL());
+        left = new Coordinates(c.getROW() - 1, c.getCOL());
 
         if( board.get(c) == null ) return false;
 

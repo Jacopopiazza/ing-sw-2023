@@ -43,10 +43,10 @@ public class Shelf implements Cloneable{
     }
 
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
-        if( ( c.getX() < 0 ) || ( c.getY() < 0 ) || ( c.getX() >= Shelf.getRows() ) || ( c.getY() >= Shelf.getColumns() ) ){
+        if( ( c.getROW() < 0 ) || ( c.getCOL() < 0 ) || ( c.getROW() >= Shelf.getRows() ) || ( c.getCOL() >= Shelf.getColumns() ) ){
             throw new ColumnOutOfBoundsException();
         }
-        return SHELF[c.getX()][c.getY()];
+        return SHELF[c.getROW()][c.getCOL()];
     }
 
     public boolean isFull(){

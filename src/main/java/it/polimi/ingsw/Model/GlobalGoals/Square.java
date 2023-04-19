@@ -31,7 +31,7 @@ public class Square extends GlobalGoal {
                 if( isASquare && ( firstSquare != null ) ){
                     for( int k = 0; ( k < squareSide ) && isASquare; k++ ){
                         for( int h = 0; ( h < squareSide ) && isASquare; h++ ){
-                            if( coord.equals(new Coordinates(firstSquare.getX()+k, firstSquare.getY()+h)) ) isASquare = false;
+                            if( coord.equals(new Coordinates(firstSquare.getROW()+k, firstSquare.getCOL()+h)) ) isASquare = false;
                         }
                     }
                 }

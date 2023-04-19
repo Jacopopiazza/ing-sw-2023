@@ -10,9 +10,9 @@ public class CoordinatesParser {
     }
 
     public static Coordinates coordinatesParser(JsonElement jsonCoordinates) {
-        int x = jsonCoordinates.getAsJsonObject().get("x").getAsInt();
-        int y = jsonCoordinates.getAsJsonObject().get("y").getAsInt();
+        int r = jsonCoordinates.getAsJsonObject().get("r").getAsInt();
+        int c = jsonCoordinates.getAsJsonObject().get("c").getAsInt();
 
-        return new Coordinates(x,y);
+        return new Coordinates(r,c);
     }
 }

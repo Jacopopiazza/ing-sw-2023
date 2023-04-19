@@ -3,20 +3,20 @@ package it.polimi.ingsw.Model;
 import java.util.Objects;
 
 public class Coordinates {
-    private final int x;
-    private final int y;
+    private final int ROW;
+    private final int COL;
 
-    public Coordinates(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Coordinates(int r, int c) {
+        this.ROW = r;
+        this.COL = c;
     }
 
-    public int getX() {
-        return x;
+    public int getROW() {
+        return ROW;
     }
 
-    public int getY() {
-        return y;
+    public int getCOL() {
+        return COL;
     }
 
     @Override
@@ -26,12 +26,12 @@ public class Coordinates {
         if ( o == null || ( this.getClass() != o.getClass() ) )
             return false;
         Coordinates temp = (Coordinates) o;
-        return ( x == temp.x ) && ( y == temp.y );
+        return ( ROW == temp.ROW ) && ( COL == temp.COL );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(ROW, COL);
     }
 
 }

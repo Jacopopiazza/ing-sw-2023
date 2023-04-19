@@ -32,25 +32,25 @@ public class Shape extends GlobalGoal {
             throw new MissingShelfException();
         }
 
-        int c = Shelf.getColumns();
-        int r = Shelf.getRows();
+        int columns = Shelf.getColumns();
+        int rows = Shelf.getRows();
         boolean found;
-        TileColor col;
-        int x, y;
+        TileColor color;
+        int r, c;
 
-        for( int i=0; i<r; i++ ){
-            for( int j=0; j<c; j++ ){
+        for( int i=0; i<rows; i++ ){
+            for( int j=0; j<columns; j++ ){
                 for( List<Coordinates> shape : shapes ){
                     found = true;
                     // if the first of the shape's tiles is inside the shelf (it does not need to be the first one)
-                    if( ( i+shape.get(0).getX() < r ) && ( j+shape.get(0).getY() < c ) ){
+                    if( ( i+shape.get(0).getROW() < rows ) && ( j+shape.get(0).getCOL() < columns ) ){
                         // get its color
-                        col = s.getTile(new Coordinates(i+shape.get(0).getX(),j+shape.get(0).getY())).getColor();
+                        color = s.getTile(new Coordinates(i+shape.get(0).getROW(),j+shape.get(0).getCOL())).getColor();
                         // and check if every shape's tile is inside the shelf and has the same color
                         for( Coordinates coord : shape ) {
-                            x = coord.getX();
-                            y = coord.getY();
-                            if ( ( i+x >= r ) || ( j+y >= c ) || !s.getTile(new Coordinates(i+x, j+y)).getColor().equals(col)){
+                            r = coord.getROW();
+                            c = coord.getCOL();
+                            if ( ( i+r >= rows ) || ( j+c >= columns ) || !s.getTile(new Coordinates(i+r, j+c)).getColor().equals(color)){
                                 found = false;
                                 break;
                             }

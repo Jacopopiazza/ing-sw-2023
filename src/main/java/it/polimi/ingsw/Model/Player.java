@@ -47,8 +47,8 @@ public class Player{
         return score;
     }
 
-    public void setScore(int s) throws NonValidScoreException {
-        if ( s < 0 ) throw new NonValidScoreException();
+    public void setScore(int s) throws InvalidScoreException {
+        if ( s < 0 ) throw new InvalidScoreException();
         score = s;
     }
 

@@ -84,8 +84,8 @@ public class PlayerTest extends TestCase {
     }
 
     @Test
-    public void testSetScoreNegativeScore() throws NonValidScoreException {
-        Assert.assertThrows(NonValidScoreException.class, () -> p.setScore(-1));
+    public void testSetScoreNegativeScore() throws InvalidScoreException {
+        Assert.assertThrows(InvalidScoreException.class, () -> p.setScore(-1));
     }
 
     @Test

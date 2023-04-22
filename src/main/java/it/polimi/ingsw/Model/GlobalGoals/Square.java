@@ -25,7 +25,7 @@ public class Square extends GlobalGoal {
                 Coordinates coord = new Coordinates(i, j);
                 Tile temp = s.getTile(coord);
                 boolean isASquare = true;
-                //here I will check if there is a Tile at this coordinates and, if this is the case,
+                //here I will check if there is a Tile at [i][j] and, if this is the case,
                 //I will check whether that Tile is not contained in the first found square (if it was already found)
                 if( temp == null ) isASquare = false;
                 if( isASquare && ( firstSquare != null ) ){

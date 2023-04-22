@@ -34,4 +34,8 @@ public class Coordinates {
         return Objects.hash(ROW, COL);
     }
 
+    public Coordinates clone(){
+        return new Coordinates(this.ROW,this.COL);
+    }
+
 }

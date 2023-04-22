@@ -8,7 +8,6 @@ import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Exceptions.MissingShelfException;
 import it.polimi.ingsw.Exceptions.NoTileException;
-import it.polimi.ingsw.Model.Utilities.CoordinatesParser;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,10 +40,9 @@ public class GameBoardTest extends TestCase {
 
         Gson gson = new Gson();
         Reader reader = new InputStreamReader(Objects.requireNonNull(this.getClass().getResourceAsStream("/GameBoard.json")));
-        JsonArray array;
-        int peopleOfCurrentConfig;
-        array = gson.fromJson(reader, JsonArray.class);
+        JsonArray array = gson.fromJson(reader, JsonArray.class);
 
+        int peopleOfCurrentConfig;
         for( JsonElement elem : array ){
             JsonObject obj = elem.getAsJsonObject();
 
@@ -54,9 +52,11 @@ public class GameBoardTest extends TestCase {
 
             JsonArray jsonCells = obj.get("cells").getAsJsonArray();
 
+            int r, c;
             for( JsonElement jsonCell : jsonCells ){
-                Coordinates c = CoordinatesParser.coordinatesParser(jsonCell);
-                coordinatesSetToTest.add(c);
+                r = jsonCell.getAsJsonObject().get("ROW").getAsInt();
+                c = jsonCell.getAsJsonObject().get("COL").getAsInt();
+                coordinatesSetToTest.add(new Coordinates(r,c));
             }
 
         }

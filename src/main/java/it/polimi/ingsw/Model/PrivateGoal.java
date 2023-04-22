@@ -1,14 +1,8 @@
 package it.polimi.ingsw.Model;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
+
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public final class PrivateGoal {
@@ -27,25 +21,13 @@ public final class PrivateGoal {
             throw new InvalidNumberOfPlayersException();
         }
 
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(PrivateGoal.class.getResourceAsStream("/PrivateGoals.json"));
-
-        JsonArray baseArray = gson.fromJson(reader, JsonArray.class);
-        List<Coordinates[]> allPrivateGoals = new ArrayList<Coordinates[]>();
-
-        for (JsonElement jsonPrivateGaol : baseArray) {
-            JsonArray prvGoal = jsonPrivateGaol.getAsJsonArray();
-            Coordinates[] coords = gson.fromJson(prvGoal, Coordinates[].class);
-            allPrivateGoals.add(coords);
-        }
-
         PrivateGoal[] retValue = new PrivateGoal[people];
 
+        List<Coordinates[]> allPrivateGoals = Config.getInstance().getPrivateGoals();
         Collections.shuffle(allPrivateGoals);
 
-        for ( int i = 0; i < people; i++ ) {
+        for ( int i = 0; i < people; i++ )
             retValue[i] = new PrivateGoal(allPrivateGoals.get(i));
-        }
 
         return retValue;
     }
@@ -65,7 +47,7 @@ public final class PrivateGoal {
         Config config = Config.getInstance();
         final int numOfTiles = numOfCorrectTiles;
 
-        return Arrays.stream(config.getPrivateGoals()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.score()).findFirst().getAsInt();
+        return Arrays.stream(config.getPrivateGoalsScores()).filter(g -> g.correctPosition() == numOfTiles).mapToInt(g -> g.score()).findFirst().getAsInt();
     }
 
 }

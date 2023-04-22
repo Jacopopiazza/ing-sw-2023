@@ -1,10 +1,18 @@
 package it.polimi.ingsw.Model.Utilities;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.Model.Coordinates;
+import it.polimi.ingsw.Model.PrivateGoal;
+import it.polimi.ingsw.Model.Tile;
+
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,25 +26,62 @@ public class Config {
     private final int shelfRows;
     private final int shelfColumns;
     private final int numOfTilesPerColor;
-    private final PrivateGoalScore[] privateGoals;
+    private final JsonArray gameBoardJsonCoordinatesInfo;
+    private final List<Coordinates[]> privateGoals;
+    private final PrivateGoalScore[] privateGoalsScores;
     private final GlobalGoalScore[] globalGoals;
     private final BoardGoalScore[] boardGoals;
 
     private Config(){
         Gson gson = new Gson();
-        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/config.json"));
-        JsonObject jsonConfig = gson.fromJson(reader, JsonObject.class);
-        privateGoals = gson.fromJson(jsonConfig.get("privateGoals"), PrivateGoalScore[].class);
+        Reader readerConfig = new InputStreamReader(this.getClass().getResourceAsStream("/Config.json"));
+        JsonObject jsonConfig = gson.fromJson(readerConfig, JsonObject.class);
+        privateGoalsScores = gson.fromJson(jsonConfig.get("privateGoalsScores"), PrivateGoalScore[].class);
         globalGoals = gson.fromJson(jsonConfig.get("globalGoals"), GlobalGoalScore[].class);
         boardGoals = gson.fromJson(jsonConfig.get("boardGoals"), BoardGoalScore[].class);
         shelfRows = jsonConfig.get("shelfRows").getAsInt();
         shelfColumns = jsonConfig.get("shelfColumns").getAsInt();
         numOfTilesPerColor = jsonConfig.get("numOfTilesPerColor").getAsInt();
         maxNumberOfPlayers = jsonConfig.get("maxNumberOfPlayers").getAsInt();
+
+        Reader readerPG = new InputStreamReader(this.getClass().getResourceAsStream("/PrivateGoals.json"));
+        JsonArray baseArray = gson.fromJson(readerPG, JsonArray.class);
+        privateGoals = new ArrayList<Coordinates[]>();
+        JsonArray prvGoal;
+        for (JsonElement jsonPrivateGoal : baseArray) {
+            prvGoal = jsonPrivateGoal.getAsJsonArray();
+            Coordinates[] coords = gson.fromJson(prvGoal, Coordinates[].class);
+            privateGoals.add(coords);
+        }
+
+        Reader readerGB = new InputStreamReader(this.getClass().getResourceAsStream("/GameBoard.json"));
+        gameBoardJsonCoordinatesInfo = gson.fromJson(readerGB, JsonArray.class);
     }
 
-    public PrivateGoalScore[] getPrivateGoals() {
+    public PrivateGoalScore[] getPrivateGoalsScores() {
+        return privateGoalsScores;
+    }
+
+    public List<Coordinates[]> getPrivateGoals(){
         return privateGoals;
+    }
+
+    public List<Coordinates> getGameBoardCoordinates(int people){
+        int currPeople;
+        List<Coordinates> gameBoardCoordinates = new ArrayList<>();
+        for( JsonElement elem : gameBoardJsonCoordinatesInfo ){
+            JsonObject obj = (JsonObject) elem.getAsJsonObject();
+            currPeople = obj.get("people").getAsInt();
+            if( currPeople > people ) continue;
+            JsonArray jsonCells = obj.get("cells").getAsJsonArray();
+            int r, c;
+            for( JsonElement jsonCell : jsonCells ){
+                r = jsonCell.getAsJsonObject().get("ROW").getAsInt();
+                c = jsonCell.getAsJsonObject().get("COL").getAsInt();
+                gameBoardCoordinates.add(new Coordinates(r,c));
+            }
+        }
+        return gameBoardCoordinates;
     }
 
     public GlobalGoalScore[] getUnsortedGlobalGoals() {

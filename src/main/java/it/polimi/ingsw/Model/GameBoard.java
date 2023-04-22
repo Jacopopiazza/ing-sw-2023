@@ -1,15 +1,8 @@
 package it.polimi.ingsw.Model;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.Utilities.CoordinatesParser;
 import it.polimi.ingsw.Model.Utilities.Config;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 
 public class GameBoard {
@@ -20,30 +13,10 @@ public class GameBoard {
             throw new InvalidNumberOfPlayersException();
         }
 
-        Gson gson = new Gson();
-        Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/GameBoard.json"));
-        int peopleOfCurrentConfig;
-        JsonArray array;
-
-        array = gson.fromJson(reader, JsonArray.class);
-
-        this.board = new HashMap<Coordinates,Tile>();
-
-        for( JsonElement elem : array ){
-            JsonObject obj = (JsonObject) elem.getAsJsonObject();
-
-            peopleOfCurrentConfig = obj.get("people").getAsInt();
-
-            if( peopleOfCurrentConfig > people ) continue;
-
-            JsonArray jsonCells = obj.get("cells").getAsJsonArray();
-
-            for( JsonElement jsonCell : jsonCells ){
-                Coordinates c = CoordinatesParser.coordinatesParser(jsonCell);
-                this.board.put(c, null);
-            }
-
-        }
+        board = new HashMap<>();
+        List<Coordinates> a = Config.getInstance().getGameBoardCoordinates(people);
+        for( Coordinates coords : a )
+            board.put(coords.clone(), null);
     }
 
     public Set<Coordinates> getCoords(){

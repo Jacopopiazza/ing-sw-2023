@@ -4,7 +4,7 @@
   "shelfColumns" : 5,
   "numOfTilesPerColor": 22,
 
-  "privateGoals" : [
+  "privateGoalsScores" : [
     {"correctPosition": 0, "score":  0},
     {"correctPosition": 1, "score":  1},
     {"correctPosition": 2, "score":  2},

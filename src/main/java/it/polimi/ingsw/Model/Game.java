@@ -4,10 +4,7 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.lang.String;
-import java.util.Collections;
-import java.util.EmptyStackException;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Game {
     private final GameBoard board;
@@ -55,7 +52,7 @@ public class Game {
         return players[p];
     }
 
-    public boolean checkGlobalGoals() throws EmptyStackException, NonValidScoreException, InvalidIndexException, MissingShelfException {
+    public boolean checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException {
         boolean retValue = false;
         int token;
         int currentScore = players[currentPlayer].getScore();
@@ -80,6 +77,34 @@ public class Game {
 
     public GameBoard getGameBoard(){
         return board;
+    }
+
+    public boolean refillGameBoard(){
+        if( !this.board.toRefill() )
+            return false;
+
+        boolean noTileAdded = true;
+        int remain[] = new int[TileColor.values().length];
+
+        // For each Coordinate in the board
+        for( Coordinates c : this.board.getCoords() ){
+            // Check if the sack is empty
+            if( ( Arrays.stream(this.sack.getRemaining()).sum() == 0 ) && noTileAdded )
+                return false;
+            else if( Arrays.stream(this.sack.getRemaining()).sum() == 0 )
+                break;
+
+            // Add a new Tile from the sack to the board
+            try{
+                if( this.board.getTile(c) == null ) {
+                    this.board.setTile(c, this.sack.pop());
+                    if( noTileAdded ) noTileAdded = false;
+                }
+            }
+            catch( InvalidCoordinatesForCurrentGameException e ){}
+        }
+        // at least one Tile was added
+        return true;
     }
 
     private GlobalGoal[] pickTwoGlobalGoals() throws InvalidNumberOfPlayersException {

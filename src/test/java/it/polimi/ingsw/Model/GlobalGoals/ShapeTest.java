@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -77,27 +78,16 @@ public class ShapeTest extends TestCase {
     @Test
     public void testCheck() {
 
-        List<List<Coordinates>> diagonal = new ArrayList<List<Coordinates>>();
-        List<Coordinates> temp = new ArrayList<Coordinates>();
-        for( int i = 0; i<5; i++ ) temp.add(new Coordinates(i, i));
-        diagonal.add(temp);
-        temp = new ArrayList<Coordinates>();
-        for( int i = 0; i<5; i++ ) temp.add(new Coordinates(4-i, i));
-        diagonal.add(temp);
 
-        Shape test = new Shape(2, diagonal);
+
+        Shape test = new Shape(2, Config.getInstance().getDiagonalsFromJSON());
 
         assertTrue(test.check(passShelfDiagonal));
         assertFalse(test.check(dontPassShelfDiagonal));
 
-        List<List<Coordinates>> xShape= new ArrayList<List<Coordinates>>();
-        temp = new ArrayList<Coordinates>();
-        for( int i = 0; i<3; i++ ) temp.add(new Coordinates(i, i));
-        temp.add(new Coordinates(0, 2));
-        temp.add(new Coordinates(2, 0));
-        xShape.add(temp);
 
-        test = new Shape(2,xShape);
+
+        test = new Shape(2, Config.getInstance().getXShapeFromJSON());
 
         assertTrue(test.check(passShelfXShape));
         assertFalse(test.check(dontPassShelfXShape));

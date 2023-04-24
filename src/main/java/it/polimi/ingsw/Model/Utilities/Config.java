@@ -32,6 +32,9 @@ public class Config {
     private final GlobalGoalScore[] globalGoals;
     private final BoardGoalScore[] boardGoals;
 
+    private final List<List<Coordinates>> XShapeFromJSON;
+    private final List<List<Coordinates>> DiagonalsFromJSON;
+
     private Config(){
         Gson gson = new Gson();
         Reader readerConfig = new InputStreamReader(this.getClass().getResourceAsStream("/Config.json"));
@@ -56,6 +59,31 @@ public class Config {
 
         Reader readerGB = new InputStreamReader(this.getClass().getResourceAsStream("/GameBoard.json"));
         gameBoardJsonCoordinatesInfo = gson.fromJson(readerGB, JsonArray.class);
+
+        Reader readerGG = new InputStreamReader(this.getClass().getResourceAsStream("/GlobalGoals.json"));
+        XShapeFromJSON = new ArrayList<>();
+        JsonObject globalGoalsJson = gson.fromJson(readerGG, JsonObject.class);
+        XShapeFromJSON.add(new ArrayList<>());
+
+        JsonArray XShapeCoords = globalGoalsJson.get("XShape").getAsJsonArray();
+        for(JsonElement coords : XShapeCoords){
+            XShapeFromJSON.get(0).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
+        }
+
+        DiagonalsFromJSON = new ArrayList<>();
+        DiagonalsFromJSON.add(new ArrayList<>());
+        DiagonalsFromJSON.add(new ArrayList<>());
+
+        JsonArray FirstDiagonalCoords = globalGoalsJson.get("FirstDiagonal").getAsJsonArray();
+        for(JsonElement coords : FirstDiagonalCoords){
+            DiagonalsFromJSON.get(0).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
+        }
+
+        JsonArray SecondDiagonalCoords = globalGoalsJson.get("SecondDiagonal").getAsJsonArray();
+        for(JsonElement coords : SecondDiagonalCoords){
+            DiagonalsFromJSON.get(1).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
+        }
+
     }
 
     public PrivateGoalScore[] getPrivateGoalsScores() {
@@ -82,6 +110,14 @@ public class Config {
             }
         }
         return gameBoardCoordinates;
+    }
+
+    public List<List<Coordinates>> getXShapeFromJSON() {
+        return XShapeFromJSON;
+    }
+
+    public List<List<Coordinates>> getDiagonalsFromJSON() {
+        return DiagonalsFromJSON;
     }
 
     public GlobalGoalScore[] getUnsortedGlobalGoals() {

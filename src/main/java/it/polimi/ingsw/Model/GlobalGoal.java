@@ -43,16 +43,7 @@ public abstract class GlobalGoal implements Cloneable {
     public static List<GlobalGoal> getOneForEachChild(int people) throws InvalidNumberOfPlayersException {
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
         goals.add(new Angles(people));
-
-        List<List<Coordinates>> diagonal= new ArrayList<List<Coordinates>>();
-        List<Coordinates> temp = new ArrayList<Coordinates>();
-        for(int i=0;i<5;i++) temp.add(new Coordinates(i,i));
-        diagonal.add(temp);
-        temp = new ArrayList<Coordinates>();
-        for(int i=0;i<5;i++) temp.add(new Coordinates(4-i,i));
-        diagonal.add(temp);
-
-        goals.add(new Shape(people,diagonal));
+        goals.add(new Shape(people,Config.getInstance().getDiagonalsFromJSON()));
         goals.add(new Columns(people, false, 2, Shelf.getRows()));
         goals.add(new Rows(people, false, 2, Shelf.getColumns()));
         goals.add(new EightTiles(people));
@@ -62,15 +53,7 @@ public abstract class GlobalGoal implements Cloneable {
         goals.add(new Square(people));
         goals.add(new Stair(people));
         goals.add(new GroupOfTiles(people,2,6));
-
-        List<List<Coordinates>> xShape= new ArrayList<List<Coordinates>>();
-        temp = new ArrayList<Coordinates>();
-        for(int i=0;i<3;i++) temp.add(new Coordinates(i,i));
-        temp.add(new Coordinates(0,2));
-        temp.add(new Coordinates(2,0));
-        xShape.add(temp);
-
-        goals.add(new Shape(people,xShape));
+        goals.add(new Shape(people,Config.getInstance().getXShapeFromJSON()));
         return goals;
     }
 

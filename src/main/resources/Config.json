@@ -1,0 +1,31 @@
+{
+  "maxNumberOfPlayers" : 4,
+  "shelfRows" : 6,
+  "shelfColumns" : 5,
+  "numOfTilesPerColor": 22,
+
+  "privateGoalsScores" : [
+    {"correctPosition": 0, "score":  0},
+    {"correctPosition": 1, "score":  1},
+    {"correctPosition": 2, "score":  2},
+    {"correctPosition": 3, "score":  4},
+    {"correctPosition": 4, "score":  6},
+    {"correctPosition": 5, "score":  9},
+    {"correctPosition": 6, "score":  12}
+  ],
+
+  "globalGoals": [
+    {"players": 4, "score": 2},
+    {"players": 2, "score": 4},
+    {"players": 3, "score": 6},
+    {"players": 2, "score": 8}
+  ],
+
+  "boardGoals": [
+    {"tiles": 3, "score": 2},
+    {"tiles": 4, "score": 4},
+    {"tiles": 5, "score": 6},
+    {"tiles": 6, "score": 8}
+  ]
+
+}

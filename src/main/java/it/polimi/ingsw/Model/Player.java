@@ -8,17 +8,23 @@ public class Player{
     private PrivateGoal goal;
     private final String nickname;
     private int[] accomplishedGlobalGoals;
-    private boolean active;
     private boolean winner;
 
-    public Player(PrivateGoal privateGoal, String nick) {
+    public Player(String nick) {
         nickname = nick;
+        score = 0;
+        shelf = null;
+        goal = null;
+        accomplishedGlobalGoals = null;
+        winner = false;
+    }
+
+    public void init(PrivateGoal privateGoal) {
         score = 0;
         shelf = new Shelf();
         goal = privateGoal;
         accomplishedGlobalGoals = new int[]{0, 0};
         winner = false;
-        active = true;
     }
 
     public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
@@ -70,14 +76,6 @@ public class Player{
 
     public void setGoal(PrivateGoal goal) {
         this.goal = goal;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public void first() {

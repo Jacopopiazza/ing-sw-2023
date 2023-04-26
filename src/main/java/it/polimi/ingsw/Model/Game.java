@@ -7,27 +7,71 @@ import java.lang.String;
 import java.util.*;
 
 public class Game {
-    private final GameBoard board;
-    private final Player[] players;
-    private final GlobalGoal[] goals;
+    private GameBoard board;
+    private final int numOfPlayers;
+    private EventListener[] listeners;
+    private Player[] players;
+    private GlobalGoal[] goals;
     private int currentPlayer;
-    private final TileSack sack;
+    private TileSack sack;
 
-    public Game(String[] nicknames) throws InvalidNumberOfPlayersException{
-        if( ( nicknames.length < 2 ) || ( nicknames.length > Config.getInstance().getMaxNumberOfPlayers() ) ){
+    public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
+        if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ){
             throw new InvalidNumberOfPlayersException();
         }
+        board = null;
+        this.numOfPlayers = numOfPlayers;
+        listeners = new EventListener[numOfPlayers];
+        players = new Player[numOfPlayers];
+        goals = null;
+        currentPlayer = -1;
+        sack= null;
+    }
 
-        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(nicknames.length);
+    public void init(){
+        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(numOfPlayers);
+        for( int i = 0; i < numOfPlayers; i++ )
+            players[i].init(privateGoals[i]);
 
-        this.players = new Player[nicknames.length];
-        for( int i = 0; i < players.length; i++ )
-            players[i] = new Player(privateGoals[i],nicknames[i]);
-
-        board = new GameBoard(players.length);
+        board = new GameBoard(numOfPlayers);
         sack = new TileSack();
-        currentPlayer = new Random().nextInt(this.players.length);
+        currentPlayer = new Random().nextInt(numOfPlayers);
         goals = this.pickTwoGlobalGoals();
+    }
+
+    public int addPlayer(String nick, EventListener listener){
+        int i;
+        for(i=0; i<numOfPlayers && players[i]!=null; i++);
+        players[i] = new Player(nick);
+        listeners[i] = listener;
+        int result = 0;
+        for(i=0; i<numOfPlayers; i++){
+            if(players[i] != null) result++;
+        }
+        return result;
+    }
+
+    public void disconnect(String nick){
+        for(int i=0; i<numOfPlayers;i++){
+            if(nick.equals(players[i].getNickname())) listeners[i] = null;
+        }
+    }
+    public int kick(String nick){
+        for(int i=0; i<numOfPlayers;i++){
+            if(nick.equals(players[i].getNickname())){
+                listeners[i] = null;
+                players[i] = null;
+            }
+        }
+        int result = 0;
+        for(int i=0; i<numOfPlayers; i++){
+            if(players[i] != null) result++;
+        }
+        return result;
+    }
+
+    public int getNumOfPlayers(){
+        return numOfPlayers;
     }
 
     public int getCurrentPlayer(){
@@ -43,6 +87,7 @@ public class Game {
 
     public void nextPlayer(){
         currentPlayer = (currentPlayer+1) % players.length;
+        while(listeners[currentPlayer] == null) currentPlayer = (currentPlayer+1) % players.length;
     }
 
     public Player getPlayer(int p) throws InvalidIndexException{

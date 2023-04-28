@@ -78,6 +78,12 @@ public class Game {
         return currentPlayer;
     }
 
+    public int getNumOfActivePlayers(){
+        int result = 0;
+        for(int i=0; i<numOfPlayers;i++) if(listeners[i] != null) result++;
+        return result;
+    }
+
     public GlobalGoal[] getGoals() throws CloneNotSupportedException {
         GlobalGoal[] temp = new GlobalGoal[this.goals.length];
         for( int i = 0; i < this.goals.length; i++ )
@@ -97,8 +103,7 @@ public class Game {
         return players[p];
     }
 
-    public boolean checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException {
-        boolean retValue = false;
+    public void checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException {
         int token;
         int currentScore = players[currentPlayer].getScore();
 
@@ -107,13 +112,11 @@ public class Game {
                 token = goals[i].popScore();
                 players[currentPlayer].setAccomplishedGlobalGoal(i, token);
                 currentScore += token;
-                retValue = true;
             }
 
         }
 
         players[currentPlayer].setScore(currentScore);
-        return retValue;
     }
 
     public TileSack getTileSack(){
@@ -146,7 +149,9 @@ public class Game {
                     if( noTileAdded ) noTileAdded = false;
                 }
             }
-            catch( InvalidCoordinatesForCurrentGameException e ){}
+            catch( InvalidCoordinatesForCurrentGameException e ){
+                e.printStackTrace();
+            }
         }
         // at least one Tile was added
         return true;

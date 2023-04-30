@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
+import it.polimi.ingsw.Exceptions.InvalidIndexException;
 import it.polimi.ingsw.Exceptions.NotValidChosenTiles;
 import it.polimi.ingsw.Exceptions.NotYourTurnException;
 import it.polimi.ingsw.Model.Coordinates;
@@ -109,24 +110,24 @@ public class ControllerTest extends TestCase {
         controller.perform("Picci", rightAction);
     }
 
-    @Test (expected = NotYourTurnException.class)
+    @Test
     public void test_NotYourTurnException() throws NotYourTurnException, NotValidChosenTiles, IllegalColumnInsertionException {
         controller.addPlayer("Picci", null);
-        controller.perform("Roma", null);
+        Assert.assertThrows(NotYourTurnException.class, () -> controller.perform("Roma", null));
     }
 
     // Action implementation needed
     @Test (expected = NotValidChosenTiles.class)
     public void test_NotValidChosenTilesException() throws NotValidChosenTiles, IllegalColumnInsertionException, NotYourTurnException {
         controller.addPlayer("Picci", null);
-        controller.perform("Picci", wrongNumberOfTilesAction);
-        controller.perform("Picci", wrongRowsAndColumnsAction);
+        Assert.assertThrows(NotValidChosenTiles.class, () -> controller.perform("Picci", wrongNumberOfTilesAction));
+        Assert.assertThrows(NotValidChosenTiles.class, () -> controller.perform("Picci", wrongRowsAndColumnsAction));
     }
 
 
     @Test (expected = IllegalColumnInsertionException.class)
     public void test_IllegalColumnInsertionException() throws NotValidChosenTiles, IllegalColumnInsertionException, NotYourTurnException {
         controller.addPlayer("Picci", null);
-        controller.perform("Picci", wrongColumnInsertion);
+        Assert.assertThrows(IllegalColumnInsertionException.class, () -> controller.perform("Picci", wrongColumnInsertion));
     }
 }

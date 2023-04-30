@@ -150,4 +150,6 @@ public class PlayerTest extends TestCase {
         p.setShelf(shelfToTest);
         assertEquals(p.checkPrivateGoal(), true);
     }
+
+
 }

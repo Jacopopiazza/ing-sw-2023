@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Exceptions.NotYourTurnException;
 import it.polimi.ingsw.Model.Coordinates;
 import junit.framework.TestCase;
 import org.junit.Assert;

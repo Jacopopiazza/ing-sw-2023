@@ -31,6 +31,9 @@ public class Player{
         if ( ( t == null ) || ( t.length == 0 ) ){
             throw new NoTileException();
         }
+
+        if(t.length > shelf.remainingSpaceInColumn(column)) throw new IllegalColumnInsertionException();
+
         for ( int i = 0; ( i < t.length ) && ( t[i] != null ) ; i++){
             shelf.addTile(t[i], column);
         }

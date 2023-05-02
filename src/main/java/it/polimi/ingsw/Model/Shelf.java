@@ -58,6 +58,16 @@ public class Shelf implements Cloneable{
         return true;
     }
 
+    public int remainingSpaceInColumn(int column) throws ColumnOutOfBoundsException{
+        if(column<0 || column>=Shelf.getColumns()) throw new ColumnOutOfBoundsException();
+
+        int result = 0;
+        for(int i=0;i<Shelf.getRows() && this.SHELF[i][column]!=null; i++){
+            result++;
+        }
+        return result;
+    }
+
     public static int getColumns(){
         return Config.getInstance().getShelfColumns();
     }

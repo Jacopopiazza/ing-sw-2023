@@ -44,7 +44,7 @@ public class Controller {
         if(gameStarted) model.disconnect(nick);
     }
 
-    public void doTurn(String nick, Coordinates[] chosenTiles, int col) throws NotYourTurnException, IllegalColumnInsertionException{
+    public void doTurn(String nick, Coordinates[] chosenTiles, int col){
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
@@ -52,17 +52,30 @@ public class Controller {
             e.printStackTrace();
         }
         //checking that the given player is actually the one who has to play
-        if( !(currPlayer.getNickname().equals(nick)) ){
-            throw new NotYourTurnException();
+        if( !(currPlayer.getNickname().equals(nick) || model.getNumOfActivePlayers() == 1) ){
+            model.addCheater(nick);
+            return;
         }
 
         GameBoard board = model.getGameBoard();
 
-        if( !(board.checkChosenTiles(chosenTiles)) ) ;
+        if( !(board.checkChosenTiles(chosenTiles)) ){
+            model.addCheater(nick);
+            return;
+        }
 
         //now I know the chosen tiles are valid
         //checking the selected column
-        if(col<0 || col>Shelf.getColumns()) throw new IllegalColumnInsertionException();
+        if(col<0 || col>Shelf.getColumns()){
+            model.addCheater(nick);
+            return;
+        }
+
+        //checking whether there is enough space in the selected column or not
+        if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
+            model.addCheater(nick);
+            return;
+        }
 
         //taking the tiles from the board
         Tile[] effectiveTiles = new Tile[chosenTiles.length];
@@ -79,7 +92,13 @@ public class Controller {
         try {
             currPlayer.insert(effectiveTiles,col);
         } catch (NoTileException e) {
-            return false;
+            e.printStackTrace();
+        }
+        catch(ColumnOutOfBoundsException e1){
+            e1.printStackTrace();
+        }
+        catch(IllegalColumnInsertionException e2){
+            e2.printStackTrace();
         }
 
         //checking the global goals
@@ -103,8 +122,6 @@ public class Controller {
         model.refillGameBoard();
 
         //setting the next player
-        if(model.getNumOfActivePlayers() ==0);//need to end the game
-        if(model.getNumOfActivePlayers() == 1);//need to implement the timer
         if(model.getNumOfActivePlayers() > 1) model.nextPlayer();
     }
 }

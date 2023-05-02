@@ -2,6 +2,8 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
+import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.UpdateViewMessage;
 import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.ModelView.GameView;
 
@@ -17,6 +19,8 @@ public class Game {
     private int currentPlayer;
     private TileSack sack;
 
+    private Stack<String> cheaters;
+
     public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
         if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ){
             throw new InvalidNumberOfPlayersException();
@@ -28,6 +32,7 @@ public class Game {
         goals = null;
         currentPlayer = -1;
         sack= null;
+        cheaters = null;
     }
 
     public void init(){
@@ -39,6 +44,7 @@ public class Game {
         sack = new TileSack();
         currentPlayer = new Random().nextInt(numOfPlayers);
         goals = this.pickTwoGlobalGoals();
+        cheaters = new Stack<String>();
     }
 
     public int addPlayer(String nick, GameListener listener){
@@ -171,12 +177,17 @@ public class Game {
         return returned;
     }
 
-    public void cheaterAlert(String nickname){
-        GameView gameView = new GameView(this);
-        gameView.setCheater(nickname);
-        for (GameListener el: listeners) {
-            el.updateGame(gameView);
-        }
+    public void addCheater(String nickname){
+        cheaters.add(nickname);
+        notifyAllListeners();
     }
 
+    public Stack<String> getCheaters(){ return cheaters;}
+
+    private void notifyAllListeners(){
+        Message gv = new UpdateViewMessage(new GameView(this));
+        for (GameListener el: listeners) {
+            el.updateGame(gv);
+        }
+    }
 }

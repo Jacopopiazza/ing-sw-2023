@@ -3,6 +3,7 @@ package it.polimi.ingsw.ModelView;
 import it.polimi.ingsw.Model.*;
 
 import java.io.Serializable;
+import java.util.Stack;
 
 public class GameView implements Serializable {
 
@@ -13,7 +14,7 @@ public class GameView implements Serializable {
     private final int currentPlayer;
     private final TileSackView sack;
 
-    private String cheater;
+    private Stack<String> cheaters;
 
     //private final Exception exception;
 
@@ -26,7 +27,7 @@ public class GameView implements Serializable {
         }
         this.currentPlayer = game.getCurrentPlayer();
         this.sack = new TileSackView(game.getTileSack());
-        this.cheater = null;
+        this.cheaters = game.getCheaters();
     }
 
     public GameBoardView getBoard() {
@@ -49,16 +50,8 @@ public class GameView implements Serializable {
         return sack;
     }
 
-    public void foundCheater(String nickname) {
-        cheater = nickname;
-    }
-
-    public String getCheater(){
-        return this.cheater;
-    }
-
-    public void setCheater(String nickname){
-        this.cheater = nickname;
+    public Stack<String> getCheaters(){
+        return this.cheaters;
     }
 
 }

@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameBoard {
     private Map<Coordinates,Tile> board;
@@ -158,6 +159,42 @@ public class GameBoard {
         if( !board.containsKey(left) || ( board.get(left) == null ) ) return true;
 
         return false;
+    }
+
+    public boolean checkChosenTiles(Coordinates[] chosenTiles) {
+        //checking that the length of the array is at most 3
+        if(chosenTiles.length > 3) return false;
+
+        //checking there are no duplicates and that they are all pickable
+        for (Coordinates c : chosenTiles){
+            try {
+                if(Arrays.stream(chosenTiles).filter(x -> x.equals(c)).collect(Collectors.toList()).size() > 1
+                        || !(isPickable(c)) ) {
+                    return false;
+                }
+            } catch (InvalidCoordinatesForCurrentGameException e) {
+                return false;
+            }
+        }
+
+        //checking that the chosen tiles are on the same column or row on the board,
+        //that they are one next ot the other
+        boolean row = true;
+        boolean column = true;
+        for(int i=0;i<chosenTiles.length-1 && (row || column);i++) {
+            if(chosenTiles[i].getROW() != chosenTiles[i+1].getROW()) row = false;
+            if(chosenTiles[i].getCOL() != chosenTiles[i+1].getCOL()) column = false;
+
+            if( !(row || column) ) return false;
+
+            Coordinates c = chosenTiles[i];
+            if(row && Arrays.stream(chosenTiles).filter(x -> c.getROW()-1 == x.getROW() ||
+                    c.getROW()+1 == x.getROW()).collect(Collectors.toList()).size() == 0) return false;
+
+            if(column && Arrays.stream(chosenTiles).filter(x -> c.getCOL()-1 == x.getCOL() ||
+                    c.getCOL()+1 == x.getCOL()).collect(Collectors.toList()).size() == 0) return false;
+        }
+        return true;
     }
 
 }

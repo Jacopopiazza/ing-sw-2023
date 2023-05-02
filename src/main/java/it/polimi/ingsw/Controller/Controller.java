@@ -1,13 +1,12 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.network.Server;
 
 import java.util.Arrays;
 import java.util.EmptyStackException;
-import java.util.EventListener;
-import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -26,7 +25,7 @@ public class Controller {
     }
 
     //returns true if the lobby is full
-    public boolean addPlayer(String nick, EventListener listener){
+    public boolean addPlayer(String nick, GameListener listener){
         int playersInLobby = model.addPlayer(nick,listener);
         int maxPlayersInLobby = model.getNumOfPlayers();
         if(playersInLobby == maxPlayersInLobby){
@@ -45,7 +44,7 @@ public class Controller {
         if(gameStarted) model.disconnect(nick);
     }
 
-    public void doTurn(String nick, Coordinates[] chosenTiles, int col) throws NotYourTurnException, NotValidChosenTiles, IllegalColumnInsertionException{
+    public void doTurn(String nick, Coordinates[] chosenTiles, int col) throws NotYourTurnException, IllegalColumnInsertionException{
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
@@ -59,38 +58,7 @@ public class Controller {
 
         GameBoard board = model.getGameBoard();
 
-        //checking that the length of the array is at most 3
-        if(chosenTiles.length > 3) throw new NotValidChosenTiles();
-
-        //checking there are no duplicates and that they are all pickable
-        for (Coordinates c : chosenTiles){
-            try {
-                if(Arrays.stream(chosenTiles).filter(x -> x.equals(c)).collect(Collectors.toList()).size() > 1
-                    || !(board.isPickable(c)) ) {
-                    throw new NotValidChosenTiles();
-                }
-            } catch (InvalidCoordinatesForCurrentGameException e) {
-                throw new NotValidChosenTiles();
-            }
-        }
-
-        //checking that the chosen tiles are on the same column or row on the board,
-        //that they are one next ot the other
-        boolean row = true;
-        boolean column = true;
-        for(int i=0;i<chosenTiles.length-1 && (row || column);i++) {
-            if(chosenTiles[i].getROW() != chosenTiles[i+1].getROW()) row = false;
-            if(chosenTiles[i].getCOL() != chosenTiles[i+1].getCOL()) column = false;
-
-            if( !(row || column) ) throw new NotValidChosenTiles();
-
-            Coordinates c = chosenTiles[i];
-            if(row && Arrays.stream(chosenTiles).filter(x -> c.getROW()-1 == x.getROW() ||
-                    c.getROW()+1 == x.getROW()).collect(Collectors.toList()).size() == 0) throw new NotValidChosenTiles();
-
-            if(column && Arrays.stream(chosenTiles).filter(x -> c.getCOL()-1 == x.getCOL() ||
-                    c.getCOL()+1 == x.getCOL()).collect(Collectors.toList()).size() == 0) throw new NotValidChosenTiles();
-        }
+        if( !(board.checkChosenTiles(chosenTiles)) ) ;
 
         //now I know the chosen tiles are valid
         //checking the selected column
@@ -111,7 +79,7 @@ public class Controller {
         try {
             currPlayer.insert(effectiveTiles,col);
         } catch (NoTileException e) {
-            throw new NotValidChosenTiles();
+            return false;
         }
 
         //checking the global goals

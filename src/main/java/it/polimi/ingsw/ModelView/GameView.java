@@ -3,7 +3,6 @@ package it.polimi.ingsw.ModelView;
 import it.polimi.ingsw.Model.*;
 
 import java.io.Serializable;
-import java.util.EventListener;
 
 public class GameView implements Serializable {
 
@@ -13,6 +12,8 @@ public class GameView implements Serializable {
     //private final GlobalGoal[] goals;
     private final int currentPlayer;
     private final TileSackView sack;
+
+    private String cheater;
 
     //private final Exception exception;
 
@@ -25,6 +26,7 @@ public class GameView implements Serializable {
         }
         this.currentPlayer = game.getCurrentPlayer();
         this.sack = new TileSackView(game.getTileSack());
+        this.cheater = null;
     }
 
     public GameBoardView getBoard() {
@@ -46,4 +48,17 @@ public class GameView implements Serializable {
     public TileSackView getSack() {
         return sack;
     }
+
+    public void foundCheater(String nickname) {
+        cheater = nickname;
+    }
+
+    public String getCheater(){
+        return this.cheater;
+    }
+
+    public void setCheater(String nickname){
+        this.cheater = nickname;
+    }
+
 }

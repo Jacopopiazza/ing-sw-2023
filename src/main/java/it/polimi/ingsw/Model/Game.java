@@ -1,8 +1,9 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Listener.EventListener;
+import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.ModelView.GameView;
 
 import java.lang.String;
 import java.util.*;
@@ -10,7 +11,7 @@ import java.util.*;
 public class Game {
     private GameBoard board;
     private final int numOfPlayers;
-    private EventListener[] listeners;
+    private GameListener[] listeners;
     private Player[] players;
     private GlobalGoal[] goals;
     private int currentPlayer;
@@ -22,7 +23,7 @@ public class Game {
         }
         board = null;
         this.numOfPlayers = numOfPlayers;
-        listeners = new EventListener[numOfPlayers];
+        listeners = new GameListener[numOfPlayers];
         players = new Player[numOfPlayers];
         goals = null;
         currentPlayer = -1;
@@ -40,7 +41,7 @@ public class Game {
         goals = this.pickTwoGlobalGoals();
     }
 
-    public int addPlayer(String nick, EventListener listener){
+    public int addPlayer(String nick, GameListener listener){
         int i;
         for(i=0; i<numOfPlayers && players[i]!=null; i++);
         players[i] = new Player(nick);
@@ -168,6 +169,14 @@ public class Game {
         }
 
         return returned;
+    }
+
+    public void cheaterAlert(String nickname){
+        GameView gameView = new GameView(this);
+        gameView.setCheater(nickname);
+        for (GameListener el: listeners) {
+            el.updateGame(gameView);
+        }
     }
 
 }

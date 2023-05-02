@@ -1,8 +1,6 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Exceptions.InvalidIndexException;
-import it.polimi.ingsw.Exceptions.NotValidChosenTiles;
 import it.polimi.ingsw.Exceptions.NotYourTurnException;
 import it.polimi.ingsw.Model.Coordinates;
 import junit.framework.TestCase;
@@ -68,22 +66,13 @@ public class ControllerTest extends TestCase {
     }
 
     @Test
-    public void test_NotYourTurnException() throws NotYourTurnException, NotValidChosenTiles, IllegalColumnInsertionException {
+    public void test_NotYourTurnException() throws NotYourTurnException, IllegalColumnInsertionException {
         controller.addPlayer("Picci", null);
         Assert.assertThrows(NotYourTurnException.class, () -> controller.doTurn("Roma", null, 0));
     }
 
-    // Action implementation needed
-    @Test (expected = NotValidChosenTiles.class)
-    public void test_NotValidChosenTilesException() throws NotValidChosenTiles, IllegalColumnInsertionException, NotYourTurnException {
-        controller.addPlayer("Picci", null);
-        Assert.assertThrows(NotValidChosenTiles.class, () -> controller.doTurn("Picci", wrongNumberOfTilesActionCoords, wrongNumberOfTilesActionColumn));
-        Assert.assertThrows(NotValidChosenTiles.class, () -> controller.doTurn("Picci", wrongRowsAndColumnsActionCoords, 1));
-    }
-
-
-    @Test (expected = IllegalColumnInsertionException.class)
-    public void test_IllegalColumnInsertionException() throws NotValidChosenTiles, IllegalColumnInsertionException, NotYourTurnException {
+    @Test
+    public void test_IllegalColumnInsertionException() throws IllegalColumnInsertionException, NotYourTurnException {
         controller.addPlayer("Picci", null);
         Assert.assertThrows(IllegalColumnInsertionException.class, () -> controller.doTurn("Picci", wrongColumnActionCoords, wrongColumnActionColumn));
     }

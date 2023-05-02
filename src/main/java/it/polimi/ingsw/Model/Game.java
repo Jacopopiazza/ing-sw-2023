@@ -45,6 +45,7 @@ public class Game {
         currentPlayer = new Random().nextInt(numOfPlayers);
         goals = this.pickTwoGlobalGoals();
         cheaters = new Stack<String>();
+        notifyAllListeners();
     }
 
     public int addPlayer(String nick, GameListener listener){
@@ -59,10 +60,18 @@ public class Game {
         return result;
     }
 
+    public void reconnect(String nick, GameListener listener){
+        int i;
+        for(i=0; i<numOfPlayers && !(players[i].getNickname().equals(nick)); i++);
+        listeners[i] = listener;
+        notifyAllListeners();
+    }
+
     public void disconnect(String nick){
         for(int i=0; i<numOfPlayers;i++){
             if(nick.equals(players[i].getNickname())) listeners[i] = null;
         }
+        notifyAllListeners();
     }
     public int kick(String nick){
         for(int i=0; i<numOfPlayers;i++){
@@ -187,7 +196,7 @@ public class Game {
     private void notifyAllListeners(){
         Message gv = new UpdateViewMessage(new GameView(this));
         for (GameListener el: listeners) {
-            el.updateGame(gv);
+            if(el!=null) el.update(gv);
         }
     }
 }

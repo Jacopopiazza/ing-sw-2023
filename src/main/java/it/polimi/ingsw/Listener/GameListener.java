@@ -4,6 +4,6 @@ import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.ModelView.GameView;
 
 public interface GameListener {
-    public void updateGame(Message message);
+    public void update(Message message);
 
 }

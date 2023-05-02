@@ -37,7 +37,13 @@ public class Controller {
     }
 
     public void kick(String nick){
-        if(!gameStarted) model.kick(nick);
+        if(!gameStarted){
+            model.kick(nick);
+        }
+    }
+
+    public void reconnect(String nick, GameListener listener){
+        model.reconnect(nick,listener);
     }
 
     public void disconnect(String nick){

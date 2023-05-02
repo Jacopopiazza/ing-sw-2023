@@ -44,7 +44,7 @@ public class Controller {
         if(gameStarted) model.disconnect(nick);
     }
 
-    public void perform(String nick, Action action) throws NotYourTurnException, NotValidChosenTiles, IllegalColumnInsertionException{
+    public void doTurn(String nick, Coordinates[] chosenTiles, int col) throws NotYourTurnException, NotValidChosenTiles, IllegalColumnInsertionException{
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
@@ -57,7 +57,6 @@ public class Controller {
         }
 
         GameBoard board = model.getGameBoard();
-        Coordinates[] chosenTiles = action.getChosenTiles();
 
         //checking that the length of the array is at most 3
         if(chosenTiles.length > 3) throw new NotValidChosenTiles();
@@ -94,7 +93,6 @@ public class Controller {
 
         //now I know the chosen tiles are valid
         //checking the selected column
-        int col = action.getColumn();
         if(col<0 || col>Shelf.getColumns()) throw new IllegalColumnInsertionException();
 
         //taking the tiles from the board

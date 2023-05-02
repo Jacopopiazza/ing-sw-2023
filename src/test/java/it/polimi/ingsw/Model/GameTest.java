@@ -3,6 +3,7 @@ package it.polimi.ingsw.Model;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Exceptions.InvalidIndexException;
 import it.polimi.ingsw.Exceptions.InvalidScoreException;
+import it.polimi.ingsw.Listener.EventListener;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;

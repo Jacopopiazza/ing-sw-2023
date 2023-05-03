@@ -1,4 +1,4 @@
-package it.polimi.ingsw.network;
+package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Listener.GameListener;

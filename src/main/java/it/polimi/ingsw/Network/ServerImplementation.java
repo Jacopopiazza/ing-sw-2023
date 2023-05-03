@@ -39,7 +39,10 @@ public class ServerImplementation implements Server{
                 }
                 else{
                     if(lobbyWaitingToStart.peek() != null){
-                        if(lobbyWaitingToStart.peek().addPlayer(nick,listener)) lobbyWaitingToStart.poll();
+                        if(lobbyWaitingToStart.peek().addPlayer(nick,listener)) {
+                            lobbyWaitingToStart.poll();
+                            while(lobbyWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbyWaitingToStart.poll();
+                        }
                     }
                     else listener.update(new NoLobbyAvailableMessage());
                 }
@@ -73,6 +76,10 @@ public class ServerImplementation implements Server{
             }
             else{
                 controller.kick(nick);
+                if(controller == lobbyWaitingToStart.peek() && controller.getNumOfActivePlayers() == 0){
+                    lobbyWaitingToStart.poll();
+                    while(lobbyWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbyWaitingToStart.poll();
+                }
             }
         }
     }

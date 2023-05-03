@@ -25,9 +25,8 @@ public class Controller {
 
     //returns true if the lobby is full
     public boolean addPlayer(String nick, GameListener listener){
-        int playersInLobby = model.addPlayer(nick,listener);
-        int maxPlayersInLobby = model.getNumOfPlayers();
-        if(playersInLobby == maxPlayersInLobby){
+        model.addPlayer(nick,listener);
+        if(model.getNumOfActivePlayers() == model.getNumOfPlayers()){
             model.init();
             gameStarted = true;
             return true;
@@ -47,6 +46,10 @@ public class Controller {
 
     public void disconnect(String nick){
         if(gameStarted) model.disconnect(nick);
+    }
+
+    public int getNumOfActivePlayers(){
+        return model.getNumOfActivePlayers();
     }
 
     public void doTurn(String nick, Coordinates[] chosenTiles, int col){

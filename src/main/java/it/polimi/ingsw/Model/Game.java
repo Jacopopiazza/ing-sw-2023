@@ -48,16 +48,11 @@ public class Game {
         notifyAllListeners();
     }
 
-    public int addPlayer(String nick, GameListener listener){
+    public void addPlayer(String nick, GameListener listener){
         int i;
         for(i=0; i<numOfPlayers && players[i]!=null; i++);
         players[i] = new Player(nick);
         listeners[i] = listener;
-        int result = 0;
-        for(i=0; i<numOfPlayers; i++){
-            if(players[i] != null) result++;
-        }
-        return result;
     }
 
     public void reconnect(String nick, GameListener listener){
@@ -73,18 +68,14 @@ public class Game {
         }
         notifyAllListeners();
     }
-    public int kick(String nick){
+
+    public void kick(String nick){
         for(int i=0; i<numOfPlayers;i++){
             if(nick.equals(players[i].getNickname())){
                 listeners[i] = null;
                 players[i] = null;
             }
         }
-        int result = 0;
-        for(int i=0; i<numOfPlayers; i++){
-            if(players[i] != null) result++;
-        }
-        return result;
     }
 
     public int getNumOfPlayers(){

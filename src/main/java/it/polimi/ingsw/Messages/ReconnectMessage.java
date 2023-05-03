@@ -1,16 +1,16 @@
 package it.polimi.ingsw.Messages;
 
 public class ReconnectMessage implements Message{
-    private String nickname;
+    private String username;
     private Client client;
 
-    public ReconnectMessage(String nickname, Client client){
-        this.nickname = nickname;
+    public ReconnectMessage(String u, Client client){
+        this.username = u;
         this.client = client;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
     public Client getClient() {

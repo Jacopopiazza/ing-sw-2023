@@ -1,18 +1,18 @@
 package it.polimi.ingsw.Messages;
 
 public class RegisterMessage implements Message{
-    private String nickname;
+    private String username;
     private Client client;
     private int numOfPlayers;
 
-    public RegisterMessage(String nickname, Client client, int numOfPlayers){
-        this.nickname = nickname;
+    public RegisterMessage(String u, Client client, int numOfPlayers){
+        this.username = u;
         this.client = client;
         this.numOfPlayers = numOfPlayers;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
     public Client getClient() {

@@ -11,7 +11,7 @@ public class PlayerView implements Serializable {
     private final int score;
     private final ShelfView shelf;
     private final PrivateGoal privateGoal;
-    private final String nickname;
+    private final String username;
     private final int[] accomplishedGlobalGoals;
     private final boolean winner;
 
@@ -19,7 +19,7 @@ public class PlayerView implements Serializable {
         this.score = player.getScore();
         this.shelf = new ShelfView(player.getShelf());
         this.privateGoal = player.getPrivateGoal();
-        this.nickname = player.getNickname();
+        this.username = player.getUsername();
         this.accomplishedGlobalGoals = player.getAccomplishedGlobalGoals().clone();
         this.winner = player.isWinner();
     }
@@ -36,8 +36,8 @@ public class PlayerView implements Serializable {
         return privateGoal;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
     public int[] getAccomplishedGlobalGoals() {

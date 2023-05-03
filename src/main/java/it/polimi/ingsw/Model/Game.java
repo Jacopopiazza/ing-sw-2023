@@ -48,30 +48,30 @@ public class Game {
         notifyAllListeners();
     }
 
-    public void addPlayer(String nick, GameListener listener){
+    public void addPlayer(String username, GameListener listener){
         int i;
         for(i=0; i<numOfPlayers && players[i]!=null; i++);
-        players[i] = new Player(nick);
+        players[i] = new Player(username);
         listeners[i] = listener;
     }
 
-    public void reconnect(String nick, GameListener listener){
+    public void reconnect(String username, GameListener listener){
         int i;
-        for(i=0; i<numOfPlayers && !(players[i].getNickname().equals(nick)); i++);
+        for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
         listeners[i] = listener;
         notifyAllListeners();
     }
 
-    public void disconnect(String nick){
+    public void disconnect(String username){
         for(int i=0; i<numOfPlayers;i++){
-            if(nick.equals(players[i].getNickname())) listeners[i] = null;
+            if(username.equals(players[i].getUsername())) listeners[i] = null;
         }
         notifyAllListeners();
     }
 
-    public void kick(String nick){
+    public void kick(String username){
         for(int i=0; i<numOfPlayers;i++){
-            if(nick.equals(players[i].getNickname())){
+            if(username.equals(players[i].getUsername())){
                 listeners[i] = null;
                 players[i] = null;
             }
@@ -177,8 +177,8 @@ public class Game {
         return returned;
     }
 
-    public void addCheater(String nickname){
-        cheaters.add(nickname);
+    public void addCheater(String username){
+        cheaters.add(username);
         notifyAllListeners();
     }
 

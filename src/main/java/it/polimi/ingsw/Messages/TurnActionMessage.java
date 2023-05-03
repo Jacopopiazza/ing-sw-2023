@@ -3,12 +3,12 @@ package it.polimi.ingsw.Messages;
 import it.polimi.ingsw.Model.Coordinates;
 
 public class TurnActionMessage implements Message {
-    private String nickname;
+    private String username;
     private Coordinates[] chosenTiles;
     private int column;
 
-    public TurnActionMessage(String nickname, Coordinates[] chosenTiles, int column){
-        this.nickname = nickname;
+    public TurnActionMessage(String u, Coordinates[] chosenTiles, int column){
+        this.username = u;
         this.chosenTiles = chosenTiles;
         this.column = column;
     }

@@ -6,12 +6,12 @@ public class Player{
     private int score;
     private Shelf shelf;
     private PrivateGoal goal;
-    private final String nickname;
+    private final String username;
     private int[] accomplishedGlobalGoals;
     private boolean winner;
 
-    public Player(String nick) {
-        nickname = nick;
+    public Player(String u) {
+        username = u;
         score = 0;
         shelf = null;
         goal = null;
@@ -39,8 +39,8 @@ public class Player{
         }
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getUsername() {
+        return username;
     }
 
     public int[] getAccomplishedGlobalGoals() {

@@ -14,23 +14,23 @@ import java.util.concurrent.ExecutorService;
 
 public class ServerImplementation implements Server{
     private ExecutorService executorService;
-    private Map<String, Controller> playingNicknames;
-    private Map<String, Controller> disconnectedNicknames;
+    private Map<String, Controller> playingUsernames;
+    private Map<String, Controller> disconnectedUsernames;
     private Queue<Controller> lobbiesWaitingToStart;
 
     //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
-    private void register(GameListener listener, String nick, int numOfPlayers){
+    private void register(GameListener listener, String username, int numOfPlayers){
         if(numOfPlayers<=0 || numOfPlayers>4){
             listener.update(new InvalidNumOfPlayersMessage());
             return;
         }
-        if(nick == null){
+        if(username == null){
             listener.update(new MissingUsernameMessage());
             return;
         }
-        synchronized (playingNicknames){
-            synchronized (disconnectedNicknames){
-                if(playingNicknames.containsKey(nick) || disconnectedNicknames.containsKey(nick)){
+        synchronized (playingUsernames){
+            synchronized (disconnectedUsernames){
+                if(playingUsernames.containsKey(username) || disconnectedUsernames.containsKey(username)){
                     listener.update(new TakenUsernameMessage());
                     return;
                 }
@@ -38,13 +38,13 @@ public class ServerImplementation implements Server{
             synchronized (lobbiesWaitingToStart){
                 if(numOfPlayers != 1){
                     Controller lobby = new Controller(numOfPlayers,this);
-                    lobby.addPlayer(nick,listener);
-                    playingNicknames.put(nick,lobby);
+                    lobby.addPlayer(username,listener);
+                    playingUsernames.put(username,lobby);
                         lobbiesWaitingToStart.add(lobby);
                 }
                 else{
                     if(lobbiesWaitingToStart.peek() != null){
-                        if(lobbiesWaitingToStart.peek().addPlayer(nick,listener)) {
+                        if(lobbiesWaitingToStart.peek().addPlayer(username,listener)) {
                             lobbiesWaitingToStart.poll();
                             while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
                         }
@@ -55,34 +55,34 @@ public class ServerImplementation implements Server{
         }
     }
 
-    private void reconnect(String nick, GameListener listener){
-        synchronized (playingNicknames){
-            synchronized (disconnectedNicknames){
-                if( !(disconnectedNicknames.containsKey(nick)) ){
+    private void reconnect(String username, GameListener listener){
+        synchronized (playingUsernames){
+            synchronized (disconnectedUsernames){
+                if( !(disconnectedUsernames.containsKey(username)) ){
                     listener.update(new NoUsernameToReconnectMessage());
                     return;
                 }
-                playingNicknames.put(nick,disconnectedNicknames.get(nick));
-                disconnectedNicknames.remove(nick);
-                playingNicknames.get(nick).reconnect(nick,listener);
+                playingUsernames.put(username,disconnectedUsernames.get(username));
+                disconnectedUsernames.remove(username);
+                playingUsernames.get(username).reconnect(username,listener);
             }
         }
     }
 
     // when Client does not ping back and when the user quits the lobby or the game
-    private void disconnect(String nick){
-        synchronized (playingNicknames){
-            if( !playingNicknames.containsKey(nick) ) return;
-            Controller controller = playingNicknames.get(nick);
-            playingNicknames.remove(nick);
+    private void disconnect(String username){
+        synchronized (playingUsernames){
+            if( !playingUsernames.containsKey(username) ) return;
+            Controller controller = playingUsernames.get(username);
+            playingUsernames.remove(username);
             if(controller.isGameStarted()){
-                synchronized (disconnectedNicknames){
-                    disconnectedNicknames.put(nick,controller);
-                    controller.disconnect(nick);
+                synchronized (disconnectedUsernames){
+                    disconnectedUsernames.put(username,controller);
+                    controller.disconnect(username);
                 }
             }
             else{
-                controller.kick(nick);
+                controller.kick(username);
                 if(controller == lobbiesWaitingToStart.peek() && controller.getNumOfActivePlayers() == 0){
                     lobbiesWaitingToStart.poll();
                     while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();

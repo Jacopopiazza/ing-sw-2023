@@ -16,13 +16,13 @@ public class PlayerTest extends TestCase {
     @Before
     public void setUp(){
         pg = PrivateGoal.getPrivateGoals(2)[0];
-        p = new Player(pg, "nickname");
+        p = new Player("username");
         randomToken = 1000;
     }
 
     @Test
     public void testGettersAndSetScore() throws InvalidIndexException, NoTileException, IllegalColumnInsertionException {
-        assertEquals(p.getNickname(),"nickname");
+        assertEquals(p.getUsername(),"username");
         assertEquals(p.getScore(),0);
 
         assertEquals(p.getPrivateGoal(),pg);

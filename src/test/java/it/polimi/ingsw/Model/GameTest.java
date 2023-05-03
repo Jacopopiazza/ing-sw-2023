@@ -181,8 +181,8 @@ public class GameTest extends TestCase {
         game.addPlayer("Roma", null);
         game.addPlayer("J", null);
 
-        assertEquals(game.getPlayer(0).getNickname(), p1.getNickname());
-        assertEquals(game.getPlayer(1).getNickname(), p2.getNickname());
+        assertEquals(game.getPlayer(0).getUsername(), p1.getUsername());
+        assertEquals(game.getPlayer(1).getUsername(), p2.getUsername());
     }
 
     @Test

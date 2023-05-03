@@ -24,8 +24,8 @@ public class Controller {
     }
 
     //returns true if the lobby is full
-    public boolean addPlayer(String nick, GameListener listener){
-        model.addPlayer(nick,listener);
+    public boolean addPlayer(String username, GameListener listener){
+        model.addPlayer(username,listener);
         if(model.getNumOfActivePlayers() == model.getNumOfPlayers()){
             model.init();
             gameStarted = true;
@@ -34,25 +34,25 @@ public class Controller {
         return false;
     }
 
-    public void kick(String nick){
+    public void kick(String username){
         if(!gameStarted){
-            model.kick(nick);
+            model.kick(username);
         }
     }
 
-    public void reconnect(String nick, GameListener listener){
-        model.reconnect(nick,listener);
+    public void reconnect(String username, GameListener listener){
+        model.reconnect(username,listener);
     }
 
-    public void disconnect(String nick){
-        if(gameStarted) model.disconnect(nick);
+    public void disconnect(String username){
+        if(gameStarted) model.disconnect(username);
     }
 
     public int getNumOfActivePlayers(){
         return model.getNumOfActivePlayers();
     }
 
-    public void doTurn(String nick, Coordinates[] chosenTiles, int col){
+    public void doTurn(String username, Coordinates[] chosenTiles, int col){
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
@@ -60,28 +60,28 @@ public class Controller {
             e.printStackTrace();
         }
         //checking that the given player is actually the one who has to play
-        if( !(currPlayer.getNickname().equals(nick) || model.getNumOfActivePlayers() == 1) ){
-            model.addCheater(nick);
+        if( !(currPlayer.getUsername().equals(username) || model.getNumOfActivePlayers() == 1) ){
+            model.addCheater(username);
             return;
         }
 
         GameBoard board = model.getGameBoard();
 
         if( !(board.checkChosenTiles(chosenTiles)) ){
-            model.addCheater(nick);
+            model.addCheater(username);
             return;
         }
 
         //now I know the chosen tiles are valid
         //checking the selected column
         if(col<0 || col>Shelf.getColumns()){
-            model.addCheater(nick);
+            model.addCheater(username);
             return;
         }
 
         //checking whether there is enough space in the selected column or not
         if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
-            model.addCheater(nick);
+            model.addCheater(username);
             return;
         }
 

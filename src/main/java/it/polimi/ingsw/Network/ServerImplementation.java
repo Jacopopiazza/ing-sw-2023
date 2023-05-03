@@ -6,6 +6,7 @@ import it.polimi.ingsw.Messages.InvalidNumOfPlayersMessage;
 import it.polimi.ingsw.Messages.NoLobbyAvailableMessage;
 import it.polimi.ingsw.Messages.NoUsernameToReconnectMessage;
 import it.polimi.ingsw.Messages.TakenUsernameMessage;
+import it.polimi.ingsw.Messages.MissingUsernameMessage;
 
 import java.util.Map;
 import java.util.Queue;
@@ -21,6 +22,10 @@ public class ServerImplementation implements Server{
     private void register(GameListener listener, String nick, int numOfPlayers){
         if(numOfPlayers<=0 || numOfPlayers>4){
             listener.update(new InvalidNumOfPlayersMessage());
+            return;
+        }
+        if(nick == null){
+            listener.update(new MissingUsernameMessage());
             return;
         }
         synchronized (playingNicknames){
@@ -64,8 +69,10 @@ public class ServerImplementation implements Server{
         }
     }
 
-    private void quit (String nick){
+    // when Client does not ping back and when the user quits the lobby or the game
+    private void disconnect(String nick){
         synchronized (playingNicknames){
+            if( !playingNicknames.containsKey(nick) ) return;
             Controller controller = playingNicknames.get(nick);
             playingNicknames.remove(nick);
             if(controller.isGameStarted()){

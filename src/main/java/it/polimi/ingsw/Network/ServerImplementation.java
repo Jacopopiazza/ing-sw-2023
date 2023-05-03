@@ -15,7 +15,7 @@ public class ServerImplementation implements Server{
     private ExecutorService executorService;
     private Map<String, Controller> playingNicknames;
     private Map<String, Controller> disconnectedNicknames;
-    private Queue<Controller> lobbyWaitingToStart;
+    private Queue<Controller> lobbiesWaitingToStart;
 
     //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
     private void register(GameListener listener, String nick, int numOfPlayers){
@@ -30,18 +30,18 @@ public class ServerImplementation implements Server{
                     return;
                 }
             }
-            synchronized (lobbyWaitingToStart){
+            synchronized (lobbiesWaitingToStart){
                 if(numOfPlayers != 1){
                     Controller lobby = new Controller(numOfPlayers,this);
                     lobby.addPlayer(nick,listener);
                     playingNicknames.put(nick,lobby);
-                        lobbyWaitingToStart.add(lobby);
+                        lobbiesWaitingToStart.add(lobby);
                 }
                 else{
-                    if(lobbyWaitingToStart.peek() != null){
-                        if(lobbyWaitingToStart.peek().addPlayer(nick,listener)) {
-                            lobbyWaitingToStart.poll();
-                            while(lobbyWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbyWaitingToStart.poll();
+                    if(lobbiesWaitingToStart.peek() != null){
+                        if(lobbiesWaitingToStart.peek().addPlayer(nick,listener)) {
+                            lobbiesWaitingToStart.poll();
+                            while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
                         }
                     }
                     else listener.update(new NoLobbyAvailableMessage());
@@ -76,9 +76,9 @@ public class ServerImplementation implements Server{
             }
             else{
                 controller.kick(nick);
-                if(controller == lobbyWaitingToStart.peek() && controller.getNumOfActivePlayers() == 0){
-                    lobbyWaitingToStart.poll();
-                    while(lobbyWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbyWaitingToStart.poll();
+                if(controller == lobbiesWaitingToStart.peek() && controller.getNumOfActivePlayers() == 0){
+                    lobbiesWaitingToStart.poll();
+                    while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
                 }
             }
         }

@@ -50,7 +50,7 @@ public abstract class GlobalGoal implements Cloneable {
         return gg;
     }
 
-    public static List<GlobalGoal> getOneForEachChild(int people) throws InvalidNumberOfPlayersException {
+    public static List<GlobalGoal> getInstances(int people) throws InvalidNumberOfPlayersException {
         List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
         goals.add(new Angles(people));
         goals.add(new Shape(people,Config.getInstance().getDiagonalsFromJSON()));

@@ -171,7 +171,7 @@ public class Game {
     }
 
     private GlobalGoal[] pickTwoGlobalGoals() throws InvalidNumberOfPlayersException {
-        List<GlobalGoal> goals = GlobalGoal.getOneForEachChild(players.length);
+        List<GlobalGoal> goals = GlobalGoal.getInstances(players.length);
 
         Collections.shuffle(goals);
         GlobalGoal[] returned = new GlobalGoal[Config.getInstance().getNumOfGlobalGoals()];

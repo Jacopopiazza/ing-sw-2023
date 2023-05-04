@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.ModelView.PlayerView;
 
 public class Player{
     private int score;
@@ -17,6 +18,10 @@ public class Player{
         goal = null;
         accomplishedGlobalGoals = null;
         winner = false;
+    }
+
+    public PlayerView getView(){
+        return new PlayerView(this);
     }
 
     public void init(PrivateGoal privateGoal) {

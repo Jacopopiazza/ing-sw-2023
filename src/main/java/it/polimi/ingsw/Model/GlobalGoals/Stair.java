@@ -1,20 +1,19 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 
-
 public class Stair extends GlobalGoal {
     public Stair(int people) throws InvalidNumberOfPlayersException {
-        super(people);
+        super(people, "Stair");
     }
 
     // Five columns with asc/desc height:
     // starting from the first column to the left or right
     // every next column must have one more tile.
     // The tiles can have different colors.
+
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if( s == null ){

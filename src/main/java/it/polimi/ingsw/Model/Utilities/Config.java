@@ -26,6 +26,7 @@ public class Config {
     private final int shelfRows;
     private final int shelfColumns;
     private final int numOfTilesPerColor;
+    private final int numOfGlobalGoals;
     private final JsonArray gameBoardJsonCoordinatesInfo;
     private final List<Coordinates[]> privateGoals;
     private final PrivateGoalScore[] privateGoalsScores;
@@ -46,6 +47,7 @@ public class Config {
         shelfColumns = jsonConfig.get("shelfColumns").getAsInt();
         numOfTilesPerColor = jsonConfig.get("numOfTilesPerColor").getAsInt();
         maxNumberOfPlayers = jsonConfig.get("maxNumberOfPlayers").getAsInt();
+        numOfGlobalGoals = jsonConfig.get("numOfGlobalGoals").getAsInt();
 
         Reader readerPG = new InputStreamReader(this.getClass().getResourceAsStream("/PrivateGoals.json"));
         JsonArray baseArray = gson.fromJson(readerPG, JsonArray.class);
@@ -132,6 +134,10 @@ public class Config {
 
     public int getMaxNumberOfPlayers() {
         return maxNumberOfPlayers;
+    }
+
+    public int getNumOfGlobalGoals() {
+        return numOfGlobalGoals;
     }
 
     public int getShelfRows() {

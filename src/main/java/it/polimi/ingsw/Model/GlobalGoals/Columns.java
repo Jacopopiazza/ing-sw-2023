@@ -6,13 +6,12 @@ import it.polimi.ingsw.Exceptions.*;
 import java.util.HashSet;
 
 public class Columns extends GlobalGoal {
-
     private final boolean equal;
     private final int numOfColumns;
     private final int differentTilesPerColumn;
 
     public Columns(int people, boolean equal, int numOfColumns, int differentTilesPerColumn) throws InvalidNumberOfPlayersException {
-        super(people);
+        super(people, "Columns");
         this.equal=equal;
         this.numOfColumns=numOfColumns;
         this.differentTilesPerColumn=differentTilesPerColumn;

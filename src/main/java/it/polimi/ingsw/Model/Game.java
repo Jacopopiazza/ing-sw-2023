@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.UpdateViewMessage;
+import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
 import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.ModelView.GameView;
 
@@ -33,6 +34,10 @@ public class Game {
         currentPlayer = -1;
         sack= null;
         cheaters = null;
+    }
+
+    public GameView getView(){
+        return new GameView(this);
     }
 
     public void init(){
@@ -169,7 +174,7 @@ public class Game {
         List<GlobalGoal> goals = GlobalGoal.getOneForEachChild(players.length);
 
         Collections.shuffle(goals);
-        GlobalGoal[] returned = new GlobalGoal[2];
+        GlobalGoal[] returned = new GlobalGoal[Config.getInstance().getNumOfGlobalGoals()];
         for( int i = 0; i < returned.length; i++ ){
             returned[i] = goals.get(i);
         }

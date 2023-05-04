@@ -1,33 +1,43 @@
-package it.polimi.ingsw.Model;
+package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.GlobalGoals.*;
+import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.ModelView.GlobalGoalView;
 
 import java.util.*;
 
 public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;
 
-    public GlobalGoal(int people) throws InvalidNumberOfPlayersException {
+    protected final String name;
+
+    protected GlobalGoal(int people, String name) throws InvalidNumberOfPlayersException {
         if ( ( people < 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
             throw new InvalidNumberOfPlayersException();
         }
 
-        Config config = Config.getInstance();
-
         // Get a copy of the array, sorted by score so that the smaller rewards go to the bottom of the stack
-        Config.GlobalGoalScore[] globalGoalScores = Arrays.stream(config.getUnsortedGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.score(),g2.score())).toArray(Config.GlobalGoalScore[]::new);
+        Config.GlobalGoalScore[] globalGoalScores = Arrays.stream(Config.getInstance().getUnsortedGlobalGoals()).sorted((g1, g2) -> Integer.compare(g1.score(),g2.score())).toArray(Config.GlobalGoalScore[]::new);
 
         scores = new Stack<Integer>();
-
         for( Config.GlobalGoalScore ggp : globalGoalScores ){
             if( people >= ggp.players() ) scores.push(ggp.score());
         }
 
+        this.name = name;
+
     }
 
     public abstract boolean check(Shelf s) throws ColumnOutOfBoundsException,MissingShelfException;
+
+    public GlobalGoalView getView(){
+        return new GlobalGoalView(this);
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public int popScore() throws EmptyStackException{
         return scores.pop();

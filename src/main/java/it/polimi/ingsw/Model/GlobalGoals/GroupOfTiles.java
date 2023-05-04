@@ -1,10 +1,10 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Tile;
+import it.polimi.ingsw.Model.Utilities.NumberToWord;
 
 public class GroupOfTiles extends GlobalGoal {
 
@@ -12,7 +12,7 @@ public class GroupOfTiles extends GlobalGoal {
     private final int numOfGroups;
 
     public GroupOfTiles(int people, int groupDim, int numOfGroups) throws InvalidNumberOfPlayersException {
-        super(people);
+        super(people, myName(groupDim));
         this.groupDim=groupDim;
         this.numOfGroups=numOfGroups;
     }
@@ -40,14 +40,15 @@ public class GroupOfTiles extends GlobalGoal {
         return false;
     }
 
-    private int checkFromThisTile(Shelf s,Coordinates coord, boolean[][] checked){
-        Tile t = s.getTile(coord);
+
+    private int checkFromThisTile(Shelf s, Coordinates coords, boolean[][] checked){
+        Tile t = s.getTile(coords);
         if( t == null ) return 0;
 
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
-        int i = coord.getROW();
-        int j = coord.getCOL();
+        int i = coords.getROW();
+        int j = coords.getCOL();
         int res=1;
         Tile temp;
 
@@ -79,5 +80,11 @@ public class GroupOfTiles extends GlobalGoal {
 
         return res;
     }
+
+    private static String myName( int g ){
+        return "GroupOf" + NumberToWord.getWord(Integer.toString(g).toCharArray()) + "Tiles";
+    }
+
+
 
 }

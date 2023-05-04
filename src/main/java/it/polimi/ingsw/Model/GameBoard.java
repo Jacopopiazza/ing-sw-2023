@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.ModelView.GameBoardView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +19,10 @@ public class GameBoard {
         List<Coordinates> a = Config.getInstance().getGameBoardCoordinates(people);
         for( Coordinates coords : a )
             board.put(coords.clone(), null);
+    }
+
+    public GameBoardView getView(){
+        return new GameBoardView(this);
     }
 
     public Set<Coordinates> getCoords(){

@@ -3,6 +3,7 @@
   "shelfRows" : 6,
   "shelfColumns" : 5,
   "numOfTilesPerColor": 22,
+  "numOfGlobalGoals": 2,
 
   "privateGoalsScores" : [
     {"correctPosition": 0, "score":  0},

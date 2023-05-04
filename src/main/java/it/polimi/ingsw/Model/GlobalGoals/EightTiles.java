@@ -1,14 +1,13 @@
 package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.GlobalGoal;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.TileColor;
 
 public class EightTiles extends GlobalGoal {
     public EightTiles(int people) throws InvalidNumberOfPlayersException {
-        super(people);
+        super(people, "EightTiles");
     }
 
     @Override

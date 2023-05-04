@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.ModelView.TileSackView;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -13,6 +14,10 @@ public class TileSack {
         remaining = new int[LEN];
         // initialize the array with the maximum value for every element
         for( int i = 0; i < LEN; i++ ) remaining[i] = Config.getInstance().getNumOfTilesPerColor();
+    }
+
+    public TileSackView getView(){
+        return new TileSackView(this);
     }
 
     // Generate a Tile with a random color and pops it from the sack

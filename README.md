@@ -6,6 +6,27 @@ Mattia Piccinato [@peetceenatoo](https://github.com/peetceenatoo)<br>
 Francesco Rita [@FraRita](https://github.com/FraRita)<br>
 Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 
+## Progress
+
+| Functionality | State |
+|:-----------------------|:------------------------------------:|
+| Basic rules | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| Complete rules | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| Socket | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| RMI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| GUI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| CLI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00)|
+| Multiple games | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| Persistence | ![#c5f015](https://placehold.it/15/f03c15/f03c15) |
+| Chat | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| Disconnections | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+
+<!--
+[![RED](https://placehold.it/15/f03c15/f03c15)](#)
+[![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#)
+[![GREEN](https://placehold.it/15/44bb44/44bb44)](#)
+-->
+
 ## Utilized Software
 
 * [Draw.io - Diagrams.net](https://app.diagrams.net/): UML and sequence diagrams.

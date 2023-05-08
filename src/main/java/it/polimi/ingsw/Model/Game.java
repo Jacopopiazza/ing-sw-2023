@@ -140,7 +140,7 @@ public class Game {
         return board;
     }
 
-    public boolean refillGameBoard(){
+    public boolean refillGameBoard() throws EmptySackException {
         if( !this.board.toRefill() )
             return false;
 
@@ -150,10 +150,7 @@ public class Game {
         // For each Coordinate in the board
         for( Coordinates c : this.board.getCoords() ){
             // Check if the sack is empty
-            if( ( Arrays.stream(this.sack.getRemaining()).sum() == 0 ) && noTileAdded )
-                return false;
-            else if( Arrays.stream(this.sack.getRemaining()).sum() == 0 )
-                break;
+            if( Arrays.stream(this.sack.getRemaining()).sum() == 0 ) throw new EmptySackException();
 
             // Add a new Tile from the sack to the board
             try{

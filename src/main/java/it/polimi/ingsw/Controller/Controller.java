@@ -127,9 +127,14 @@ public class Controller {
         }
 
         //refilling the board
-        model.refillGameBoard();
+        try{
+            model.refillGameBoard();
+        }
+        catch( EmptySackException e ){
+            e.printStackTrace();
+        }
 
         //setting the next player
-        if(model.getNumOfActivePlayers() > 1) model.nextPlayer();
+        if( model.getNumOfActivePlayers() > 1 ) model.nextPlayer();
     }
 }

@@ -72,9 +72,7 @@ public class Player{
 
     //Method added just for testing purposes
     public void setShelf(Shelf shelf) throws MissingShelfException{
-
         if( shelf == null ) throw new MissingShelfException();
-
         this.shelf = shelf.clone();
     }
 

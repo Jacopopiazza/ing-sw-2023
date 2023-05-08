@@ -17,6 +17,7 @@ public class PlayerTest extends TestCase {
     public void setUp(){
         pg = PrivateGoal.getPrivateGoals(2)[0];
         p = new Player("username");
+        p.init(pg);
         randomToken = 1000;
     }
 
@@ -33,12 +34,7 @@ public class PlayerTest extends TestCase {
         p.setScore(10);
         assertEquals(p.getScore(),10);
 
-
-        assertTrue(p.isActive());
         assertFalse(p.isWinner());
-
-        p.setActive(false);
-        assertFalse(p.isActive());
 
         p.setWinner(true);
         assertTrue(p.isWinner());

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Messages;
 
+import it.polimi.ingsw.Network.Client;
+
 public class ReconnectMessage implements Message{
     private String username;
     private Client client;

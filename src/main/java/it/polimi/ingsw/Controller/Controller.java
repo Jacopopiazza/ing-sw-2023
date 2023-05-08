@@ -36,16 +36,32 @@ public class Controller {
 
     public void kick(String username){
         if(!gameStarted){
-            model.kick(username);
+            try {
+                model.kick(username);
+            }
+            catch (UsernameNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void reconnect(String username, GameListener listener){
-        model.reconnect(username,listener);
+        try {
+            model.reconnect(username,listener);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void disconnect(String username){
-        if(gameStarted) model.disconnect(username);
+        if(gameStarted) {
+            try {
+                model.disconnect(username);
+            }
+            catch (UsernameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public int getNumOfActivePlayers(){
@@ -60,7 +76,7 @@ public class Controller {
             e.printStackTrace();
         }
         //checking that the given player is actually the one who has to play
-        if( !(currPlayer.getUsername().equals(username) || model.getNumOfActivePlayers() == 1) ){
+        if( !( currPlayer.getUsername().equals(username) || ( model.getNumOfActivePlayers() == 1 ) ) ){
             model.addCheater(username);
             return;
         }
@@ -80,9 +96,13 @@ public class Controller {
         }
 
         //checking whether there is enough space in the selected column or not
-        if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
-            model.addCheater(username);
-            return;
+        try {
+            if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
+                model.addCheater(username);
+                return;
+            }
+        } catch (ColumnOutOfBoundsException e) {
+            e.printStackTrace();
         }
 
         //taking the tiles from the board
@@ -124,6 +144,9 @@ public class Controller {
         }
         catch (MissingShelfException e3) {
             e3.printStackTrace();
+        }
+        catch (ColumnOutOfBoundsException e4) {
+            e4.printStackTrace();
         }
 
         //refilling the board

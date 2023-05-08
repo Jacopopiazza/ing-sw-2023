@@ -65,7 +65,7 @@ public class Shelf implements Cloneable{
         for(int i=0;i<Shelf.getRows() && this.SHELF[i][column]!=null; i++){
             result++;
         }
-        return result;
+        return Shelf.getRows()-result;
     }
 
     public static int getColumns(){

@@ -16,7 +16,7 @@ public class ShelfView implements Serializable {
         this.SHELF = new TileView[Shelf.getRows()][Shelf.getColumns()];
         for(int i = 0; i < Shelf.getRows(); i++){
             for(int j = 0; j < Shelf.getColumns(); j++){
-                this.SHELF[i][j] = new TileView(shelf.getTile(new Coordinates(i,j)));
+                this.SHELF[i][j] = ( shelf.getTile(new Coordinates(i,j)) == null ) ? null : new TileView( shelf.getTile(new Coordinates(i,j) ) );
             }
         }
     }

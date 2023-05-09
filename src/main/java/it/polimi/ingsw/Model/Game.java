@@ -194,4 +194,9 @@ public class Game {
             if(el!=null) el.update(gv);
         }
     }
+
+    public void insertTilesIntoPlayerShelf(Player p, Tile[] t, int column) throws IllegalColumnInsertionException, NoTileException {
+        p.insert(t, column);
+    }
+
 }

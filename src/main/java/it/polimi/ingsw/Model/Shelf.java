@@ -3,6 +3,8 @@ package it.polimi.ingsw.Model;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
+import java.util.Arrays;
+
 
 public class Shelf implements Cloneable{
     private final Tile[][] SHELF;
@@ -49,14 +51,6 @@ public class Shelf implements Cloneable{
         return SHELF[c.getROW()][c.getCOL()];
     }
 
-    public boolean isFull(){
-        for( int i = 0; i < getRows(); i++ ){
-            for( int j = 0; j < getColumns(); j++ ){
-                if( SHELF[i][j] == null ) return false;
-            }
-        }
-        return true;
-    }
 
     public int remainingSpaceInColumn(int column) throws ColumnOutOfBoundsException{
         if(column<0 || column>=Shelf.getColumns()) throw new ColumnOutOfBoundsException();
@@ -79,6 +73,14 @@ public class Shelf implements Cloneable{
     @Override
     public Shelf clone() {
         return new Shelf(this.SHELF);
+    }
+
+    public boolean isFull(){
+        for(int i = 0; i < getColumns(); i++){
+            if(SHELF[0][i] == null)
+                return false;
+        }
+        return true;
     }
 
 }

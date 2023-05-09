@@ -139,7 +139,7 @@ public class Controller {
 
         //putting the tiles in the shelf;
         try {
-            currPlayer.insert(effectiveTiles,col);
+            model.insertTilesIntoPlayerShelf(currPlayer, effectiveTiles, col);
         } catch (NoTileException e) {
             e.printStackTrace();
         }

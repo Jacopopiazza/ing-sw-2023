@@ -47,7 +47,7 @@ public class Game {
 
         board = new GameBoard(numOfPlayers);
         sack = new TileSack();
-        currentPlayer = new Random().nextInt(numOfPlayers);
+        currentPlayer = 0;
         goals = this.pickTwoGlobalGoals();
         cheaters = new Stack<String>();
         notifyAllListeners();
@@ -58,29 +58,31 @@ public class Game {
         for(i=0; i<numOfPlayers && players[i]!=null; i++);
         players[i] = new Player(username);
         listeners[i] = listener;
+        if( currentPlayer == -1 ) currentPlayer = 0;
     }
 
-    public void reconnect(String username, GameListener listener){
+    public void reconnect(String username, GameListener listener) throws UsernameNotFoundException {
         int i;
         for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
+        if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = listener;
         notifyAllListeners();
     }
 
-    public void disconnect(String username){
-        for(int i=0; i<numOfPlayers;i++){
-            if(username.equals(players[i].getUsername())) listeners[i] = null;
-        }
+    public void disconnect(String username) throws UsernameNotFoundException {
+        int i;
+        for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
+        if( i == numOfPlayers ) throw new UsernameNotFoundException();
+        listeners[i] = null;
         notifyAllListeners();
     }
 
-    public void kick(String username){
-        for(int i=0; i<numOfPlayers;i++){
-            if(username.equals(players[i].getUsername())){
-                listeners[i] = null;
-                players[i] = null;
-            }
-        }
+    public void kick(String username) throws UsernameNotFoundException {
+        int i;
+        for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
+        if( i == numOfPlayers ) throw new UsernameNotFoundException();
+        listeners[i] = null;
+        players[i] = null;
     }
 
     public int getNumOfPlayers(){
@@ -116,7 +118,7 @@ public class Game {
         return players[p];
     }
 
-    public void checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException {
+    public void checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException, ColumnOutOfBoundsException {
         int token;
         int currentScore = players[currentPlayer].getScore();
 

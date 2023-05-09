@@ -1,17 +1,19 @@
-package it.polimi.ingsw.Controller;
+package java.it.polimi.ingsw.Controller;
 
+import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
+import it.polimi.ingsw.Listener.GameListener;
+import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.Coordinates;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.EventListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ControllerTest extends TestCase {
     private Controller controller;
-    private Server server;
 
     Coordinates wrongNumberOfTilesActionCoords[];
     int wrongNumberOfTilesActionColumn = 1;
@@ -24,7 +26,7 @@ public class ControllerTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        controller = new Controller(2, server);
+        controller = new Controller(2, null);
 
         Coordinates wrongNumberOfTilesActionCoords[] = { new Coordinates(1,3), new Coordinates(1, 4), null, null };
         int wrongNumberOfTilesActionColumn = 1;
@@ -44,34 +46,25 @@ public class ControllerTest extends TestCase {
 
     @Test
     public void testAddPlayer() {
-        EventListener listener_Picci = new EventListener() {
-            @Override
-            public String toString() {
-                return super.toString();
-            }
-        };
-        EventListener listener_Roma = new EventListener() {
-            @Override
-            public String toString() {
-                return super.toString();
-            }
-        };
-
-        assertFalse(controller.addPlayer("Picci", listener_Picci));
+        assertFalse(controller.addPlayer("Picci", null));
         Assert.assertFalse(controller.isGameStarted());
 
-        assertTrue(controller.addPlayer("Roma", listener_Roma));
+        assertTrue(controller.addPlayer("Roma", null));
         assertTrue(controller.isGameStarted());
     }
 
     @Test
-    public void test_NotYourTurnException() throws NotYourTurnException, IllegalColumnInsertionException {
+    public void testDoTurn_wrongPlayer() throws IllegalColumnInsertionException {
+        AtomicBoolean cheatedFlag = new AtomicBoolean(false);
+        GameListener cheater = (Message message) -> cheatedFlag.set(true);
         controller.addPlayer("Picci", null);
-        Assert.assertThrows(NotYourTurnException.class, () -> controller.doTurn("Roma", null, 0));
+        controller.addPlayer("Roma", cheater);
+        controller.doTurn("Roma", null, 0);
+        assertTrue(cheatedFlag.get());
     }
 
     @Test
-    public void test_IllegalColumnInsertionException() throws IllegalColumnInsertionException, NotYourTurnException {
+    public void test_IllegalColumnInsertionException() throws IllegalColumnInsertionException {
         controller.addPlayer("Picci", null);
         Assert.assertThrows(IllegalColumnInsertionException.class, () -> controller.doTurn("Picci", wrongColumnActionCoords, wrongColumnActionColumn));
     }

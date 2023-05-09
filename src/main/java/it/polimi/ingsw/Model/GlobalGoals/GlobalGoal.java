@@ -29,7 +29,7 @@ public abstract class GlobalGoal implements Cloneable {
 
     }
 
-    public abstract boolean check(Shelf s) throws ColumnOutOfBoundsException,MissingShelfException;
+    public abstract boolean check(Shelf s) throws MissingShelfException;
 
     public GlobalGoalView getView(){
         return new GlobalGoalView(this);

@@ -6,12 +6,24 @@ import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Network.Server;
 
 import java.util.EmptyStackException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Controller {
 
     private Server gameServer;
     private boolean gameStarted;
     private Game model;
+    private final int timerLength = 30; // in seconds
+    private final Timer timer = new Timer();
+
+    private final TimerTask task = new TimerTask(){
+        public void run(){
+            timer.cancel();
+            model.getPlayer(model.getCurrentPlayer()).setWinner(true);
+            //model.destroy();
+        }
+    };
 
     public Controller (int numOfPlayers, Server server){
         gameServer = server;
@@ -36,16 +48,41 @@ public class Controller {
 
     public void kick(String username){
         if(!gameStarted){
-            model.kick(username);
+            try {
+                model.kick(username);
+            }
+            catch (UsernameNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void reconnect(String username, GameListener listener){
-        model.reconnect(username,listener);
+        try {
+            model.reconnect(username,listener);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        if(model.getNumOfActivePlayers() == 2) timer.cancel();
     }
 
     public void disconnect(String username){
-        if(gameStarted) model.disconnect(username);
+        if(gameStarted) {
+            try {
+                model.disconnect(username);
+            }
+            catch (UsernameNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+            if(model.getNumOfActivePlayers() == 1) {
+                timer.schedule(task,0,timerLength*1000);
+                return;
+            }
+            if (model.getNumOfActivePlayers() == 0) return; //model.destroy();s
+            if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)) model.nextPlayer();
+        }
     }
 
     public int getNumOfActivePlayers(){
@@ -60,7 +97,7 @@ public class Controller {
             e.printStackTrace();
         }
         //checking that the given player is actually the one who has to play
-        if( !(currPlayer.getUsername().equals(username) || model.getNumOfActivePlayers() == 1) ){
+        if( !( currPlayer.getUsername().equals(username) || ( model.getNumOfActivePlayers() == 1 ) ) ){
             model.addCheater(username);
             return;
         }
@@ -80,9 +117,13 @@ public class Controller {
         }
 
         //checking whether there is enough space in the selected column or not
-        if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
-            model.addCheater(username);
-            return;
+        try {
+            if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
+                model.addCheater(username);
+                return;
+            }
+        } catch (ColumnOutOfBoundsException e) {
+            e.printStackTrace();
         }
 
         //taking the tiles from the board
@@ -124,6 +165,9 @@ public class Controller {
         }
         catch (MissingShelfException e3) {
             e3.printStackTrace();
+        }
+        catch (ColumnOutOfBoundsException e4) {
+            e4.printStackTrace();
         }
 
         //refilling the board

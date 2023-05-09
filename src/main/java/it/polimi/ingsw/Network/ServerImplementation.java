@@ -15,6 +15,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
@@ -193,6 +194,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             instance = new ServerImplementation();
         }
         return instance;
+    }
+
+    public void endGame(List<String> players){
+        for(String player: players){
+            playingUsernames.remove(player);
+            disconnectedUsernames.remove(player);
+        }
     }
 
 

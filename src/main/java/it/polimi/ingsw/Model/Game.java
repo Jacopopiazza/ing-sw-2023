@@ -50,8 +50,8 @@ public class Game {
         sack = new TileSack();
         // Shuffle in the same order players and listeners
         Random rnd = new Random(System.currentTimeMillis());
-        Collections.shuffle(Arrays.stream(players).toList(), rnd );
-        Collections.shuffle(Arrays.stream(listeners).toList(), rnd );
+        Collections.shuffle(Arrays.asList(players), rnd );
+        Collections.shuffle(Arrays.asList(listeners), rnd );
         currentPlayer = 0;
         goals = this.pickTwoGlobalGoals();
         cheaters = new Stack<String>();

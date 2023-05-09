@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Network;
 
-public interface Server {
+import it.polimi.ingsw.Messages.Message;
 
+public interface Server {
+    public void handleMessage( Message m);
 }

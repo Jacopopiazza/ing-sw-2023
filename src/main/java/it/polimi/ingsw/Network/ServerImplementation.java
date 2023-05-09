@@ -196,7 +196,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         return instance;
     }
 
-    public void endGame(List<String> players){
+    public void deleteGame(List<String> players){
         synchronized (playingUsernames){
             synchronized (disconnectedUsernames){
                 for(String player: players){

@@ -22,8 +22,9 @@ public class Controller {
             isTimerRunning = false;
             model.setWinner(model.getCurrentPlayer());
             List<String> players = new ArrayList<String>();
-            for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
-            gameServer.endGame(players);
+            for(int i=0; i<model.getNumOfPlayers();i++)
+                players.add(model.getPlayer(i).getUsername());
+            gameServer.deleteGame(players);
         }
     };
 
@@ -69,7 +70,7 @@ public class Controller {
     }
 
     public void disconnect(String username){
-        if(model.isGameStarted()) {
+        if( model.isGameStarted() ) {
             try {
                 model.disconnect(username);
             }
@@ -85,10 +86,11 @@ public class Controller {
             if (model.getNumOfActivePlayers() == 0){
                 List<String> players = new ArrayList<String>();
                 for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
-                gameServer.endGame(players);
+                gameServer.deleteGame(players);
                 return;
             }
-            if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)) model.nextPlayer();
+            if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username))
+                model.nextPlayer();
         }
     }
 
@@ -97,37 +99,38 @@ public class Controller {
     }
 
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
-        if (isTimerRunning){
+        // If timer is running, the player should just wait for THEM to win
+        if ( isTimerRunning ){
             model.addCheater(username);
             return;
         }
+
+        // Get the current player...
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
         } catch (InvalidIndexException e) {
             e.printStackTrace();
         }
-        //checking that the given player is actually the one who has to play
+        // ...and check if such player is the one who sent the request
         if( !( currPlayer.getUsername().equals(username) || ( model.getNumOfActivePlayers() == 1 ) ) ){
             model.addCheater(username);
             return;
         }
 
+        // Check if the chosen tiles are valid
         GameBoard board = model.getGameBoard();
-
         if( !(board.checkChosenTiles(chosenTiles)) ){
             model.addCheater(username);
             return;
         }
 
-        //now I know the chosen tiles are valid
-        //checking the selected column
-        if(col<0 || col>Shelf.getColumns()){
+        // Check is the index for the column is valid...
+        if( ( col<0 ) || ( col>Shelf.getColumns() ) ){
             model.addCheater(username);
             return;
         }
-
-        //checking whether there is enough space in the selected column or not
+        // ...and check if there is enough space in such column
         try {
             if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
                 model.addCheater(username);
@@ -137,7 +140,7 @@ public class Controller {
             e.printStackTrace();
         }
 
-        //taking the tiles from the board
+        // Pick the given Tiles
         Tile[] effectiveTiles = null;
             try {
                 effectiveTiles = model.pickTilesFromBoard(chosenTiles);
@@ -145,7 +148,7 @@ public class Controller {
                 e.printStackTrace();
             }
 
-        //putting the tiles in the shelf;
+        // Insert the tiles in the shelf
         try {
             model.insertTilesIntoPlayerShelf(currPlayer, effectiveTiles, col);
         } catch (NoTileException e) {
@@ -158,7 +161,7 @@ public class Controller {
             e2.printStackTrace();
         }
 
-        //checking the global goals
+        // Compute the global goals' points
         try {
             model.checkGlobalGoals();
         }
@@ -178,7 +181,7 @@ public class Controller {
             e4.printStackTrace();
         }
 
-        //refilling the board
+        // Eventually refill the board
         try{
             model.refillGameBoard();
         }
@@ -186,13 +189,15 @@ public class Controller {
             e.printStackTrace();
         }
 
-        //setting the next player
-        if( model.getNumOfActivePlayers() > 1 && !(model.nextPlayer()) ){
+        // Set the next player and if the game is over the game ends
+        if( ( model.getNumOfActivePlayers() > 1 ) && !model.nextPlayer() ){
             model.endGame();
+            // Get list of usernames for server's method
             List<String> players = new ArrayList<String>();
-            for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
-            gameServer.endGame(players);
-            return;
-        };
+            for( int i=0; i<model.getNumOfPlayers(); i++ )
+                players.add(model.getPlayer(i).getUsername());
+            // Delete game from server
+            gameServer.deleteGame(players);
+        }
     }
 }

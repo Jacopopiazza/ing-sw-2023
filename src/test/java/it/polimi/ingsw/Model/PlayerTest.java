@@ -36,7 +36,7 @@ public class PlayerTest extends TestCase {
 
         assertFalse(p.isWinner());
 
-        p.setWinner(true);
+        p.setWinner();
         assertTrue(p.isWinner());
 
        for( int i = 0; i < p.getAccomplishedGlobalGoals().length; i++ ) {

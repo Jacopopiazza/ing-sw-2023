@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
+import it.polimi.ingsw.Messages.LobbyMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.UpdateViewMessage;
 import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
@@ -19,7 +20,7 @@ public class Game {
     private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
-
+    private boolean started;
     private Stack<String> cheaters;
 
     public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
@@ -32,8 +33,9 @@ public class Game {
         players = new Player[numOfPlayers];
         goals = null;
         currentPlayer = -1;
-        sack= null;
+        sack = null;
         cheaters = null;
+        started = false;
     }
 
     public GameView getView(){
@@ -44,13 +46,21 @@ public class Game {
         PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(numOfPlayers);
         for( int i = 0; i < numOfPlayers; i++ )
             players[i].init(privateGoals[i]);
-
         board = new GameBoard(numOfPlayers);
         sack = new TileSack();
+        // Shuffle in the same order players and listeners
+        Random rnd = new Random(System.currentTimeMillis());
+        Collections.shuffle(Arrays.stream(players).toList(), rnd );
+        Collections.shuffle(Arrays.stream(listeners).toList(), rnd );
         currentPlayer = 0;
         goals = this.pickTwoGlobalGoals();
         cheaters = new Stack<String>();
         notifyAllListeners();
+        started = true;
+    }
+
+    public boolean isGameStarted(){
+        return started;
     }
 
     public void addPlayer(String username, GameListener listener){
@@ -59,6 +69,7 @@ public class Game {
         players[i] = new Player(username);
         listeners[i] = listener;
         if( currentPlayer == -1 ) currentPlayer = 0;
+        notifyAllListeners();
     }
 
     public void reconnect(String username, GameListener listener) throws UsernameNotFoundException {
@@ -106,9 +117,14 @@ public class Game {
         return temp;
     }
 
-    public void nextPlayer(){
+    // Return false if Game's over
+    public boolean nextPlayer(){
         currentPlayer = (currentPlayer+1) % players.length;
         while(listeners[currentPlayer] == null) currentPlayer = (currentPlayer+1) % players.length;
+        notifyAllListeners();
+        if( players[currentPlayer].getShelf().isFull() )
+            return false;
+        return true;
     }
 
     public Player getPlayer(int p) throws InvalidIndexException{
@@ -118,20 +134,24 @@ public class Game {
         return players[p];
     }
 
+    // Used by the controller only in case of TimeOut, otherwise the winner is set by endGame()
+    public void setWinner(int p){
+        players[p].setWinner();
+        notifyAllListeners();
+    }
+
     public void checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException, ColumnOutOfBoundsException {
         int token;
         int currentScore = players[currentPlayer].getScore();
-
         for( int i = 0; i < goals.length; i++ ){
             if( ( players[currentPlayer].getAccomplishedGlobalGoals()[i] == 0 ) && goals[i].check(players[currentPlayer].getShelf()) ){
                 token = goals[i].popScore();
                 players[currentPlayer].setAccomplishedGlobalGoal(i, token);
                 currentScore += token;
             }
-
         }
-
         players[currentPlayer].setScore(currentScore);
+        notifyAllListeners();
     }
 
     public TileSack getTileSack(){
@@ -140,6 +160,16 @@ public class Game {
 
     public GameBoard getGameBoard(){
         return board;
+    }
+
+    public Tile[] pickTilesFromBoard(Coordinates[] coords) throws InvalidCoordinatesForCurrentGameException {
+        Tile[] res = new Tile[coords.length];
+        for( int i=0; i<coords.length; i++){
+            res[i] = board.getTile(coords[i]);
+            board.setTile(coords[i], null);
+        }
+        notifyAllListeners();
+        return res;
     }
 
     public boolean refillGameBoard() throws EmptySackException {
@@ -165,6 +195,7 @@ public class Game {
                 e.printStackTrace();
             }
         }
+        notifyAllListeners();
         // at least one Tile was added
         return true;
     }
@@ -189,9 +220,19 @@ public class Game {
     public Stack<String> getCheaters(){ return cheaters;}
 
     private void notifyAllListeners(){
-        Message gv = new UpdateViewMessage(new GameView(this));
-        for (GameListener el: listeners) {
-            if(el!=null) el.update(gv);
+        if( started ) {
+            Message gv = new UpdateViewMessage(new GameView(this));
+            for (GameListener el : listeners) {
+                if (el != null) el.update(gv);
+            }
+        }
+        else {
+            List<String> players = new ArrayList<>();
+            for( int i=0; i<numOfPlayers; i++ ){
+                if( this.players[i] != null )
+                    players.add(this.players[i].getUsername());
+            }
+            Message lobby = new LobbyMessage(players);
         }
     }
 
@@ -199,4 +240,26 @@ public class Game {
         p.insert(t, column);
     }
 
+    public void endGame(){
+        // Add point for being the first to finish
+        players[currentPlayer].first();
+
+        // Add points for PrivateGoals and for the goals on the GameBoard
+        for( int i=0; i<numOfPlayers; i++ ){
+            players[i].checkPrivateGoal();
+            players[i].setScore( players[i].getScore() + GameBoard.checkBoardGoal(players[i].getShelf()) );
+        }
+
+        // "In case of a tie, the tied player sitting closer (clockwise)
+        // from the first player wins the game."
+        // Remember: the player who started has index 0
+        int winner = 0;
+        for( int i=0; i<numOfPlayers; i++ ){
+            if( players[i].getScore() > players[winner].getScore())
+                winner = i;
+        }
+
+        // Set the game winner
+        players[winner].setWinner();
+    }
 }

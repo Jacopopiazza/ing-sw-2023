@@ -25,11 +25,9 @@ public class Player{
     }
 
     public void init(PrivateGoal privateGoal) {
-        score = 0;
         shelf = new Shelf();
         goal = privateGoal;
         accomplishedGlobalGoals = new int[]{0, 0};
-        winner = false;
     }
 
     public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
@@ -92,8 +90,9 @@ public class Player{
         return winner;
     }
 
-    public void setWinner(boolean winner) {
-        this.winner = winner;
+    // To determine the winner of the game, and not the first to finish
+    public void setWinner() {
+        this.winner = true;
     }
 
     public PrivateGoal getPrivateGoal() {

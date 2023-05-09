@@ -109,7 +109,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     private void doTurn(String username, Coordinates[] chosenTiles, int column){
         synchronized (playingUsernames){
-            if( !playingUsernames.containsKey(username) ) return;
+            if( !playingUsernames.containsKey(username) || !(playingUsernames.get(username).isGameStarted()) ) return; // message is ignored
             Controller controller = playingUsernames.get(username);
             controller.doTurn(username,chosenTiles,column);
         }
@@ -197,9 +197,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     public void endGame(List<String> players){
-        for(String player: players){
-            playingUsernames.remove(player);
-            disconnectedUsernames.remove(player);
+        synchronized (playingUsernames){
+            synchronized (disconnectedUsernames){
+                for(String player: players){
+                    playingUsernames.remove(player);
+                    disconnectedUsernames.remove(player);
+                }
+            }
         }
     }
 

@@ -4,35 +4,37 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Network.Server;
+import it.polimi.ingsw.Network.ServerImplementation;
 
-import java.util.EmptyStackException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class Controller {
 
-    private Server gameServer;
-    private boolean gameStarted;
+    private ServerImplementation gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
+    private boolean isTimerRunning;
     private final Timer timer = new Timer();
 
     private final TimerTask task = new TimerTask(){
         public void run(){
             timer.cancel();
-            model.getPlayer(model.getCurrentPlayer()).setWinner(true);
-            //model.destroy();
+            isTimerRunning = false;
+            model.setWinner(model.getCurrentPlayer());
+            List<String> players = new ArrayList<String>();
+            for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
+            gameServer.endGame(players);
         }
     };
 
-    public Controller (int numOfPlayers, Server server){
+    public Controller (int numOfPlayers, ServerImplementation server){
         gameServer = server;
-        gameStarted = false;
         model = new Game(numOfPlayers);
+        isTimerRunning = false;
     }
 
     public boolean isGameStarted(){
-        return gameStarted;
+        return model.isGameStarted();
     }
 
     //returns true if the lobby is full
@@ -40,14 +42,13 @@ public class Controller {
         model.addPlayer(username,listener);
         if(model.getNumOfActivePlayers() == model.getNumOfPlayers()){
             model.init();
-            gameStarted = true;
             return true;
         }
         return false;
     }
 
     public void kick(String username){
-        if(!gameStarted){
+        if(!model.isGameStarted()){
             try {
                 model.kick(username);
             }
@@ -68,7 +69,7 @@ public class Controller {
     }
 
     public void disconnect(String username){
-        if(gameStarted) {
+        if(model.isGameStarted()) {
             try {
                 model.disconnect(username);
             }
@@ -77,10 +78,16 @@ public class Controller {
                 return;
             }
             if(model.getNumOfActivePlayers() == 1) {
+                isTimerRunning = true;
                 timer.schedule(task,0,timerLength*1000);
                 return;
             }
-            if (model.getNumOfActivePlayers() == 0) return; //model.destroy();s
+            if (model.getNumOfActivePlayers() == 0){
+                List<String> players = new ArrayList<String>();
+                for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
+                gameServer.endGame(players);
+                return;
+            }
             if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)) model.nextPlayer();
         }
     }
@@ -90,6 +97,10 @@ public class Controller {
     }
 
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
+        if (isTimerRunning){
+            model.addCheater(username);
+            return;
+        }
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
@@ -127,15 +138,12 @@ public class Controller {
         }
 
         //taking the tiles from the board
-        Tile[] effectiveTiles = new Tile[chosenTiles.length];
-        for(int i=0; i<chosenTiles.length; i++) {
+        Tile[] effectiveTiles = null;
             try {
-                effectiveTiles[i]=board.getTile(chosenTiles[i]);
-                board.setTile(chosenTiles[i],null);
+                effectiveTiles = model.pickTilesFromBoard(chosenTiles);
             } catch (InvalidCoordinatesForCurrentGameException e) {
                 e.printStackTrace();
             }
-        }
 
         //putting the tiles in the shelf;
         try {
@@ -179,6 +187,12 @@ public class Controller {
         }
 
         //setting the next player
-        if( model.getNumOfActivePlayers() > 1 ) model.nextPlayer();
+        if( model.getNumOfActivePlayers() > 1 && !(model.nextPlayer()) ){
+            model.endGame();
+            List<String> players = new ArrayList<String>();
+            for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
+            gameServer.endGame(players);
+            return;
+        };
     }
 }

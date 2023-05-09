@@ -13,13 +13,12 @@ public class Controller {
     private ServerImplementation gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
-    private boolean isTimerRunning;
+    private boolean remainingPlayerHasDoneTheTurn;
     private final Timer timer = new Timer();
 
     private final TimerTask task = new TimerTask(){
         public void run(){
             timer.cancel();
-            isTimerRunning = false;
             model.setWinner(model.getCurrentPlayer());
             List<String> players = new ArrayList<String>();
             for(int i=0; i<model.getNumOfPlayers();i++)
@@ -31,7 +30,7 @@ public class Controller {
     public Controller (int numOfPlayers, ServerImplementation server){
         gameServer = server;
         model = new Game(numOfPlayers);
-        isTimerRunning = false;
+        remainingPlayerHasDoneTheTurn = false;
     }
 
     public boolean isGameStarted(){
@@ -66,7 +65,13 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        if(model.getNumOfActivePlayers() == 2) timer.cancel();
+        if(model.getNumOfActivePlayers() == 2){
+            timer.cancel();
+            if(remainingPlayerHasDoneTheTurn) {
+                model.nextPlayer();
+                remainingPlayerHasDoneTheTurn = false;
+            }
+        }
     }
 
     public void disconnect(String username){
@@ -79,7 +84,10 @@ public class Controller {
                 return;
             }
             if(model.getNumOfActivePlayers() == 1) {
-                isTimerRunning = true;
+                if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)) {
+                    model.nextPlayer();
+                    remainingPlayerHasDoneTheTurn = false;
+                }
                 timer.schedule(task,0,timerLength*1000);
                 return;
             }
@@ -100,7 +108,7 @@ public class Controller {
 
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
         // If timer is running, the player should just wait for THEM to win
-        if ( isTimerRunning ){
+        if ( model.getNumOfPlayers() == 1 && remainingPlayerHasDoneTheTurn ){
             model.addCheater(username);
             return;
         }
@@ -199,5 +207,7 @@ public class Controller {
             // Delete game from server
             gameServer.deleteGame(players);
         }
+
+        if(model.getNumOfActivePlayers() == 1) remainingPlayerHasDoneTheTurn = true;
     }
 }

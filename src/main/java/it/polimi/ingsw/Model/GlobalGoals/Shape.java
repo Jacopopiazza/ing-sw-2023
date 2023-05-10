@@ -17,9 +17,9 @@ public class Shape extends GlobalGoal {
         super(people, myName(s));
         shapes = new ArrayList<List<Coordinates>>();
         List<Coordinates> shape;
-        for (List<Coordinates> l : s) {
+        for( List<Coordinates> l : s ){
             shape = new ArrayList<Coordinates>();
-            for (Coordinates c : l) {
+            for( Coordinates c : l ){
                 shape.add(c);
             }
             shapes.add(shape);
@@ -28,7 +28,7 @@ public class Shape extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if (s == null) {
+        if ( s == null ) {
             throw new MissingShelfException();
         }
 
@@ -38,26 +38,27 @@ public class Shape extends GlobalGoal {
         TileColor color;
         int r, c;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                for (List<Coordinates> shape : shapes) {
+        for( int i = 0; i < rows; i++ ){
+            for( int j = 0; j < columns; j++ ){
+                for( List<Coordinates> shape : shapes ){
                     found = true;
                     // if the first of the shape's tiles is inside the shelf (it does not need to be the first one)
-                    if ((i + shape.get(0).getROW() < rows) && (j + shape.get(0).getCOL() < columns)) {
+                    if( ( ( i + shape.get(0).getROW() ) < rows ) && ( ( j + shape.get(0).getCOL() ) < columns) ){
                         // get its color
-                        color = s.getTile(new Coordinates(i + shape.get(0).getROW(), j + shape.get(0).getCOL())).getColor();
+                        color = s.getTile(new Coordinates( i + shape.get(0).getROW(), j + shape.get(0).getCOL()) ).getColor();
                         // and check if every shape's tile is inside the shelf and has the same color
-                        for (Coordinates coord : shape) {
+                        for( Coordinates coord : shape ){
                             r = coord.getROW();
                             c = coord.getCOL();
-                            if ((i + r >= rows) || (j + c >= columns) || !s.getTile(new Coordinates(i + r, j + c)).getColor().equals(color)) {
+                            if( ( ( i + r ) >= rows ) || ( ( j + c ) >= columns ) || !s.getTile(new Coordinates(i+r, j+c)).getColor().equals(color) ){
                                 found = false;
                                 break;
                             }
                         }
-                    } else found = false;
+                    }
+                    else found = false;
 
-                    if (found) return true;
+                    if( found ) return true;
                 }
             }
         }
@@ -72,25 +73,25 @@ public class Shape extends GlobalGoal {
 
         // Check if it's Diagonal
         mayBe = true;
-        for (List<Coordinates> l1 : shape) {
+        for( List<Coordinates> l1 : shape ) {
             tempFlag = false;
-            for (List<Coordinates> l2 : Config.getInstance().getDiagonalsFromJSON()) {
-                if (!tempFlag && l1.containsAll(l2) && (l1.size() == l2.size())) tempFlag = true;
+            for( List<Coordinates> l2 : Config.getInstance().getDiagonalsFromJSON() ) {
+                if ( !tempFlag && l1.containsAll(l2) && (l1.size() == l2.size()) ) tempFlag = true;
             }
-            if (!tempFlag) mayBe = false;
+            if( !tempFlag ) mayBe = false;
         }
-        if (mayBe) return "Diagonal";
+        if( mayBe ) return "Diagonal";
 
         // Check if it's XShape
         mayBe = true;
-        for (List<Coordinates> l1 : shape) {
+        for( List<Coordinates> l1 : shape ){
             tempFlag = false;
-            for (List<Coordinates> l2 : Config.getInstance().getXShapeFromJSON()) {
-                if (!tempFlag && l1.containsAll(l2) && (l1.size() == l2.size())) tempFlag = false;
+            for( List<Coordinates> l2 : Config.getInstance().getXShapeFromJSON() ){
+                if( !tempFlag && l1.containsAll(l2) && ( l1.size() == l2.size() ) ) tempFlag = false;
             }
-            if (!tempFlag) mayBe = false;
+            if( !tempFlag ) mayBe = false;
         }
-        if (mayBe) return "XShape";
+        if( mayBe ) return "XShape";
 
         return "UnimplementedShape";
     }

@@ -11,7 +11,7 @@ public class Square extends GlobalGoal {
     // 2 separated groups of 2x2 Tiles of the same color
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if ( s == null ){
+        if( s == null ){
             throw new MissingShelfException();
         }
 
@@ -20,8 +20,8 @@ public class Square extends GlobalGoal {
         int squareSide = 2;
         Coordinates firstSquare = null;
 
-        for ( int i = 0; i <= r-squareSide; i++ ){
-            for ( int j = 0; j <= c-squareSide; j++ ){
+        for( int i = 0; i <= r-squareSide; i++ ){
+            for( int j = 0; j <= c-squareSide; j++ ){
                 Coordinates coord = new Coordinates(i, j);
                 Tile temp = s.getTile(coord);
                 boolean isASquare = true;

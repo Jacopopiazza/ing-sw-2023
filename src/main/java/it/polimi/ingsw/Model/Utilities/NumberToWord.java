@@ -11,37 +11,37 @@ public class NumberToWord {
         String[] multipleOfTens = new String[]{"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
         String[] powerOfTens = new String[]{"Hundred", "Thousand"};
 
-        if ((num == null) || (num.length == 0)) return "None";
-        if (num.length > 4) return "Many";
+        if( ( num == null ) || (num.length == 0) ) return "None";
+        if( num.length > 4 ) return "Many";
 
-        if (num.length == 1) return oneDigit[num[0] - '0'];
+        if( num.length == 1 ) return oneDigit[num[0] - '0'];
 
         x = 0;
         len = num.length;
-        while ( x < num.length ) {
+        while( x < num.length ){
             // if there are three or four digits last
-            if ( len >= 3 ) {
-                if ((num[x] - '0') > 0) {
+            if( len >= 3 ){
+                if( (num[x] - '0') > 0 ){
                     ret += oneDigit[num[x] - '0'];
                     ret += powerOfTens[len - 3];
                 }
                 len--;
             }
             // else (if there are one or two digits last)
-            else {
+            else{
                 // if it's between 10 and 19
-                if ((num[x] - '0') == 1) {
+                if( ( num[x] - '0' ) == 1 ){
                     ret += twoDigits[num[x + 1] - '0' + 1];
                     return ret;
                 }
                 // else
-                else {
+                else{
                     // if it's not between 00 and 09
-                    if ((num[x] - '0') > 0)
+                    if( ( num[x] - '0' ) > 0 )
                         ret += multipleOfTens[num[x] - '0'];
                     x++;
                     // and if it's not a multiple of ten
-                    if ((num[x] - '0') > 0)
+                    if( ( num[x] - '0' ) > 0 )
                         ret += oneDigit[num[x] - '0'];
                 }
             }

@@ -21,9 +21,9 @@ public class Coordinates {
 
     @Override
     public boolean equals(Object o) {
-        if ( this == o )
+        if( this == o )
             return true;
-        if ( o == null || ( this.getClass() != o.getClass() ) )
+        if( ( o == null ) || ( this.getClass() != o.getClass() ) )
             return false;
         Coordinates temp = (Coordinates) o;
         return ( ROW == temp.ROW ) && ( COL == temp.COL );

@@ -15,13 +15,13 @@ import java.util.*;
 public class Game {
     private GameBoard board;
     private final int numOfPlayers;
-    private GameListener[] listeners;
     private Player[] players;
+    private GameListener[] listeners;
     private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
-    private boolean started;
     private Stack<String> cheaters;
+    private boolean started;
 
     public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
         if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ){
@@ -65,7 +65,7 @@ public class Game {
 
     public void addPlayer(String username, GameListener listener){
         int i;
-        for(i=0; i<numOfPlayers && players[i]!=null; i++);
+        for( i=0; ( i<numOfPlayers ) && ( players[i] != null ); i++ );
         players[i] = new Player(username);
         listeners[i] = listener;
         if( currentPlayer == -1 ) currentPlayer = 0;
@@ -74,7 +74,7 @@ public class Game {
 
     public void reconnect(String username, GameListener listener) throws UsernameNotFoundException {
         int i;
-        for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
+        for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = listener;
         notifyAllListeners();
@@ -82,7 +82,7 @@ public class Game {
 
     public void disconnect(String username) throws UsernameNotFoundException {
         int i;
-        for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
+        for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = null;
         notifyAllListeners();
@@ -90,7 +90,7 @@ public class Game {
 
     public void kick(String username) throws UsernameNotFoundException {
         int i;
-        for(i=0; i<numOfPlayers && !(players[i].getUsername().equals(username)); i++);
+        for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = null;
         players[i] = null;
@@ -106,8 +106,18 @@ public class Game {
 
     public int getNumOfActivePlayers(){
         int result = 0;
-        for(int i=0; i<numOfPlayers;i++) if(listeners[i] != null) result++;
+        for( int i=0; i<numOfPlayers; i++ ) if( listeners[i] != null ) result++;
         return result;
+    }
+
+    // Return false if Game's over
+    public boolean nextPlayer(){
+        currentPlayer = (currentPlayer+1) % players.length;
+        while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
+        notifyAllListeners();
+        if( players[currentPlayer].getShelf().isFull() )
+            return false;
+        return true;
     }
 
     public GlobalGoal[] getGoals() throws CloneNotSupportedException {
@@ -117,27 +127,11 @@ public class Game {
         return temp;
     }
 
-    // Return false if Game's over
-    public boolean nextPlayer(){
-        currentPlayer = (currentPlayer+1) % players.length;
-        while(listeners[currentPlayer] == null) currentPlayer = (currentPlayer+1) % players.length;
-        notifyAllListeners();
-        if( players[currentPlayer].getShelf().isFull() )
-            return false;
-        return true;
-    }
-
     public Player getPlayer(int p) throws InvalidIndexException{
         if( ( p < 0 ) || ( p >= players.length ) ){
             throw new InvalidIndexException();
         }
         return players[p];
-    }
-
-    // Used by the controller only in case of TimeOut, otherwise the winner is set by endGame()
-    public void setWinner(int p){
-        players[p].setWinner();
-        notifyAllListeners();
     }
 
     public void checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException, ColumnOutOfBoundsException {
@@ -164,12 +158,16 @@ public class Game {
 
     public Tile[] pickTilesFromBoard(Coordinates[] coords) throws InvalidCoordinatesForCurrentGameException {
         Tile[] res = new Tile[coords.length];
-        for( int i=0; i<coords.length; i++){
+        for( int i=0; i<coords.length; i++ ){
             res[i] = board.getTile(coords[i]);
             board.setTile(coords[i], null);
         }
         notifyAllListeners();
         return res;
+    }
+
+    public void playerInsertion(Player p, Tile[] t, int column) throws IllegalColumnInsertionException, NoTileException {
+        p.insert(t, column);
     }
 
     public boolean refillGameBoard() throws EmptySackException {
@@ -182,7 +180,7 @@ public class Game {
         // For each Coordinate in the board
         for( Coordinates c : this.board.getCoords() ){
             // Check if the sack is empty
-            if( Arrays.stream(this.sack.getRemaining()).sum() == 0 ) throw new EmptySackException();
+            if( Arrays.stream( this.sack.getRemaining()).sum() == 0 ) throw new EmptySackException();
 
             // Add a new Tile from the sack to the board
             try{
@@ -190,8 +188,7 @@ public class Game {
                     this.board.setTile(c, this.sack.pop());
                     if( noTileAdded ) noTileAdded = false;
                 }
-            }
-            catch( InvalidCoordinatesForCurrentGameException e ){
+            } catch( InvalidCoordinatesForCurrentGameException e ){
                 e.printStackTrace();
             }
         }
@@ -200,44 +197,19 @@ public class Game {
         return true;
     }
 
-    private GlobalGoal[] pickTwoGlobalGoals() throws InvalidNumberOfPlayersException {
-        List<GlobalGoal> goals = GlobalGoal.getInstances(players.length);
-
-        Collections.shuffle(goals);
-        GlobalGoal[] returned = new GlobalGoal[Config.getInstance().getNumOfGlobalGoals()];
-        for( int i = 0; i < returned.length; i++ ){
-            returned[i] = goals.get(i);
-        }
-
-        return returned;
-    }
-
     public void addCheater(String username){
         cheaters.add(username);
         notifyAllListeners();
     }
 
-    public Stack<String> getCheaters(){ return cheaters;}
-
-    private void notifyAllListeners(){
-        if( started ) {
-            Message gv = new UpdateViewMessage(new GameView(this));
-            for (GameListener el : listeners) {
-                if (el != null) el.update(gv);
-            }
-        }
-        else {
-            List<String> players = new ArrayList<>();
-            for( int i=0; i<numOfPlayers; i++ ){
-                if( this.players[i] != null )
-                    players.add(this.players[i].getUsername());
-            }
-            Message lobby = new LobbyMessage(players);
-        }
+    public Stack<String> getCheaters(){
+        return cheaters;
     }
 
-    public void insertTilesIntoPlayerShelf(Player p, Tile[] t, int column) throws IllegalColumnInsertionException, NoTileException {
-        p.insert(t, column);
+    // Used by the controller only in case of TimeOut, otherwise the winner is set by endGame()
+    public void setWinner(int p){
+        players[p].setWinner();
+        notifyAllListeners();
     }
 
     public void endGame(){
@@ -255,11 +227,40 @@ public class Game {
         // Remember: the player who started has index 0
         int winner = 0;
         for( int i=0; i<numOfPlayers; i++ ){
-            if( players[i].getScore() > players[winner].getScore())
+            if( players[i].getScore() > players[winner].getScore() )
                 winner = i;
         }
 
         // Set the game winner
         players[winner].setWinner();
     }
+
+    private GlobalGoal[] pickTwoGlobalGoals() throws InvalidNumberOfPlayersException {
+        List<GlobalGoal> goals = GlobalGoal.getInstances(players.length);
+
+        Collections.shuffle(goals);
+        GlobalGoal[] returned = new GlobalGoal[Config.getInstance().getNumOfGlobalGoals()];
+        for( int i = 0; i < returned.length; i++ )
+            returned[i] = goals.get(i);
+
+        return returned;
+    }
+
+    private void notifyAllListeners(){
+        if( started ){
+            Message gv = new UpdateViewMessage(new GameView(this));
+            for( GameListener el : listeners ){
+                if( el != null ) el.update(gv);
+            }
+        }
+        else{
+            List<String> players = new ArrayList<>();
+            for( int i=0; i<numOfPlayers; i++ ){
+                if( this.players[i] != null )
+                    players.add(this.players[i].getUsername());
+            }
+            Message lobby = new LobbyMessage(players);
+        }
+    }
+
 }

@@ -14,11 +14,13 @@ public class GlobalGoalView {
         scores = new Stack<>();
         Stack<Integer> temp = new Stack<>();
 
-        try{ while(true) temp.push(gg.popScore()); }
-        catch( EmptyStackException e ){}
+        try {
+            while(true) temp.push(gg.popScore());
+        } catch( EmptyStackException e ) {}
 
-        try{ while(true) scores.push(gg.popScore()); }
-        catch( EmptyStackException e ){}
+        try {
+            while(true) scores.push(gg.popScore());
+        } catch( EmptyStackException e ) {}
 
         name = gg.getName();
 

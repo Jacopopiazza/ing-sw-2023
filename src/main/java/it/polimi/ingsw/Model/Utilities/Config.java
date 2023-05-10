@@ -53,7 +53,7 @@ public class Config {
         JsonArray baseArray = gson.fromJson(readerPG, JsonArray.class);
         privateGoals = new ArrayList<Coordinates[]>();
         JsonArray prvGoal;
-        for (JsonElement jsonPrivateGoal : baseArray) {
+        for( JsonElement jsonPrivateGoal : baseArray ){
             prvGoal = jsonPrivateGoal.getAsJsonArray();
             Coordinates[] coords = gson.fromJson(prvGoal, Coordinates[].class);
             privateGoals.add(coords);
@@ -68,7 +68,7 @@ public class Config {
         XShapeFromJSON.add(new ArrayList<>());
 
         JsonArray XShapeCoords = globalGoalsJson.get("XShape").getAsJsonArray();
-        for(JsonElement coords : XShapeCoords){
+        for( JsonElement coords : XShapeCoords ){
             XShapeFromJSON.get(0).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
         }
 
@@ -77,12 +77,12 @@ public class Config {
         DiagonalsFromJSON.add(new ArrayList<>());
 
         JsonArray FirstDiagonalCoords = globalGoalsJson.get("FirstDiagonal").getAsJsonArray();
-        for(JsonElement coords : FirstDiagonalCoords){
+        for( JsonElement coords : FirstDiagonalCoords ){
             DiagonalsFromJSON.get(0).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
         }
 
         JsonArray SecondDiagonalCoords = globalGoalsJson.get("SecondDiagonal").getAsJsonArray();
-        for(JsonElement coords : SecondDiagonalCoords){
+        for( JsonElement coords : SecondDiagonalCoords ){
             DiagonalsFromJSON.get(1).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
         }
 

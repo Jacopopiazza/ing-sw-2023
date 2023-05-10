@@ -48,6 +48,7 @@ public class Stair extends GlobalGoal {
                 if( stair ) return true;
             }
         }
+
     return false;
     }
 

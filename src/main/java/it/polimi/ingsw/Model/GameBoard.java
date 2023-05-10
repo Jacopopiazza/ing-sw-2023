@@ -60,9 +60,7 @@ public class GameBoard {
                     notYet = notYet || (board.containsKey(left) && isPickable(left));
                     if (notYet) return false;
                 }
-            }
-            //this exception should never be caught
-            catch (InvalidCoordinatesForCurrentGameException ex){
+            } catch (InvalidCoordinatesForCurrentGameException ex){
                 System.out.println("Something went wrong");
                 return false;
             }

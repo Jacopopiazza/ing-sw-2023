@@ -3,17 +3,15 @@ package it.polimi.ingsw.Controller;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.*;
-import it.polimi.ingsw.Network.Server;
 import it.polimi.ingsw.Network.ServerImplementation;
 
 import java.util.*;
 
 public class Controller {
-
     private ServerImplementation gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
-    private boolean remainingPlayerHasDoneTheTurn;
+    private boolean onlyLastPlayerHasDoneTheTurnAlready;
     private final Timer timer = new Timer();
 
     private final TimerTask task = new TimerTask(){
@@ -21,8 +19,8 @@ public class Controller {
             timer.cancel();
             model.setWinner(model.getCurrentPlayer());
             List<String> players = new ArrayList<String>();
-            for(int i=0; i<model.getNumOfPlayers();i++)
-                players.add(model.getPlayer(i).getUsername());
+            for( int i=0; i<model.getNumOfPlayers(); i++ )
+                players.add( model.getPlayer(i).getUsername() );
             gameServer.deleteGame(players);
         }
     };
@@ -30,7 +28,7 @@ public class Controller {
     public Controller (int numOfPlayers, ServerImplementation server){
         gameServer = server;
         model = new Game(numOfPlayers);
-        remainingPlayerHasDoneTheTurn = false;
+        onlyLastPlayerHasDoneTheTurnAlready = false;
     }
 
     public boolean isGameStarted(){
@@ -40,7 +38,7 @@ public class Controller {
     //returns true if the lobby is full
     public boolean addPlayer(String username, GameListener listener){
         model.addPlayer(username,listener);
-        if(model.getNumOfActivePlayers() == model.getNumOfPlayers()){
+        if( model.getNumOfActivePlayers() == model.getNumOfPlayers() ){
             model.init();
             return true;
         }
@@ -48,11 +46,10 @@ public class Controller {
     }
 
     public void kick(String username){
-        if(!model.isGameStarted()){
+        if( !model.isGameStarted() ){
             try {
                 model.kick(username);
-            }
-            catch (UsernameNotFoundException e) {
+            } catch (UsernameNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -65,11 +62,15 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        if(model.getNumOfActivePlayers() == 2){
+        if( model.getNumOfActivePlayers() == 2 ){
             timer.cancel();
-            if(remainingPlayerHasDoneTheTurn) {
+            // If a player reconnects after the last remaining player performed their turn,
+            // the currentPlayer won't change at the end of it
+            if( onlyLastPlayerHasDoneTheTurnAlready ) {
+                // Therefore the nextPlayer is set
                 model.nextPlayer();
-                remainingPlayerHasDoneTheTurn = false;
+                // And this flag must be set back to false
+                onlyLastPlayerHasDoneTheTurnAlready = false;
             }
         }
     }
@@ -83,21 +84,20 @@ public class Controller {
                 e.printStackTrace();
                 return;
             }
-            if(model.getNumOfActivePlayers() == 1) {
-                if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)) {
+            if( model.getNumOfActivePlayers() == 1 ) {
+                if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
                     model.nextPlayer();
-                    remainingPlayerHasDoneTheTurn = false;
-                }
                 timer.schedule(task,0,timerLength*1000);
                 return;
             }
-            if (model.getNumOfActivePlayers() == 0){
+            if( model.getNumOfActivePlayers() == 0 ){
                 List<String> players = new ArrayList<String>();
-                for(int i=0; i<model.getNumOfPlayers();i++) players.add(model.getPlayer(i).getUsername());
+                for( int i=0; i<model.getNumOfPlayers(); i++ )
+                    players.add(model.getPlayer(i).getUsername());
                 gameServer.deleteGame(players);
                 return;
             }
-            if(model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username))
+            if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
                 model.nextPlayer();
         }
     }
@@ -108,7 +108,8 @@ public class Controller {
 
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
         // If timer is running, the player should just wait for THEM to win
-        if ( model.getNumOfPlayers() == 1 && remainingPlayerHasDoneTheTurn ){
+        // It's not possible that onlyLastPlayerHasDoneTheTurnAlready == True while the first condition is false
+        if ( ( model.getNumOfPlayers() == 1 ) && onlyLastPlayerHasDoneTheTurnAlready ){
             model.addCheater(username);
             return;
         }
@@ -139,61 +140,53 @@ public class Controller {
             return;
         }
         // ...and check if there is enough space in such column
-        try {
-            if(chosenTiles.length>currPlayer.getShelf().remainingSpaceInColumn(col)){
+        try{
+            if( chosenTiles.length > currPlayer.getShelf().remainingSpaceInColumn(col) ){
                 model.addCheater(username);
                 return;
             }
-        } catch (ColumnOutOfBoundsException e) {
+        } catch(ColumnOutOfBoundsException e){
             e.printStackTrace();
         }
 
         // Pick the given Tiles
         Tile[] effectiveTiles = null;
-            try {
+            try{
                 effectiveTiles = model.pickTilesFromBoard(chosenTiles);
-            } catch (InvalidCoordinatesForCurrentGameException e) {
+            } catch(InvalidCoordinatesForCurrentGameException e) {
                 e.printStackTrace();
             }
 
         // Insert the tiles in the shelf
         try {
-            model.insertTilesIntoPlayerShelf(currPlayer, effectiveTiles, col);
-        } catch (NoTileException e) {
+            model.playerInsertion(currPlayer, effectiveTiles, col);
+        } catch(NoTileException e) {
             e.printStackTrace();
-        }
-        catch(ColumnOutOfBoundsException e1){
+        } catch(ColumnOutOfBoundsException e1) {
             e1.printStackTrace();
-        }
-        catch(IllegalColumnInsertionException e2){
+        } catch(IllegalColumnInsertionException e2) {
             e2.printStackTrace();
         }
 
         // Compute the global goals' points
         try {
             model.checkGlobalGoals();
-        }
-        catch (InvalidIndexException e) {
+        } catch (InvalidIndexException e) {
             e.printStackTrace();
-        }
-        catch (InvalidScoreException e1) {
+        } catch (InvalidScoreException e1 ){
             e1.printStackTrace();
-        }
-        catch (EmptyStackException e2) {
+        } catch (EmptyStackException e2) {
             e2.printStackTrace();
-        }
-        catch (MissingShelfException e3) {
+        } catch (MissingShelfException e3) {
             e3.printStackTrace();
-        }
-        catch (ColumnOutOfBoundsException e4) {
+        } catch (ColumnOutOfBoundsException e4) {
             e4.printStackTrace();
         }
 
         // Eventually refill the board
-        try{
+        try {
             model.refillGameBoard();
-        }
-        catch( EmptySackException e ){
+        } catch( EmptySackException e ) {
             e.printStackTrace();
         }
 
@@ -208,6 +201,8 @@ public class Controller {
             gameServer.deleteGame(players);
         }
 
-        if(model.getNumOfActivePlayers() == 1) remainingPlayerHasDoneTheTurn = true;
+        // In case it's the turn of the remaining player, he was free to do it
+        if( model.getNumOfActivePlayers() == 1 )
+            onlyLastPlayerHasDoneTheTurnAlready = true;
     }
 }

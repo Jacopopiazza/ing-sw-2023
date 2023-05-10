@@ -5,7 +5,6 @@ import it.polimi.ingsw.Messages.Message;
 
 import java.rmi.RemoteException;
 
-public interface Client
-{
+public interface Client {
     public void update(Message m) throws RemoteException;
 }

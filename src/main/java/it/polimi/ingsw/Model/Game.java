@@ -22,6 +22,7 @@ public class Game {
     private TileSack sack;
     private Stack<String> cheaters;
     private boolean started;
+    private boolean lastTurn;
 
     public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
         if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ){
@@ -36,6 +37,7 @@ public class Game {
         sack = null;
         cheaters = null;
         started = false;
+        lastTurn = false;
     }
 
     public GameView getView(){
@@ -62,6 +64,8 @@ public class Game {
     public boolean isGameStarted(){
         return started;
     }
+
+    public boolean isLastTurn(){ return lastTurn; }
 
     public void addPlayer(String username, GameListener listener){
         int i;
@@ -112,10 +116,11 @@ public class Game {
 
     // Return false if Game's over
     public boolean nextPlayer(){
+        if( players[currentPlayer].getShelf().isFull() ) lastTurn = true;
         currentPlayer = (currentPlayer+1) % players.length;
         while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
         notifyAllListeners();
-        if( players[currentPlayer].getShelf().isFull() )
+        if( lastTurn && ( currentPlayer == 0 ) )
             return false;
         return true;
     }

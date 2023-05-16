@@ -15,6 +15,8 @@ public class GameView implements Serializable {
     private final GlobalGoal[] goals;
     private final int currentPlayer;
     private final TileSackView sack;
+    private final boolean started;
+    private final boolean lastTurn;
 
     private final Stack<String> cheaters;
 
@@ -28,6 +30,8 @@ public class GameView implements Serializable {
         this.sack = game.getTileSack().getView();
         this.cheaters = game.getCheaters();
         this.goals = new GlobalGoal[Config.getInstance().getNumOfGlobalGoals()];
+        this.started = game.isGameStarted();
+        this.lastTurn = game.isLastTurn();
         try {
             for (int i = 0; i < game.getGoals().length; i++)
                 this.goals[i] = game.getGoals()[i];
@@ -59,7 +63,10 @@ public class GameView implements Serializable {
     }
 
     public Stack<String> getCheaters(){
-        return this.cheaters;
+        return cheaters;
     }
 
+    public boolean isStarted(){ return started; }
+
+    public boolean isLastTurn(){ return lastTurn; }
 }

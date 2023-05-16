@@ -1,8 +1,9 @@
 package it.polimi.ingsw.Network.Middleware;
 
-import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.ConnectToGameServerMessage;
 import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.ReconnectMessage;
+import it.polimi.ingsw.Messages.RegisterMessage;
 import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.Server;
 
@@ -13,7 +14,6 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 
 public class ClientSkeleton implements Client {
-
     private Server server;
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
@@ -36,6 +36,7 @@ public class ClientSkeleton implements Client {
     public void update(Message m) throws RemoteException {
         if( m instanceof ConnectToGameServerMessage ){
             server = ((ConnectToGameServerMessage) m).getServer();
+            m = new ConnectToGameServerMessage(null);
         }
         try {
             oos.writeObject(m);
@@ -55,8 +56,13 @@ public class ClientSkeleton implements Client {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize choice from client", e);
         }
-
-        server.handleMessage( m);
+        if( m instanceof ReconnectMessage ){
+            server.handleMessage(new ReconnectMessage(((ReconnectMessage) m).getUsername(), this));
+        }
+        else if( m instanceof RegisterMessage ){
+            server.handleMessage(new RegisterMessage(((RegisterMessage) m).getUsername(), this, ((RegisterMessage) m).getNumOfPlayers()));
+        }
+        else server.handleMessage(m);
     }
 
 

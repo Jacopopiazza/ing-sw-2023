@@ -2,6 +2,8 @@ package it.polimi.ingsw.Network.Middleware;
 
 import it.polimi.ingsw.Messages.ConnectToGameServerMessage;
 import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.ReconnectMessage;
+import it.polimi.ingsw.Messages.RegisterMessage;
 import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.Server;
 
@@ -12,12 +14,10 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 
 public class ServerStub implements Server {
-
     String ip;
     int port;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
-
     private Socket socket;
 
     public ServerStub(String ip, int port) {
@@ -44,6 +44,12 @@ public class ServerStub implements Server {
     }
 
     public void handleMessage(Message m) throws RemoteException {
+        if( m instanceof ReconnectMessage ){
+            m = new ReconnectMessage(((ReconnectMessage) m).getUsername(), null );
+        }
+        else if( m instanceof RegisterMessage){
+            m = new RegisterMessage(((RegisterMessage) m).getUsername(), null, ((RegisterMessage) m).getNumOfPlayers() );
+        }
         try {
             oos.writeObject(m);
             oos.flush();
@@ -62,12 +68,10 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize model view from client", e);
         }
-        if(m instanceof ConnectToGameServerMessage){
+        if( m instanceof ConnectToGameServerMessage )
             client.update(new ConnectToGameServerMessage(this));
-        }
-        else{
-            client.update(m);
-        }
+        else client.update(m);
+
     }
 
 

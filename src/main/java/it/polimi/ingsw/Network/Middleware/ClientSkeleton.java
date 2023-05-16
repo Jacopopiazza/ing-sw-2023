@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Network.Middleware;
 
 import it.polimi.ingsw.Listener.GameListener;
+import it.polimi.ingsw.Messages.ConnectToGameServerMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.Server;
@@ -13,10 +14,13 @@ import java.rmi.RemoteException;
 
 public class ClientSkeleton implements Client {
 
+    private Server server;
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
 
-    public ClientSkeleton(Socket socket) throws RemoteException {
+    public ClientSkeleton(Server s, Socket socket) throws RemoteException {
+        this.server = s;
+
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -30,6 +34,9 @@ public class ClientSkeleton implements Client {
     }
 
     public void update(Message m) throws RemoteException {
+        if( m instanceof ConnectToGameServerMessage ){
+            server = ((ConnectToGameServerMessage) m).getServer();
+        }
         try {
             oos.writeObject(m);
             oos.flush();
@@ -39,7 +46,7 @@ public class ClientSkeleton implements Client {
         }
     }
 
-    public void receive(Server server) throws RemoteException {
+    public void receive() throws RemoteException {
         Message m;
         try {
             m = (Message) ois.readObject();

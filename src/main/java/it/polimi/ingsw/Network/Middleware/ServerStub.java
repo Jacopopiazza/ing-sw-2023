@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Network.Middleware;
 
+import it.polimi.ingsw.Messages.ConnectToGameServerMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.Server;
@@ -42,7 +43,7 @@ public class ServerStub implements Server {
         }
     }
 
-    public void handleMessage( Message m) throws RemoteException {
+    public void handleMessage(Message m) throws RemoteException {
         try {
             oos.writeObject(m);
             oos.flush();
@@ -61,8 +62,12 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize model view from client", e);
         }
-
-        client.update(m);
+        if(m instanceof ConnectToGameServerMessage){
+            client.update(new ConnectToGameServerMessage(this));
+        }
+        else{
+            client.update(m);
+        }
     }
 
 

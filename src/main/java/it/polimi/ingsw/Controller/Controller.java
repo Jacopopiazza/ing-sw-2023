@@ -3,12 +3,14 @@ package it.polimi.ingsw.Controller;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.*;
+import it.polimi.ingsw.Network.GameServer;
+import it.polimi.ingsw.Network.Server;
 import it.polimi.ingsw.Network.ServerImplementation;
 
 import java.util.*;
 
 public class Controller {
-    private ServerImplementation gameServer;
+    private GameServer gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
     private boolean onlyLastPlayerHasDoneTheTurnAlready;
@@ -25,7 +27,7 @@ public class Controller {
         }
     };
 
-    public Controller (int numOfPlayers, ServerImplementation server){
+    public Controller (int numOfPlayers, GameServer server){
         gameServer = server;
         model = new Game(numOfPlayers);
         onlyLastPlayerHasDoneTheTurnAlready = false;

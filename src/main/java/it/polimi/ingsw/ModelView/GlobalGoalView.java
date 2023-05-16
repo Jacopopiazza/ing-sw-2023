@@ -16,11 +16,15 @@ public class GlobalGoalView {
 
         try {
             while(true) temp.push(gg.popScore());
-        } catch( EmptyStackException e ) {}
+        } catch( EmptyStackException e ) {
+            e.printStackTrace();
+        }
 
         try {
             while(true) scores.push(gg.popScore());
-        } catch( EmptyStackException e ) {}
+        } catch( EmptyStackException e ) {
+            e.printStackTrace();
+        }
 
         name = gg.getName();
 

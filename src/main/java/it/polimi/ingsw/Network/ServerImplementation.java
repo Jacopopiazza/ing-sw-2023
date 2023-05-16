@@ -1,39 +1,73 @@
 package it.polimi.ingsw.Network;
 
-import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
-import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ServerImplementation extends UnicastRemoteObject implements Server {
-
     private static ServerImplementation instance;
-    private final ExecutorService executorService = Executors.newCachedThreadPool();;
-    private Map<String, Controller> playingUsernames;
-    private Map<String, Controller> disconnectedUsernames;
-    private Queue<Controller> lobbiesWaitingToStart;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private List<String> playingUsernames; // to disconnect
+    private Map<String, GameServer> disconnectedUsernames;
+    private Queue<GameServer> lobbiesWaitingToStart;
 
-    protected ServerImplementation() throws RemoteException {
+    private ServerImplementation() throws RemoteException {
+        playingUsernames = new ArrayList<>();
+        disconnectedUsernames = new HashMap<>();
+        lobbiesWaitingToStart = new LinkedBlockingQueue<>();
+    }
+
+    public void disconnect(String username, GameServer gameServer) {
+        synchronized (playingUsernames){
+            if( !playingUsernames.contains(username) ) return;
+            playingUsernames.remove(username);
+        }
+        synchronized (disconnectedUsernames){
+            disconnectedUsernames.put(username, gameServer);
+        }
+    }
+
+    public void kick(String username, GameServer lobby) {
+        synchronized (playingUsernames) {
+            if (lobby == lobbiesWaitingToStart.peek() && lobby.getNumOfActivePlayers() == 0) {
+                lobbiesWaitingToStart.poll();
+                while (lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
+            }
+        }
+    }
+
+    private void reconnect(String username, GameListener listener){
+        synchronized (playingUsernames){
+            synchronized (disconnectedUsernames){
+                if(playingUsernames.contains(username)) {
+                    listener.update(new TakenUsernameMessage());
+                    return;
+                } else if( !(disconnectedUsernames.containsKey(username)) ){
+                    listener.update(new NoUsernameToReconnectMessage());
+                    return;
+                }
+                playingUsernames.add(username);
+                disconnectedUsernames.get(username).reconnect(username, listener);
+                listener.update(new ConnectToGameServerMessage(disconnectedUsernames.get(username)));
+                disconnectedUsernames.remove(username);
+            }
+        }
     }
 
     //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
-    private void register(String username, int numOfPlayers, GameListener listener){
+    private void register(String username, int numOfPlayers, GameListener listener) throws RemoteException {
         if(numOfPlayers<=0 || numOfPlayers>4){
             listener.update(new InvalidNumOfPlayersMessage());
             return;
@@ -44,81 +78,47 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
         synchronized (playingUsernames){
             synchronized (disconnectedUsernames){
-                if(playingUsernames.containsKey(username) || disconnectedUsernames.containsKey(username)){
+                if(playingUsernames.contains(username) || disconnectedUsernames.containsKey(username)){
                     listener.update(new TakenUsernameMessage());
                     return;
                 }
             }
             synchronized (lobbiesWaitingToStart){
                 if(numOfPlayers != 1){
-                    Controller lobby = new Controller(numOfPlayers,this);
-                    lobby.addPlayer(username,listener);
-                    playingUsernames.put(username,lobby);
-                        lobbiesWaitingToStart.add(lobby);
-                }
-                else{
-                    if(lobbiesWaitingToStart.peek() != null){
-                        if(lobbiesWaitingToStart.peek().addPlayer(username,listener)) {
+                    GameServer lobby = new GameServer(this,numOfPlayers);
+                    lobby.addPlayer(username, listener);
+                    playingUsernames.add(username);
+                    lobbiesWaitingToStart.add(lobby);
+                    listener.update(new ConnectToGameServerMessage(lobby));
+                } else {
+                    if (lobbiesWaitingToStart.peek() != null) {
+                        GameServer lobby = lobbiesWaitingToStart.peek();
+                        if (lobby.addPlayer(username, listener)) { // full
                             lobbiesWaitingToStart.poll();
-                            while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
+                            while (lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0)
+                                lobbiesWaitingToStart.poll();
                         }
+                        listener.update(new ConnectToGameServerMessage(lobby));
+                    } else {
+                        listener.update(new NoLobbyAvailableMessage());
                     }
-                    else listener.update(new NoLobbyAvailableMessage());
                 }
             }
         }
     }
 
-    private void reconnect(String username, GameListener listener){
-        synchronized (playingUsernames){
-            synchronized (disconnectedUsernames){
-                if( !(disconnectedUsernames.containsKey(username)) ){
-
-                    listener.update(new NoUsernameToReconnectMessage());
-
-                    return;
+    // it has to handle only the message for connect the client to his GameServer
+    // and to reconnect a client to his GameServer
+    public void handleMessage( Message m ) throws RemoteException {
+        if(m instanceof RegisterMessage){
+            register(((RegisterMessage) m).getUsername(),((RegisterMessage) m).getNumOfPlayers(), (message -> {
+                try {
+                    ((RegisterMessage)m).getClient().update(message);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-                playingUsernames.put(username,disconnectedUsernames.get(username));
-                disconnectedUsernames.remove(username);
-                playingUsernames.get(username).reconnect(username,listener);
-            }
-        }
-    }
-
-    // when Client does not ping back and when the user quits the lobby or the game
-    private void disconnect(String username){
-        synchronized (playingUsernames){
-            if( !playingUsernames.containsKey(username) ) return;
-            Controller controller = playingUsernames.get(username);
-            playingUsernames.remove(username);
-            if(controller.isGameStarted()){
-                synchronized (disconnectedUsernames){
-                    disconnectedUsernames.put(username,controller);
-                    controller.disconnect(username);
-                }
-            }
-            else{
-                controller.kick(username);
-                if(controller == lobbiesWaitingToStart.peek() && controller.getNumOfActivePlayers() == 0){
-                    lobbiesWaitingToStart.poll();
-                    while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
-                }
-            }
-        }
-    }
-
-    private void doTurn(String username, Coordinates[] chosenTiles, int column){
-        synchronized (playingUsernames){
-            if( !playingUsernames.containsKey(username) || !(playingUsernames.get(username).isGameStarted()) ) return; // message is ignored
-            Controller controller = playingUsernames.get(username);
-            controller.doTurn(username,chosenTiles,column);
-        }
-    }
-
-    public void handleMessage( Message m ){
-
-
-        if( m instanceof ReconnectMessage){
+            }));
+        }else if( m instanceof ReconnectMessage){
             reconnect(((ReconnectMessage) m).getUsername(), (message -> {
                 try {
                     ((ReconnectMessage)m).getClient().update(message);
@@ -126,36 +126,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                     System.err.println("Cannot send message to client");
                 }
             }));
-        }
-        else if(m instanceof RegisterMessage){
-            register(((RegisterMessage) m).getUsername(),((RegisterMessage) m).getNumOfPlayers(), (message -> {
-                try {
-                    ((RegisterMessage)m).getClient().update(message);
-                } catch (RemoteException e) {
-                    System.err.println("Cannot send message to client");
-                }
-            }));
-        }
-        else if(m instanceof TurnActionMessage){
-
-            TurnActionMessage message = (TurnActionMessage) m;
-            doTurn(message.getUsername(),message.getChosenTiles(),message.getColumn());
-
-        }
-        else if(m instanceof DisconnectMessage){
-            DisconnectMessage message = (DisconnectMessage) m;
-            disconnect(message.getUsername());
-        }
-        else{
+        }else {
             System.err.println("Message not recognized; ignoring it");
         }
-
-
     }
 
     private void startRMI() throws RemoteException {
         ServerImplementation server = getInstance();
-
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind("G26-MyShelfie-Server", server);
     }
@@ -167,10 +144,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 Socket socket = serverSocket.accept();
                 instance.executorService.submit(() -> {
                     try {
-                        ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
+                        ClientSkeleton clientSkeleton = new ClientSkeleton(instance, socket);
 
                         while (true) {
-                            clientSkeleton.receive(instance);
+                            clientSkeleton.receive();
                         }
                     } catch (RemoteException e) {
                         System.err.println("Cannot receive from client. Closing this connection...");
@@ -194,17 +171,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             instance = new ServerImplementation();
         }
         return instance;
-    }
-
-    public void deleteGame(List<String> players){
-        synchronized (playingUsernames){
-            synchronized (disconnectedUsernames){
-                for(String player: players){
-                    playingUsernames.remove(player);
-                    disconnectedUsernames.remove(player);
-                }
-            }
-        }
     }
 
 }

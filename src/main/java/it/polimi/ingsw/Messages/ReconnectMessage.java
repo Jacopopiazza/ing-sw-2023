@@ -8,7 +8,7 @@ public class ReconnectMessage implements Message, Serializable {
     private String username;
     private Client client;
 
-    public ReconnectMessage(String u, Client client){
+    public ReconnectMessage(String u, Client client) {
         this.username = u;
         this.client = client;
     }

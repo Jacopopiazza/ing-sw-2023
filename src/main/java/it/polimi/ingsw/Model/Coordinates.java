@@ -35,7 +35,7 @@ public class Coordinates implements Serializable {
         return Objects.hash(ROW, COL);
     }
 
-    public Coordinates clone(){
+    public Coordinates clone() {
         return new Coordinates(this.ROW,this.COL);
     }
 

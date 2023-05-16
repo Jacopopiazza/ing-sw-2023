@@ -56,7 +56,7 @@ public class Square extends GlobalGoal {
                 }
 
                 if( isASquare ){
-                    if ( firstSquare == null ) firstSquare = coord;
+                    if( firstSquare == null ) firstSquare = coord;
                     else return true;
                 }
             }

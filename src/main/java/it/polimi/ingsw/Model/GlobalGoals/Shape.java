@@ -28,7 +28,7 @@ public class Shape extends GlobalGoal {
 
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
-        if ( s == null ) {
+        if( s == null ) {
             throw new MissingShelfException();
         }
 
@@ -76,7 +76,7 @@ public class Shape extends GlobalGoal {
         for( List<Coordinates> l1 : shape ) {
             tempFlag = false;
             for( List<Coordinates> l2 : Config.getInstance().getDiagonalsFromJSON() ) {
-                if ( !tempFlag && l1.containsAll(l2) && (l1.size() == l2.size()) ) tempFlag = true;
+                if( !tempFlag && l1.containsAll(l2) && (l1.size() == l2.size()) ) tempFlag = true;
             }
             if( !tempFlag ) mayBe = false;
         }

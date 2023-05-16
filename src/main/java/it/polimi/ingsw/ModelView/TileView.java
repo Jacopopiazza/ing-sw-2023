@@ -28,9 +28,9 @@ public class TileView implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if ( this == o )
+        if( this == o )
             return true;
-        if ( ( o == null ) || ( this.getClass() != o.getClass() ) )
+        if( ( o == null ) || ( this.getClass() != o.getClass() ) )
             return false;
         TileView tile = (TileView) o;
         return ( tile.ID == this.ID ) && ( tile.COLOR == this.COLOR );

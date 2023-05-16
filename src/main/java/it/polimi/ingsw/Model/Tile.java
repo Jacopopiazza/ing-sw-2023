@@ -18,15 +18,15 @@ public class Tile implements Cloneable{
     }
 
     @Override
-    public Tile clone(){
+    public Tile clone() {
         return new Tile(this.COLOR,this.ID);
     }
 
     @Override
     public boolean equals(Object o) {
-        if ( this == o )
+        if( this == o )
             return true;
-        if ( ( o == null ) || ( this.getClass() != o.getClass() ) )
+        if( ( o == null ) || ( this.getClass() != o.getClass() ) )
             return false;
         Tile tile = (Tile) o;
         return ( tile.ID == this.ID ) && ( tile.COLOR == this.COLOR );

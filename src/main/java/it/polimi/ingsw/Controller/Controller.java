@@ -4,12 +4,10 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Network.GameServer;
-import it.polimi.ingsw.Network.Server;
-import it.polimi.ingsw.Network.ServerImplementation;
 
 import java.util.*;
 
-public class Controller {
+public class Controller  {
     private GameServer gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
@@ -81,8 +79,7 @@ public class Controller {
         if( model.isGameStarted() ) {
             try {
                 model.disconnect(username);
-            }
-            catch (UsernameNotFoundException e) {
+            } catch (UsernameNotFoundException e) {
                 e.printStackTrace();
                 return;
             }
@@ -111,7 +108,7 @@ public class Controller {
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
         // If timer is running, the player should just wait for THEM to win
         // It's not possible that onlyLastPlayerHasDoneTheTurnAlready == True while the first condition is false
-        if ( ( model.getNumOfPlayers() == 1 ) && onlyLastPlayerHasDoneTheTurnAlready ){
+        if( ( model.getNumOfPlayers() == 1 ) && onlyLastPlayerHasDoneTheTurnAlready ){
             model.addCheater(username);
             return;
         }
@@ -147,7 +144,7 @@ public class Controller {
                 model.addCheater(username);
                 return;
             }
-        } catch(ColumnOutOfBoundsException e){
+        } catch (ColumnOutOfBoundsException e){
             e.printStackTrace();
         }
 
@@ -155,18 +152,18 @@ public class Controller {
         Tile[] effectiveTiles = null;
             try{
                 effectiveTiles = model.pickTilesFromBoard(chosenTiles);
-            } catch(InvalidCoordinatesForCurrentGameException e) {
+            } catch (InvalidCoordinatesForCurrentGameException e) {
                 e.printStackTrace();
             }
 
         // Insert the tiles in the shelf
         try {
             model.playerInsertion(currPlayer, effectiveTiles, col);
-        } catch(NoTileException e) {
+        } catch (NoTileException e) {
             e.printStackTrace();
-        } catch(ColumnOutOfBoundsException e1) {
+        } catch (ColumnOutOfBoundsException e1) {
             e1.printStackTrace();
-        } catch(IllegalColumnInsertionException e2) {
+        } catch (IllegalColumnInsertionException e2) {
             e2.printStackTrace();
         }
 
@@ -188,7 +185,7 @@ public class Controller {
         // Eventually refill the board
         try {
             model.refillGameBoard();
-        } catch( EmptySackException e ) {
+        } catch (EmptySackException e) {
             e.printStackTrace();
         }
 

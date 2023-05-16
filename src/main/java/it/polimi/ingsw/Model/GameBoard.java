@@ -11,7 +11,7 @@ public class GameBoard {
     private Map<Coordinates,Tile> board;
 
     public GameBoard(int people) throws InvalidNumberOfPlayersException{
-        if( people > Config.getInstance().getMaxNumberOfPlayers() ){
+        if( people > Config.getInstance().getMaxNumberOfPlayers() ) {
             throw new InvalidNumberOfPlayersException();
         }
 
@@ -21,23 +21,23 @@ public class GameBoard {
             board.put(coords.clone(), null);
     }
 
-    public GameBoardView getView(){
+    public GameBoardView getView() {
         return new GameBoardView(this);
     }
 
-    public Set<Coordinates> getCoords(){
+    public Set<Coordinates> getCoords() {
         return Collections.unmodifiableSet(board.keySet());
     }
 
     public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
-        if( !board.containsKey(c) ){
+        if( !board.containsKey(c) ) {
             throw new InvalidCoordinatesForCurrentGameException();
         }
         return board.get(c) != null ? board.get(c).clone() : null;
     }
 
     public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
-        if( !board.containsKey(c) ){
+        if( !board.containsKey(c) ) {
             throw new InvalidCoordinatesForCurrentGameException();
         }
         board.put(c, ( t == null ) ? null : t.clone() );
@@ -46,9 +46,9 @@ public class GameBoard {
     public boolean toRefill() {
         Coordinates up, down, right, left;
         boolean notYet;
-        for( Coordinates c : board.keySet() ){
+        for( Coordinates c : board.keySet() ) {
             try {
-                if (isPickable(c)) {
+                if(isPickable(c)) {
                     up = new Coordinates(c.getROW(), c.getCOL() - 1);
                     down = new Coordinates(c.getROW(), c.getCOL() + 1);
                     right = new Coordinates(c.getROW() + 1, c.getCOL());
@@ -58,9 +58,9 @@ public class GameBoard {
                     notYet = notYet || (board.containsKey(down) && isPickable(down));
                     notYet = notYet || (board.containsKey(right) && isPickable(right));
                     notYet = notYet || (board.containsKey(left) && isPickable(left));
-                    if (notYet) return false;
+                    if(notYet) return false;
                 }
-            } catch (InvalidCoordinatesForCurrentGameException ex){
+            } catch (InvalidCoordinatesForCurrentGameException ex) {
                 System.out.println("Something went wrong");
                 return false;
             }
@@ -69,7 +69,7 @@ public class GameBoard {
     }
 
     public static int checkBoardGoal(Shelf s) throws MissingShelfException, ColumnOutOfBoundsException {
-        if( s == null ){
+        if( s == null ) {
             throw new MissingShelfException();
         }
 
@@ -80,18 +80,18 @@ public class GameBoard {
 
         boolean[][] checked = new boolean[r][c];
 
-        for( int i = 0; i < r; i++ ){
-            for( int j = 0; j < c; j++ ){
+        for( int i = 0; i < r; i++ ) {
+            for( int j = 0; j < c; j++ ) {
                 checked[i][j] = false;
             }
         }
 
         totalScore = 0;
-        for( int i = 0; i < r; i++ ){
-            for( int j = 0; j < c; j++ ){
-                if( checked[i][j] == false ){
+        for( int i = 0; i < r; i++ ) {
+            for( int j = 0; j < c; j++ ) {
+                if( checked[i][j] == false ) {
                     currentGroup = checkFromThisTile(s, new Coordinates(i,j), checked);
-                    for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ){
+                    for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ) {
                         if( currentGroup == t.tiles() ) totalScore += t.score();
                     }
                     indexOfLastCheck = Config.getInstance().getSortedBoardGoals().length - 1;
@@ -117,25 +117,25 @@ public class GameBoard {
         if( t == null ) return 0;
 
         //checking the Tile above this one
-        if( i>0 && ( checked[i-1][j] == false ) ){
+        if( i>0 && ( checked[i-1][j] == false ) ) {
             temp = s.getTile(new Coordinates(i-1,j));
             if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i-1,j),checked);
         }
 
         //checking the Tile under this one
-        if( ( i < r-1 ) && ( checked[i+1][j] == false ) ){
+        if( ( i < r-1 ) && ( checked[i+1][j] == false ) ) {
             temp = s.getTile(new Coordinates(i+1,j));
             if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i+1,j),checked);
         }
 
         //checking the Tile to the left of this one
-        if( j>0 && checked[i][j-1] == false ){
+        if( j>0 && checked[i][j-1] == false ) {
             temp = s.getTile(new Coordinates(i,j-1));
             if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i,j-1),checked);
         }
 
         //checking the Tile to the right of this one
-        if( ( j < c-1 ) && ( checked[i][j+1] == false ) ){
+        if( ( j < c-1 ) && ( checked[i][j+1] == false ) ) {
             temp = s.getTile(new Coordinates(i,j+1));
             if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i,j+1),checked);
         }
@@ -144,7 +144,7 @@ public class GameBoard {
     }
 
     public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
-        if( !board.containsKey(c) ){
+        if( !board.containsKey(c) ) {
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
@@ -169,7 +169,7 @@ public class GameBoard {
         if(chosenTiles.length > 3) return false;
 
         //checking there are no duplicates and that they are all pickable
-        for (Coordinates c : chosenTiles){
+        for(Coordinates c : chosenTiles) {
             try {
                 if(Arrays.stream(chosenTiles).filter(x -> x.equals(c)).collect(Collectors.toList()).size() > 1
                         || !(isPickable(c)) ) {

@@ -10,18 +10,18 @@ public class TileSack {
     private int[] remaining;                                    // Index is the corresponding color in TileColor
     private final static int LEN = TileColor.values().length;   // length of the array
 
-    public TileSack(){
+    public TileSack() {
         remaining = new int[LEN];
         // initialize the array with the maximum value for every element
         for( int i = 0; i < LEN; i++ ) remaining[i] = Config.getInstance().getNumOfTilesPerColor();
     }
 
-    public TileSackView getView(){
+    public TileSackView getView() {
         return new TileSackView(this);
     }
 
     // Generate a Tile with a random color and pops it from the sack
-    public Tile pop(){
+    public Tile pop() {
         int random_color_index = 0;
 
         if(Arrays.stream(remaining).sum() == 0) return null;
@@ -30,9 +30,9 @@ public class TileSack {
         random_color_index = new Random().nextInt(Arrays.stream(remaining).sum());
 
         int top_bound = 0, bottom_bound = 0;
-        for( int i = 0; i < LEN; i++ ){
+        for( int i = 0; i < LEN; i++ ) {
             top_bound += remaining[i];
-            if( ( random_color_index >= bottom_bound ) && ( random_color_index < top_bound ) ){
+            if( ( random_color_index >= bottom_bound ) && ( random_color_index < top_bound ) ) {
                 // Pop that color from the tileSack
                 remaining[i]--;
                 // Return the corresponding Tile
@@ -43,7 +43,7 @@ public class TileSack {
         return null;
     }
 
-    public int[] getRemaining(){
+    public int[] getRemaining() {
         return this.remaining;
     }
 

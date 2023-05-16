@@ -6,7 +6,7 @@ public class NoLobbyAvailableMessage implements Message, Serializable {
     private final String message = "No lobby available";
 
     @Override
-    public String toString(){
+    public String toString() {
         return message;
     }
 }

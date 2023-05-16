@@ -25,7 +25,7 @@ public class Game {
     private boolean lastTurn;
 
     public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
-        if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ){
+        if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ) {
             throw new InvalidNumberOfPlayersException();
         }
         board = null;
@@ -40,11 +40,11 @@ public class Game {
         lastTurn = false;
     }
 
-    public GameView getView(){
+    public GameView getView() {
         return new GameView(this);
     }
 
-    public void init(){
+    public void init() {
         PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(numOfPlayers);
         for( int i = 0; i < numOfPlayers; i++ )
             players[i].init(privateGoals[i]);
@@ -61,13 +61,13 @@ public class Game {
         started = true;
     }
 
-    public boolean isGameStarted(){
+    public boolean isGameStarted() {
         return started;
     }
 
-    public boolean isLastTurn(){ return lastTurn; }
+    public boolean isLastTurn() { return lastTurn; }
 
-    public void addPlayer(String username, GameListener listener){
+    public void addPlayer(String username, GameListener listener) {
         int i;
         for( i=0; ( i<numOfPlayers ) && ( players[i] != null ); i++ );
         players[i] = new Player(username);
@@ -100,22 +100,22 @@ public class Game {
         players[i] = null;
     }
 
-    public int getNumOfPlayers(){
+    public int getNumOfPlayers() {
         return numOfPlayers;
     }
 
-    public int getCurrentPlayer(){
+    public int getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public int getNumOfActivePlayers(){
+    public int getNumOfActivePlayers() {
         int result = 0;
         for( int i=0; i<numOfPlayers; i++ ) if( listeners[i] != null ) result++;
         return result;
     }
 
     // Return false if Game's over
-    public boolean nextPlayer(){
+    public boolean nextPlayer() {
         if( players[currentPlayer].getShelf().isFull() ) lastTurn = true;
         currentPlayer = (currentPlayer+1) % players.length;
         while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
@@ -133,7 +133,7 @@ public class Game {
     }
 
     public Player getPlayer(int p) throws InvalidIndexException{
-        if( ( p < 0 ) || ( p >= players.length ) ){
+        if( ( p < 0 ) || ( p >= players.length ) ) {
             throw new InvalidIndexException();
         }
         return players[p];
@@ -142,8 +142,8 @@ public class Game {
     public void checkGlobalGoals() throws EmptyStackException, InvalidScoreException, InvalidIndexException, MissingShelfException, ColumnOutOfBoundsException {
         int token;
         int currentScore = players[currentPlayer].getScore();
-        for( int i = 0; i < goals.length; i++ ){
-            if( ( players[currentPlayer].getAccomplishedGlobalGoals()[i] == 0 ) && goals[i].check(players[currentPlayer].getShelf()) ){
+        for( int i = 0; i < goals.length; i++ ) {
+            if( ( players[currentPlayer].getAccomplishedGlobalGoals()[i] == 0 ) && goals[i].check(players[currentPlayer].getShelf()) ) {
                 token = goals[i].popScore();
                 players[currentPlayer].setAccomplishedGlobalGoal(i, token);
                 currentScore += token;
@@ -153,17 +153,17 @@ public class Game {
         notifyAllListeners();
     }
 
-    public TileSack getTileSack(){
+    public TileSack getTileSack() {
         return sack;
     }
 
-    public GameBoard getGameBoard(){
+    public GameBoard getGameBoard() {
         return board;
     }
 
     public Tile[] pickTilesFromBoard(Coordinates[] coords) throws InvalidCoordinatesForCurrentGameException {
         Tile[] res = new Tile[coords.length];
-        for( int i=0; i<coords.length; i++ ){
+        for( int i=0; i<coords.length; i++ ) {
             res[i] = board.getTile(coords[i]);
             board.setTile(coords[i], null);
         }
@@ -183,7 +183,7 @@ public class Game {
         int remain[] = new int[TileColor.values().length];
 
         // For each Coordinate in the board
-        for( Coordinates c : this.board.getCoords() ){
+        for( Coordinates c : this.board.getCoords() ) {
             // Check if the sack is empty
             if( Arrays.stream( this.sack.getRemaining()).sum() == 0 ) throw new EmptySackException();
 
@@ -193,7 +193,7 @@ public class Game {
                     this.board.setTile(c, this.sack.pop());
                     if( noTileAdded ) noTileAdded = false;
                 }
-            } catch( InvalidCoordinatesForCurrentGameException e ){
+            } catch (InvalidCoordinatesForCurrentGameException e) {
                 e.printStackTrace();
             }
         }

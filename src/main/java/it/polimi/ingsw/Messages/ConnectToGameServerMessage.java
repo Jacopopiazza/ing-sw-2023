@@ -11,7 +11,7 @@ public class ConnectToGameServerMessage implements Message, Serializable {
         this.server = server;
     }
 
-    public Server getServer(){
+    public Server getServer() {
         return this.server;
     }
 }

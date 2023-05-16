@@ -6,7 +6,7 @@ public class TakenUsernameMessage implements Message, Serializable {
     private final String message = "Username already taken";
 
     @Override
-    public String toString(){
+    public String toString() {
         return message;
     }
 }

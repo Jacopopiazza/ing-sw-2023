@@ -9,7 +9,7 @@ public class TurnActionMessage implements Message, Serializable {
     private Coordinates[] chosenTiles;
     private int column;
 
-    public TurnActionMessage(String u, Coordinates[] chosenTiles, int column){
+    public TurnActionMessage(String u, Coordinates[] chosenTiles, int column) {
         this.username = u;
         this.chosenTiles = chosenTiles;
         this.column = column;

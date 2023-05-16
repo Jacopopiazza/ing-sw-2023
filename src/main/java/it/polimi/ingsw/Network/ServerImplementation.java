@@ -29,32 +29,68 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();
     }
 
+    // it has to handle only the message for connect the client to his GameServer
+    // and to reconnect a client to his GameServer
+    public void handleMessage(Message m) throws RemoteException {
+        if( m instanceof RegisterMessage ) {
+            register( ((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers(), ( (message) -> {
+                try {
+                    ((RegisterMessage)m).getClient().update(message);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }) );
+        }
+        else if( m instanceof ReconnectMessage) {
+            reconnect( ((ReconnectMessage) m).getUsername(), ( (message) -> {
+                try {
+                    ((ReconnectMessage)m).getClient().update(message);
+                } catch (RemoteException e) {
+                    System.err.println("Cannot send message to client");
+                }
+            }) );
+        }
+        else System.err.println("Message not recognized; ignoring it");
+    }
+
+    public void deleteGame(List<String> players) {
+        synchronized (playingUsernames) {
+            synchronized (disconnectedUsernames) {
+                for( String player : players ) {
+                    playingUsernames.remove(player);
+                    disconnectedUsernames.remove(player);
+                }
+            }
+        }
+    }
+
     public void disconnect(String username, GameServer gameServer) {
-        synchronized (playingUsernames){
+        synchronized (playingUsernames) {
             if( !playingUsernames.contains(username) ) return;
             playingUsernames.remove(username);
         }
-        synchronized (disconnectedUsernames){
+        synchronized (disconnectedUsernames) {
             disconnectedUsernames.put(username, gameServer);
         }
     }
 
     public void kick(String username, GameServer lobby) {
         synchronized (playingUsernames) {
-            if (lobby == lobbiesWaitingToStart.peek() && lobby.getNumOfActivePlayers() == 0) {
+            if( lobby == lobbiesWaitingToStart.peek() && lobby.getNumOfActivePlayers() == 0 ) {
                 lobbiesWaitingToStart.poll();
-                while (lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
+                while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
             }
         }
     }
 
-    private void reconnect(String username, GameListener listener){
-        synchronized (playingUsernames){
-            synchronized (disconnectedUsernames){
-                if(playingUsernames.contains(username)) {
+    private void reconnect(String username, GameListener listener) {
+        synchronized (playingUsernames) {
+            synchronized (disconnectedUsernames) {
+                if( playingUsernames.contains(username) ) {
                     listener.update(new TakenUsernameMessage());
                     return;
-                } else if( !(disconnectedUsernames.containsKey(username)) ){
+                }
+                else if( !(disconnectedUsernames.containsKey(username)) ) {
                     listener.update(new NoUsernameToReconnectMessage());
                     return;
                 }
@@ -68,75 +104,40 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
     private void register(String username, int numOfPlayers, GameListener listener) throws RemoteException {
-        if(numOfPlayers<=0 || numOfPlayers>4){
+        if( ( numOfPlayers <= 0 ) || ( numOfPlayers>4 ) ) {
             listener.update(new InvalidNumOfPlayersMessage());
             return;
         }
-        if(username == null){
+        if( username == null ) {
             listener.update(new MissingUsernameMessage());
             return;
         }
-        synchronized (playingUsernames){
-            synchronized (disconnectedUsernames){
-                if(playingUsernames.contains(username) || disconnectedUsernames.containsKey(username)){
+        synchronized (playingUsernames) {
+            synchronized (disconnectedUsernames) {
+                if( playingUsernames.contains(username) || disconnectedUsernames.containsKey(username) ) {
                     listener.update(new TakenUsernameMessage());
                     return;
                 }
             }
             synchronized (lobbiesWaitingToStart){
-                if(numOfPlayers != 1){
+                if( numOfPlayers != 1 ){
                     GameServer lobby = new GameServer(this,numOfPlayers);
                     lobby.addPlayer(username, listener);
                     playingUsernames.add(username);
                     lobbiesWaitingToStart.add(lobby);
                     listener.update(new ConnectToGameServerMessage(lobby));
-                } else {
-                    if (lobbiesWaitingToStart.peek() != null) {
+                }
+                else {
+                    if( lobbiesWaitingToStart.peek() != null ) {
                         GameServer lobby = lobbiesWaitingToStart.peek();
-                        if (lobby.addPlayer(username, listener)) { // full
+                        if( lobby.addPlayer(username, listener) ) { // full
                             lobbiesWaitingToStart.poll();
-                            while (lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0)
+                            while( lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
                         listener.update(new ConnectToGameServerMessage(lobby));
-                    } else {
-                        listener.update(new NoLobbyAvailableMessage());
                     }
-                }
-            }
-        }
-    }
-
-    // it has to handle only the message for connect the client to his GameServer
-    // and to reconnect a client to his GameServer
-    public void handleMessage( Message m ) throws RemoteException {
-        if(m instanceof RegisterMessage){
-            register(((RegisterMessage) m).getUsername(),((RegisterMessage) m).getNumOfPlayers(), (message -> {
-                try {
-                    ((RegisterMessage)m).getClient().update(message);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }));
-        }else if( m instanceof ReconnectMessage){
-            reconnect(((ReconnectMessage) m).getUsername(), (message -> {
-                try {
-                    ((ReconnectMessage)m).getClient().update(message);
-                } catch (RemoteException e) {
-                    System.err.println("Cannot send message to client");
-                }
-            }));
-        }else {
-            System.err.println("Message not recognized; ignoring it");
-        }
-    }
-
-    public void deleteGame(List<String> players) {
-        synchronized (playingUsernames) {
-            synchronized (disconnectedUsernames) {
-                for (String player : players) {
-                    playingUsernames.remove(player);
-                    disconnectedUsernames.remove(player);
+                    else listener.update(new NoLobbyAvailableMessage());
                 }
             }
         }
@@ -151,13 +152,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     public static void startSocket() throws RemoteException {
         ServerImplementation instance = getInstance();
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
-            while (true) {
+            while(true) {
                 Socket socket = serverSocket.accept();
                 instance.executorService.submit(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(instance, socket);
 
-                        while (true) {
+                        while(true) {
                             clientSkeleton.receive();
                         }
                     } catch (RemoteException e) {
@@ -178,7 +179,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     // Return the singleton instance of the server
     public static ServerImplementation getInstance() throws RemoteException{
-        if (instance == null) {
+        if( instance == null ) {
             instance = new ServerImplementation();
         }
         return instance;

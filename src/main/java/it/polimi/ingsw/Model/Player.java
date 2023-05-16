@@ -20,7 +20,7 @@ public class Player{
         winner = false;
     }
 
-    public PlayerView getView(){
+    public PlayerView getView() {
         return new PlayerView(this);
     }
 
@@ -31,13 +31,13 @@ public class Player{
     }
 
     public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
-        if ( ( t == null ) || ( t.length == 0 ) ){
+        if( ( t == null ) || ( t.length == 0 ) ) {
             throw new NoTileException();
         }
 
         if(t.length > shelf.remainingSpaceInColumn(column)) throw new IllegalColumnInsertionException();
 
-        for ( int i = 0; ( i < t.length ) && ( t[i] != null ) ; i++){
+        for( int i = 0; ( i < t.length ) && ( t[i] != null ) ; i++) {
             shelf.addTile(t[i], column);
         }
     }
@@ -51,7 +51,7 @@ public class Player{
     }
 
     public void setAccomplishedGlobalGoal( int i, int token ) throws InvalidIndexException {
-        if ( ( i < 0 ) || ( i >= this.accomplishedGlobalGoals.length ) ) throw new InvalidIndexException();
+        if( ( i < 0 ) || ( i >= this.accomplishedGlobalGoals.length ) ) throw new InvalidIndexException();
         this.accomplishedGlobalGoals[i] = token;
     }
 
@@ -60,7 +60,7 @@ public class Player{
     }
 
     public void setScore(int s) throws InvalidScoreException {
-        if ( s < 0 ) throw new InvalidScoreException();
+        if( s < 0 ) throw new InvalidScoreException();
         score = s;
     }
 
@@ -102,7 +102,7 @@ public class Player{
     public boolean checkPrivateGoal() throws MissingShelfException, ColumnOutOfBoundsException {
         int res = goal.check(shelf.clone());
         score += res;
-        if ( res > 0 ) return true;
+        if( res > 0 ) return true;
         return false;
     }
 

@@ -13,7 +13,7 @@ public abstract class GlobalGoal implements Cloneable {
     protected final String name;
 
     protected GlobalGoal(int people, String name) throws InvalidNumberOfPlayersException {
-        if ( ( people < 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
+        if( ( people < 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
             throw new InvalidNumberOfPlayersException();
         }
 

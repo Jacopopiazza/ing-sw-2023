@@ -1,9 +1,9 @@
 package it.polimi.ingsw.Messages;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-public class LobbyMessage implements Message {
+public class LobbyMessage implements Message, Serializable {
 
     private List<String> players;
 

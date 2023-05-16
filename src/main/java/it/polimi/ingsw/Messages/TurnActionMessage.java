@@ -2,7 +2,9 @@ package it.polimi.ingsw.Messages;
 
 import it.polimi.ingsw.Model.Coordinates;
 
-public class TurnActionMessage implements Message {
+import java.io.Serializable;
+
+public class TurnActionMessage implements Message, Serializable {
     private String username;
     private Coordinates[] chosenTiles;
     private int column;

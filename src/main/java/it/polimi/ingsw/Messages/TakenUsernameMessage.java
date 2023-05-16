@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Messages;
 
-public class TakenUsernameMessage implements Message{
+import java.io.Serializable;
+
+public class TakenUsernameMessage implements Message, Serializable {
     private final String message = "Username already taken";
 
     @Override

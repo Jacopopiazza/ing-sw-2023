@@ -2,7 +2,9 @@ package it.polimi.ingsw.Messages;
 
 import it.polimi.ingsw.ModelView.GameView;
 
-public class UpdateViewMessage implements Message {
+import java.io.Serializable;
+
+public class UpdateViewMessage implements Message, Serializable {
     private GameView gameView;
 
     public UpdateViewMessage(GameView gv){

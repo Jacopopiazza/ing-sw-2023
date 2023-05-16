@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Messages;
 
-public class InvalidActionMessage implements Message{
+import java.io.Serializable;
+
+public class InvalidActionMessage implements Message, Serializable {
     private final String message = "Invalid turn action";
 
     @Override

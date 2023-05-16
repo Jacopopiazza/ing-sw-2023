@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Messages;
 
-public class NoUsernameToReconnectMessage implements Message{
+import java.io.Serializable;
+
+public class NoUsernameToReconnectMessage implements Message, Serializable {
     private final String message = "No Username to reconnect";
 
     @Override

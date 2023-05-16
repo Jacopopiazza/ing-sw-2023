@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Messages;
 
-public class InvalidNumOfPlayersMessage implements Message{
+import java.io.Serializable;
+
+public class InvalidNumOfPlayersMessage implements Message, Serializable {
     private final String message = "Invalid number of players";
 
     @Override

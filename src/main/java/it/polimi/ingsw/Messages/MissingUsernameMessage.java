@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Messages;
 
-public class MissingUsernameMessage implements Message{
+import java.io.Serializable;
+
+public class MissingUsernameMessage implements Message, Serializable {
     private final String message = "Username is null";
 
     @Override

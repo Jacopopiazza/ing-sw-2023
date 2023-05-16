@@ -131,6 +131,17 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
+    public void deleteGame(List<String> players) {
+        synchronized (playingUsernames) {
+            synchronized (disconnectedUsernames) {
+                for (String player : players) {
+                    playingUsernames.remove(player);
+                    disconnectedUsernames.remove(player);
+                }
+            }
+        }
+    }
+
     private void startRMI() throws RemoteException {
         ServerImplementation server = getInstance();
         Registry registry = LocateRegistry.getRegistry();

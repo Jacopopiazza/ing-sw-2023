@@ -38,14 +38,14 @@ public class GameServer implements Server{
             if( !playingUsernames.contains(username) ) return;
 
             playingUsernames.remove(username);
-
-            if(isGameStarted()){
+            if( isGameStarted() ){
                 synchronized (disconnectedUsernames){
                     disconnectedUsernames.add(username);
                     controller.disconnect(username);
                 }
                 serverImplementation.disconnect(username, this);
             } else {
+                // controller needs to be sync-ed as well ???
                 controller.kick(username);
                 serverImplementation.kick(username, this);
             }
@@ -55,20 +55,13 @@ public class GameServer implements Server{
 
     private void doTurn(String username, Coordinates[] chosenTiles, int column){
         synchronized (playingUsernames){
-            if( !playingUsernames.contains(username) || !isGameStarted()) return; // message is ignored
+            if( !playingUsernames.contains(username) || !isGameStarted() ) return; // message is ignored
             controller.doTurn(username,chosenTiles,column);
         }
     }
 
     public void deleteGame(List<String> players){
-        synchronized (playingUsernames){
-            synchronized (disconnectedUsernames){
-                for(String player: players){
-                    playingUsernames.remove(player);
-                    disconnectedUsernames.remove(player);
-                }
-            }
-        }
+        serverImplementation.deleteGame(players);
     }
 
     public void reconnect(String username, GameListener listener){
@@ -87,10 +80,8 @@ public class GameServer implements Server{
     @Override
     public void handleMessage(Message m) throws RemoteException {
         if(m instanceof TurnActionMessage){
-
             TurnActionMessage message = (TurnActionMessage) m;
             doTurn(message.getUsername(),message.getChosenTiles(),message.getColumn());
-
         }
         else if(m instanceof DisconnectMessage){
             DisconnectMessage message = (DisconnectMessage) m;

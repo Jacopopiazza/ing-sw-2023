@@ -2,12 +2,10 @@ package it.polimi.ingsw.Messages;
 
 import it.polimi.ingsw.Network.Server;
 
-import java.io.Serializable;
-
-public class ConnectToGameServerMessage implements Message, Serializable {
+public class GameServerMessage implements Message {
     private Server server;
 
-    public ConnectToGameServerMessage(Server server) {
+    public GameServerMessage(Server server) {
         this.server = server;
     }
 

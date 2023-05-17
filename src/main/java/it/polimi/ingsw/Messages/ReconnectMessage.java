@@ -2,9 +2,8 @@ package it.polimi.ingsw.Messages;
 
 import it.polimi.ingsw.Network.Client;
 
-import java.io.Serializable;
 
-public class ReconnectMessage implements Message, Serializable {
+public class ReconnectMessage implements Message {
     private String username;
     private Client client;
 

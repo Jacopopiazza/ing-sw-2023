@@ -96,7 +96,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 }
                 playingUsernames.add(username);
                 disconnectedUsernames.get(username).reconnect(username, listener);
-                listener.update(new ConnectToGameServerMessage(disconnectedUsernames.get(username)));
+                listener.update(new GameServerMessage(disconnectedUsernames.get(username)));
                 disconnectedUsernames.remove(username);
             }
         }
@@ -125,7 +125,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                     lobby.addPlayer(username, listener);
                     playingUsernames.add(username);
                     lobbiesWaitingToStart.add(lobby);
-                    listener.update(new ConnectToGameServerMessage(lobby));
+                    listener.update(new GameServerMessage(lobby));
                 }
                 else {
                     if( lobbiesWaitingToStart.peek() != null ) {
@@ -135,7 +135,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                             while( lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
-                        listener.update(new ConnectToGameServerMessage(lobby));
+                        listener.update(new GameServerMessage(lobby));
                     }
                     else listener.update(new NoLobbyAvailableMessage());
                 }

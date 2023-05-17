@@ -3,7 +3,6 @@ package it.polimi.ingsw.ModelView;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.GameBoard;
-import it.polimi.ingsw.Model.Tile;
 
 import java.io.Serializable;
 import java.util.Collections;

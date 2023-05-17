@@ -3,7 +3,6 @@ package it.polimi.ingsw.ModelView;
 import it.polimi.ingsw.Exceptions.ColumnOutOfBoundsException;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
-import it.polimi.ingsw.Model.Tile;
 
 import java.io.Serializable;
 

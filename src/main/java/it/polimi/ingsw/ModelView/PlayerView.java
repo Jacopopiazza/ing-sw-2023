@@ -2,7 +2,6 @@ package it.polimi.ingsw.ModelView;
 
 import it.polimi.ingsw.Model.Player;
 import it.polimi.ingsw.Model.PrivateGoal;
-import it.polimi.ingsw.Model.Shelf;
 
 import java.io.Serializable;
 

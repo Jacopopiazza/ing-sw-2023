@@ -3,9 +3,6 @@ package it.polimi.ingsw.Model;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
-import java.util.Arrays;
-
-
 public class Shelf implements Cloneable{
     private final Tile[][] SHELF;
 

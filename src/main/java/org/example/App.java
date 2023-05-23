@@ -22,9 +22,9 @@ import it.polimi.ingsw.TUI.UI;
 public class App 
 {
     public static void main( String[] args ){
-        // GUI to be implemented
-        // only reads a string :)
         UI tui = new UI();
-        tui.DAJEROMADAJE();
+        tui.show();
+
+
     }
 }

@@ -25,9 +25,9 @@ public class Controller  {
         }
     };
 
-    public Controller (int numOfPlayers, GameServer server){
+    public Controller (int numOfPlayers, Game model, GameServer server){
         gameServer = server;
-        model = new Game(numOfPlayers);
+        this.model = model;
         onlyLastPlayerHasDoneTheTurnAlready = false;
     }
 

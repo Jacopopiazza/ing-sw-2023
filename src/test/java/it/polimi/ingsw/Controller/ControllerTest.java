@@ -5,6 +5,7 @@ import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.Coordinates;
+import it.polimi.ingsw.Model.Game;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,8 @@ public class ControllerTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        controller = new Controller(2, null);
+        Game game = new Game(2);
+        controller = new Controller(2, game, null);
 
         Coordinates wrongNumberOfTilesActionCoords[] = { new Coordinates(1,3), new Coordinates(1, 4), null, null };
         int wrongNumberOfTilesActionColumn = 1;

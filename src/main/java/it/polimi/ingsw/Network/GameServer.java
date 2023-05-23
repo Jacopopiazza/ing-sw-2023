@@ -4,12 +4,15 @@ import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
+import it.polimi.ingsw.Model.Game;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameServer implements Server {
+
+    private Game model;
     private Controller controller;
     private  ServerImplementation serverImplementation = null;
     private List<String> playingUsernames;
@@ -17,7 +20,8 @@ public class GameServer implements Server {
 
     public GameServer(ServerImplementation serverImplementation, int numOfPlayers) throws RemoteException {
         this.serverImplementation = ServerImplementation.getInstance();
-        this.controller = new Controller(numOfPlayers, this);
+        this.model = new Game(numOfPlayers);
+        this.controller = new Controller(numOfPlayers, model, this);
         this.playingUsernames = new ArrayList<>();
         this.disconnectedUsernames = new ArrayList<>();
     }

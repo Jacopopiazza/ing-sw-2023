@@ -17,12 +17,10 @@ public class ServerStub implements Server {
     private ObjectInputStream ois;
     private Socket socket;
 
-    public ServerStub(String ip, int port) {
+    public ServerStub(String ip, int port) throws RemoteException {
         this.ip = ip;
         this.port = port;
-    }
 
-    public void register(Client client) throws RemoteException {
         try {
             this.socket = new Socket(ip, port);
             try {
@@ -39,6 +37,7 @@ public class ServerStub implements Server {
             throw new RemoteException("Unable to connect to the server", e);
         }
     }
+
 
     public void handleMessage(Message m) throws RemoteException {
         if( m instanceof ReconnectMessage ){

@@ -7,15 +7,15 @@ public class AppClientImplementation {
 
     public static void main(String[] args) {
         View ui;
-        String ip = "localhost";
-        Integer port = 1234;
 
-        if(args.length > 0 && args[0].equals("cli"))
+        ui = new TextualUI();
+
+        /*if(args.length > 0 && args[0].equals("cli"))
             ui = new TextualUI();
         else{
             //ui = new GraphicalUI();
             throw new RuntimeException("Graphical UI not implemented yet");
-        }
+        }*/
         ui.run();
 
 

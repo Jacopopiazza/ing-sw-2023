@@ -143,9 +143,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
-    private void startRMI() throws RemoteException {
+    private static void startRMI() throws RemoteException {
         ServerImplementation server = getInstance();
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.createRegistry(1111);
         registry.rebind("G26-MyShelfie-Server", server);
     }
 
@@ -183,6 +183,47 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             instance = new ServerImplementation();
         }
         return instance;
+    }
+
+    public static void main(String[] args){
+        ServerImplementation server = null;
+
+        try {
+            server = getInstance();
+        } catch (RemoteException e) {
+            System.err.println("Cannot get server");
+            System.err.println(e.getMessage());
+            return;
+        }
+
+        Thread rmiThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    startRMI();
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI. This protocol will be disabled.");
+                }
+            }
+        };
+
+        rmiThread.start();
+
+        Thread socketThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    startSocket();
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI server");
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+
+        socketThread.start();
+
+        System.out.println("Server started");
     }
 
 }

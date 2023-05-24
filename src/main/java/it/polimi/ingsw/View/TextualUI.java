@@ -73,7 +73,7 @@ public class TextualUI extends ClientManager {
                 choice = in.nextInt();
                 in.nextLine();
 
-                if (choice >= 0 && choice <= 1) {
+                if (choice >= 1 && choice <= 2) {
                     validConnection = true;
                 } else {
                     out.println("Invalid selection!");
@@ -94,7 +94,6 @@ public class TextualUI extends ClientManager {
             }
         }else{
             out.println("Connecting with socket...");
-            out.println("Connecting with RMI...");
             try{
                 this.setUpSocketClient();
             }catch (RemoteException | NotBoundException ex ){

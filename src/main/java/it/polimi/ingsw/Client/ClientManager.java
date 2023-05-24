@@ -28,7 +28,7 @@ public abstract class ClientManager implements Runnable, View
     }
 
     protected void setUpRMIClient() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.getRegistry(1111);
         Server server = (Server) registry.lookup("G26-MyShelfie-Server");
 
         this.client = new ClientImplementation(this, server);
@@ -45,11 +45,11 @@ public abstract class ClientManager implements Runnable, View
                         serverStub.receive(client);
                     } catch (RemoteException e) {
                         System.err.println("Cannot receive from server. Stopping...");
-                        try {
+                        /*try {
                             serverStub.close();
                         } catch (RemoteException ex) {
                             System.err.println("Cannot close connection with server. Halting...");
-                        }
+                        }*/
                         System.exit(1);
                     }
                 }

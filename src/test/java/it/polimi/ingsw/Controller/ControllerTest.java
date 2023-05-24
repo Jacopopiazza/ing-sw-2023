@@ -27,8 +27,7 @@ public class ControllerTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        Game game = new Game(2);
-        controller = new Controller(2, game, null);
+        controller = new Controller(2, null);
 
         Coordinates wrongNumberOfTilesActionCoords[] = { new Coordinates(1,3), new Coordinates(1, 4), null, null };
         int wrongNumberOfTilesActionColumn = 1;

@@ -31,6 +31,7 @@ public class ClientSkeleton implements Client {
     }
 
     public void update(Message m) throws RemoteException {
+        System.out.println("ClientSkeleton is sending message to client");
         if( m instanceof GameServerMessage){
             server = ((GameServerMessage) m).getServer();
             m = new GameServerMessageTicket();
@@ -55,7 +56,8 @@ public class ClientSkeleton implements Client {
         System.out.println("Received message: " + m.toString());
 
         if( m instanceof ReconnectMessageTicket ){
-            server.handleMessage(new ReconnectMessage(((ReconnectMessage) m).getUsername(), this));
+            Message packed = new ReconnectMessage(((ReconnectMessageTicket) m).getUsername(), this);
+            server.handleMessage(packed);
         }
         else if( m instanceof RegisterMessageTicket ){
             server.handleMessage(new RegisterMessage(((RegisterMessage) m).getUsername(), this, ((RegisterMessage) m).getNumOfPlayers()));

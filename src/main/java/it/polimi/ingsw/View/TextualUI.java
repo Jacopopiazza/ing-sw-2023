@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Client.AppClientImplementation;
 import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
@@ -10,8 +11,10 @@ import it.polimi.ingsw.Messages.TakenUsernameMessage;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
+import it.polimi.ingsw.Network.ClientImplementation;
 
 
+import javax.print.attribute.SetOfIntegerSyntax;
 import java.io.PrintStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -19,13 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class TextualUI extends ClientManager {
 
     private Scanner in;
     private PrintStream out;
-
     private String userName;
 
     // Write this title in a config file
@@ -37,10 +41,34 @@ public class TextualUI extends ClientManager {
     String r6 = "|_|    |_|\\__, |   |_____/|_| |_|\\___/|_|_|  |_|\\___/";
     String r7 = "            _/ |";
     String r8 = "           |__/";
-    int padding;
 
-    String user = null;
     GameBoard gameBoard;
+
+    public enum State {
+        WAITING_FOR_SERVER_RESPONSE,
+        WAITING_FOR_PLAYER_ACTION,
+        WAITING_FOR_USERNAME,
+        WAITING_FOR_CHOICE_ABOUT_LOBBY,
+        WAITING_FOR_UNUSED_USERNAME,
+        WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY,
+
+    }
+
+    private State state = State.WAITING_FOR_PLAYER_ACTION;
+    private final Object lock = new Object();
+
+    private State getState() {
+        synchronized (lock) {
+            return state;
+        }
+    }
+
+    private void setState(State state) {
+        synchronized (lock) {
+            this.state = state;
+            lock.notifyAll();
+        }
+    }
 
     // Needs the view
 
@@ -110,30 +138,21 @@ public class TextualUI extends ClientManager {
     }
 
     private int readChoiceFromInput(String option_1, String option_2){
-        Scanner scanner = new Scanner(System.in);
         String input;
-        int choice;
+        int choice = -1;
 
-        while(true){
-            System.out.println("1 - " + option_1);
-            System.out.println("2 - " + option_2 + "\n");
-            input = scanner.nextLine();
-            try{
-                choice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                continue;
-            }
+        do{
+            out.println("1 - " + option_1);
+            out.println("2 - " + option_2 + "\n");
+            choice = in.nextInt();
+        }while (choice<1 || choice>2);
 
-            if(checkUserInput(1,2, choice)){
-                return choice;
-            }
-        }
+        return choice;
     }
 
-    private String readUsername(){
+    private void readUsername(){
         System.out.println("Insert username:");
-        Scanner inputScanner = new Scanner(System.in);
-        return inputScanner.nextLine();
+        this.userName = in.nextLine();
     }
 
     public void initializePlayer(String username){
@@ -309,7 +328,10 @@ public class TextualUI extends ClientManager {
 
         out.println("Trying to connected to server...");
         doReconnect(this.userName);
+        setState(State.WAITING_FOR_SERVER_RESPONSE);
+
     }
+
     public void showProva() {
 
         Scanner scanner = new Scanner(System.in);
@@ -320,9 +342,9 @@ public class TextualUI extends ClientManager {
         //if(!connected)
         //    return;
         System.out.println("Connected!");
-        user = readUsername();
+        readUsername();
 
-        System.out.println("Your username is: " + user);
+        System.out.println("Your username is: " + this.userName);
 
         Game game = new Game(4);// Instanciated just for try
         game.addPlayer("a", (message -> System.out.println("ciao")));
@@ -401,8 +423,7 @@ public class TextualUI extends ClientManager {
         }
     }
 
-
-    private void askPlayerNumOfPlayerForLobby(String username){
+    private void askPlayerNumOfPlayerForLobby(){
         out.println("Insert the number of players for the game:");
         int numOfPlayers = -1;
 
@@ -411,20 +432,21 @@ public class TextualUI extends ClientManager {
         } while (numOfPlayers < 2 || numOfPlayers > 4);
 
         doConnect(this.userName, numOfPlayers);
+        setState(State.WAITING_FOR_SERVER_RESPONSE);
     }
 
     @Override
     public void update(Message m){
-        out.println("CLI Received message");
+        AppClientImplementation.logger.log(Level.INFO,"CLI Received message");
 
         if(m instanceof NoUsernameToReconnectMessage){
+            setState(State.WAITING_FOR_CHOICE_ABOUT_LOBBY);
             out.println(m.toString());
-            askPlayerNumOfPlayerForLobby(this.userName);
         }
         else if(m instanceof TakenUsernameMessage){
+            setState(State.WAITING_FOR_UNUSED_USERNAME);
             out.println(m.toString());
-            readUsername();
-            askPlayerNumOfPlayerForLobby(this.userName);
+
         }
         else if(m instanceof GameServerMessage){
             out.println(m.toString());
@@ -438,7 +460,8 @@ public class TextualUI extends ClientManager {
             });
         }
         else{
-            out.println("Invalid message received; ignoring it.");
+            AppClientImplementation.logger.log(Level.INFO,"Invalid message recieved; ignoring it.");
+            AppClientImplementation.logger.log(Level.INFO,m.toString());
         }
 
     }
@@ -446,5 +469,68 @@ public class TextualUI extends ClientManager {
     @Override
     public void run() {
         show();
+        while(true){
+            while(getState() == State.WAITING_FOR_SERVER_RESPONSE){
+                synchronized (lock){
+                    try{
+                        lock.wait();
+                    }catch (InterruptedException e){
+                        System.err.println("Interrupted while waiting for server: " + e.getMessage());
+                        AppClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+                    }
+                }
+            }
+
+            //TODO: handle messages from server
+            doAction();
+
+        }
+
+    }
+
+    private void chooseLobby(){
+        out.println("Choose a lobby:");
+        out.println("1. Create a new lobby");
+        out.println("2. Join an existing lobby");
+
+        int choice = -1;
+        do{
+            choice = in.nextInt();
+        } while (choice < 1 || choice > 3);
+
+        switch (choice){
+            case 1 -> {
+                setState(State.WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY);
+            }
+            case 2 -> {
+                doConnect(this.userName,1);
+                setState(State.WAITING_FOR_SERVER_RESPONSE);
+            }
+        }
+    }
+
+    private void doAction() {
+        switch (getState()){
+            case WAITING_FOR_USERNAME -> {
+                readUsername();
+                doReconnect(this.userName);
+                setState(State.WAITING_FOR_SERVER_RESPONSE);
+                break;
+            }
+            case WAITING_FOR_CHOICE_ABOUT_LOBBY -> {
+                chooseLobby();
+                break;
+            }
+            case WAITING_FOR_UNUSED_USERNAME -> {
+                readUsername();
+                setState(State.WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY);
+                break;
+            }
+            case WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY -> {
+                askPlayerNumOfPlayerForLobby();
+                break;
+            }
+
+        }
     }
 }

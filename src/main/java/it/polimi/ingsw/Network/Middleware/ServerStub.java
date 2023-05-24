@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Network.Middleware;
 
+import it.polimi.ingsw.Client.AppClientImplementation;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.Server;
@@ -9,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
 
 public class ServerStub implements Server {
     String ip;
@@ -49,24 +51,28 @@ public class ServerStub implements Server {
     }
 
     public void handleMessage(Message m) throws RemoteException {
-        System.out.println("ServerStub is sending message to server");
+
+        Message toBeSent = m;
+
+        AppClientImplementation.logger.log(Level.INFO, "ServerStub is sending message to server");
+
         if( m instanceof ReconnectMessage ){
-            m = new ReconnectMessageTicket(((ReconnectMessage) m).getUsername() );
+            toBeSent = new ReconnectMessageTicket(((ReconnectMessage) m).getUsername() );
         }
         else if( m instanceof RegisterMessage){
-            m = new RegisterMessageTicket(((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers() );
+            toBeSent = new RegisterMessageTicket(((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers() );
         }
         try {
-            oos.writeObject(m);
+            oos.writeObject(toBeSent);
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }
-        System.out.println("ServerStub sent message to server succesfully");
+        AppClientImplementation.logger.log(Level.INFO, "ServerStub sent message to server");
 
     }
 
     public void receive(Client client) throws RemoteException {
-        System.out.println("ServerStub is waiting for a message from server");
+        AppClientImplementation.logger.log(Level.INFO, "ServerStub is waiting for a message from server");
 
         Message m;
         try {
@@ -76,9 +82,7 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize model view from client", e);
         }
-
-        System.out.println("Server stub received message: " + m.toString());
-
+        AppClientImplementation.logger.log(Level.INFO, "Server stub received message: " + m.toString());
 
         if( m instanceof GameServerMessageTicket)
             client.update(new GameServerMessage(this));

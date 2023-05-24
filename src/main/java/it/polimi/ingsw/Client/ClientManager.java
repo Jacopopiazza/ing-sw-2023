@@ -16,6 +16,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public abstract class ClientManager implements Runnable, View
 {
@@ -45,6 +46,7 @@ public abstract class ClientManager implements Runnable, View
                         serverStub.receive(client);
                     } catch (RemoteException e) {
                         System.err.println("Cannot receive from server. Stopping...");
+                        e.printStackTrace();
                         System.exit(1);
                     }
                 }
@@ -62,7 +64,7 @@ public abstract class ClientManager implements Runnable, View
 
     @Override
     public void notifyListeners(Message m) {
-        System.out.println("Notifying ClientManager listeners");
+        AppClientImplementation.logger.log(Level.INFO,"Notifying ClientManager listeners");
         synchronized (listeners) {
             for (ViewListener listener : listeners) {
                 listener.handleMessage(m);
@@ -77,12 +79,12 @@ public abstract class ClientManager implements Runnable, View
     }
 
     protected void doReconnect(String username){
-        System.out.println("Sending reconnect message");
+        AppClientImplementation.logger.log(Level.INFO,"Sending reconnect message");
         notifyListeners(new ReconnectMessage(username,client));
     }
 
     protected void doConnect(String username, int numOfPlayers){
-        System.out.println("Sending register message");
+        AppClientImplementation.logger.log(Level.INFO,"Sending register message with numOfPlayer=" + numOfPlayers);
         notifyListeners(new RegisterMessage(username,client,numOfPlayers));
     }
 

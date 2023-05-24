@@ -37,7 +37,7 @@ public abstract class ClientManager implements Runnable, View
     protected void setUpSocketClient() throws RemoteException, NotBoundException {
         ServerStub serverStub = new ServerStub("localhost", 1234);
         this.client = new ClientImplementation(this, serverStub);
-        /*new Thread() {
+        new Thread() {
             @Override
             public void run() {
                 while(true) {
@@ -49,7 +49,7 @@ public abstract class ClientManager implements Runnable, View
                     }
                 }
             }
-        }.start();*/
+        }.start();
 
     }
 

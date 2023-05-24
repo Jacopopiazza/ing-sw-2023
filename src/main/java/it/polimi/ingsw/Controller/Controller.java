@@ -11,7 +11,7 @@ public class Controller  {
     private GameServer gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
-    private boolean onlyLastPlayerHasDoneTheTurnAlready;
+    private boolean lastPlayerHasAlreadyDoneTheTurn;
     private final Timer timer = new Timer();
 
     private final TimerTask task = new TimerTask(){
@@ -25,10 +25,10 @@ public class Controller  {
         }
     };
 
-    public Controller (int numOfPlayers, Game model, GameServer server){
+    public Controller (Game model, GameServer server){
         gameServer = server;
         this.model = model;
-        onlyLastPlayerHasDoneTheTurnAlready = false;
+        lastPlayerHasAlreadyDoneTheTurn = false;
     }
 
     public boolean isGameStarted(){
@@ -64,13 +64,13 @@ public class Controller  {
         }
         if( model.getNumOfActivePlayers() == 2 ){
             timer.cancel();
-            // If a player reconnects after the last remaining player performed their turn,
-            // the currentPlayer won't change at the end of it
-            if( onlyLastPlayerHasDoneTheTurnAlready ) {
+            // If a player reconnects after the last remaining player has performed their turn,
+            // the currentPlayer must be updated because it was not changed at the end of that turn
+            if( lastPlayerHasAlreadyDoneTheTurn ) {
+                // This flag must be set back to false
+                lastPlayerHasAlreadyDoneTheTurn = false;
                 // Therefore the nextPlayer is set
-                model.nextPlayer();
-                // And this flag must be set back to false
-                onlyLastPlayerHasDoneTheTurnAlready = false;
+                if(!model.nextPlayer()) endGame();
             }
         }
     }
@@ -85,8 +85,8 @@ public class Controller  {
             }
             if( model.getNumOfActivePlayers() == 1 ) {
                 if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
-                    model.nextPlayer();
-                timer.schedule(task,0,timerLength*1000);
+                    if(!model.nextPlayer()) endGame();
+                    else timer.schedule(task,0,timerLength*1000);
                 return;
             }
             if( model.getNumOfActivePlayers() == 0 ){
@@ -97,7 +97,7 @@ public class Controller  {
                 return;
             }
             if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
-                model.nextPlayer();
+                if(!model.nextPlayer()) endGame();
         }
     }
 
@@ -107,8 +107,7 @@ public class Controller  {
 
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
         // If timer is running, the player should just wait for THEM to win
-        // It's not possible that onlyLastPlayerHasDoneTheTurnAlready == True while the first condition is false
-        if( ( model.getNumOfPlayers() == 1 ) && onlyLastPlayerHasDoneTheTurnAlready ){
+        if( ( model.getNumOfPlayers() == 1 )){
             model.addCheater(username);
             return;
         }
@@ -121,7 +120,7 @@ public class Controller  {
             e.printStackTrace();
         }
         // ...and check if such player is the one who sent the request
-        if( !( currPlayer.getUsername().equals(username) || ( model.getNumOfActivePlayers() == 1 ) ) ){
+        if( !( currPlayer.getUsername().equals(username)) ){
             model.addCheater(username);
             return;
         }
@@ -133,7 +132,7 @@ public class Controller  {
             return;
         }
 
-        // Check is the index for the column is valid...
+        // Check if the index for the column is valid...
         if( ( col<0 ) || ( col>Shelf.getColumns() ) ){
             model.addCheater(username);
             return;
@@ -191,17 +190,21 @@ public class Controller  {
 
         // Set the next player and if the game is over the game ends
         if( ( model.getNumOfActivePlayers() > 1 ) && !model.nextPlayer() ){
-            model.endGame();
-            // Get list of usernames for server's method
-            List<String> players = new ArrayList<String>();
-            for( int i=0; i<model.getNumOfPlayers(); i++ )
-                players.add(model.getPlayer(i).getUsername());
-            // Delete game from server
-            gameServer.deleteGame(players);
+            endGame();
         }
 
         // In case it's the turn of the remaining player, he was free to do it
         if( model.getNumOfActivePlayers() == 1 )
-            onlyLastPlayerHasDoneTheTurnAlready = true;
+            lastPlayerHasAlreadyDoneTheTurn = true;
+    }
+
+    private void endGame(){
+        model.endGame();
+        // Get list of usernames for server's method
+        List<String> players = new ArrayList<String>();
+        for( int i=0; i<model.getNumOfPlayers(); i++ )
+            players.add(model.getPlayer(i).getUsername());
+        // Delete game from server
+        gameServer.deleteGame(players);
     }
 }

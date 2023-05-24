@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameServer implements Server {
-
-    private Game model;
     private Controller controller;
     private  ServerImplementation serverImplementation = null;
     private List<String> playingUsernames;
@@ -20,8 +18,7 @@ public class GameServer implements Server {
 
     public GameServer(ServerImplementation serverImplementation, int numOfPlayers) throws RemoteException {
         this.serverImplementation = ServerImplementation.getInstance();
-        this.model = new Game(numOfPlayers);
-        this.controller = new Controller(numOfPlayers, model, this);
+        this.controller = new Controller(new Game(numOfPlayers), this);
         this.playingUsernames = new ArrayList<>();
         this.disconnectedUsernames = new ArrayList<>();
     }

@@ -3,15 +3,13 @@ import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
-import it.polimi.ingsw.ModelView.GameBoardView;
-import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.ModelView.ShelfView;
-import it.polimi.ingsw.ModelView.TileView;
+import it.polimi.ingsw.ModelView.*;
+
 import java.util.*;
 
+// Todo: check the column insertion
 
-
-public class UI {
+public class TextualUI {
     // Write this title in a config file
     String r1 = " __    __           ______ _           _  __  _";
     String r2 = "|  \\  /  |         /  ____| |         | |/ _|(_)";
@@ -25,7 +23,7 @@ public class UI {
 
     // Needs the view
 
-    public UI() {
+    public TextualUI() {
 
     }
 
@@ -114,23 +112,28 @@ public class UI {
 
     public void showBoard(GameBoardView gameBoard){
         // print the board -> using a 4 player board for a first try
-        int max_x = gameBoard.getCoords().stream().mapToInt(Coordinates::getROW).max().getAsInt();
-        int max_y = gameBoard.getCoords().stream().mapToInt(Coordinates::getROW).max().getAsInt();
+        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+        int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
+
+        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+        int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
         String color;
 
         Set<Coordinates> coords = gameBoard.getCoords();
 
+        System.out.println("\n\n\n\n\t\t\t\tGame Board");
         System.out.print("     ");
-        for(int c = 0; c < max_y; c++){
-            System.out.print(" " + c + "   ");
+
+        for(int c = minCol; c < maxCol; c++){
+            System.out.print(" " + (c - minCol) + "   ");
         }
         System.out.print("\n\n");
 
-        for(int r = 0; r < max_x; r++){
-            System.out.print(" " + (char)(r + 65) + "   ");
-            for(int c = 0; c < max_y; c++){
-                if(coords.contains(new Coordinates(r, c)) && gameBoard.getTile(new Coordinates(r,c)) != null){
+        for(int r = minRow; r < maxRow; r++){
+            System.out.print(" " + (char)(r + 65 - minRow) + "   ");
+            for(int c = minCol; c < maxCol; c++){
+                if(coords.contains(new Coordinates(r, c)) && gameBoard.getTile(new Coordinates(r, c)) != null){
                     color = getColorCode(gameBoard.getTile(new Coordinates(r, c)));
                 }else{
                     color = ConsoleColors.RESET.getCode();
@@ -142,13 +145,44 @@ public class UI {
         }
     }
 
+    private void printTile(TileView tileView){
+        String color;
+        if(tileView != null){
+            color = getColorCode(tileView);
+        }else{
+            color = ConsoleColors.BROWN_BACKGROUND.getCode();
+        }
+        System.out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+    }
+
+    public void showPrivateGoals(Coordinates[] privateGoals){
+        System.out.println("\n\n\tMy private goals\n\n");
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        TileView tile = null;
+
+        for(int i = 0; i < r; i++){
+            for(int k = 0; k < c; k++){
+                for(int color = 0; color < privateGoals.length; color++){
+                    if(privateGoals[color].equals(new Coordinates(i, k))){
+                        tile = new TileView(new Tile(TileColor.values()[color], 0));
+                    }
+                }
+                printTile(tile);
+                tile = null;
+            }
+            System.out.print(ConsoleColors.RESET.getCode() + "");
+            System.out.print("\n\n");
+        }
+    }
+
     public void showShelf(ShelfView shelf){
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
 
-        String color;
         TileView tile;
 
+        System.out.println("\n\n\n\n\t\tMy Shelf\n\n");
         for(int i = 0; i < c; i++)
             System.out.print(" " + i + "   ");
         System.out.print("\n\n");
@@ -156,19 +190,16 @@ public class UI {
         for(int i = 0; i < r; i++){
             for(int k = 0; k < c; k++){
                 tile = shelf.getTile(new Coordinates(i, k));
-                if(tile != null){
-                    color = getColorCode(tile);
-                }else{
-                    color = ConsoleColors.BROWN_BACKGROUND.getCode();
-                }
-                System.out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+                printTile(tile);
             }
             System.out.print(ConsoleColors.RESET.getCode() + "");
             System.out.print("\n\n");
         }
     }
 
-    public List<Coordinates> pickTiles(){
+    private List<Coordinates> pickTiles(int numRows, int numCols){
+        /* Todo: check that the chosen Tiles from the board are actually pickable, on the same line, maximum 3
+        *   -> controller*/
         List<Coordinates> coords = new ArrayList<>();
 
         int row, column, choice;
@@ -188,13 +219,14 @@ public class UI {
                     if( (c.length > 2) || (c.length < 2)
                         || c[0].length() > 1 || c[0].length() <= 0
                         || c[1].length() > 1 || c[1].length() <= 0
-                        || !checkUserInput('A', 'H', c[0].toUpperCase().charAt(0))
-                        || !checkUserInput(0, 7, c[1].charAt(0) - '0'))
+                        || !checkUserInput('A', numRows + 'A', c[0].toUpperCase().charAt(0))
+                        || !checkUserInput(0, numCols, c[1].charAt(0) - '0'))
                     {
-                        System.out.print("\nInsert a row [A - H] and a column [0 - 7]!\n");
+                        System.out.print("\nInsert a row [A - " + (char)(numRows + 'A') + "]" +
+                                "and a column [0 - " + numCols +"]!\n");
                         continue;
                     }
-                    row = (c[0].charAt(0)) - 'A';
+                    row = (c[0].toUpperCase().charAt(0)) - 'A';
                     column = c[1].charAt(0) - '0';
                     coords.add(new Coordinates(row, column));
                     break;
@@ -221,9 +253,9 @@ public class UI {
 
         Game game = new Game(4);// Instanciated just for try
         game.addPlayer("a", (message -> System.out.println("ciao")));
-        game.addPlayer("d", (message -> System.out.println("ciao")));
         game.addPlayer("b", (message -> System.out.println("ciao")));
         game.addPlayer("c", (message -> System.out.println("ciao")));
+        game.addPlayer("d", (message -> System.out.println("ciao")));
         game.init();
         try {
             game.refillGameBoard();
@@ -231,7 +263,13 @@ public class UI {
             e.printStackTrace();
         }
 
+        PlayerView me = new PlayerView(game.getPlayer(0));
+        Coordinates[] pvtGoals = new Coordinates[6]; // num of Coordinates to be read from config
+        pvtGoals = me.getPrivateGoal().getCoordinates();
+
         Shelf shelf = new Shelf();
+        Shelf privateGoals = new Shelf();
+
         ShelfView shelfView = new ShelfView(shelf);
 
         Coordinates[] chosenTiles;
@@ -241,13 +279,17 @@ public class UI {
             GameView modelView = new GameView(game);
             GameBoardView gameBoard = modelView.getGameBoard();
 
-            System.out.println("\n\n\n\n\t\tGame Board");
             showBoard(gameBoard);
-
-            System.out.print("\n\n\n\n\t\tMy Shelf\n\n\n");
             showShelf(shelfView);
+            showPrivateGoals(modelView.getPlayers()[0].getPrivateGoal().getCoordinates());
 
-            coords = pickTiles();
+            int numRows = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt()
+                    - gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt() - 1;
+
+            int numCols = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt()
+                    - gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt() - 1;
+
+            coords = pickTiles(numRows, numCols);
             chosenTiles = new Coordinates[coords.size()];
             for(int i = 0; i < coords.size(); i++){
                 chosenTiles[i] = coords.get(i);

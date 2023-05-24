@@ -143,9 +143,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
-    private void startRMI() throws RemoteException {
+    private static void startRMI() throws RemoteException {
         ServerImplementation server = getInstance();
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.createRegistry(1111);
         registry.rebind("G26-MyShelfie-Server", server);
     }
 
@@ -153,17 +153,19 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         ServerImplementation instance = getInstance();
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
             while(true) {
+                System.out.println("Waiting for a client...");
                 Socket socket = serverSocket.accept();
+                System.out.println("Client connected");
                 instance.executorService.submit(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(instance, socket);
-
                         while(true) {
                             clientSkeleton.receive();
                         }
                     } catch (RemoteException e) {
                         System.err.println("Cannot receive from client. Closing this connection...");
                     } finally {
+                        System.out.println("Client disconnected");
                         try {
                             socket.close();
                         } catch (IOException e) {
@@ -183,6 +185,47 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             instance = new ServerImplementation();
         }
         return instance;
+    }
+
+    public static void main(String[] args){
+        ServerImplementation server = null;
+
+        try {
+            server = getInstance();
+        } catch (RemoteException e) {
+            System.err.println("Cannot get server");
+            System.err.println(e.getMessage());
+            return;
+        }
+
+        Thread rmiThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    startRMI();
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI. This protocol will be disabled.");
+                }
+            }
+        };
+
+        rmiThread.start();
+
+        Thread socketThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    startSocket();
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI server");
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+
+        socketThread.start();
+
+        System.out.println("Server started");
     }
 
 }

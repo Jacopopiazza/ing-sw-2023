@@ -82,7 +82,7 @@ public class GameBoardTest extends TestCase {
     @Test
     public void testSetTile() throws InvalidCoordinatesForCurrentGameException {
         Tile t = new Tile(TileColor.CYAN, 0);
-        Coordinates c = new Coordinates(0, 1);
+        Coordinates c = new Coordinates(4, 4);
         gameBoard.setTile(c, t);
         Assert.assertEquals(gameBoard.getTile(c), t);
     }

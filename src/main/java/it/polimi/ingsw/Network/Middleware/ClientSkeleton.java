@@ -37,8 +37,6 @@ public class ClientSkeleton implements Client {
         }
         try {
             oos.writeObject(m);
-            oos.flush();
-            oos.reset();
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }
@@ -53,6 +51,8 @@ public class ClientSkeleton implements Client {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize choice from client", e);
         }
+
+        System.out.println("Received message: " + m.toString());
 
         if( m instanceof ReconnectMessageTicket ){
             server.handleMessage(new ReconnectMessage(((ReconnectMessage) m).getUsername(), this));

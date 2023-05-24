@@ -1,15 +1,4 @@
 package it.polimi.ingsw.TUI;
-
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
-import it.polimi.ingsw.Exceptions.EmptySackException;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Model.*;
@@ -18,15 +7,8 @@ import it.polimi.ingsw.ModelView.GameBoardView;
 import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.ModelView.ShelfView;
 import it.polimi.ingsw.ModelView.TileView;
+import java.util.*;
 
-
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-
-import static it.polimi.ingsw.Model.Utilities.ConsoleColors.WHITE;
 
 
 public class UI {
@@ -39,10 +21,7 @@ public class UI {
     String r6 = "|_|    |_|\\__, |   |_____/|_| |_|\\___/|_|_|  |_|\\___/";
     String r7 = "            _/ |";
     String r8 = "           |__/";
-    int padding;
-
     String user = null;
-    GameBoard gameBoard;
 
     // Needs the view
 
@@ -61,25 +40,33 @@ public class UI {
         System.out.println(r8);
     }
 
-    public boolean chooseConnection(){
+    private boolean checkUserInput(int lowerBound, int upperBound, int input){
+        return input >= lowerBound && input <= upperBound;
+    }
+
+    private int readChoiceFromInput(String option_1, String option_2){
         Scanner scanner = new Scanner(System.in);
-        String choiceStr;
+        String input;
         int choice;
 
         while(true){
-            System.out.println("1 - RMI");
-            System.out.println("2 - SOCKET\n");
-            choiceStr = scanner.nextLine();
+            System.out.println("1 - " + option_1);
+            System.out.println("2 - " + option_2 + "\n");
+            input = scanner.nextLine();
             try{
-                choice = Integer.parseInt(choiceStr);
+                choice = Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 continue;
             }
 
-            if(choice == 1 || choice == 2){
-                break;
+            if(checkUserInput(1,2, choice)){
+                return choice;
             }
         }
+    }
+
+    public boolean chooseConnection(){
+        int choice = readChoiceFromInput("RMI", "SOCKET");
 
         if(choice == 1){
             System.out.println("Connecting with RMI...");
@@ -92,8 +79,7 @@ public class UI {
     private String readUsername(){
         System.out.println("Insert username:");
         Scanner inputScanner = new Scanner(System.in);
-        String username = inputScanner.nextLine();
-        return username;
+        return inputScanner.nextLine();
     }
 
     public void initializePlayer(String username){
@@ -103,57 +89,35 @@ public class UI {
 
     private String getColorCode(TileView tile){
         TileColor tc = tile.getCOLOR();
-        switch(tc) {
-            case WHITE: {
+        switch (tc) {
+            case WHITE -> {
                 return ConsoleColors.WHITE_BACKGROUND_BRIGHT.getCode();
             }
-            case FUCHSIA:{
+            case FUCHSIA -> {
                 return ConsoleColors.PURPLE_BACKGROUND_BRIGHT.getCode();
             }
-            case BLUE:{
+            case BLUE -> {
                 return ConsoleColors.BLUE_BACKGROUND_BRIGHT.getCode();
             }
-            case CYAN:{
+            case CYAN -> {
                 return ConsoleColors.CYAN_BACKGROUND_BRIGHT.getCode();
             }
-            case GREEN:{
+            case GREEN -> {
                 return ConsoleColors.GREEN_BACKGROUND_BRIGHT.getCode();
             }
-            case YELLOW:{
+            case YELLOW -> {
                 return ConsoleColors.YELLOW_BACKGROUND.getCode();
             }
         }
         return ConsoleColors.RESET.getCode();
     }
 
-    public void showBoard(){
+    public void showBoard(GameBoardView gameBoard){
         // print the board -> using a 4 player board for a first try
-        Game game = new Game(4);// Instanciated just for try
-        game.addPlayer("a", (message -> {System.out.println("ciao");}));
-        game.addPlayer("d", (message -> {System.out.println("ciao");}));
-        game.addPlayer("b", (message -> {System.out.println("ciao");}));
-        game.addPlayer("c", (message -> {System.out.println("ciao");}));
-        game.init();
+        int max_x = gameBoard.getCoords().stream().mapToInt(Coordinates::getROW).max().getAsInt();
+        int max_y = gameBoard.getCoords().stream().mapToInt(Coordinates::getROW).max().getAsInt();
 
-        try {
-            game.refillGameBoard();
-
-        }catch (Exception e){
-
-        }
-
-        GameView modelView = new GameView(game);
-
-        GameBoardView gameBoard = modelView.getGameBoard();
-
-        int max_x;
-        int max_y;
-
-        max_x = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-        max_y = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-
-        String color = ConsoleColors.RESET.getCode();
-        TileColor tc = TileColor.WHITE;
+        String color;
 
         Set<Coordinates> coords = gameBoard.getCoords();
 
@@ -182,8 +146,8 @@ public class UI {
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
 
-        String color = ConsoleColors.RESET.getCode();
-        TileView tile = null;
+        String color;
+        TileView tile;
 
         for(int i = 0; i < c; i++)
             System.out.print(" " + i + "   ");
@@ -204,8 +168,48 @@ public class UI {
         }
     }
 
+    public List<Coordinates> pickTiles(){
+        List<Coordinates> coords = new ArrayList<>();
+
+        int row, column, choice;
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        while(true) {
+            choice = readChoiceFromInput("Pick a tile", "Done");
+            if (choice == 1) {
+                // Pick a tile
+                while(true){
+                    System.out.print("Insert the coordinates [ROW] [COLUMN]: ");
+                    input = scanner.nextLine();
+                    String[] c;
+                    c = input.split("\\s+");    // split with one or multiple spaces
+                    if( (c.length > 2) || (c.length < 2)
+                        || c[0].length() > 1 || c[0].length() <= 0
+                        || c[1].length() > 1 || c[1].length() <= 0
+                        || !checkUserInput('A', 'H', c[0].toUpperCase().charAt(0))
+                        || !checkUserInput(0, 7, c[1].charAt(0) - '0'))
+                    {
+                        System.out.print("\nInsert a row [A - H] and a column [0 - 7]!\n");
+                        continue;
+                    }
+                    row = (c[0].charAt(0)) - 'A';
+                    column = c[1].charAt(0) - '0';
+                    coords.add(new Coordinates(row, column));
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return coords;
+    }
+
     public void show() {
         boolean connected;
+
+        Scanner scanner = new Scanner(System.in);
 
         showTitle();
         connected = chooseConnection();
@@ -215,23 +219,70 @@ public class UI {
         user = readUsername();
         System.out.println("Your username is: " + user);
 
-        System.out.print("\n\n\n\n\t\tGame Board");
-        showBoard();
-
-        Shelf shelf = new Shelf();
-
+        Game game = new Game(4);// Instanciated just for try
+        game.addPlayer("a", (message -> System.out.println("ciao")));
+        game.addPlayer("d", (message -> System.out.println("ciao")));
+        game.addPlayer("b", (message -> System.out.println("ciao")));
+        game.addPlayer("c", (message -> System.out.println("ciao")));
+        game.init();
         try {
-            shelf.addTile(new Tile(TileColor.CYAN, 0), 3);
-            shelf.addTile(new Tile(TileColor.YELLOW, 0), 3);
-        } catch (IllegalColumnInsertionException e) {
-            e.printStackTrace();
-        } catch (NoTileException e) {
+            game.refillGameBoard();
+        }catch (Exception e){
             e.printStackTrace();
         }
 
+        Shelf shelf = new Shelf();
         ShelfView shelfView = new ShelfView(shelf);
 
-        System.out.print("\n\n\n\n\t\tMy Shelf\n\n\n");
-        showShelf(shelfView);
+        Coordinates[] chosenTiles;
+        List<Coordinates> coords;
+
+        while(true){
+            GameView modelView = new GameView(game);
+            GameBoardView gameBoard = modelView.getGameBoard();
+
+            System.out.println("\n\n\n\n\t\tGame Board");
+            showBoard(gameBoard);
+
+            System.out.print("\n\n\n\n\t\tMy Shelf\n\n\n");
+            showShelf(shelfView);
+
+            coords = pickTiles();
+            chosenTiles = new Coordinates[coords.size()];
+            for(int i = 0; i < coords.size(); i++){
+                chosenTiles[i] = coords.get(i);
+            }
+
+            Tile t;
+            int column = 0;
+            while(true){
+                System.out.print("In which column do you want to insert the Tiles? ");
+                String input = scanner.nextLine();
+                if(!checkUserInput(0, 4, input.charAt(0) - '0')) {
+                    System.out.println("\nInsert a valid column!");
+                    continue;
+                }
+                try{
+                    column = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+
+            // Once I have the Tiles to pick
+            for(Coordinates el: chosenTiles){
+                t = game.getGameBoard().getTile(el);
+                game.getGameBoard().setTile(el, null);
+                try{
+                    shelf.addTile(t, column);
+                } catch (IllegalColumnInsertionException e) {
+                    e.printStackTrace();
+                } catch (NoTileException e) {
+                    e.printStackTrace();
+                }
+            }
+            shelfView = new ShelfView(shelf);
+        }
     }
 }

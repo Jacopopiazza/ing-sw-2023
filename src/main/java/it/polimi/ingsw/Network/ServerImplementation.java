@@ -153,17 +153,19 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         ServerImplementation instance = getInstance();
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
             while(true) {
+                System.out.println("Waiting for a client...");
                 Socket socket = serverSocket.accept();
+                System.out.println("Client connected");
                 instance.executorService.submit(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(instance, socket);
-
                         while(true) {
                             clientSkeleton.receive();
                         }
                     } catch (RemoteException e) {
                         System.err.println("Cannot receive from client. Closing this connection...");
                     } finally {
+                        System.out.println("Client disconnected");
                         try {
                             socket.close();
                         } catch (IOException e) {

@@ -37,7 +37,7 @@ public abstract class ClientManager implements Runnable, View
     protected void setUpSocketClient() throws RemoteException, NotBoundException {
         ServerStub serverStub = new ServerStub("localhost", 1234);
         this.client = new ClientImplementation(this, serverStub);
-        new Thread() {
+        /*new Thread() {
             @Override
             public void run() {
                 while(true) {
@@ -45,16 +45,11 @@ public abstract class ClientManager implements Runnable, View
                         serverStub.receive(client);
                     } catch (RemoteException e) {
                         System.err.println("Cannot receive from server. Stopping...");
-                        /*try {
-                            serverStub.close();
-                        } catch (RemoteException ex) {
-                            System.err.println("Cannot close connection with server. Halting...");
-                        }*/
                         System.exit(1);
                     }
                 }
             }
-        }.start();
+        }.start();*/
 
     }
 
@@ -67,7 +62,7 @@ public abstract class ClientManager implements Runnable, View
 
     @Override
     public void notifyListeners(Message m) {
-        System.out.println("Sending message boiiii");
+        System.out.println("Notifying ClientManager listeners");
         synchronized (listeners) {
             for (ViewListener listener : listeners) {
                 listener.handleMessage(m);
@@ -82,10 +77,12 @@ public abstract class ClientManager implements Runnable, View
     }
 
     protected void doReconnect(String username){
+        System.out.println("Sending reconnect message");
         notifyListeners(new ReconnectMessage(username,client));
     }
 
     protected void doConnect(String username, int numOfPlayers){
+        System.out.println("Sending register message");
         notifyListeners(new RegisterMessage(username,client,numOfPlayers));
     }
 

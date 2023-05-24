@@ -23,23 +23,33 @@ public class ServerStub implements Server {
 
         try {
             this.socket = new Socket(ip, port);
-            try {
-                this.oos = new ObjectOutputStream(socket.getOutputStream());
-            } catch (IOException e) {
-                throw new RemoteException("Cannot create output stream", e);
-            }
-            try {
-                this.ois = new ObjectInputStream(socket.getInputStream());
-            } catch (IOException e) {
-                throw new RemoteException("Cannot create input stream", e);
-            }
+
         } catch (IOException e) {
             throw new RemoteException("Unable to connect to the server", e);
         }
+
+        try {
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            throw new RemoteException("Cannot create output stream", e);
+        }
+        try {
+            this.ois = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            throw new RemoteException("Cannot create input stream", e);
+        }
     }
 
+    public void close() throws RemoteException {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RemoteException("Cannot close socket", e);
+        }
+    }
 
     public void handleMessage(Message m) throws RemoteException {
+        System.out.println("ServerStub is sending message to server");
         if( m instanceof ReconnectMessage ){
             m = new ReconnectMessageTicket(((ReconnectMessage) m).getUsername() );
         }
@@ -48,14 +58,16 @@ public class ServerStub implements Server {
         }
         try {
             oos.writeObject(m);
-            oos.flush();
-            oos.reset();
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }
+        System.out.println("ServerStub sent message to server succesfully");
+
     }
 
     public void receive(Client client) throws RemoteException {
+        System.out.println("ServerStub is waiting for a message from server");
+
         Message m;
         try {
             m = (Message) ois.readObject();
@@ -64,6 +76,10 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize model view from client", e);
         }
+
+        System.out.println("Server stub received message: " + m.toString());
+
+
         if( m instanceof GameServerMessageTicket)
             client.update(new GameServerMessage(this));
         else client.update(m);

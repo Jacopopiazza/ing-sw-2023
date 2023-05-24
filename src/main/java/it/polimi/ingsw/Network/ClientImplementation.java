@@ -18,14 +18,16 @@ public class ClientImplementation implements Client {
             try {
                 server.handleMessage(message);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                System.err.println(e.getMessage());
+                System.err.println(e.getCause());
+                return;
             }
         });
     }
 
     @Override
     public void update(Message m) throws RemoteException {
-        this.view.notifyListeners(m);
+        this.view.update(m);
     }
 
 

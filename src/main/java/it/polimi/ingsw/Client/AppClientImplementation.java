@@ -16,6 +16,7 @@ public class AppClientImplementation {
             //ui = new GraphicalUI();
             throw new RuntimeException("Graphical UI not implemented yet");
         }*/
+
         ui.run();
 
 

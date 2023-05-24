@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Controller.Controller;
-import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
@@ -9,6 +8,7 @@ import it.polimi.ingsw.Model.Game;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GameServer implements Server {
     private Controller controller;
@@ -46,11 +46,11 @@ public class GameServer implements Server {
         this.serverImplementation.deleteGame(players);
     }
 
-    public void reconnect(String username, GameListener listener) {
+    public void reconnect(String username, Consumer<Message> listener) {
         this.controller.reconnect(username, listener);
     }
 
-    public boolean addPlayer(String username, GameListener listener) {
+    public boolean addPlayer(String username, Consumer<Message> listener) {
         return this.controller.addPlayer(username, listener);
     }
 

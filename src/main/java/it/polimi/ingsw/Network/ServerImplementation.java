@@ -1,6 +1,5 @@
 package it.polimi.ingsw.Network;
 
-import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
 
@@ -15,6 +14,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
 
 public class ServerImplementation extends UnicastRemoteObject implements Server {
     private static ServerImplementation instance;
@@ -83,39 +83,39 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
-    private void reconnect(String username, GameListener listener) {
+    private void reconnect(String username, Consumer<Message> listener) {
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
                 if( playingUsernames.contains(username) ) {
-                    listener.update(new TakenUsernameMessage());
+                    listener.accept(new TakenUsernameMessage());
                     return;
                 }
                 else if( !(disconnectedUsernames.containsKey(username)) ) {
-                    listener.update(new NoUsernameToReconnectMessage());
+                    listener.accept(new NoUsernameToReconnectMessage());
                     return;
                 }
                 playingUsernames.add(username);
                 disconnectedUsernames.get(username).reconnect(username, listener);
-                listener.update(new GameServerMessage(disconnectedUsernames.get(username)));
+                listener.accept(new GameServerMessage(disconnectedUsernames.get(username)));
                 disconnectedUsernames.remove(username);
             }
         }
     }
 
     //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
-    private void register(String username, int numOfPlayers, GameListener listener) throws RemoteException {
+    private void register(String username, int numOfPlayers, Consumer<Message> listener) throws RemoteException {
         if( ( numOfPlayers <= 0 ) || ( numOfPlayers>4 ) ) {
-            listener.update(new InvalidNumOfPlayersMessage());
+            listener.accept(new InvalidNumOfPlayersMessage());
             return;
         }
         if( username == null ) {
-            listener.update(new MissingUsernameMessage());
+            listener.accept(new MissingUsernameMessage());
             return;
         }
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
                 if( playingUsernames.contains(username) || disconnectedUsernames.containsKey(username) ) {
-                    listener.update(new TakenUsernameMessage());
+                    listener.accept(new TakenUsernameMessage());
                     return;
                 }
             }
@@ -125,7 +125,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                     lobby.addPlayer(username, listener);
                     playingUsernames.add(username);
                     lobbiesWaitingToStart.add(lobby);
-                    listener.update(new GameServerMessage(lobby));
+                    listener.accept(new GameServerMessage(lobby));
                 }
                 else {
                     if( lobbiesWaitingToStart.peek() != null ) {
@@ -135,9 +135,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                             while( lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
-                        listener.update(new GameServerMessage(lobby));
+                        listener.accept(new GameServerMessage(lobby));
                     }
-                    else listener.update(new NoLobbyAvailableMessage());
+                    else listener.accept(new NoLobbyAvailableMessage());
                 }
             }
         }

@@ -2,7 +2,6 @@ package java.it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
@@ -57,9 +56,8 @@ public class ControllerTest extends TestCase {
     @Test
     public void testDoTurn_wrongPlayer() throws IllegalColumnInsertionException {
         AtomicBoolean cheatedFlag = new AtomicBoolean(false);
-        GameListener cheater = (Message message) -> cheatedFlag.set(true);
         controller.addPlayer("Picci", null);
-        controller.addPlayer("Roma", cheater);
+        controller.addPlayer("Roma", (message) -> { cheatedFlag.set(true);});
         controller.doTurn("Roma", null, 0);
         assertTrue(cheatedFlag.get());
     }

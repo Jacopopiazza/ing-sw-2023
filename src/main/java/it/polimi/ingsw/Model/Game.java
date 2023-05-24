@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.LobbyMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.UpdateViewMessage;
@@ -11,12 +10,13 @@ import it.polimi.ingsw.ModelView.GameView;
 
 import java.lang.String;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Game {
     private GameBoard board;
     private final int numOfPlayers;
     private Player[] players;
-    private GameListener[] listeners;
+    private Consumer<Message>[] listeners;
     private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
@@ -30,7 +30,7 @@ public class Game {
         }
         board = null;
         this.numOfPlayers = numOfPlayers;
-        listeners = new GameListener[numOfPlayers];
+        listeners = new Consumer<Message>[numOfPlayers];
         players = new Player[numOfPlayers];
         goals = null;
         currentPlayer = -1;
@@ -67,7 +67,7 @@ public class Game {
 
     public boolean isLastTurn() { return lastTurn; }
 
-    public void addPlayer(String username, GameListener listener) {
+    public void addPlayer(String username, Consumer<Message> listener) {
         int i;
         for( i=0; ( i<numOfPlayers ) && ( players[i] != null ); i++ );
         players[i] = new Player(username);
@@ -76,7 +76,7 @@ public class Game {
         notifyAllListeners();
     }
 
-    public void reconnect(String username, GameListener listener) throws UsernameNotFoundException {
+    public void reconnect(String username, Consumer<Message> listener) throws UsernameNotFoundException {
         int i;
         for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
@@ -254,8 +254,8 @@ public class Game {
     private void notifyAllListeners(){
         if( started ){
             Message gv = new UpdateViewMessage(new GameView(this));
-            for( GameListener el : listeners ){
-                if( el != null ) el.update(gv);
+            for( Consumer<Message> el : listeners ){
+                if( el != null ) el.accept(gv);
             }
         }
         else{

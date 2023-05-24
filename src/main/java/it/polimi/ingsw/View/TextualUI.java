@@ -1,21 +1,22 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Client.ClientManager;
+import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
+import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Messages.GameServerMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.NoUsernameToReconnectMessage;
 import it.polimi.ingsw.Messages.TakenUsernameMessage;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
-import it.polimi.ingsw.ModelView.GameBoardView;
-import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.ModelView.ShelfView;
-import it.polimi.ingsw.ModelView.TileView;
+import it.polimi.ingsw.ModelView.*;
 
 
 import java.io.PrintStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -104,10 +105,35 @@ public class TextualUI extends ClientManager {
         return true;
     }
 
-    private void readUsername(){
-        out.println("Insert username:");
+    private boolean checkUserInput(int lowerBound, int upperBound, int input){
+        return input >= lowerBound && input <= upperBound;
+    }
+
+    private int readChoiceFromInput(String option_1, String option_2){
+        Scanner scanner = new Scanner(System.in);
+        String input;
+        int choice;
+
+        while(true){
+            System.out.println("1 - " + option_1);
+            System.out.println("2 - " + option_2 + "\n");
+            input = scanner.nextLine();
+            try{
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            if(checkUserInput(1,2, choice)){
+                return choice;
+            }
+        }
+    }
+
+    private String readUsername(){
+        System.out.println("Insert username:");
         Scanner inputScanner = new Scanner(System.in);
-        this.userName = inputScanner.nextLine();
+        return inputScanner.nextLine();
     }
 
     public void initializePlayer(String username){
@@ -140,55 +166,69 @@ public class TextualUI extends ClientManager {
         return ConsoleColors.RESET.getCode();
     }
 
-    public void showBoard(){
+    public void showBoard(GameBoardView gameBoard){
         // print the board -> using a 4 player board for a first try
-        Game game = new Game(4);// Instanciated just for try
-        game.addPlayer("a", (message -> {out.println("ciao");}));
-        game.addPlayer("d", (message -> {out.println("ciao");}));
-        game.addPlayer("b", (message -> {out.println("ciao");}));
-        game.addPlayer("c", (message -> {out.println("ciao");}));
-        game.init();
+        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+        int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
 
-        try {
-            game.refillGameBoard();
+        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+        int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
-        }catch (Exception e){
-
-        }
-
-        GameView modelView = new GameView(game);
-
-        GameBoardView gameBoard = modelView.getGameBoard();
-
-        int max_x;
-        int max_y;
-
-        max_x = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-        max_y = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-
-        String color = ConsoleColors.RESET.getCode();
-        TileColor tc = TileColor.WHITE;
+        String color;
 
         Set<Coordinates> coords = gameBoard.getCoords();
 
-        out.print("     ");
-        for(int c = 0; c < max_y; c++){
-            out.print(" " + c + "   ");
-        }
-        out.print("\n\n");
+        System.out.println("\n\n\n\n\t\t\t\tGame Board");
+        System.out.print("     ");
 
-        for(int r = 0; r < max_x; r++){
-            out.print(" " + (char)(r + 65) + "   ");
-            for(int c = 0; c < max_y; c++){
-                if(coords.contains(new Coordinates(r, c)) && gameBoard.getTile(new Coordinates(r,c)) != null){
+        for(int c = minCol; c < maxCol; c++){
+            System.out.print(" " + (c - minCol) + "   ");
+        }
+        System.out.print("\n\n");
+
+        for(int r = minRow; r < maxRow; r++){
+            System.out.print(" " + (char)(r + 65 - minRow) + "   ");
+            for(int c = minCol; c < maxCol; c++){
+                if(coords.contains(new Coordinates(r, c)) && gameBoard.getTile(new Coordinates(r, c)) != null){
                     color = getColorCode(gameBoard.getTile(new Coordinates(r, c)));
                 }else{
                     color = ConsoleColors.RESET.getCode();
                 }
-                out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+                System.out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
             }
-            out.print(ConsoleColors.RESET.getCode() + "");
-            out.print("\n\n");
+            System.out.print(ConsoleColors.RESET.getCode() + "");
+            System.out.print("\n\n");
+        }
+    }
+
+    private void printTile(TileView tileView){
+        String color;
+        if(tileView != null){
+            color = getColorCode(tileView);
+        }else{
+            color = ConsoleColors.BROWN_BACKGROUND.getCode();
+        }
+        System.out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+    }
+
+    public void showPrivateGoals(Coordinates[] privateGoals){
+        System.out.println("\n\n\tMy private goals\n\n");
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+        TileView tile = null;
+
+        for(int i = 0; i < r; i++){
+            for(int k = 0; k < c; k++){
+                for(int color = 0; color < privateGoals.length; color++){
+                    if(privateGoals[color].equals(new Coordinates(i, k))){
+                        tile = new TileView(new Tile(TileColor.values()[color], 0));
+                    }
+                }
+                printTile(tile);
+                tile = null;
+            }
+            System.out.print(ConsoleColors.RESET.getCode() + "");
+            System.out.print("\n\n");
         }
     }
 
@@ -196,26 +236,62 @@ public class TextualUI extends ClientManager {
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
 
-        String color = ConsoleColors.RESET.getCode();
-        TileView tile = null;
+        TileView tile;
 
+        System.out.println("\n\n\n\n\t\tMy Shelf\n\n");
         for(int i = 0; i < c; i++)
-            out.print(" " + i + "   ");
-        out.print("\n\n");
+            System.out.print(" " + i + "   ");
+        System.out.print("\n\n");
 
         for(int i = 0; i < r; i++){
             for(int k = 0; k < c; k++){
                 tile = shelf.getTile(new Coordinates(i, k));
-                if(tile != null){
-                    color = getColorCode(tile);
-                }else{
-                    color = ConsoleColors.BROWN_BACKGROUND.getCode();
-                }
-                out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+                printTile(tile);
             }
-            out.print(ConsoleColors.RESET.getCode() + "");
-            out.print("\n\n");
+            System.out.print(ConsoleColors.RESET.getCode() + "");
+            System.out.print("\n\n");
         }
+    }
+
+    private List<Coordinates> pickTiles(int numRows, int numCols){
+        /* Todo: check that the chosen Tiles from the board are actually pickable, on the same line, maximum 3
+         *   -> controller*/
+        List<Coordinates> coords = new ArrayList<>();
+
+        int row, column, choice;
+
+        Scanner scanner = new Scanner(System.in);
+        String input;
+
+        while(true) {
+            choice = readChoiceFromInput("Pick a tile", "Done");
+            if (choice == 1) {
+                // Pick a tile
+                while(true){
+                    System.out.print("Insert the coordinates [ROW] [COLUMN]: ");
+                    input = scanner.nextLine();
+                    String[] c;
+                    c = input.split("\\s+");    // split with one or multiple spaces
+                    if( (c.length > 2) || (c.length < 2)
+                            || c[0].length() > 1 || c[0].length() <= 0
+                            || c[1].length() > 1 || c[1].length() <= 0
+                            || !checkUserInput('A', numRows + 'A', c[0].toUpperCase().charAt(0))
+                            || !checkUserInput(0, numCols, c[1].charAt(0) - '0'))
+                    {
+                        System.out.print("\nInsert a row [A - " + (char)(numRows + 'A') + "]" +
+                                "and a column [0 - " + numCols +"]!\n");
+                        continue;
+                    }
+                    row = (c[0].toUpperCase().charAt(0)) - 'A';
+                    column = c[1].charAt(0) - '0';
+                    coords.add(new Coordinates(row, column));
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return coords;
     }
 
     public void show() {
@@ -234,6 +310,97 @@ public class TextualUI extends ClientManager {
         out.println("Trying to connected to server...");
         doReconnect(this.userName);
     }
+    public void showProva() {
+
+        Scanner scanner = new Scanner(System.in);
+
+        showTitle();
+        //boolean connected;
+        //connected = chooseConnection();
+        //if(!connected)
+        //    return;
+        System.out.println("Connected!");
+        user = readUsername();
+
+        System.out.println("Your username is: " + user);
+
+        Game game = new Game(4);// Instanciated just for try
+        game.addPlayer("a", (message -> System.out.println("ciao")));
+        game.addPlayer("b", (message -> System.out.println("ciao")));
+        game.addPlayer("c", (message -> System.out.println("ciao")));
+        game.addPlayer("d", (message -> System.out.println("ciao")));
+        game.init();
+        try {
+            game.refillGameBoard();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        PlayerView me = new PlayerView(game.getPlayer(0));
+        Coordinates[] pvtGoals = new Coordinates[6]; // num of Coordinates to be read from config
+        pvtGoals = me.getPrivateGoal().getCoordinates();
+
+        Shelf shelf = new Shelf();
+        Shelf privateGoals = new Shelf();
+
+        ShelfView shelfView = new ShelfView(shelf);
+
+        Coordinates[] chosenTiles;
+        List<Coordinates> coords;
+
+        while(true){
+            GameView modelView = new GameView(game);
+            GameBoardView gameBoard = modelView.getGameBoard();
+
+            showBoard(gameBoard);
+            showShelf(shelfView);
+            showPrivateGoals(modelView.getPlayers()[0].getPrivateGoal().getCoordinates());
+
+            int numRows = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt()
+                    - gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt() - 1;
+
+            int numCols = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt()
+                    - gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt() - 1;
+
+            coords = pickTiles(numRows, numCols);
+            chosenTiles = new Coordinates[coords.size()];
+            for(int i = 0; i < coords.size(); i++){
+                chosenTiles[i] = coords.get(i);
+            }
+
+            Tile t;
+            int column = 0;
+            while(true){
+                System.out.print("In which column do you want to insert the Tiles? ");
+                String input = scanner.nextLine();
+                if(!checkUserInput(0, 4, input.charAt(0) - '0')) {
+                    System.out.println("\nInsert a valid column!");
+                    continue;
+                }
+                try{
+                    column = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+
+            // Once I have the Tiles to pick
+            for(Coordinates el: chosenTiles){
+                t = game.getGameBoard().getTile(el);
+                game.getGameBoard().setTile(el, null);
+                try{
+                    shelf.addTile(t, column);
+                } catch (IllegalColumnInsertionException e) {
+                    e.printStackTrace();
+                } catch (NoTileException e) {
+                    e.printStackTrace();
+                }
+            }
+            shelfView = new ShelfView(shelf);
+        }
+    }
+
 
     private void askPlayerNumOfPlayerForLobby(String username){
         out.println("Insert the number of players for the game:");

@@ -11,7 +11,7 @@ public class Controller  {
     private GameServer gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
-    private boolean onlyLastPlayerHasDoneTheTurnAlready;
+    private boolean lastPlayerHasAlreadyDoneTheTurn;
     private final Timer timer = new Timer();
 
     private final TimerTask task = new TimerTask(){
@@ -25,10 +25,10 @@ public class Controller  {
         }
     };
 
-    public Controller (int numOfPlayers, Game model, GameServer server){
+    public Controller (int numOfPlayers, GameServer server){
         gameServer = server;
-        this.model = model;
-        onlyLastPlayerHasDoneTheTurnAlready = false;
+        this.model = new Game(numOfPlayers);
+        lastPlayerHasAlreadyDoneTheTurn = false;
     }
 
     public boolean isGameStarted(){
@@ -66,11 +66,11 @@ public class Controller  {
             timer.cancel();
             // If a player reconnects after the last remaining player performed their turn,
             // the currentPlayer won't change at the end of it
-            if( onlyLastPlayerHasDoneTheTurnAlready ) {
+            if( lastPlayerHasAlreadyDoneTheTurn ) {
                 // Therefore the nextPlayer is set
                 model.nextPlayer();
                 // And this flag must be set back to false
-                onlyLastPlayerHasDoneTheTurnAlready = false;
+                lastPlayerHasAlreadyDoneTheTurn = false;
             }
         }
     }
@@ -107,8 +107,8 @@ public class Controller  {
 
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
         // If timer is running, the player should just wait for THEM to win
-        // It's not possible that onlyLastPlayerHasDoneTheTurnAlready == True while the first condition is false
-        if( ( model.getNumOfPlayers() == 1 ) && onlyLastPlayerHasDoneTheTurnAlready ){
+        // It's not possible that lastPlayerHasAlreadyDoneTheTurn == True while the first condition is false
+        if( ( model.getNumOfPlayers() == 1 ) && lastPlayerHasAlreadyDoneTheTurn ){
             model.addCheater(username);
             return;
         }
@@ -202,6 +202,6 @@ public class Controller  {
 
         // In case it's the turn of the remaining player, he was free to do it
         if( model.getNumOfActivePlayers() == 1 )
-            onlyLastPlayerHasDoneTheTurnAlready = true;
+            lastPlayerHasAlreadyDoneTheTurn = true;
     }
 }

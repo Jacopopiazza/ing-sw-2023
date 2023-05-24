@@ -1,15 +1,30 @@
 package it.polimi.ingsw.TUI;
+import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
+import it.polimi.ingsw.Messages.GameServerMessage;
+import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.NoUsernameToReconnectMessage;
+import it.polimi.ingsw.Messages.TakenUsernameMessage;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
+import it.polimi.ingsw.View.View;
+import it.polimi.ingsw.View.ViewListener;
 
+import java.io.PrintStream;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.*;
 
 // Todo: check the column insertion
 
-public class TextualUI {
+public class TextualUI extends ClientManager {
+
+    private Scanner in;
+    private PrintStream out;
+
+    private String userName;
     // Write this title in a config file
     String r1 = " __    __           ______ _           _  __  _";
     String r2 = "|  \\  /  |         /  ____| |         | |/ _|(_)";
@@ -24,7 +39,9 @@ public class TextualUI {
     // Needs the view
 
     public TextualUI() {
-
+        super();
+        in = new Scanner(System.in);
+        out = new PrintStream(System.out, true);
     }
 
     private void showTitle(){
@@ -36,6 +53,50 @@ public class TextualUI {
         System.out.println(r6);
         System.out.println(r7);
         System.out.println(r8);
+    }
+
+    public boolean chooseConnection(){
+        int choice = -1;
+        boolean validConnection = false;
+
+        out.println("Choose the connection type:");
+        out.println("1 - RMI");
+        out.println("2 - SOCKET\n");
+
+        do {
+            if (in.hasNextInt()) {
+                choice = in.nextInt();
+                in.nextLine();
+
+                if (choice >= 1 && choice <= 2) {
+                    validConnection = true;
+                } else {
+                    out.println("Invalid selection!");
+                }
+            } else {
+                in.nextLine();
+                out.println("Invalid integer provided!");
+            }
+        } while (!validConnection);
+
+        if(choice == 1){
+            out.println("Connecting with RMI...");
+            try{
+                this.setUpRMIClient();
+            }catch (RemoteException | NotBoundException ex ){
+                out.println("Cannot connect with RMI. Trying with socket...");
+                return false;
+            }
+        }else{
+            out.println("Connecting with socket...");
+            try{
+                this.setUpSocketClient();
+            }catch (RemoteException | NotBoundException ex ){
+                out.println("Cannot connect with RMI. Trying with socket...");
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean checkUserInput(int lowerBound, int upperBound, int input){
@@ -61,17 +122,6 @@ public class TextualUI {
                 return choice;
             }
         }
-    }
-
-    public boolean chooseConnection(){
-        int choice = readChoiceFromInput("RMI", "SOCKET");
-
-        if(choice == 1){
-            System.out.println("Connecting with RMI...");
-        }else{
-            System.out.println("Connecting with socket...");
-        }
-        return true;
     }
 
     private String readUsername(){
@@ -326,5 +376,51 @@ public class TextualUI {
             }
             shelfView = new ShelfView(shelf);
         }
+    }
+
+    private void askPlayerNumOfPlayerForLobby(String username){
+        out.println("Insert the number of players for the game:");
+        int numOfPlayers = -1;
+
+        do{
+            numOfPlayers=in.nextInt();
+        } while (numOfPlayers < 2 || numOfPlayers > 4);
+
+        doConnect(this.userName, numOfPlayers);
+    }
+
+    @Override
+    public void update(Message m){
+        out.println("CLI Received message");
+
+        if(m instanceof NoUsernameToReconnectMessage){
+            out.println(m.toString());
+            askPlayerNumOfPlayerForLobby(this.userName);
+        }
+        else if(m instanceof TakenUsernameMessage){
+            out.println(m.toString());
+            readUsername();
+            askPlayerNumOfPlayerForLobby(this.userName);
+        }
+        else if(m instanceof GameServerMessage){
+            out.println(m.toString());
+            cleanListeners();
+            addListener((message) -> {
+                try {
+                    ((GameServerMessage) m).getServer().handleMessage(message);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        else{
+            out.println("Invalid message received; ignoring it.");
+        }
+
+    }
+
+    @Override
+    public void run() {
+        show();
     }
 }

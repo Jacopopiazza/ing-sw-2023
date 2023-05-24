@@ -18,7 +18,7 @@ public class GameServer implements Server {
 
     public GameServer(ServerImplementation serverImplementation, int numOfPlayers) throws RemoteException {
         this.serverImplementation = ServerImplementation.getInstance();
-        this.controller = new Controller(numOfPlayers, this);
+        this.controller = new Controller(new Game(numOfPlayers), this);
         this.playingUsernames = new ArrayList<>();
         this.disconnectedUsernames = new ArrayList<>();
     }

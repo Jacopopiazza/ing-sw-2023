@@ -30,7 +30,7 @@ public class Game {
         }
         board = null;
         this.numOfPlayers = numOfPlayers;
-        listeners = new Consumer<Message>[numOfPlayers];
+        listeners = new Consumer[numOfPlayers];
         players = new Player[numOfPlayers];
         goals = null;
         currentPlayer = -1;

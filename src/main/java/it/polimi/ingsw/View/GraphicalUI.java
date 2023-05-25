@@ -86,4 +86,8 @@ public class GraphicalUI extends ClientManager{
         return false;
     }
 
+    public void show(){
+        Frame frame = new Frame();
+    }
+
 }

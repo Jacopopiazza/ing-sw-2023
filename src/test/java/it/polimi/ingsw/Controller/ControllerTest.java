@@ -1,15 +1,13 @@
-package java.it.polimi.ingsw.Controller;
+package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

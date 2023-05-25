@@ -2,6 +2,7 @@ package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
 
 import java.io.IOException;
@@ -105,7 +106,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
     private void register(String username, int numOfPlayers, GameListener listener) throws RemoteException {
-        if( ( numOfPlayers <= 0 ) || ( numOfPlayers>4 ) ) {
+        if( ( numOfPlayers <= 0 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers()) ) {
             listener.update(new InvalidNumOfPlayersMessage());
             return;
         }

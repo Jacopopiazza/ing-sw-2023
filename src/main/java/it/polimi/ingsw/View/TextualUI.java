@@ -9,6 +9,7 @@ import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.NoUsernameToReconnectMessage;
 import it.polimi.ingsw.Messages.TakenUsernameMessage;
 import it.polimi.ingsw.Model.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
 import it.polimi.ingsw.Network.ClientImplementation;
@@ -429,7 +430,7 @@ public class TextualUI extends ClientManager {
 
         do{
             numOfPlayers=in.nextInt();
-        } while (numOfPlayers < 2 || numOfPlayers > 4);
+        } while (numOfPlayers < 2 || numOfPlayers > Config.getInstance().getMaxNumberOfPlayers());
 
         doConnect(this.userName, numOfPlayers);
         setState(State.WAITING_FOR_SERVER_RESPONSE);

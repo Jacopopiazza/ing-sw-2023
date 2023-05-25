@@ -6,7 +6,7 @@ import org.junit.Test;
 public class GraphicalUITest extends TestCase {
 
     @Test
-    public void testShow(){
-        new GraphicalUI().show();
+    public void testRun(){
+        new GraphicalUI().run();
     }
 }

@@ -1,12 +1,12 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Network.GameServer;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class Controller  {
     private GameServer gameServer;
@@ -37,7 +37,7 @@ public class Controller  {
     }
 
     //returns true if the lobby is full
-    public boolean addPlayer(String username, Consumer<Message> listener){
+    public boolean addPlayer(String username, GameListener listener){
         model.addPlayer(username,listener);
         if( model.getNumOfActivePlayers() == model.getNumOfPlayers() ){
             model.init();
@@ -56,7 +56,7 @@ public class Controller  {
         }
     }
 
-    public void reconnect(String username, Consumer<Message> listener){
+    public void reconnect(String username, GameListener listener){
         try {
             model.reconnect(username,listener);
         } catch (UsernameNotFoundException e) {

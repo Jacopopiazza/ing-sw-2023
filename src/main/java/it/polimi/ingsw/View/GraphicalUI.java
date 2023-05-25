@@ -1,12 +1,17 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Client.ClientManager;
+import it.polimi.ingsw.Messages.Message;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.EventListener;
 
-public class GraphicalUI extends ClientManager{
+public class GraphicalUI extends ClientManager {
 
     private class Frame extends JFrame{
 
@@ -86,7 +91,12 @@ public class GraphicalUI extends ClientManager{
         return false;
     }
 
-    public void show(){
+    @Override
+    public void update(Message m) {
+
+    }
+
+    public void run(){
         Frame frame = new Frame();
     }
 

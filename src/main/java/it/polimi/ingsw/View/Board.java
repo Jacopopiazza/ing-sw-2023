@@ -14,12 +14,12 @@ import java.awt.event.ActionListener;
 import java.util.Set;
 
 public class Board extends ClientManager {
-    Game game = new Game(4);// Instanciated just for try
+    Game game = new Game(3);// Instanciated just for try
     public Board() {
         game.addPlayer("a", (message -> System.out.println("ciao")));
         game.addPlayer("b", (message -> System.out.println("ciao")));
         game.addPlayer("c", (message -> System.out.println("ciao")));
-        game.addPlayer("d", (message -> System.out.println("ciao")));
+        //game.addPlayer("d", (message -> System.out.println("ciao")));
         game.init();
         try {
             game.refillGameBoard();
@@ -56,13 +56,15 @@ public class Board extends ClientManager {
 
             JPanel background = new Background("visual_components/boards/livingroom.png");
             background.setToolTipText("GameBoard");
+            int borderWidth = 30;
+            background.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth, borderWidth, borderWidth + 5));
             setContentPane(background);
 
             GameBoardView gameBoardView = new GameBoardView(game.getGameBoard());
             Set<Coordinates> coordinatesSet = gameBoardView.getCoords();
             String color;
 
-            setLayout(new GridLayout(9, 9));
+            setLayout(new GridLayout(9, 9, 5, 6));
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     JButton button = new JButton();
@@ -83,7 +85,6 @@ public class Board extends ClientManager {
                     add(button);
                 }
             }
-
             setVisible(true);
         }
 

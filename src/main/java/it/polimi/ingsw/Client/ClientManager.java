@@ -20,8 +20,7 @@ import java.util.logging.Level;
 
 public abstract class ClientManager implements Runnable, View
 {
-    private Client client;
-
+    protected Client client;
     List<ViewListener> listeners;
 
     public ClientManager() {
@@ -29,7 +28,7 @@ public abstract class ClientManager implements Runnable, View
     }
 
     protected void setUpRMIClient() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(1111);
+        Registry registry = LocateRegistry.getRegistry(1099);
         Server server = (Server) registry.lookup("G26-MyShelfie-Server");
 
         this.client = new ClientImplementation(this, server);
@@ -80,12 +79,12 @@ public abstract class ClientManager implements Runnable, View
 
     protected void doReconnect(String username){
         AppClientImplementation.logger.log(Level.INFO,"Sending reconnect message");
-        notifyListeners(new ReconnectMessage(username,client));
+        notifyListeners(new ReconnectMessage(username,(Client) client));
     }
 
     protected void doConnect(String username, int numOfPlayers){
         AppClientImplementation.logger.log(Level.INFO,"Sending register message with numOfPlayer=" + numOfPlayers);
-        notifyListeners(new RegisterMessage(username,client,numOfPlayers));
+        notifyListeners(new RegisterMessage(username,(Client) client,numOfPlayers));
     }
 
 

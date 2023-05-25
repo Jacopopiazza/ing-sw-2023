@@ -84,6 +84,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     private void reconnect(String username, GameListener listener) {
+        System.out.println("Reconnecting request for " + username);
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
                 if( playingUsernames.contains(username) ) {
@@ -143,22 +144,22 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
-    private static void startRMI() throws RemoteException {
-        ServerImplementation server = getInstance();
-        Registry registry = LocateRegistry.createRegistry(1111);
+    private static void startRMI(Server server) throws RemoteException {
+        LocateRegistry.createRegistry(1099);
+        Registry registry = LocateRegistry.getRegistry();
         registry.rebind("G26-MyShelfie-Server", server);
+        System.out.println("In attesa di client RMI...");
     }
 
-    public static void startSocket() throws RemoteException {
-        ServerImplementation instance = getInstance();
+    public static void startSocket(Server server) throws RemoteException {
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
             while(true) {
-                System.out.println("Waiting for a client...");
+                System.out.println("In attesa di un client via socket...");
                 Socket socket = serverSocket.accept();
-                System.out.println("Client connected");
+                System.out.println("Socket Client connected");
                 instance.executorService.submit(() -> {
                     try {
-                        ClientSkeleton clientSkeleton = new ClientSkeleton(instance, socket);
+                        ClientSkeleton clientSkeleton = new ClientSkeleton(server, socket);
                         while(true) {
                             clientSkeleton.receive();
                         }
@@ -202,7 +203,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             @Override
             public void run() {
                 try {
-                    startRMI();
+                    startRMI(getInstance());
                 } catch (RemoteException e) {
                     System.err.println("Cannot start RMI. This protocol will be disabled.");
                 }
@@ -215,7 +216,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             @Override
             public void run() {
                 try {
-                    startSocket();
+                    startSocket(getInstance());
                 } catch (RemoteException e) {
                     System.err.println("Cannot start RMI server");
                     System.err.println(e.getMessage());

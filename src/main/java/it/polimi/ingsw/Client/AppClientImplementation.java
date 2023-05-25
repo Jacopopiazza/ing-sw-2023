@@ -17,14 +17,12 @@ public class AppClientImplementation {
 
         View ui;
 
-        ui = new TextualUI();
-
-        /*if(args.length > 0 && args[0].equals("cli"))
+        if(args.length > 0 && args[0].equals("cli"))
             ui = new TextualUI();
         else{
             //ui = new GraphicalUI();
             throw new RuntimeException("Graphical UI not implemented yet");
-        }*/
+        }
 
         ui.run();
 

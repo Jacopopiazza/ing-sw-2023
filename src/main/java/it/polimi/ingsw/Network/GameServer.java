@@ -7,10 +7,11 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameServer implements Server {
+public class GameServer extends UnicastRemoteObject implements Server {
     private Controller controller;
     private  ServerImplementation serverImplementation = null;
     private List<String> playingUsernames;

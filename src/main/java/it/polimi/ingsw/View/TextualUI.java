@@ -443,10 +443,9 @@ public class TextualUI extends ClientManager {
             setState(State.WAITING_FOR_CHOICE_ABOUT_LOBBY);
             out.println(m.toString());
         }
-        else if(m instanceof TakenUsernameMessage){
+        else if(m instanceof TakenUsernameMessage) {
             setState(State.WAITING_FOR_UNUSED_USERNAME);
             out.println(m.toString());
-
         }
         else if(m instanceof GameServerMessage){
             out.println(m.toString());

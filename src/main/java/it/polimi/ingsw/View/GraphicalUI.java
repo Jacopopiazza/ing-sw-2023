@@ -65,7 +65,7 @@ public class GraphicalUI extends ClientManager {
             //add the error
             error = new JLabel();
             error.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-            error.setForeground(Color.decode("13806189"));
+            error.setForeground(Color.decode("14929049"));
             content.add(error);
 
             background.add(content,BorderLayout.CENTER);
@@ -81,7 +81,7 @@ public class GraphicalUI extends ClientManager {
             JLabel text = new JLabel("Do you want to use RMI or Socket?");
             text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             text.setFont(text.getFont().deriveFont(20f));
-            text.setForeground(Color.decode("13806189"));
+            text.setForeground(Color.decode("14929049"));
             request.add(text);
 
             //set up the options
@@ -90,7 +90,8 @@ public class GraphicalUI extends ClientManager {
             choices.setLayout(new FlowLayout());
             JButton rmi = new JButton("RMI");
             rmi.setPreferredSize(new Dimension(100,40));
-            rmi.setBackground(Color.decode("13806189"));
+            rmi.setBackground(Color.decode("14929049"));
+            rmi.setForeground(Color.decode("5776384"));
             rmi.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(!connectionChosen(button)){
@@ -100,7 +101,8 @@ public class GraphicalUI extends ClientManager {
             });
             JButton socket = new JButton("Socket");
             socket.setPreferredSize(new Dimension(100,40));
-            socket.setBackground(Color.decode("13806189"));
+            socket.setBackground(Color.decode("14929049"));
+            socket.setForeground(Color.decode("5776384"));
             socket.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(!connectionChosen(button)){

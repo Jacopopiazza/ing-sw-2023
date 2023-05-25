@@ -327,8 +327,9 @@ public class TextualUI extends ClientManager {
         out.println("Your username is: " + this.userName);
 
         out.println("Trying to connected to server...");
-        doReconnect(this.userName);
         setState(State.WAITING_FOR_SERVER_RESPONSE);
+        doReconnect(this.userName);
+
 
     }
 

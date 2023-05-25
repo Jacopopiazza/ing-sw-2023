@@ -24,6 +24,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private Queue<GameServer> lobbiesWaitingToStart;
 
     private ServerImplementation() throws RemoteException {
+        super();
         playingUsernames = new ArrayList<>();
         disconnectedUsernames = new HashMap<>();
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();

@@ -18,6 +18,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private List<String> disconnectedUsernames;
 
     public GameServer(ServerImplementation serverImplementation, int numOfPlayers) throws RemoteException {
+        super();
         this.serverImplementation = ServerImplementation.getInstance();
         this.controller = new Controller(new Game(numOfPlayers), this);
         this.playingUsernames = new ArrayList<>();

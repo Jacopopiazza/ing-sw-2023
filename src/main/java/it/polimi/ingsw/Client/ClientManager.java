@@ -8,7 +8,7 @@ import it.polimi.ingsw.Network.ClientImplementation;
 import it.polimi.ingsw.Network.Middleware.ServerStub;
 import it.polimi.ingsw.Network.Server;
 import it.polimi.ingsw.View.View;
-import it.polimi.ingsw.View.ViewListener;
+import it.polimi.ingsw.Listener.ViewListener;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

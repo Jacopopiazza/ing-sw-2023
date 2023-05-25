@@ -13,6 +13,21 @@ import java.util.EventListener;
 
 public class GraphicalUI extends ClientManager {
 
+    private class Background extends JPanel{
+        private Image backgroundImage;
+
+        private Background(String imagePath){
+            super();
+            backgroundImage = new ImageIcon(imagePath).getImage();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
     private class Frame extends JFrame{
 
         private JPanel content;
@@ -21,27 +36,23 @@ public class GraphicalUI extends ClientManager {
         private Frame(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(400, 400);
-            setLayout(new BorderLayout());
+            setSize(1280, 720); // 16:9 proportion
 
             //add the background
-            JPanel backgound = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    Image image = new ImageIcon("visual_components/misc/sfondo parquet.jpg").getImage();
-                    g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-                }
-            };
-            add(backgound);
+            JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
+            background.setLayout(new BorderLayout());
+            add(background);
 
             //add the content
-            backgound.setLayout(new BorderLayout());
             content = new JPanel();
+            content.setOpaque(false);
             content.setLayout(new BoxLayout(content,BoxLayout.PAGE_AXIS));
-            content.add(new JLabel(new ImageIcon("visual_components/Publisher material/Title 2000x618px.jpg")));
+            Image titleImage = new ImageIcon("visual_components/Publisher material/Title 2000x618px.png").getImage();
+            ImageIcon titleIcon = new ImageIcon(titleImage.getScaledInstance(1000,309,Image.SCALE_DEFAULT));
+            content.add(new JLabel(titleIcon));
             content.add(new JLabel("Do you want to use RMI or Socket?"));
             JPanel choices = new JPanel();
+            choices.setOpaque(false);
             choices.setLayout(new FlowLayout());
             JButton rmi = new JButton("RMI");
             rmi.addActionListener((e) -> {
@@ -66,7 +77,8 @@ public class GraphicalUI extends ClientManager {
             content.add(error);
             content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            backgound.add(content,BorderLayout.CENTER);
+            background.add(content,BorderLayout.CENTER);
+
             setVisible(true);
         }
 

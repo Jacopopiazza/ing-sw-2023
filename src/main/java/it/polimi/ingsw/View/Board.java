@@ -4,13 +4,15 @@ import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
-import it.polimi.ingsw.Model.GameBoard;
+import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.ModelView.GameBoardView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Board extends ClientManager {
@@ -43,11 +45,63 @@ public class Board extends ClientManager {
         }
     }
 
+    private class ManageImage{
+        protected static List<ImageIcon> getListOfTileImages(TileColor color){
+            List<ImageIcon> tileImagesWhite = new ArrayList<>();
+            List<ImageIcon> tileImagesFuchsia = new ArrayList<>();
+            List<ImageIcon> tileImagesBlue = new ArrayList<>();
+            List<ImageIcon> tileImagesCyan = new ArrayList<>();
+            List<ImageIcon> tileImagesYellow = new ArrayList<>();
+            List<ImageIcon> tileImagesGreen = new ArrayList<>();
+
+            tileImagesBlue.add(new ImageIcon("visual_components/item tiles/Cornici1.1.png"));
+            tileImagesBlue.add(new ImageIcon("visual_components/item tiles/Cornici1.2.png"));
+            tileImagesBlue.add(new ImageIcon("visual_components/item tiles/Cornici1.3.png"));
+
+            tileImagesGreen.add(new ImageIcon("visual_components/item tiles/Gatti1.1.png"));
+            tileImagesGreen.add(new ImageIcon("visual_components/item tiles/Gatti1.2.png"));
+            tileImagesGreen.add(new ImageIcon("visual_components/item tiles/Gatti1.3.png"));
+
+            tileImagesYellow.add(new ImageIcon("visual_components/item tiles/Giochi1.1.png"));
+            tileImagesYellow.add(new ImageIcon("visual_components/item tiles/Giochi1.2.png"));
+            tileImagesYellow.add(new ImageIcon("visual_components/item tiles/Giochi1.3.png"));
+
+            tileImagesWhite.add(new ImageIcon("visual_components/item tiles/Libri1.1.png"));
+            tileImagesWhite.add(new ImageIcon("visual_components/item tiles/Libri1.2.png"));
+            tileImagesWhite.add(new ImageIcon("visual_components/item tiles/Libri1.3.png"));
+
+            tileImagesFuchsia.add(new ImageIcon("visual_components/item tiles/Piante1.1.png"));
+            tileImagesFuchsia.add(new ImageIcon("visual_components/item tiles/Piante1.2.png"));
+            tileImagesFuchsia.add(new ImageIcon("visual_components/item tiles/Piante1.3.png"));
+
+            tileImagesCyan.add(new ImageIcon("visual_components/item tiles/Trofei1.1.png"));
+            tileImagesCyan.add(new ImageIcon("visual_components/item tiles/Trofei1.2.png"));
+            tileImagesCyan.add(new ImageIcon("visual_components/item tiles/Trofei1.3.png"));
+
+            switch (color){
+                case YELLOW -> { return tileImagesYellow; }
+                case CYAN -> { return tileImagesCyan; }
+                case GREEN -> { return tileImagesGreen; }
+                case BLUE -> { return tileImagesBlue; }
+                case WHITE -> { return tileImagesWhite; }
+                case FUCHSIA -> { return tileImagesFuchsia; }
+            }
+            return null;
+        }
+
+        protected static ImageIcon resizeImageIcon(ImageIcon icon){
+            Image img = icon.getImage();
+            Image newimg = img.getScaledInstance( 68, 68,  java.awt.Image.SCALE_SMOOTH ) ;
+            return new ImageIcon( newimg );
+        }
+    }
+
     private class Frame extends JFrame implements ActionListener{
 
         private JPanel content;
         private JLabel error;
 
+        private List<Image> tileImages = new ArrayList<>();
         private Frame(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,16 +116,25 @@ public class Board extends ClientManager {
 
             GameBoardView gameBoardView = new GameBoardView(game.getGameBoard());
             Set<Coordinates> coordinatesSet = gameBoardView.getCoords();
-            String color;
-
             setLayout(new GridLayout(9, 9, 5, 6));
+
+            List<ImageIcon> tileImages;
+            ImageIcon icon;
+            TileColor color;
+            int index;
+
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     JButton button = new JButton();
+                    button.setLayout(new FlowLayout());
                     if(coordinatesSet.contains(new Coordinates(i, j))){
-                        color = gameBoardView.getTile(new Coordinates(i, j)).getCOLOR().toString();
+                        color = gameBoardView.getTile(new Coordinates(i, j)).getCOLOR();
+                        index = gameBoardView.getTile(new Coordinates(i, j)).getID() % 3;
+                        tileImages = ManageImage.getListOfTileImages(color);
+                        icon = tileImages.get(index);
+                        icon = ManageImage.resizeImageIcon(icon);
+                        button.setIcon(icon);
                         button.addActionListener(this);
-                        button.setText(color);
                     }else{
                         button.setOpaque(false);
                         button.setEnabled(false);

@@ -60,7 +60,7 @@ public class ClientSkeleton implements Client {
             server.handleMessage(packed);
         }
         else if( m instanceof RegisterMessageTicket ){
-            server.handleMessage(new RegisterMessage(((RegisterMessage) m).getUsername(), this, ((RegisterMessage) m).getNumOfPlayers()));
+            server.handleMessage(new RegisterMessage(((RegisterMessageTicket) m).getUsername(), this, ((RegisterMessageTicket) m).getNumOfPlayers()));
         }
         else server.handleMessage(m);
     }

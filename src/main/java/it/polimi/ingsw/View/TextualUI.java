@@ -4,26 +4,17 @@ import it.polimi.ingsw.Client.AppClientImplementation;
 import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
-import it.polimi.ingsw.Messages.GameServerMessage;
-import it.polimi.ingsw.Messages.Message;
-import it.polimi.ingsw.Messages.NoUsernameToReconnectMessage;
-import it.polimi.ingsw.Messages.TakenUsernameMessage;
+import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
-import it.polimi.ingsw.Network.ClientImplementation;
 
 
-import javax.print.attribute.SetOfIntegerSyntax;
 import java.io.PrintStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class TextualUI extends ClientManager {
@@ -31,6 +22,8 @@ public class TextualUI extends ClientManager {
     private Scanner in;
     private PrintStream out;
     private String userName;
+
+    private Queue<Message> recievedMessages = new LinkedList<>();
 
     // Write this title in a config file
     String r1 = " __    __           ______ _           _  __  _";
@@ -44,31 +37,28 @@ public class TextualUI extends ClientManager {
 
     GameBoard gameBoard;
 
-    public enum State {
-        WAITING_FOR_SERVER_RESPONSE,
-        WAITING_FOR_PLAYER_ACTION,
-        WAITING_FOR_USERNAME,
-        WAITING_FOR_CHOICE_ABOUT_LOBBY,
-        WAITING_FOR_UNUSED_USERNAME,
-        WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY,
+    private final Object lockLogin = new Object();
+    private final Object lockLobby = new Object();
+    private final Object lockQueue = new Object();
 
-    }
-
-    private State state = State.WAITING_FOR_PLAYER_ACTION;
-    private final Object lock = new Object();
-
-    private State getState() {
-        synchronized (lock) {
-            return state;
+    private boolean isMessagesQueueEmpty(){
+        synchronized (lockQueue){
+            return this.recievedMessages.isEmpty();
         }
     }
 
-    private void setState(State state) {
-        synchronized (lock) {
-            this.state = state;
-            lock.notifyAll();
+    private Message getFirstMessageFromQueue(){
+        synchronized (lockQueue){
+            return this.recievedMessages.poll();
         }
     }
+
+    private void addMessageToQueue(Message m){
+        synchronized (lockQueue){
+            this.recievedMessages.add(m);
+        }
+    }
+
 
     // Needs the view
 
@@ -313,26 +303,6 @@ public class TextualUI extends ClientManager {
         return coords;
     }
 
-    public void show() {
-        boolean connected;
-
-        showTitle();
-        connected = chooseConnection();
-        if(!connected){
-            return;
-        }
-        out.println("Connected!");
-        readUsername();
-
-        out.println("Your username is: " + this.userName);
-
-        out.println("Trying to connected to server...");
-        setState(State.WAITING_FOR_SERVER_RESPONSE);
-        doReconnect(this.userName);
-
-
-    }
-
     public void showProva() {
 
         Scanner scanner = new Scanner(System.in);
@@ -433,56 +403,126 @@ public class TextualUI extends ClientManager {
         } while (numOfPlayers < 2 || numOfPlayers > 4);
 
         doConnect(this.userName, numOfPlayers);
-        setState(State.WAITING_FOR_SERVER_RESPONSE);
     }
 
     @Override
     public void update(Message m){
         AppClientImplementation.logger.log(Level.INFO,"CLI Received message");
 
+        addMessageToQueue(m);
         if(m instanceof NoUsernameToReconnectMessage){
-            setState(State.WAITING_FOR_CHOICE_ABOUT_LOBBY);
-            out.println(m.toString());
+            synchronized (lockLogin){
+                lockLogin.notify();
+            }
         }
-        else if(m instanceof TakenUsernameMessage) {
-            setState(State.WAITING_FOR_UNUSED_USERNAME);
-            out.println(m.toString());
+        else if(m instanceof TakenUsernameMessage){
+            synchronized (lockLogin){
+                lockLogin.notify();
+            }
         }
-        else if(m instanceof GameServerMessage){
-            out.println(m.toString());
-            cleanListeners();
-            addListener((message) -> {
-                try {
-                    ((GameServerMessage) m).getServer().handleMessage(message);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        else{
-            AppClientImplementation.logger.log(Level.INFO,"Invalid message recieved; ignoring it.");
-            AppClientImplementation.logger.log(Level.INFO,m.toString());
+        else if(m instanceof NoLobbyAvailableMessage){
+            synchronized (lockLogin){
+                lockLogin.notify();
+            }
         }
 
     }
 
+    private void waitForLoginResponse(){
+        synchronized (lockLogin){
+            try{
+                lockLogin.wait();
+            }catch (InterruptedException e){
+                System.err.println("Interrupted while waiting for server: " + e.getMessage());
+                AppClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+        }
+
+        AppClientImplementation.logger.log(Level.INFO,"CLI: received Reconnect response from server");
+
+    }
+
+
+    private void doLogin() {
+        boolean connected;
+
+        connected = chooseConnection();
+        if(!connected){
+            return;
+        }
+        AppClientImplementation.logger.log(Level.INFO,"Connected to server!");
+
+        readUsername();
+        out.println("Hai scelto l'username: " + this.userName);
+        AppClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
+
+        boolean validUsername = false;
+
+        doReconnect(this.userName);
+        waitForLoginResponse();
+
+        while(true)
+        {
+            Message m = this.getFirstMessageFromQueue();
+
+            if(m instanceof NoUsernameToReconnectMessage){
+                AppClientImplementation.logger.log(Level.INFO,"L'username scelto è di un nuovo utente");
+                chooseLobby();
+                waitForLoginResponse();
+            }
+            else if(m instanceof TakenUsernameMessage){
+                AppClientImplementation.logger.log(Level.INFO,"L'username scelto è già in uso");
+                readUsername();
+                out.println("Hai scelto l'username: " + this.userName);
+                chooseLobby();
+                waitForLoginResponse();
+                AppClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
+            }
+            else if(m instanceof NoLobbyAvailableMessage){
+                AppClientImplementation.logger.log(Level.INFO,"Nessuna lobby esistente");
+                out.println("Nessuna lobby esistente. Ripeti la selezione");
+                chooseLobby();
+                waitForLoginResponse();
+            }
+            else if(m instanceof GameServerMessage){
+                AppClientImplementation.logger.log(Level.INFO,"Avvio partita");
+                out.println("Nessuna lobby esistente. Ripeti la selezione");
+                doStartGame((GameServerMessage) m);
+                break;
+            }
+            else{
+                AppClientImplementation.logger.log(Level.INFO,"Invalid message recieved; ignoring it.");
+                AppClientImplementation.logger.log(Level.INFO,m.toString());
+                throw new RuntimeException("Invalid message recieved;");
+            }
+        }
+
+    }
+
+    private void doStartGame(GameServerMessage m){
+
+        cleanListeners();
+        addListener((message) -> {
+            try {
+                m.getServer().handleMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     @Override
     public void run() {
-        show();
+        showTitle();
+        doLogin();
         while(true){
-            while(getState() == State.WAITING_FOR_SERVER_RESPONSE){
-                synchronized (lock){
-                    try{
-                        lock.wait();
-                    }catch (InterruptedException e){
-                        System.err.println("Interrupted while waiting for server: " + e.getMessage());
-                        AppClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
-                    }
-                }
+            if(isMessagesQueueEmpty()){
+                continue;
             }
 
-            //TODO: handle messages from server
-            doAction();
+            Message m = this.getFirstMessageFromQueue();
+            System.out.println(m.toString());
 
         }
 
@@ -499,38 +539,14 @@ public class TextualUI extends ClientManager {
         } while (choice < 1 || choice > 3);
 
         switch (choice){
-            case 1 -> {
-                setState(State.WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY);
-            }
-            case 2 -> {
-                doConnect(this.userName,1);
-                setState(State.WAITING_FOR_SERVER_RESPONSE);
-            }
-        }
-    }
-
-    private void doAction() {
-        switch (getState()){
-            case WAITING_FOR_USERNAME -> {
-                readUsername();
-                doReconnect(this.userName);
-                setState(State.WAITING_FOR_SERVER_RESPONSE);
-                break;
-            }
-            case WAITING_FOR_CHOICE_ABOUT_LOBBY -> {
-                chooseLobby();
-                break;
-            }
-            case WAITING_FOR_UNUSED_USERNAME -> {
-                readUsername();
-                setState(State.WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY);
-                break;
-            }
-            case WAITING_FOR_NUMBER_OF_PLAYERS_IN_LOBBY -> {
+            case 1:
                 askPlayerNumOfPlayerForLobby();
                 break;
-            }
-
+            case 2:
+                doConnect(this.userName, 1);
+                break;
         }
     }
+
+
 }

@@ -1,7 +1,8 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Client.AppClientImplementation;
 import it.polimi.ingsw.Client.ClientManager;
-import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import javax.swing.*;
@@ -11,10 +12,13 @@ import java.awt.event.ActionListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EventListener;
+import java.util.logging.Level;
 
 public class GraphicalUI extends ClientManager {
 
     String username;
+
+    Frame frame;
 
     private class Background extends JPanel{
         private Image backgroundImage;
@@ -32,7 +36,6 @@ public class GraphicalUI extends ClientManager {
     }
 
     private class Frame extends JFrame{
-
         private JPanel request;
         private JLabel error;
 
@@ -62,11 +65,11 @@ public class GraphicalUI extends ClientManager {
             request = new JPanel();
             request.setOpaque(false);
             request.setLayout(new BoxLayout(request,BoxLayout.PAGE_AXIS));
+            error = new JLabel();
             askConnection();
             content.add(request);
 
             //add the error
-            error = new JLabel();
             error.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             error.setForeground(Color.decode("14929049"));
             content.add(error);
@@ -79,6 +82,7 @@ public class GraphicalUI extends ClientManager {
 
         private void askConnection(){
             request.removeAll();
+            error.setText("");
 
             //set up the question
             request.add(getStandardText("Do you want to use RMI or Socket?"));
@@ -118,6 +122,7 @@ public class GraphicalUI extends ClientManager {
 
         private void askUsername(){
             request.removeAll();
+            error.setText("");
 
             //set up the question
             request.add(getStandardText("Insert the username"));
@@ -137,8 +142,9 @@ public class GraphicalUI extends ClientManager {
             JButton submit = getStandardButton("Submit");
             submit.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
-                    doReconnect(inputText.getText());
+                    username = inputText.getText();
                     inputText.setText("");
+                    doReconnect(username);
                 }
             });
 
@@ -151,6 +157,7 @@ public class GraphicalUI extends ClientManager {
 
         private void askLobby(){
             request.removeAll();
+            error.setText("");
 
             //set up the question
             request.add(getStandardText("Do you want to create a lobby or to join a lobby?"));
@@ -163,7 +170,7 @@ public class GraphicalUI extends ClientManager {
             create.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(button.getText().equals("Create")) {
-                        doConnect(username,1);
+                        askNumOfPlayersInLobby();
                     }
                 }
             });
@@ -171,7 +178,7 @@ public class GraphicalUI extends ClientManager {
             join.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(button.getText().equals("Join")) {
-                        askNumOfPlayersInLobby();
+                        doConnect(username,1);
                     }
                 }
             });
@@ -184,6 +191,7 @@ public class GraphicalUI extends ClientManager {
 
         private void askNumOfPlayersInLobby(){
             request.removeAll();
+            error.setText("");
 
             //set up the question
             request.add(getStandardText("How many players do you want in your lobby?"));
@@ -253,11 +261,36 @@ public class GraphicalUI extends ClientManager {
 
     @Override
     public void update(Message m) {
+        AppClientImplementation.logger.log(Level.INFO,"GUI Received message");
 
+        if(m instanceof NoUsernameToReconnectMessage){
+            frame.askLobby();
+        }
+        else if(m instanceof TakenUsernameMessage){
+            username = null;
+            frame.askUsername();
+            frame.error.setText("Username is already taken");
+        }
+        else if(m instanceof NoLobbyAvailableMessage){
+            frame.error.setText("There are no lobbies available at the moment, create a new one");
+        }
+        else if(m instanceof GameServerMessage){
+            cleanListeners();
+            addListener((message) -> {
+                try{
+                    ((GameServerMessage) m).getServer().handleMessage(message,client);
+                }catch (RemoteException e){
+                    e.printStackTrace();
+                }
+            });
+        }
+        else{
+            AppClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");
+        }
     }
 
     public void run(){
-        Frame frame = new Frame();
+        frame = new Frame();
     }
 
 }

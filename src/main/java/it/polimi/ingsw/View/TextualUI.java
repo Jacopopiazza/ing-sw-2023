@@ -164,7 +164,7 @@ public class TextualUI extends ClientManager {
     }
 
     private void readUsername(){
-        System.out.println("Insert username:");
+        out.println("Insert username:");
         this.userName = in.nextLine();
     }
 
@@ -210,26 +210,26 @@ public class TextualUI extends ClientManager {
 
         Set<Coordinates> coords = gameBoard.getCoords();
 
-        System.out.println("\n\n\n\n\t\t\t\tGame Board");
-        System.out.print("     ");
+        out.println("\n\n\n\n\t\t\t\tGame Board");
+        out.print("     ");
 
         for(int c = minCol; c < maxCol; c++){
-            System.out.print(" " + (c - minCol) + "   ");
+            out.print(" " + (c - minCol) + "   ");
         }
-        System.out.print("\n\n");
+        out.print("\n\n");
 
         for(int r = minRow; r < maxRow; r++){
-            System.out.print(" " + (char)(r + 65 - minRow) + "   ");
+            out.print(" " + (char)(r + 65 - minRow) + "   ");
             for(int c = minCol; c < maxCol; c++){
                 if(coords.contains(new Coordinates(r, c)) && gameBoard.getTile(new Coordinates(r, c)) != null){
                     color = getColorCode(gameBoard.getTile(new Coordinates(r, c)));
                 }else{
                     color = ConsoleColors.RESET.getCode();
                 }
-                System.out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+                out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
             }
-            System.out.print(ConsoleColors.RESET.getCode() + "");
-            System.out.print("\n\n");
+            out.print(ConsoleColors.RESET.getCode() + "");
+            out.print("\n\n");
         }
     }
 
@@ -240,11 +240,11 @@ public class TextualUI extends ClientManager {
         }else{
             color = ConsoleColors.BROWN_BACKGROUND.getCode();
         }
-        System.out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+        out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
     }
 
     public void showPrivateGoals(Coordinates[] privateGoals){
-        System.out.println("\n\n\tMy private goals\n\n");
+        out.println("\n\n\tMy private goals\n\n");
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
         TileView tile = null;
@@ -259,8 +259,8 @@ public class TextualUI extends ClientManager {
                 printTile(tile);
                 tile = null;
             }
-            System.out.print(ConsoleColors.RESET.getCode() + "");
-            System.out.print("\n\n");
+            out.print(ConsoleColors.RESET.getCode() + "");
+            out.print("\n\n");
         }
     }
 
@@ -270,18 +270,18 @@ public class TextualUI extends ClientManager {
 
         TileView tile;
 
-        System.out.println("\n\n\n\n\t\tMy Shelf\n\n");
+        out.println("\n\n\n\n\t\tMy Shelf\n\n");
         for(int i = 0; i < c; i++)
-            System.out.print(" " + i + "   ");
-        System.out.print("\n\n");
+            out.print(" " + i + "   ");
+        out.print("\n\n");
 
         for(int i = 0; i < r; i++){
             for(int k = 0; k < c; k++){
                 tile = shelf.getTile(new Coordinates(i, k));
                 printTile(tile);
             }
-            System.out.print(ConsoleColors.RESET.getCode() + "");
-            System.out.print("\n\n");
+            out.print(ConsoleColors.RESET.getCode() + "");
+            out.print("\n\n");
         }
     }
 
@@ -291,8 +291,6 @@ public class TextualUI extends ClientManager {
         List<Coordinates> coords = new ArrayList<>();
 
         int row, column, choice;
-
-        Scanner scanner = new Scanner(System.in);
         String input;
 
         while(true) {
@@ -301,7 +299,7 @@ public class TextualUI extends ClientManager {
                 // Pick a tile
                 while(true){
                     System.out.print("Insert the coordinates [ROW] [COLUMN]: ");
-                    input = scanner.nextLine();
+                    input = in.nextLine();
                     String[] c;
                     c = input.split("\\s+");    // split with one or multiple spaces
                     if( (c.length > 2) || (c.length < 2)
@@ -327,24 +325,21 @@ public class TextualUI extends ClientManager {
     }
 
     public void showProva() {
-
-        Scanner scanner = new Scanner(System.in);
-
         showTitle();
         //boolean connected;
         //connected = chooseConnection();
         //if(!connected)
         //    return;
-        System.out.println("Connected!");
+        out.println("Connected!");
         readUsername();
 
-        System.out.println("Your username is: " + this.userName);
+        out.println("Your username is: " + this.userName);
 
         Game game = new Game(4);// Instanciated just for try
-        game.addPlayer("a", (message -> System.out.println("ciao")));
-        game.addPlayer("b", (message -> System.out.println("ciao")));
-        game.addPlayer("c", (message -> System.out.println("ciao")));
-        game.addPlayer("d", (message -> System.out.println("ciao")));
+        game.addPlayer("a", (message -> out.println("ciao")));
+        game.addPlayer("b", (message -> out.println("ciao")));
+        game.addPlayer("c", (message -> out.println("ciao")));
+        game.addPlayer("d", (message -> out.println("ciao")));
         game.init();
         try {
             game.refillGameBoard();
@@ -387,10 +382,10 @@ public class TextualUI extends ClientManager {
             Tile t;
             int column = 0;
             while(true){
-                System.out.print("In which column do you want to insert the Tiles? ");
-                String input = scanner.nextLine();
+                out.print("In which column do you want to insert the Tiles? ");
+                String input = in.nextLine();
                 if(!checkUserInput(0, 4, input.charAt(0) - '0')) {
-                    System.out.println("\nInsert a valid column!");
+                    out.println("\nInsert a valid column!");
                     continue;
                 }
                 try{

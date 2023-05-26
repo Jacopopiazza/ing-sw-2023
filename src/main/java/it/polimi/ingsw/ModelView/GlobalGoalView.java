@@ -18,13 +18,11 @@ public class GlobalGoalView implements Serializable {
         try {
             while(true) temp.push(gg.popScore());
         } catch (EmptyStackException e) {
-            e.printStackTrace();
         }
 
         try {
-            while(true) scores.push(gg.popScore());
+            while(true) scores.push(temp.pop());
         } catch (EmptyStackException e) {
-            e.printStackTrace();
         }
 
         name = gg.getName();

@@ -12,7 +12,7 @@ public class GameView implements Serializable {
     private final GameBoardView board;
     private final int numOfPlayers;
     private final PlayerView[] players;
-    private final GlobalGoal[] goals;
+    private final GlobalGoalView[] goals;
     private final int currentPlayer;
     private final TileSackView sack;
     private final boolean started;
@@ -29,12 +29,12 @@ public class GameView implements Serializable {
         this.currentPlayer = game.getCurrentPlayer();
         this.sack = game.getTileSack().getView();
         this.cheaters = game.getCheaters();
-        this.goals = new GlobalGoal[Config.getInstance().getNumOfGlobalGoals()];
+        this.goals = new GlobalGoalView[Config.getInstance().getNumOfGlobalGoals()];
         this.started = game.isGameStarted();
         this.lastTurn = game.isLastTurn();
         try {
             for(int i = 0; i < game.getGoals().length; i++)
-                this.goals[i] = game.getGoals()[i];
+                this.goals[i] = new GlobalGoalView(game.getGoals()[i]);
         } catch (CloneNotSupportedException e){
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class GameView implements Serializable {
         return numOfPlayers;
     }
 
-    public GlobalGoal[] getGlobalGoals() { return goals; }
+    public GlobalGoalView[] getGlobalGoals() { return goals; }
 
     public PlayerView[] getPlayers() {
         return players;

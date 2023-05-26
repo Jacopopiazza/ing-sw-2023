@@ -176,7 +176,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 System.out.println("Socket Client connected");
                 logger.log(Level.INFO, "Nuova connessione via socket accettata");
 
-                instance.executorService.submit(() -> {
+                instance.executorService.execute(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(server, socket);
                         while(true) {

@@ -81,21 +81,13 @@ public class GraphicalUI extends ClientManager {
             request.removeAll();
 
             //set up the question
-            JLabel text = new JLabel("Do you want to use RMI or Socket?");
-            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-            text.setFont(text.getFont().deriveFont(20f));
-            text.setForeground(Color.decode("14929049"));
-            request.add(text);
+            request.add(getStandardText("Do you want to use RMI or Socket?"));
 
             //set up the options
             JPanel choices = new JPanel();
             choices.setOpaque(false);
             choices.setLayout(new FlowLayout());
-            JButton rmi = new JButton("RMI");
-            rmi.setPreferredSize(new Dimension(100,40));
-            rmi.setBackground(Color.decode("14929049"));
-            rmi.setForeground(Color.decode("5776384"));
-            rmi.setFont(rmi.getFont().deriveFont(18f));
+            JButton rmi = getStandardButton("RMI");
             rmi.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(connectionChosen(button)) {
@@ -106,14 +98,10 @@ public class GraphicalUI extends ClientManager {
                     }
                 }
             });
-            JButton socket = new JButton("Socket");
-            socket.setPreferredSize(new Dimension(100,40));
-            socket.setBackground(Color.decode("14929049"));
-            socket.setForeground(Color.decode("5776384"));
-            socket.setFont(socket.getFont().deriveFont(18f));
+            JButton socket = getStandardButton("Socket");
             socket.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
-                    if(!connectionChosen(button)){
+                    if(connectionChosen(button)){
                         askUsername();
                     }
                     else{
@@ -124,17 +112,15 @@ public class GraphicalUI extends ClientManager {
             choices.add(rmi);
             choices.add(socket);
             request.add(choices);
+            request.revalidate();
+            request.repaint();
         }
 
         private void askUsername(){
             request.removeAll();
 
             //set up the question
-            JLabel text = new JLabel("Insert the username");
-            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-            text.setFont(text.getFont().deriveFont(20f));
-            text.setForeground(Color.decode("14929049"));
-            request.add(text);
+            request.add(getStandardText("Insert the username"));
 
             JPanel panel = new JPanel();
             panel.setOpaque(false);
@@ -148,11 +134,7 @@ public class GraphicalUI extends ClientManager {
             inputText.setForeground(Color.decode("5776384"));
 
             //set up the submit button
-            JButton submit = new JButton("Submit");
-            submit.setPreferredSize(new Dimension(100,40));
-            submit.setBackground(Color.decode("14929049"));
-            submit.setForeground(Color.decode("5776384"));
-            submit.setFont(submit.getFont().deriveFont(18f));
+            JButton submit = getStandardButton("Submit");
             submit.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     doReconnect(inputText.getText());
@@ -163,27 +145,21 @@ public class GraphicalUI extends ClientManager {
             panel.add(inputText);
             panel.add(submit);
             request.add(panel);
+            request.revalidate();
+            request.repaint();
         }
 
         private void askLobby(){
             request.removeAll();
 
             //set up the question
-            JLabel text = new JLabel("Do you want to create a lobby or to join a lobby?");
-            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-            text.setFont(text.getFont().deriveFont(20f));
-            text.setForeground(Color.decode("14929049"));
-            request.add(text);
+            request.add(getStandardText("Do you want to create a lobby or to join a lobby?"));
 
             //set up the options
             JPanel choices = new JPanel();
             choices.setOpaque(false);
             choices.setLayout(new FlowLayout());
-            JButton create = new JButton("Create");
-            create.setPreferredSize(new Dimension(100,40));
-            create.setBackground(Color.decode("14929049"));
-            create.setForeground(Color.decode("5776384"));
-            create.setFont(create.getFont().deriveFont(18f));
+            JButton create = getStandardButton("Create");
             create.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(button.getText().equals("Create")) {
@@ -191,11 +167,7 @@ public class GraphicalUI extends ClientManager {
                     }
                 }
             });
-            JButton join = new JButton("Join");
-            join.setPreferredSize(new Dimension(100,40));
-            join.setBackground(Color.decode("14929049"));
-            join.setForeground(Color.decode("5776384"));
-            join.setFont(join.getFont().deriveFont(18f));
+            JButton join = getStandardButton("Join");
             join.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
                     if(button.getText().equals("Join")) {
@@ -206,17 +178,15 @@ public class GraphicalUI extends ClientManager {
             choices.add(create);
             choices.add(join);
             request.add(choices);
+            request.revalidate();
+            request.repaint();
         }
 
         private void askNumOfPlayersInLobby(){
             request.removeAll();
 
             //set up the question
-            JLabel text = new JLabel("How many players do you want in your lobby?");
-            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-            text.setFont(text.getFont().deriveFont(20f));
-            text.setForeground(Color.decode("14929049"));
-            request.add(text);
+            request.add(getStandardText("How many players do you want in your lobby?"));
 
             JPanel panel = new JPanel();
             panel.setOpaque(false);
@@ -224,11 +194,7 @@ public class GraphicalUI extends ClientManager {
 
             //set up the options
             for(int i = 2; i <= Config.getInstance().getMaxNumberOfPlayers();i++){
-                JButton choice = new JButton(String.valueOf(i));
-                choice.setPreferredSize(new Dimension(100,40));
-                choice.setBackground(Color.decode("14929049"));
-                choice.setForeground(Color.decode("5776384"));
-                choice.setFont(choice.getFont().deriveFont(18f));
+                JButton choice = getStandardButton(String.valueOf(i));
                 choice.addActionListener((e) -> {
                     if(e.getSource() instanceof JButton button){
                         int numOfPlayers = Integer.parseInt(button.getText());
@@ -241,6 +207,25 @@ public class GraphicalUI extends ClientManager {
             }
 
             request.add(panel);
+            request.revalidate();
+            request.repaint();
+        }
+
+        private JButton getStandardButton(String name){
+            JButton button = new JButton(name);
+            button.setPreferredSize(new Dimension(100,40));
+            button.setBackground(Color.decode("14929049"));
+            button.setForeground(Color.decode("5776384"));
+            button.setFont(button.getFont().deriveFont(18f));
+            return button;
+        }
+
+        private JLabel getStandardText(String text){
+            JLabel label = new JLabel(text);
+            label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+            label.setFont(label.getFont().deriveFont(20f));
+            label.setForeground(Color.decode("14929049"));
+            return label;
         }
 
         private boolean connectionChosen (JButton button) {

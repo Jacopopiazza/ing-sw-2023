@@ -86,7 +86,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         synchronized (playingUsernames) {
             if( lobby == lobbiesWaitingToStart.peek() && lobby.getNumOfActivePlayers() == 0 ) {
                 lobbiesWaitingToStart.poll();
-                while(lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0) lobbiesWaitingToStart.poll();
+                while( lobbiesWaitingToStart.peek() != null && lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 ) lobbiesWaitingToStart.poll();
             }
         }
     }
@@ -127,7 +127,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             listener.update(new MissingUsernameMessage());
             return;
         }
-        logger.log(Level.INFO, "Register request for player with username:  " + username + " parameters were valid. Loggin player in");
+        logger.log(Level.INFO, "Register request for player with username:  " + username + " parameters were valid. Logging player in");
 
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
@@ -149,7 +149,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                         GameServer lobby = lobbiesWaitingToStart.peek();
                         if( lobby.addPlayer(username, listener) ) { // full
                             lobbiesWaitingToStart.poll();
-                            while( lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
+                            while( lobbiesWaitingToStart.peek() != null && lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
                         listener.update(new GameServerMessage(lobby));

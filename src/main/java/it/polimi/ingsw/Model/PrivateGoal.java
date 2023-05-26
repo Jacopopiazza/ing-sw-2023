@@ -13,7 +13,9 @@ public final class PrivateGoal {
     }
 
     public Coordinates[] getCoordinates() {
-        return coords;
+        Coordinates[] temp = new Coordinates[coords.length];
+        for(int i =0; i< coords.length;i++) temp[i] = coords[i].clone();
+        return temp;
     }
 
     public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException {

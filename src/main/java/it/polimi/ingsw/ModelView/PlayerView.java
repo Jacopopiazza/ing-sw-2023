@@ -9,7 +9,7 @@ public class PlayerView implements Serializable {
     private static final long serialVersionUID=1L;
     private final int score;
     private final ShelfView shelf;
-    private final PrivateGoal privateGoal;
+    private final PrivateGoalView privateGoal;
     private final String username;
     private final int[] accomplishedGlobalGoals;
     private final boolean winner;
@@ -17,7 +17,7 @@ public class PlayerView implements Serializable {
     public PlayerView(Player player){
         this.score = player.getScore();
         this.shelf = new ShelfView(player.getShelf());
-        this.privateGoal = player.getPrivateGoal();
+        this.privateGoal = new PrivateGoalView(player.getPrivateGoal());
         this.username = player.getUsername();
         this.accomplishedGlobalGoals = player.getAccomplishedGlobalGoals().clone();
         this.winner = player.isWinner();
@@ -31,7 +31,7 @@ public class PlayerView implements Serializable {
         return shelf;
     }
 
-    public PrivateGoal getPrivateGoal() {
+    public PrivateGoalView getPrivateGoal() {
         return privateGoal;
     }
 

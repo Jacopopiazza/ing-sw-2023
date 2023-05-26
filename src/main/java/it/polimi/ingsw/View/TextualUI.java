@@ -8,11 +8,9 @@ import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
-import it.polimi.ingsw.Network.ClientImplementation;
 
 
 import java.io.PrintStream;
-import java.nio.channels.InterruptedByTimeoutException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -40,7 +38,6 @@ public class TextualUI extends ClientManager {
     GameBoard gameBoard;
 
     private final Object lockLogin = new Object();
-    private final Object lockLobby = new Object();
     private final Object lockQueue = new Object();
 
     private boolean isMessagesQueueEmpty(){
@@ -429,34 +426,12 @@ public class TextualUI extends ClientManager {
 
     @Override
     public void update(Message m){
-        AppClientImplementation.logger.log(Level.INFO,"CLI Received message");
+        AppClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
 
         addMessageToQueue(m);
-        if(m instanceof NoUsernameToReconnectMessage){
-            synchronized (lockLogin){
-                lockLogin.notify();
-            }
+        synchronized (lockLogin) {
+            lockLogin.notifyAll();
         }
-        else if(m instanceof TakenUsernameMessage){
-            synchronized (lockLogin){
-                lockLogin.notify();
-            }
-        }
-        else if(m instanceof NoLobbyAvailableMessage){
-            synchronized (lockLogin){
-                lockLogin.notify();
-            }
-        }
-        else if(m instanceof GameServerMessage
-        ){
-            synchronized (lockLogin){
-                lockLogin.notify();
-            }
-        }
-        else{
-            AppClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");
-        }
-
     }
 
     private void waitForLoginResponse(){
@@ -517,8 +492,12 @@ public class TextualUI extends ClientManager {
                 waitForLoginResponse();
             }
             else if(m instanceof GameServerMessage){
-                AppClientImplementation.logger.log(Level.INFO,"Avvio partita");
-                doStartGame((GameServerMessage) m);
+                addMessageToQueue(m);
+                waitForLoginResponse();
+            }
+            else if(m instanceof LobbyMessage){
+                AppClientImplementation.logger.log(Level.INFO,"Messaggio giocatori in lobby");
+                printPlayersInLobby((LobbyMessage) m);
                 break;
             }
             else{
@@ -530,7 +509,7 @@ public class TextualUI extends ClientManager {
 
     }
 
-    private void doStartGame(GameServerMessage m){
+    private void connectToGameServer(GameServerMessage m){
 
         cleanListeners();
 
@@ -555,10 +534,23 @@ public class TextualUI extends ClientManager {
             }
 
             Message m = this.getFirstMessageFromQueue();
+            if(m instanceof  LobbyMessage){
+                printPlayersInLobby((LobbyMessage) m);
+            } else if (m instanceof UpdateViewMessage) {
+                //inizia la partita
+            }else if(m instanceof GameServerMessage){
+                AppClientImplementation.logger.log(Level.INFO,"Switchato listener a GameServer");
+                connectToGameServer((GameServerMessage) m);
+            }
             System.out.println(m.toString());
 
         }
 
+    }
+
+    private void printPlayersInLobby(LobbyMessage m){
+        out.println("Playes in lobby:");
+        m.getPlayers().stream().forEach(x -> out.println(x));
     }
 
     private void chooseLobby(){

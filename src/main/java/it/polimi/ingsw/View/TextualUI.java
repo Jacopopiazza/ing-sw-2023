@@ -8,9 +8,11 @@ import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
+import it.polimi.ingsw.Network.ClientImplementation;
 
 
 import java.io.PrintStream;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -134,10 +136,34 @@ public class TextualUI extends ClientManager {
         do{
             out.println("1 - " + option_1);
             out.println("2 - " + option_2 + "\n");
-            choice = in.nextInt();
+            try{
+                choice = in.nextInt();
+            }catch ( InputMismatchException ex){
+                choice = -1;
+            }
         }while (choice<1 || choice>2);
 
         return choice;
+    }
+
+    private int readNumberFromInput(Integer lowerBound, Integer upperBound){
+        String input;
+        boolean valid = false;
+        int number = -1;
+
+        do{
+            input = in.nextLine();
+
+            try {
+                number = Integer.parseInt(input);
+                valid = number >= lowerBound && number <= upperBound;
+            }catch (NumberFormatException ex){
+                valid = false;
+            }
+
+        }while (!valid);
+
+        return number;
     }
 
     private void readUsername(){
@@ -396,11 +422,7 @@ public class TextualUI extends ClientManager {
 
     private void askPlayerNumOfPlayerForLobby(){
         out.println("Insert the number of players for the game:");
-        int numOfPlayers = -1;
-
-        do{
-            numOfPlayers=in.nextInt();
-        } while (numOfPlayers < 2 || numOfPlayers > 4);
+        int numOfPlayers = readNumberFromInput(2,4);
 
         doConnect(this.userName, numOfPlayers);
     }
@@ -424,6 +446,15 @@ public class TextualUI extends ClientManager {
             synchronized (lockLogin){
                 lockLogin.notify();
             }
+        }
+        else if(m instanceof GameServerMessage
+        ){
+            synchronized (lockLogin){
+                lockLogin.notify();
+            }
+        }
+        else{
+            AppClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");
         }
 
     }
@@ -475,7 +506,7 @@ public class TextualUI extends ClientManager {
                 AppClientImplementation.logger.log(Level.INFO,"L'username scelto è già in uso");
                 readUsername();
                 out.println("Hai scelto l'username: " + this.userName);
-                chooseLobby();
+                doReconnect(this.userName);
                 waitForLoginResponse();
                 AppClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
             }
@@ -487,7 +518,6 @@ public class TextualUI extends ClientManager {
             }
             else if(m instanceof GameServerMessage){
                 AppClientImplementation.logger.log(Level.INFO,"Avvio partita");
-                out.println("Nessuna lobby esistente. Ripeti la selezione");
                 doStartGame((GameServerMessage) m);
                 break;
             }
@@ -503,9 +533,10 @@ public class TextualUI extends ClientManager {
     private void doStartGame(GameServerMessage m){
 
         cleanListeners();
+
         addListener((message) -> {
             try {
-                m.getServer().handleMessage(message);
+                m.getServer().handleMessage(message, client);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -516,6 +547,8 @@ public class TextualUI extends ClientManager {
     public void run() {
         showTitle();
         doLogin();
+        out.println("Login effettuato con successo!");
+        out.println("In attesa dell'inizio della partita");
         while(true){
             if(isMessagesQueueEmpty()){
                 continue;
@@ -533,10 +566,7 @@ public class TextualUI extends ClientManager {
         out.println("1. Create a new lobby");
         out.println("2. Join an existing lobby");
 
-        int choice = -1;
-        do{
-            choice = in.nextInt();
-        } while (choice < 1 || choice > 3);
+        int choice = readNumberFromInput(1,2);
 
         switch (choice){
             case 1:

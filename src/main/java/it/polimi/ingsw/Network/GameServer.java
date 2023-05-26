@@ -26,7 +26,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public void handleMessage(Message m) throws RemoteException {
+    public void handleMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
             doTurn(message.getUsername(),message.getChosenTiles(),message.getColumn());

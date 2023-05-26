@@ -53,7 +53,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     public boolean addPlayer(String username, GameListener listener) {
-        return this.controller.addPlayer(username, listener);
+        boolean res = this.controller.addPlayer(username, listener);
+        listener.update(new GameServerMessage(this));
+        return res;
     }
 
     public int getNumOfActivePlayers() {

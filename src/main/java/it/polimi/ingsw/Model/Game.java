@@ -57,8 +57,8 @@ public class Game {
         currentPlayer = 0;
         goals = this.pickTwoGlobalGoals();
         cheaters = new Stack<String>();
-        notifyAllListeners();
         started = true;
+        notifyAllListeners();
     }
 
     public boolean isGameStarted() {
@@ -259,12 +259,11 @@ public class Game {
             }
         }
         else{
-            List<String> players = new ArrayList<>();
-            for( int i=0; i<numOfPlayers; i++ ){
-                if( this.players[i] != null )
-                    players.add(this.players[i].getUsername());
-            }
+            List<String> players = Arrays.stream(this.players).filter(x -> x!=null).map(x -> x.getUsername()).toList();
             Message lobby = new LobbyMessage(players);
+            for( GameListener el : listeners ){
+                if( el != null ) el.update(lobby);
+            }
         }
     }
 

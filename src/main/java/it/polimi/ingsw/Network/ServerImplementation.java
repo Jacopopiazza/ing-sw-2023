@@ -142,7 +142,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                     lobby.addPlayer(username, listener);
                     playingUsernames.add(username);
                     lobbiesWaitingToStart.add(lobby);
-                    listener.update(new GameServerMessage(lobby));
                 }
                 else {
                     if( lobbiesWaitingToStart.peek() != null ) {
@@ -152,7 +151,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                             while( lobbiesWaitingToStart.peek() != null && lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
-                        listener.update(new GameServerMessage(lobby));
                     }
                     else listener.update(new NoLobbyAvailableMessage());
                 }

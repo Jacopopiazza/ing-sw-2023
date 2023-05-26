@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Client;
 
+import it.polimi.ingsw.Messages.DisconnectMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.ReconnectMessage;
 import it.polimi.ingsw.Messages.RegisterMessage;
@@ -86,6 +87,11 @@ public abstract class ClientManager implements Runnable, View
     protected void doConnect(String username, int numOfPlayers){
         AppClientImplementation.logger.log(Level.INFO,"Sending register message with numOfPlayer=" + numOfPlayers);
         notifyListeners(new RegisterMessage(username,numOfPlayers));
+    }
+
+    protected void doQuit(String username){
+        AppClientImplementation.logger.log(Level.INFO,username + "left the game");
+        notifyListeners(new DisconnectMessage(username));
     }
 
 

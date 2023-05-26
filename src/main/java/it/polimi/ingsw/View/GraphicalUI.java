@@ -13,6 +13,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EventListener;
 import java.util.logging.Level;
+import java.util.List;
 
 public class GraphicalUI extends ClientManager {
 
@@ -219,6 +220,31 @@ public class GraphicalUI extends ClientManager {
             request.repaint();
         }
 
+        private void showLobby(List players){
+            request.removeAll();
+            error.setText("");
+
+            //set up the question
+            request.add(getStandardText("players in lobby:"));
+            request.add(getStandardText(players.toString()));
+
+            //set up the exit button
+            JButton exit = getStandardButton("Exit");
+            exit.addActionListener((e) -> {
+                if(e.getSource() instanceof JButton button){
+                    if(button.getText().equals("Exit")) {
+                        doQuit(username);
+                        username = null;
+                        askUsername();
+                    }
+                }
+            });
+
+            request.add(exit);
+            request.revalidate();
+            request.repaint();
+        }
+
         private JButton getStandardButton(String name){
             JButton button = new JButton(name);
             button.setPreferredSize(new Dimension(100,40));
@@ -273,6 +299,9 @@ public class GraphicalUI extends ClientManager {
         }
         else if(m instanceof NoLobbyAvailableMessage){
             frame.error.setText("There are no lobbies available at the moment, create a new one");
+        }
+        else if(m instanceof LobbyMessage){
+            frame.showLobby(((LobbyMessage) m).getPlayers());
         }
         else if(m instanceof GameServerMessage){
             cleanListeners();

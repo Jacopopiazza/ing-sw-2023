@@ -103,36 +103,24 @@ public class Board extends ClientManager {
         }
     }
 
-    private class Frame extends JFrame implements ActionListener{
+    private class GameBoardGUI implements ActionListener{
         private Background board;
         private List<ImageIcon> tileImages;
         private Set<Coordinates> coordinatesSet;
         private ImageIcon icon;
         private TileColor color;
         private int image_id;
+
         private Dimension boardDimension;
 
-        private Frame(){
-            super("My Shelfie");
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(900, 900); // 1:1 proportion
-            setLocationRelativeTo(null);    // in the middle of the screen
-
-            // this background can be resized
-            JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
-            background.setToolTipText("GameBoard");
-            setContentPane(background);
-
+        protected GameBoardGUI(){
             boardDimension = new Dimension(720, 720);
-
-            //inner panel containing the gameboard that cannot be resized
             board = new Background("visual_components/boards/livingroom.png");
             board.setLayout(new BorderLayout());
             board.setPreferredSize(boardDimension); // fixed dimension
             int borderWidth = 30;   // calculated from board dimension
             board.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth + 1, borderWidth, borderWidth + 7));
             board.setLayout(new GridLayout(9, 9, 5, 5));    // calculated from board dimension
-            add(board, BorderLayout.CENTER);    // setting it at the center of the Frame
 
             // getting the elements needed to create the button board
             coordinatesSet = gameBoardView.getCoords();
@@ -149,7 +137,7 @@ public class Board extends ClientManager {
                         icon = tileImages.get(image_id);
                         icon = ManageImage.resizeImageIcon(icon);
                         button.setIcon(icon);
-                        button.addActionListener(this);
+                        button.addActionListener(this); // Maybe is better the button
                     }else{
                         button.setOpaque(false);
                         button.setEnabled(false);
@@ -163,13 +151,40 @@ public class Board extends ClientManager {
                     board.add(button);
                 }
             }
-            pack();
-            setVisible(true);
+        }
+
+        protected JPanel getGameBoardGUI(){
+            return this.board;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            // To be implemented
+        }
+    }
 
+
+    private class Frame extends JFrame{
+        GameBoardGUI gameBoardGUI;
+        private Frame(){
+            super("My Shelfie");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setSize(900, 900); // if not set the window appears in the right bottom corner
+            setLocationRelativeTo(null);    // in the middle of the screen
+
+            // this background can be resized
+            JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
+            background.setToolTipText("GameBoard");
+            setContentPane(background);
+
+            //creating the gameBoard Panel
+            gameBoardGUI = new GameBoardGUI();
+            JPanel board = gameBoardGUI.getGameBoardGUI();
+
+            // setting it at the center
+            add(board, BorderLayout.CENTER);
+            pack();
+            setVisible(true);
         }
     }
 

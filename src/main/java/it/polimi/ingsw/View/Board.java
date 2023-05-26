@@ -16,18 +16,24 @@ import java.util.List;
 import java.util.Set;
 
 public class Board extends ClientManager {
-    Game game = new Game(3);// Instanciated just for try
+    Game game = new Game(4);// Instanciated just for try
+    GameBoardView gameBoardView;
     public Board() {
         game.addPlayer("a", (message -> System.out.println("ciao")));
         game.addPlayer("b", (message -> System.out.println("ciao")));
         game.addPlayer("c", (message -> System.out.println("ciao")));
-        //game.addPlayer("d", (message -> System.out.println("ciao")));
+        game.addPlayer("d", (message -> System.out.println("ciao")));
         game.init();
         try {
             game.refillGameBoard();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        gameBoardView = new GameBoardView(game.getGameBoard());
+    }
+
+    public Board(GameBoardView gameBoardView){
+        this.gameBoardView = gameBoardView;
     }
 
     private class Background extends JPanel {
@@ -91,47 +97,56 @@ public class Board extends ClientManager {
 
         protected static ImageIcon resizeImageIcon(ImageIcon icon){
             Image img = icon.getImage();
+            // dimension calculated from the board size (720x720)
             Image newimg = img.getScaledInstance( 68, 68,  java.awt.Image.SCALE_SMOOTH ) ;
             return new ImageIcon( newimg );
         }
     }
 
     private class Frame extends JFrame implements ActionListener{
+        private Background board;
+        private List<ImageIcon> tileImages;
+        private Set<Coordinates> coordinatesSet;
+        private ImageIcon icon;
+        private TileColor color;
+        private int image_id;
+        private Dimension boardDimension;
 
-        private JPanel content;
-        private JLabel error;
-
-        private List<Image> tileImages = new ArrayList<>();
         private Frame(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(720, 720); // 1:1 proportion
+            setSize(900, 900); // 1:1 proportion
             setLocationRelativeTo(null);    // in the middle of the screen
 
-            JPanel background = new Background("visual_components/boards/livingroom.png");
+            // this background can be resized
+            JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
             background.setToolTipText("GameBoard");
-            int borderWidth = 30;
-            background.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth, borderWidth, borderWidth + 5));
             setContentPane(background);
 
-            GameBoardView gameBoardView = new GameBoardView(game.getGameBoard());
-            Set<Coordinates> coordinatesSet = gameBoardView.getCoords();
-            setLayout(new GridLayout(9, 9, 5, 6));
+            boardDimension = new Dimension(720, 720);
 
-            List<ImageIcon> tileImages;
-            ImageIcon icon;
-            TileColor color;
-            int index;
+            //inner panel containing the gameboard that cannot be resized
+            board = new Background("visual_components/boards/livingroom.png");
+            board.setLayout(new BorderLayout());
+            board.setPreferredSize(boardDimension); // fixed dimension
+            int borderWidth = 30;   // calculated from board dimension
+            board.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth + 1, borderWidth, borderWidth + 7));
+            board.setLayout(new GridLayout(9, 9, 5, 5));    // calculated from board dimension
+            add(board, BorderLayout.CENTER);    // setting it at the center of the Frame
 
+            // getting the elements needed to create the button board
+            coordinatesSet = gameBoardView.getCoords();
+
+            // setting the buttons in the board
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     JButton button = new JButton();
                     button.setLayout(new FlowLayout());
                     if(coordinatesSet.contains(new Coordinates(i, j))){
                         color = gameBoardView.getTile(new Coordinates(i, j)).getCOLOR();
-                        index = gameBoardView.getTile(new Coordinates(i, j)).getID() % 3;
+                        image_id = gameBoardView.getTile(new Coordinates(i, j)).getID() % 3;
                         tileImages = ManageImage.getListOfTileImages(color);
-                        icon = tileImages.get(index);
+                        icon = tileImages.get(image_id);
                         icon = ManageImage.resizeImageIcon(icon);
                         button.setIcon(icon);
                         button.addActionListener(this);
@@ -145,9 +160,10 @@ public class Board extends ClientManager {
                             // Not to be managed
                         });
                     }
-                    add(button);
+                    board.add(button);
                 }
             }
+            pack();
             setVisible(true);
         }
 

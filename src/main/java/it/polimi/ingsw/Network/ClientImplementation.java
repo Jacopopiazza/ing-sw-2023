@@ -11,15 +11,14 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private View view;
-    private Server server;
 
     public ClientImplementation(View view, Server server) throws RemoteException{
         super();
         this.view = view;
-        this.server = server;
+
         view.addListener((message) -> {
             try {
-                server.handleMessage(message);
+                server.handleMessage(message, this);
             } catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());

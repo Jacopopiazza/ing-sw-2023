@@ -6,5 +6,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Server extends Remote {
-    public void handleMessage( Message m) throws RemoteException;
+    public void handleMessage( Message m, Client client) throws RemoteException;
 }

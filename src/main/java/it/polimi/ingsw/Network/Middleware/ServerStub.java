@@ -50,7 +50,7 @@ public class ServerStub implements Server {
         }
     }
 
-    public void handleMessage(Message m) throws RemoteException {
+    public void handleMessage(Message m, Client client) throws RemoteException {
 
         Message toBeSent = m;
 
@@ -78,9 +78,9 @@ public class ServerStub implements Server {
         try {
             m = (Message) ois.readObject();
         } catch (IOException e) {
-            throw new RemoteException("Cannot receive model view from client", e);
+            throw new RemoteException("ServerStub: Cannot receive model view from server", e);
         } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize model view from client", e);
+            throw new RemoteException("ServerStub: Cannot deserialize model view from server", e);
         }
         AppClientImplementation.logger.log(Level.INFO, "Server stub received message: " + m.toString());
 

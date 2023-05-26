@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Listener.ViewListener;
 import it.polimi.ingsw.Messages.Message;
 
 public interface View {

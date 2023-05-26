@@ -8,7 +8,7 @@ import it.polimi.ingsw.Network.ClientImplementation;
 import it.polimi.ingsw.Network.Middleware.ServerStub;
 import it.polimi.ingsw.Network.Server;
 import it.polimi.ingsw.View.View;
-import it.polimi.ingsw.View.ViewListener;
+import it.polimi.ingsw.Listener.ViewListener;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -52,6 +52,7 @@ public abstract class ClientManager implements Runnable, View
             }
         }.start();
 
+
     }
 
     @Override
@@ -79,12 +80,12 @@ public abstract class ClientManager implements Runnable, View
 
     protected void doReconnect(String username){
         AppClientImplementation.logger.log(Level.INFO,"Sending reconnect message");
-        notifyListeners(new ReconnectMessage(username,(Client) client));
+        notifyListeners(new ReconnectMessage(username));
     }
 
     protected void doConnect(String username, int numOfPlayers){
         AppClientImplementation.logger.log(Level.INFO,"Sending register message with numOfPlayer=" + numOfPlayers);
-        notifyListeners(new RegisterMessage(username,(Client) client,numOfPlayers));
+        notifyListeners(new RegisterMessage(username,numOfPlayers));
     }
 
 

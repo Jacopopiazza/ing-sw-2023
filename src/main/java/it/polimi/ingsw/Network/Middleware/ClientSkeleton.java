@@ -56,13 +56,13 @@ public class ClientSkeleton implements Client {
         System.out.println("Received message: " + m.toString());
 
         if( m instanceof ReconnectMessageTicket ){
-            Message packed = new ReconnectMessage(((ReconnectMessageTicket) m).getUsername(), this);
-            server.handleMessage(packed);
+            Message packed = new ReconnectMessage(((ReconnectMessageTicket) m).getUsername());
+            server.handleMessage(packed, this);
         }
         else if( m instanceof RegisterMessageTicket ){
-            server.handleMessage(new RegisterMessage(((RegisterMessage) m).getUsername(), this, ((RegisterMessage) m).getNumOfPlayers()));
+            server.handleMessage(new RegisterMessage(((RegisterMessageTicket) m).getUsername(), ((RegisterMessageTicket) m).getNumOfPlayers()), this);
         }
-        else server.handleMessage(m);
+        else server.handleMessage(m, this);
     }
 
 

@@ -18,6 +18,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private List<String> disconnectedUsernames;
 
     public GameServer(ServerImplementation serverImplementation, int numOfPlayers) throws RemoteException {
+        super();
         this.serverImplementation = ServerImplementation.getInstance();
         this.controller = new Controller(new Game(numOfPlayers), this);
         this.playingUsernames = new ArrayList<>();
@@ -25,7 +26,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public void handleMessage(Message m) throws RemoteException {
+    public void handleMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
             doTurn(message.getUsername(),message.getChosenTiles(),message.getColumn());

@@ -14,6 +14,7 @@ import it.polimi.ingsw.ModelView.TileView;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -60,45 +61,21 @@ public class Board extends ClientManager {
     }
 
     private class ManageImage{
+
+        private static List<ImageIcon>[] tilesIcons = null;
+
         protected static List<ImageIcon> getListOfTileImages(TileColor color){
-            List<ImageIcon> tileImagesWhite = new ArrayList<>();
-            List<ImageIcon> tileImagesFuchsia = new ArrayList<>();
-            List<ImageIcon> tileImagesBlue = new ArrayList<>();
-            List<ImageIcon> tileImagesCyan = new ArrayList<>();
-            List<ImageIcon> tileImagesYellow = new ArrayList<>();
-            List<ImageIcon> tileImagesGreen = new ArrayList<>();
-
-            tileImagesBlue.add(new ImageIcon("visual_components/item tiles/Cornici1.1.png"));
-            tileImagesBlue.add(new ImageIcon("visual_components/item tiles/Cornici1.2.png"));
-            tileImagesBlue.add(new ImageIcon("visual_components/item tiles/Cornici1.3.png"));
-
-            tileImagesGreen.add(new ImageIcon("visual_components/item tiles/Gatti1.1.png"));
-            tileImagesGreen.add(new ImageIcon("visual_components/item tiles/Gatti1.2.png"));
-            tileImagesGreen.add(new ImageIcon("visual_components/item tiles/Gatti1.3.png"));
-
-            tileImagesYellow.add(new ImageIcon("visual_components/item tiles/Giochi1.1.png"));
-            tileImagesYellow.add(new ImageIcon("visual_components/item tiles/Giochi1.2.png"));
-            tileImagesYellow.add(new ImageIcon("visual_components/item tiles/Giochi1.3.png"));
-
-            tileImagesWhite.add(new ImageIcon("visual_components/item tiles/Libri1.1.png"));
-            tileImagesWhite.add(new ImageIcon("visual_components/item tiles/Libri1.2.png"));
-            tileImagesWhite.add(new ImageIcon("visual_components/item tiles/Libri1.3.png"));
-
-            tileImagesFuchsia.add(new ImageIcon("visual_components/item tiles/Piante1.1.png"));
-            tileImagesFuchsia.add(new ImageIcon("visual_components/item tiles/Piante1.2.png"));
-            tileImagesFuchsia.add(new ImageIcon("visual_components/item tiles/Piante1.3.png"));
-
-            tileImagesCyan.add(new ImageIcon("visual_components/item tiles/Trofei1.1.png"));
-            tileImagesCyan.add(new ImageIcon("visual_components/item tiles/Trofei1.2.png"));
-            tileImagesCyan.add(new ImageIcon("visual_components/item tiles/Trofei1.3.png"));
-
-            switch (color){
-                case YELLOW -> { return tileImagesYellow; }
-                case CYAN -> { return tileImagesCyan; }
-                case GREEN -> { return tileImagesGreen; }
-                case BLUE -> { return tileImagesBlue; }
-                case WHITE -> { return tileImagesWhite; }
-                case FUCHSIA -> { return tileImagesFuchsia; }
+            if(tilesIcons == null){
+                tilesIcons = new ArrayList[TileColor.values().length];
+                for(TileColor tc : TileColor.values()){
+                    tilesIcons[tc.ordinal()] = new ArrayList<>();
+                    for(int i=0; i<3; i++){
+                        tilesIcons[tc.ordinal()].add(new ImageIcon("visual_components/item tiles/"+tc.name().toLowerCase()+String.valueOf(i+1)+".png"));
+                    }
+                }
+            }
+            for(TileColor tc : TileColor.values()){
+                if(tc.equals(color)) return tilesIcons[tc.ordinal()];
             }
             return null;
         }

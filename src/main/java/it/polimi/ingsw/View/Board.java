@@ -14,7 +14,6 @@ import it.polimi.ingsw.ModelView.TileView;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +59,7 @@ public class Board extends ClientManager {
         }
     }
 
-    private class ManageImage{
+    private class ImageManager {
 
         private static List<ImageIcon>[] tilesIcons = null;
 
@@ -80,7 +79,7 @@ public class Board extends ClientManager {
             return null;
         }
 
-        protected static ImageIcon resizeImageIcon(ImageIcon icon){
+        protected static ImageIcon resizeTileIcon(ImageIcon icon){
             Image img = icon.getImage();
             // dimension calculated from the board size (720x720)
             Image newimg = img.getScaledInstance( 68, 68,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -132,9 +131,9 @@ public class Board extends ClientManager {
 
             color = tile.getCOLOR();
             image_id = tile.getID() % 3;
-            tileImages = ManageImage.getListOfTileImages(color);
+            tileImages = ImageManager.getListOfTileImages(color);
             icon = tileImages.get(image_id);
-            icon = ManageImage.resizeImageIcon(icon);
+            icon = ImageManager.resizeTileIcon(icon);
             button.setIcon(icon);
             button.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton pressed){
@@ -240,7 +239,7 @@ public class Board extends ClientManager {
         private Frame(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(1300, 900); // if not set the window appears in the right bottom corner
+            setSize(1280, 720); // if not set the window appears in the right bottom corner
             setLocationRelativeTo(null);    // in the middle of the screen
 
             // this background can be resized

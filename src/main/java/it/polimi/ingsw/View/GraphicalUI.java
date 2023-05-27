@@ -7,11 +7,8 @@ import it.polimi.ingsw.Model.Utilities.Config;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.EventListener;
 import java.util.logging.Level;
 import java.util.List;
 
@@ -19,7 +16,7 @@ public class GraphicalUI extends ClientManager {
 
     String username;
 
-    Frame frame;
+    StartWindow startWindow;
 
     private class Background extends JPanel{
         private Image backgroundImage;
@@ -36,14 +33,15 @@ public class GraphicalUI extends ClientManager {
         }
     }
 
-    private class Frame extends JFrame{
+    private class StartWindow extends JFrame{
         private JPanel request;
         private JLabel error;
 
-        private Frame(){
+        private StartWindow(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(1280, 720); // 16:9 proportion
+            setSize(1120, 630); // 16:9 proportion
+            setLocationRelativeTo(null);
 
             //create the background
             JPanel background = new Background("visual_components/misc/base_pagina2.jpg");
@@ -297,18 +295,18 @@ public class GraphicalUI extends ClientManager {
         AppClientImplementation.logger.log(Level.INFO,"GUI Received message");
 
         if(m instanceof NoUsernameToReconnectMessage){
-            frame.askLobby();
+            startWindow.askLobby();
         }
         else if(m instanceof TakenUsernameMessage){
             username = null;
-            frame.askUsername();
-            frame.error.setText("Username is already taken");
+            startWindow.askUsername();
+            startWindow.error.setText("Username is already taken");
         }
         else if(m instanceof NoLobbyAvailableMessage){
-            frame.error.setText("There are no lobbies available at the moment, create a new one");
+            startWindow.error.setText("There are no lobbies available at the moment, create a new one");
         }
         else if(m instanceof LobbyMessage){
-            frame.showLobby(((LobbyMessage) m).getPlayers());
+            startWindow.showLobby(((LobbyMessage) m).getPlayers());
         }
         else if(m instanceof GameServerMessage){
             cleanListeners();
@@ -326,7 +324,7 @@ public class GraphicalUI extends ClientManager {
     }
 
     public void run(){
-        frame = new Frame();
+        startWindow = new StartWindow();
     }
 
 }

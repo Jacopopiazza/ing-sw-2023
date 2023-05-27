@@ -22,7 +22,6 @@ public class Game {
     private TileSack sack;
     private Stack<String> cheaters;
     private boolean started;
-    private boolean lastTurn;
 
     public Game(int numOfPlayers) throws InvalidNumberOfPlayersException{
         if( ( numOfPlayers < 2 ) || ( numOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) ) {
@@ -37,7 +36,6 @@ public class Game {
         sack = null;
         cheaters = null;
         started = false;
-        lastTurn = false;
     }
 
     public GameView getView() {
@@ -65,8 +63,6 @@ public class Game {
         return started;
     }
 
-    public boolean isLastTurn() { return lastTurn; }
-
     public void addPlayer(String username, GameListener listener) {
         int i;
         for( i=0; ( i<numOfPlayers ) && ( players[i] != null ); i++ );
@@ -81,7 +77,7 @@ public class Game {
         for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = listener;
-        notifyAllListeners();
+        notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
     }
 
     public void disconnect(String username) throws UsernameNotFoundException {
@@ -89,7 +85,7 @@ public class Game {
         for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = null;
-        notifyAllListeners();
+        notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
     }
 
     public void kick(String username) throws UsernameNotFoundException {
@@ -98,6 +94,7 @@ public class Game {
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
         listeners[i] = null;
         players[i] = null;
+        notifyAllListeners();
     }
 
     public int getNumOfPlayers() {
@@ -116,12 +113,11 @@ public class Game {
 
     // Return false if Game's over
     public boolean nextPlayer() {
-        if( players[currentPlayer].getShelf().isFull() ) lastTurn = true;
         currentPlayer = (currentPlayer+1) % players.length;
         while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
-        notifyAllListeners();
-        if( lastTurn && ( currentPlayer == 0 ) )
+        if( players[currentPlayer].getShelf().isFull() )
             return false;
+        notifyAllListeners(new GameView(currentPlayer,null));
         return true;
     }
 
@@ -150,7 +146,7 @@ public class Game {
             }
         }
         players[currentPlayer].setScore(currentScore);
-        notifyAllListeners();
+        notifyAllListeners(new GameView(players[currentPlayer],currentPlayer,goals));
     }
 
     public TileSack getTileSack() {
@@ -167,7 +163,7 @@ public class Game {
             res[i] = board.getTile(coords[i]);
             board.setTile(coords[i], null);
         }
-        notifyAllListeners();
+        notifyAllListeners(new GameView(board,null));
         return res;
     }
 
@@ -197,24 +193,21 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        notifyAllListeners();
+        notifyAllListeners(new GameView(board,sack));
         // at least one Tile was added
         return true;
     }
 
     public void addCheater(String username){
         cheaters.add(username);
-        notifyAllListeners();
+        notifyAllListeners(new GameView(username));
     }
 
-    public Stack<String> getCheaters(){
-        return cheaters;
-    }
 
     // Used by the controller only in case of TimeOut, otherwise the winner is set by endGame()
     public void setWinner(int p){
         players[p].setWinner();
-        notifyAllListeners();
+        notifyAllListeners(new GameView(players));
     }
 
     public void endGame(){
@@ -249,6 +242,13 @@ public class Game {
             returned[i] = goals.get(i);
 
         return returned;
+    }
+
+    private void notifyAllListeners(GameView gameView){
+        Message gv = new UpdateViewMessage(gameView);
+        for( GameListener el : listeners ){
+            if( el != null ) el.update(gv);
+        }
     }
 
     private void notifyAllListeners(){

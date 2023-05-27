@@ -4,13 +4,15 @@ import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
+import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.ModelView.GameBoardView;
+import it.polimi.ingsw.ModelView.PrivateGoalView;
+import it.polimi.ingsw.ModelView.ShelfView;
+import it.polimi.ingsw.ModelView.TileView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +20,8 @@ import java.util.Set;
 public class Board extends ClientManager {
     Game game = new Game(4);// Instanciated just for try
     GameBoardView gameBoardView;
+    ShelfView shelfView;
+    PrivateGoalView privateGoalView;
     public Board() {
         game.addPlayer("a", (message -> System.out.println("ciao")));
         game.addPlayer("b", (message -> System.out.println("ciao")));
@@ -30,10 +34,14 @@ public class Board extends ClientManager {
             e.printStackTrace();
         }
         gameBoardView = new GameBoardView(game.getGameBoard());
+        shelfView = new ShelfView(game.getPlayer(0).getShelf());
+        privateGoalView = new PrivateGoalView(game.getPlayer(0).getPrivateGoal());
     }
 
-    public Board(GameBoardView gameBoardView){
+    public Board(GameBoardView gameBoardView, ShelfView shelfView, PrivateGoalView privateGoalView){
         this.gameBoardView = gameBoardView;
+        this.shelfView = shelfView;
+        this.privateGoalView = privateGoalView;
     }
 
     private class Background extends JPanel {
@@ -103,27 +111,26 @@ public class Board extends ClientManager {
         }
     }
 
-    private class GameBoardGUI implements ActionListener{
-        private Background board;
+    private class GameBoardPanel {
+        private Background gameBoardPanel;
         private List<ImageIcon> tileImages;
         private Set<Coordinates> coordinatesSet;
-        private ImageIcon icon;
-        private TileColor color;
-        private int image_id;
+        private Dimension gameBoardDimension;
+        int numberOfPicks;
 
-        private Dimension boardDimension;
-
-        protected GameBoardGUI(){
-            boardDimension = new Dimension(720, 720);
-            board = new Background("visual_components/boards/livingroom.png");
-            board.setLayout(new BorderLayout());
-            board.setPreferredSize(boardDimension); // fixed dimension
+        protected GameBoardPanel(){
+            gameBoardDimension = new Dimension(720, 720);
+            gameBoardPanel = new Background("visual_components/boards/livingroom.png");
+            gameBoardPanel.setToolTipText("Game Board");
+            gameBoardPanel.setLayout(new BorderLayout());
+            gameBoardPanel.setPreferredSize(gameBoardDimension); // fixed dimension
             int borderWidth = 30;   // calculated from board dimension
-            board.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth + 1, borderWidth, borderWidth + 7));
-            board.setLayout(new GridLayout(9, 9, 5, 5));    // calculated from board dimension
+            gameBoardPanel.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth + 1, borderWidth, borderWidth + 7));
+            gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));    // calculated from board dimension
 
             // getting the elements needed to create the button board
             coordinatesSet = gameBoardView.getCoords();
+            numberOfPicks = 0;
 
             // setting the buttons in the board
             for (int i = 0; i < 9; i++) {
@@ -131,58 +138,153 @@ public class Board extends ClientManager {
                     JButton button = new JButton();
                     button.setLayout(new FlowLayout());
                     if(coordinatesSet.contains(new Coordinates(i, j))){
-                        color = gameBoardView.getTile(new Coordinates(i, j)).getCOLOR();
-                        image_id = gameBoardView.getTile(new Coordinates(i, j)).getID() % 3;
-                        tileImages = ManageImage.getListOfTileImages(color);
-                        icon = tileImages.get(image_id);
-                        icon = ManageImage.resizeImageIcon(icon);
-                        button.setIcon(icon);
-                        button.addActionListener(this); // Maybe is better the button
+                        button = getTileButton(gameBoardView.getTile(new Coordinates(i, j)), i, j);
                     }else{
-                        button.setOpaque(false);
-                        button.setEnabled(false);
-                        button.setBorderPainted(false);
-                        button.setFocusPainted(false);
-                        button.setContentAreaFilled(false);
-                        button.addActionListener(e -> {
-                            // Not to be managed
-                        });
+                        button = getVoidButton();
                     }
-                    board.add(button);
+                    gameBoardPanel.add(button);
                 }
             }
         }
 
-        protected JPanel getGameBoardGUI(){
-            return this.board;
+        private JButton getTileButton(TileView tile, int x, int y){
+            ImageIcon icon;
+            TileColor color;
+            int image_id;
+            JButton button = new JButton();
+
+            color = tile.getCOLOR();
+            image_id = tile.getID() % 3;
+            tileImages = ManageImage.getListOfTileImages(color);
+            icon = tileImages.get(image_id);
+            icon = ManageImage.resizeImageIcon(icon);
+            button.setIcon(icon);
+            button.addActionListener((e) -> {
+                if(e.getSource() instanceof JButton pressed){
+                    if(gameBoardView.isPickable(new Coordinates(x, y))){
+                        // on every pick check that this tile is on the same line
+                        if(numberOfPicks < 3) {
+                            numberOfPicks++;
+                            System.out.println("Pressed " + x + "-" + y);
+                        }else{
+                            System.out.println("Max number of tiles picked!");
+                        }
+                    }else{
+                        System.out.println("Not Pickable!");
+                    }
+                }
+            });
+            return button;
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // To be implemented
+        private JButton getVoidButton(){
+            JButton button = new JButton();
+            button.setLayout(new FlowLayout());
+            button.setOpaque(false);
+            button.setEnabled(false);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+            button.addActionListener(e -> {
+                // Not to be managed
+            });
+            return button;
+        }
+
+        protected JPanel getGameBoardPanel(){
+            return this.gameBoardPanel;
         }
     }
 
 
+    private class ShelfPanel{
+        private Background shelfPanel;
+        private Dimension shelfDimension;
+
+        private int rows;
+        private int cols;
+
+        protected ShelfPanel() {
+            shelfDimension = new Dimension(500, 500);
+            shelfPanel = new Background("visual_components/boards/bookshelf_orth.png");
+            shelfPanel.setToolTipText("My Shelf");
+            shelfPanel.setLayout(new BorderLayout());
+            shelfPanel.setPreferredSize(shelfDimension); // fixed dimension
+
+            rows = Shelf.getRows();
+            cols = Shelf.getColumns();
+            shelfPanel.setLayout(new GridLayout(rows, cols, 20, 8));
+            int borderWidth = 30;   // calculated from board dimension
+            shelfPanel.setBorder(BorderFactory.createEmptyBorder(borderWidth + 2, borderWidth * 2,
+                    borderWidth * 2 - 3, borderWidth * 2));
+
+
+            // setting the void buttons in the board
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    shelfPanel.add(getVoidButton());
+                }
+            }
+        }
+
+        private JButton getVoidButton(){
+            JButton button = new JButton();
+            button.setLayout(new FlowLayout());
+            //button.setOpaque(false);
+            button.setEnabled(false);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+            button.addActionListener(e -> {
+                // Not to be managed
+            });
+            return button;
+        }
+
+        private void setIconToButton(){
+            // set the icon to the shelf button
+        }
+
+        protected JPanel getShelfPanel(){
+            return this.shelfPanel;
+        }
+    }
+
+
+    private class PrivateGoalPanel{
+        private JPanel privateGoalPanel;
+    }
+
+
     private class Frame extends JFrame{
-        GameBoardGUI gameBoardGUI;
+        GameBoardPanel gameBoardPanel;
+        ShelfPanel shelfPanel;
+        PrivateGoalPanel privateGoalPanel;
         private Frame(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(900, 900); // if not set the window appears in the right bottom corner
+            setSize(1300, 900); // if not set the window appears in the right bottom corner
             setLocationRelativeTo(null);    // in the middle of the screen
 
             // this background can be resized
             JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
-            background.setToolTipText("GameBoard");
             setContentPane(background);
 
             //creating the gameBoard Panel
-            gameBoardGUI = new GameBoardGUI();
-            JPanel board = gameBoardGUI.getGameBoardGUI();
-
+            gameBoardPanel = new GameBoardPanel();
+            JPanel gameBoard = gameBoardPanel.getGameBoardPanel();
             // setting it at the center
-            add(board, BorderLayout.CENTER);
+            add(gameBoard, BorderLayout.CENTER);
+
+            //creating the shelfPanel Panel
+            shelfPanel = new ShelfPanel();
+            JPanel shelf = shelfPanel.getShelfPanel();
+            //setting it to the center-right
+            add(shelf, BorderLayout.EAST);
+
+            //creating the privateGoalPanel Panel
+            //setting it to the center-left
+
             pack();
             setVisible(true);
         }

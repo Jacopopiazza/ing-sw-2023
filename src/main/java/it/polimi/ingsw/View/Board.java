@@ -1,11 +1,10 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Client.ClientManager;
+import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
+import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Messages.Message;
-import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.Game;
-import it.polimi.ingsw.Model.Shelf;
-import it.polimi.ingsw.Model.TileColor;
+import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.GameBoardView;
 import it.polimi.ingsw.ModelView.PrivateGoalView;
 import it.polimi.ingsw.ModelView.ShelfView;
@@ -34,7 +33,18 @@ public class Board extends ClientManager {
             e.printStackTrace();
         }
         gameBoardView = new GameBoardView(game.getGameBoard());
-        shelfView = new ShelfView(game.getPlayer(0).getShelf());
+        Shelf shelf = new Shelf();
+        try {
+            shelf.addTile(new Tile(TileColor.BLUE,0),4);
+            shelf.addTile(new Tile(TileColor.BLUE,1),1);
+            shelf.addTile(new Tile(TileColor.BLUE,2),2);
+            shelf.addTile(new Tile(TileColor.BLUE,3),3);
+        } catch (NoTileException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalColumnInsertionException e) {
+            e.printStackTrace();
+        }
+        shelfView = new ShelfView(shelf);
         privateGoalView = new PrivateGoalView(game.getPlayer(0).getPrivateGoal());
     }
 
@@ -180,9 +190,10 @@ public class Board extends ClientManager {
         private int rows;
         private int cols;
 
-        protected ShelfPanel() {
+        protected ShelfPanel(ShelfView shelfView) {
             shelfDimension = new Dimension(500, 500);
             shelfPanel = new Background("visual_components/boards/bookshelf_orth.png");
+            shelfPanel.setOpaque(false);
             shelfPanel.setToolTipText("My Shelf");
             shelfPanel.setLayout(new BorderLayout());
             shelfPanel.setPreferredSize(shelfDimension); // fixed dimension
@@ -198,27 +209,24 @@ public class Board extends ClientManager {
             // setting the void buttons in the board
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
-                    shelfPanel.add(getVoidButton());
+                    if(shelfView.getTile(new Coordinates(i,j)) != null) shelfPanel.add(getTileLabel(shelfView.getTile(new Coordinates(i,j))));
+                    else shelfPanel.add(getVoidLabel());
                 }
             }
+
+
         }
 
-        private JButton getVoidButton(){
-            JButton button = new JButton();
-            button.setLayout(new FlowLayout());
-            //button.setOpaque(false);
-            button.setEnabled(false);
-            button.setBorderPainted(false);
-            button.setFocusPainted(false);
-            button.setContentAreaFilled(false);
-            button.addActionListener(e -> {
-                // Not to be managed
-            });
-            return button;
+        private JLabel getTileLabel(TileView tile){
+            int image_id = tile.getID()%3;
+            ImageIcon ic = ImageManager.getListOfTileImages(tile.getCOLOR()).get(image_id);
+            return new JLabel(ImageManager.resizeTileIcon(ic));
         }
 
-        private void setIconToButton(){
-            // set the icon to the shelf button
+        private JLabel getVoidLabel(){
+            JLabel label = new JLabel();
+            label.setOpaque(false);
+            return label;
         }
 
         protected JPanel getShelfPanel(){
@@ -232,11 +240,11 @@ public class Board extends ClientManager {
     }
 
 
-    private class Frame extends JFrame{
+    private class GameWindow extends JFrame{
         GameBoardPanel gameBoardPanel;
         ShelfPanel shelfPanel;
         PrivateGoalPanel privateGoalPanel;
-        private Frame(){
+        private GameWindow(){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setSize(1280, 720); // if not set the window appears in the right bottom corner
@@ -253,7 +261,7 @@ public class Board extends ClientManager {
             add(gameBoard, BorderLayout.CENTER);
 
             //creating the shelfPanel Panel
-            shelfPanel = new ShelfPanel();
+            shelfPanel = new ShelfPanel(shelfView);
             JPanel shelf = shelfPanel.getShelfPanel();
             //setting it to the center-right
             add(shelf, BorderLayout.EAST);
@@ -273,6 +281,6 @@ public class Board extends ClientManager {
 
     @Override
     public void run() {
-        Frame frame = new Frame();
+        GameWindow gameWindow = new GameWindow();
     }
 }

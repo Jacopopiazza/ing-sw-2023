@@ -220,15 +220,17 @@ public class GraphicalUI extends ClientManager {
             request.repaint();
         }
 
-        private void showLobby(List players){
+        private void showLobby(List<String> players){
             request.removeAll();
             error.setText("");
 
             //set up the question
             request.add(getStandardText("players in lobby:"));
-            request.add(getStandardText(players.toString()));
+            for(String p : players) request.add(getStandardText(p));
 
             //set up the exit button
+            JPanel panel = new JPanel();
+            panel.setOpaque(false);
             JButton exit = getStandardButton("Exit");
             exit.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
@@ -240,7 +242,8 @@ public class GraphicalUI extends ClientManager {
                 }
             });
 
-            request.add(exit);
+            panel.add(exit);
+            request.add(panel);
             request.revalidate();
             request.repaint();
         }

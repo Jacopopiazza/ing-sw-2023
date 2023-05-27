@@ -164,8 +164,12 @@ public class TextualUI extends ClientManager {
     }
 
     private void readUsername(){
-        out.println("Insert username:");
-        this.userName = in.nextLine();
+        do{
+            out.println("Insert username:");
+            this.userName = in.nextLine();
+            if(this.userName.contains(" ")) out.println("Spaces are not allowed in the username");
+        }while(this.userName.contains(" "));
+
     }
 
     public void initializePlayer(String username){

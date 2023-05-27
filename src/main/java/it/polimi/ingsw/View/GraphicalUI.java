@@ -145,7 +145,11 @@ public class GraphicalUI extends ClientManager {
                 if(e.getSource() instanceof JButton button){
                     username = inputText.getText();
                     inputText.setText("");
-                    doReconnect(username);
+                    if (username.contains(" ")){
+                        error.setText("Spaces are not allowed in the username");
+                        username = null;
+                    }
+                    else doReconnect(username);
                 }
             });
 

@@ -11,11 +11,19 @@ public class TileView implements Serializable {
 
     private final TileColor COLOR;
 
+    private final boolean pickable;
     private final int ID;
+
+    public TileView(Tile tile, boolean pickable){
+        this.ID = tile.getId();
+        this.COLOR = tile.getColor();
+        this.pickable = pickable;
+    }
 
     public TileView(Tile tile){
         this.ID = tile.getId();
         this.COLOR = tile.getColor();
+        this.pickable = false;
     }
 
     public TileColor getCOLOR() {
@@ -25,6 +33,8 @@ public class TileView implements Serializable {
     public int getID() {
         return ID;
     }
+
+    public boolean isPickable(){return pickable;}
 
     @Override
     public boolean equals(Object o) {

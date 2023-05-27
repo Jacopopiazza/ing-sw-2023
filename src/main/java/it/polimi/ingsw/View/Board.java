@@ -139,18 +139,25 @@ public class Board extends ClientManager {
                         button.setIcon(icon);
                         button.addActionListener(this); // Maybe is better the button
                     }else{
-                        button.setOpaque(false);
-                        button.setEnabled(false);
-                        button.setBorderPainted(false);
-                        button.setFocusPainted(false);
-                        button.setContentAreaFilled(false);
-                        button.addActionListener(e -> {
-                            // Not to be managed
-                        });
+                        button = getVoidButton();
                     }
                     board.add(button);
                 }
             }
+        }
+
+        private JButton getVoidButton(){
+            JButton button = new JButton();
+            button.setLayout(new FlowLayout());
+            button.setOpaque(false);
+            button.setEnabled(false);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
+            button.addActionListener(e -> {
+                // Not to be managed
+            });
+            return button;
         }
 
         protected JPanel getGameBoardGUI(){

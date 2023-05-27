@@ -18,7 +18,7 @@ public class GameBoardView implements Serializable {
     public GameBoardView(GameBoard gameBoard){
         this.board = new HashMap<>();
         for(Coordinates c : gameBoard.getCoords()){
-            this.board.put(c,( gameBoard.getTile(c) == null ) ? null : new TileView(gameBoard.getTile(c)));
+            this.board.put(c,( gameBoard.getTile(c) == null ) ? null : new TileView(gameBoard.getTile(c),gameBoard.isPickable(c)));
         }
     }
     public Set<Coordinates> getCoords(){

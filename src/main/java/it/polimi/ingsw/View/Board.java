@@ -12,6 +12,7 @@ import it.polimi.ingsw.ModelView.TileView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -71,11 +72,13 @@ public class Board extends ClientManager {
 
     private class ImageManager {
 
-        private static List<ImageIcon>[] tilesIcons = null;
+        private static final List<ImageIcon>[] tilesIcons = new ArrayList[TileColor.values().length];
 
-        protected static List<ImageIcon> getListOfTileImages(TileColor color){
-            if(tilesIcons == null){
-                tilesIcons = new ArrayList[TileColor.values().length];
+        private static final ImageIcon goldenRing = new ImageIcon("visual_components/item tiles/bordo oro.png");
+
+        private static ImageIcon getTileImage(TileColor color,int id,boolean pickable){
+            //initialize the container of the images
+            if(tilesIcons[0] == null){
                 for(TileColor tc : TileColor.values()){
                     tilesIcons[tc.ordinal()] = new ArrayList<>();
                     for(int i=0; i<3; i++){
@@ -83,71 +86,76 @@ public class Board extends ClientManager {
                     }
                 }
             }
+
+            //take the selected tile
+            ImageIcon tile = null;
             for(TileColor tc : TileColor.values()){
-                if(tc.equals(color)) return tilesIcons[tc.ordinal()];
+                if(tc.equals(color)) tile = tilesIcons[tc.ordinal()].get(id);
             }
-            return null;
+            if(tile == null) return null;
+            if(!pickable) return tile;
+
+            //add the golden ring to the tile
+            BufferedImage layeredImage = new BufferedImage(tile.getIconWidth(), tile.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = layeredImage.createGraphics();
+            g2d.drawImage(tile.getImage(), 0, 0, null);
+            g2d.drawImage(goldenRing.getImage(), 0, 0, null);
+            g2d.dispose();
+            return new ImageIcon(layeredImage);
         }
 
-        protected static ImageIcon resizeTileIcon(ImageIcon icon,int width,int height){
+        private static ImageIcon resizeTileIcon(ImageIcon icon,int width,int height){
             Image img = icon.getImage();
             // dimension calculated from the board size (720x720)
             Image newimg = img.getScaledInstance( width, height,  java.awt.Image.SCALE_SMOOTH ) ;
             return new ImageIcon( newimg );
         }
+
+        private static JLabel getVoidLabel(){
+            JLabel label = new JLabel();
+            label.setOpaque(false);
+            return label;
+        }
     }
 
-    private class GameBoardPanel {
-        private Background gameBoardPanel;
-        private List<ImageIcon> tileImages;
-        private Set<Coordinates> coordinatesSet;
-        private Dimension gameBoardDimension;
+    private class GameBoardPanel extends Background{
+        private int width;
+        private int height;
+        private static final int gameBoardDim = 9;
         int numberOfPicks;
 
-        protected GameBoardPanel(){
-            gameBoardDimension = new Dimension(720, 720);
-            gameBoardPanel = new Background("visual_components/boards/livingroom.png");
-            gameBoardPanel.setToolTipText("Game Board");
-            gameBoardPanel.setLayout(new BorderLayout());
-            gameBoardPanel.setPreferredSize(gameBoardDimension); // fixed dimension
-            int borderWidth = 30;   // calculated from board dimension
-            gameBoardPanel.setBorder(BorderFactory.createEmptyBorder(borderWidth, borderWidth + 1, borderWidth, borderWidth + 7));
-            gameBoardPanel.setLayout(new GridLayout(9, 9, 5, 5));    // calculated from board dimension
+        private GameBoardPanel(GameBoardView gameBoard,int width, int height){
+            super("visual_components/boards/livingroom.png");
+            this.width = width;
+            this.height = height;
+            setToolTipText("Board");
+            setPreferredSize(new Dimension(width,height));
+            setBorder(BorderFactory.createEmptyBorder((int)(height/24), (int)(width/23.23), (int)(height/24), (int)(width/19.46)));
+            setLayout(new GridLayout(gameBoardDim, gameBoardDim, (int)(width/144), (int)(height/144)));
 
-            // getting the elements needed to create the button board
-            coordinatesSet = gameBoardView.getCoords();
+            Set<Coordinates> coordinatesSet = gameBoard.getCoords();
+            Coordinates coords;
             numberOfPicks = 0;
-
-            // setting the buttons in the board
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    JButton button = new JButton();
-                    button.setLayout(new FlowLayout());
-                    if(coordinatesSet.contains(new Coordinates(i, j))){
-                        button = getTileButton(gameBoardView.getTile(new Coordinates(i, j)), i, j);
+            for (int i = 0; i < gameBoardDim; i++) {
+                for (int j = 0; j < gameBoardDim; j++) {
+                    coords = new Coordinates(i,j);
+                    if(coordinatesSet.contains(coords) && gameBoard.getTile(coords) != null){
+                        add(getTileButton(gameBoard.getTile(coords), i, j,gameBoard.isPickable(coords)));
                     }else{
-                        button = getVoidButton();
+                        add(ImageManager.getVoidLabel());
                     }
-                    gameBoardPanel.add(button);
                 }
             }
         }
 
-        private JButton getTileButton(TileView tile, int x, int y){
-            ImageIcon icon;
-            TileColor color;
-            int image_id;
-            JButton button = new JButton();
-
-            color = tile.getCOLOR();
-            image_id = tile.getID() % 3;
-            tileImages = ImageManager.getListOfTileImages(color);
-            icon = tileImages.get(image_id);
-            icon = ImageManager.resizeTileIcon(icon,68,68);
-            button.setIcon(icon);
+        private JButton getTileButton(TileView tile, int x, int y,boolean pickable){
+            ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,pickable);
+            JButton button = new JButton(ImageManager.resizeTileIcon(icon,(int)(width/10.59),(int)(height/10.59)));
+            button.setBorderPainted(false);
+            button.setOpaque(false);
             button.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton pressed){
-                    if(gameBoardView.isPickable(new Coordinates(x, y))){
+                    if(pickable){
                         // on every pick check that this tile is on the same line
                         if(numberOfPicks < 3) {
                             numberOfPicks++;
@@ -163,19 +171,6 @@ public class Board extends ClientManager {
             return button;
         }
 
-        private JButton getVoidButton(){
-            JButton button = new JButton();
-            button.setOpaque(false);
-            button.setEnabled(false);
-            button.setBorderPainted(false);
-            button.setFocusPainted(false);
-            button.setContentAreaFilled(false);
-            return button;
-        }
-
-        protected JPanel getGameBoardPanel(){
-            return this.gameBoardPanel;
-        }
     }
 
     private class ShelfPanel extends Background{
@@ -199,21 +194,14 @@ public class Board extends ClientManager {
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
                     if(shelfView.getTile(new Coordinates(i,j)) != null) add(getTileLabel(shelfView.getTile(new Coordinates(i,j))));
-                    else add(getVoidLabel());
+                    else add(ImageManager.getVoidLabel());
                 }
             }
         }
 
         private JLabel getTileLabel(TileView tile){
-            int image_id = tile.getID()%3;
-            ImageIcon ic = ImageManager.getListOfTileImages(tile.getCOLOR()).get(image_id);
+            ImageIcon ic = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
             return new JLabel(ImageManager.resizeTileIcon(ic,(int)(width/7.35),(int)(height/7.35)));
-        }
-
-        private JLabel getVoidLabel(){
-            JLabel label = new JLabel();
-            label.setOpaque(false);
-            return label;
         }
 
     }
@@ -239,8 +227,7 @@ public class Board extends ClientManager {
             setContentPane(background);
 
             //creating the gameBoard Panel
-            gameBoardPanel = new GameBoardPanel();
-            JPanel gameBoard = gameBoardPanel.getGameBoardPanel();
+            GameBoardPanel gameBoard = new GameBoardPanel(gameBoardView,720,720);
             // setting it at the center
             add(gameBoard, BorderLayout.CENTER);
 

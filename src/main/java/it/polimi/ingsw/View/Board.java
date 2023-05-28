@@ -89,10 +89,10 @@ public class Board extends ClientManager {
             return null;
         }
 
-        protected static ImageIcon resizeTileIcon(ImageIcon icon){
+        protected static ImageIcon resizeTileIcon(ImageIcon icon,int width,int height){
             Image img = icon.getImage();
             // dimension calculated from the board size (720x720)
-            Image newimg = img.getScaledInstance( 68, 68,  java.awt.Image.SCALE_SMOOTH ) ;
+            Image newimg = img.getScaledInstance( width, height,  java.awt.Image.SCALE_SMOOTH ) ;
             return new ImageIcon( newimg );
         }
     }
@@ -143,7 +143,7 @@ public class Board extends ClientManager {
             image_id = tile.getID() % 3;
             tileImages = ImageManager.getListOfTileImages(color);
             icon = tileImages.get(image_id);
-            icon = ImageManager.resizeTileIcon(icon);
+            icon = ImageManager.resizeTileIcon(icon,68,68);
             button.setIcon(icon);
             button.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton pressed){
@@ -165,15 +165,11 @@ public class Board extends ClientManager {
 
         private JButton getVoidButton(){
             JButton button = new JButton();
-            button.setLayout(new FlowLayout());
             button.setOpaque(false);
             button.setEnabled(false);
             button.setBorderPainted(false);
             button.setFocusPainted(false);
             button.setContentAreaFilled(false);
-            button.addActionListener(e -> {
-                // Not to be managed
-            });
             return button;
         }
 
@@ -182,45 +178,36 @@ public class Board extends ClientManager {
         }
     }
 
+    private class ShelfPanel extends Background{
+        private int width;
+        private int height;
+        private static final int rows = Shelf.getRows();
+        private static final int cols = Shelf.getColumns();
 
-    private class ShelfPanel{
-        private Background shelfPanel;
-        private Dimension shelfDimension;
+        private ShelfPanel(ShelfView shelfView,String imagePath,String toolTip,int width, int height){
+            super(imagePath);
+            this.width = width;
+            this.height = height;
+            setOpaque(false);
+            setToolTipText(toolTip);
+            setLayout(new BorderLayout());
+            setPreferredSize(new Dimension(width,height));
+            setLayout(new GridLayout(rows, cols, (int)(width/25), (int)(height/62.5)));
+            setBorder(BorderFactory.createEmptyBorder((int)(height/15.625), (int)(width/8.33),
+                    (int)(height/8.77), (int)(width/8.77)));
 
-        private int rows;
-        private int cols;
-
-        protected ShelfPanel(ShelfView shelfView) {
-            shelfDimension = new Dimension(500, 500);
-            shelfPanel = new Background("visual_components/boards/bookshelf_orth.png");
-            shelfPanel.setOpaque(false);
-            shelfPanel.setToolTipText("My Shelf");
-            shelfPanel.setLayout(new BorderLayout());
-            shelfPanel.setPreferredSize(shelfDimension); // fixed dimension
-
-            rows = Shelf.getRows();
-            cols = Shelf.getColumns();
-            shelfPanel.setLayout(new GridLayout(rows, cols, 20, 8));
-            int borderWidth = 30;   // calculated from board dimension
-            shelfPanel.setBorder(BorderFactory.createEmptyBorder(borderWidth + 2, borderWidth * 2,
-                    borderWidth * 2 - 3, borderWidth * 2));
-
-
-            // setting the void buttons in the board
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
-                    if(shelfView.getTile(new Coordinates(i,j)) != null) shelfPanel.add(getTileLabel(shelfView.getTile(new Coordinates(i,j))));
-                    else shelfPanel.add(getVoidLabel());
+                    if(shelfView.getTile(new Coordinates(i,j)) != null) add(getTileLabel(shelfView.getTile(new Coordinates(i,j))));
+                    else add(getVoidLabel());
                 }
             }
-
-
         }
 
         private JLabel getTileLabel(TileView tile){
             int image_id = tile.getID()%3;
             ImageIcon ic = ImageManager.getListOfTileImages(tile.getCOLOR()).get(image_id);
-            return new JLabel(ImageManager.resizeTileIcon(ic));
+            return new JLabel(ImageManager.resizeTileIcon(ic,(int)(width/7.35),(int)(height/7.35)));
         }
 
         private JLabel getVoidLabel(){
@@ -229,9 +216,6 @@ public class Board extends ClientManager {
             return label;
         }
 
-        protected JPanel getShelfPanel(){
-            return this.shelfPanel;
-        }
     }
 
 
@@ -261,8 +245,7 @@ public class Board extends ClientManager {
             add(gameBoard, BorderLayout.CENTER);
 
             //creating the shelfPanel Panel
-            shelfPanel = new ShelfPanel(shelfView);
-            JPanel shelf = shelfPanel.getShelfPanel();
+            ShelfPanel shelf = new ShelfPanel(shelfView,"visual_components/boards/bookshelf_orth.png","My Shelf",500,600);
             //setting it to the center-right
             add(shelf, BorderLayout.EAST);
 

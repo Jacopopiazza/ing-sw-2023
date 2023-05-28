@@ -71,9 +71,7 @@ public class Board extends ClientManager {
     }
 
     private class ImageManager {
-
         private static final List<ImageIcon>[] tilesIcons = new ArrayList[TileColor.values().length];
-
         private static final ImageIcon goldenRing = new ImageIcon("visual_components/item tiles/bordo oro.png");
 
         private static ImageIcon getTileImage(TileColor color,int id,boolean pickable){
@@ -116,6 +114,12 @@ public class Board extends ClientManager {
             label.setOpaque(false);
             return label;
         }
+
+        private static JLabel getTileLabel(TileView tile,int width,int height){
+            ImageIcon ic = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
+            return new JLabel(ImageManager.resizeTileIcon(ic,width,height));
+        }
+
     }
 
     private class GameBoardPanel extends Background{
@@ -140,7 +144,8 @@ public class Board extends ClientManager {
                 for (int j = 0; j < gameBoardDim; j++) {
                     coords = new Coordinates(i,j);
                     if(coordinatesSet.contains(coords) && gameBoard.getTile(coords) != null){
-                        add(getTileButton(gameBoard.getTile(coords), i, j,gameBoard.isPickable(coords)));
+                        if(gameBoard.isPickable(coords)) add(getTileButton(gameBoard.getTile(coords), i, j));
+                        else add(ImageManager.getTileLabel( gameBoard.getTile(coords),(int)(width/10.59),(int)(height/10.59) ));
                     }else{
                         add(ImageManager.getVoidLabel());
                     }
@@ -148,23 +153,19 @@ public class Board extends ClientManager {
             }
         }
 
-        private JButton getTileButton(TileView tile, int x, int y,boolean pickable){
-            ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,pickable);
+        private JButton getTileButton(TileView tile, int x, int y){
+            ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,true);
             JButton button = new JButton(ImageManager.resizeTileIcon(icon,(int)(width/10.59),(int)(height/10.59)));
             button.setBorderPainted(false);
             button.setOpaque(false);
             button.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton pressed){
-                    if(pickable){
-                        // on every pick check that this tile is on the same line
-                        if(numberOfPicks < 3) {
-                            numberOfPicks++;
-                            System.out.println("Pressed " + x + "-" + y);
-                        }else{
-                            System.out.println("Max number of tiles picked!");
-                        }
+                    // on every pick check that this tile is on the same line
+                    if(numberOfPicks < 3) {
+                        numberOfPicks++;
+                        System.out.println("Pressed " + x + "-" + y);
                     }else{
-                        System.out.println("Not Pickable!");
+                        System.out.println("Max number of tiles picked!");
                     }
                 }
             });
@@ -174,15 +175,11 @@ public class Board extends ClientManager {
     }
 
     private class ShelfPanel extends Background{
-        private int width;
-        private int height;
         private static final int rows = Shelf.getRows();
         private static final int cols = Shelf.getColumns();
 
         private ShelfPanel(ShelfView shelfView,String imagePath,String toolTip,int width, int height){
             super(imagePath);
-            this.width = width;
-            this.height = height;
             setOpaque(false);
             setToolTipText(toolTip);
             setLayout(new BorderLayout());
@@ -193,15 +190,10 @@ public class Board extends ClientManager {
 
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
-                    if(shelfView.getTile(new Coordinates(i,j)) != null) add(getTileLabel(shelfView.getTile(new Coordinates(i,j))));
+                    if(shelfView.getTile(new Coordinates(i,j)) != null) add(ImageManager.getTileLabel( shelfView.getTile(new Coordinates(i,j)),(int)(width/7.35),(int)(height/7.35) ));
                     else add(ImageManager.getVoidLabel());
                 }
             }
-        }
-
-        private JLabel getTileLabel(TileView tile){
-            ImageIcon ic = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
-            return new JLabel(ImageManager.resizeTileIcon(ic,(int)(width/7.35),(int)(height/7.35)));
         }
 
     }

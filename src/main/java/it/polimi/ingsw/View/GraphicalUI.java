@@ -470,9 +470,66 @@ public class GraphicalUI extends ClientManager {
 
         }
 
+        private class PrivateGoalPanel extends Background {
+            private PrivateGoalPanel(PrivateGoalView privateGoalView, String imagePath, String toolTip, int width, int height, int pvtGoalIndex){
+                super(imagePath + "Personal_Goals" + pvtGoalIndex + ".png");
+                setOpaque(false);
+                setToolTipText(toolTip);
+                setLayout(new BorderLayout());
+                setPreferredSize(new Dimension(width,height));
+                setLayout(new FlowLayout());
+            }
+
+        }
+
+        private class PublicGoalPanel extends Background {
+            private int displayedScore;
+            private ImageIcon scoreIcon;
+            private JLabel score;
+            private int width;
+            private int height;
+            private PublicGoalPanel(GlobalGoalView ggv, String imagePath, String toolTip, int width, int height, int commonGoalCard){
+                super(imagePath + commonGoalCard + ".jpg");
+                this.width = width;
+                this.height = height;
+                setPreferredSize(new Dimension(this.width, this.height));
+                setLayout(new BorderLayout());
+                setOpaque(false);
+                setToolTipText(toolTip);
+                setLayout(new BorderLayout());
+                setLayout(new FlowLayout());
+
+                // add the scorecard
+                score = new JLabel();
+                this.displayedScore = ggv.getCurrentScore();
+
+                if(displayedScore > 0){
+                    scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + displayedScore + ".jpg");
+                }else{
+                    scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_EMPTY.jpg");
+                }
+
+                // rotate
+                scoreIcon = ImageManager.rotateImageIcon(scoreIcon, -7);
+
+                score.setToolTipText("Score");
+                add(score);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g){
+                super.paintComponent(g);
+                scoreIcon = ImageManager.resizeImageIcon(scoreIcon, (int) (width/3.675), (int) (height/2.45));
+                g.drawImage(scoreIcon.getImage(), (int)(width/1.65), (int)(height/3.8), this);
+            }
+
+        }
+
         private GameBoardPanel gameBoardPanel;
         private ShelfPanel myShelf;
         private ShelfPanel[] othersSelves;
+        private PrivateGoalPanel privateGoalPanel;
+        private PublicGoalPanel publicGoalPanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -501,6 +558,8 @@ public class GraphicalUI extends ClientManager {
             for(PlayerView p : gameView.getPlayers()){
                 if(p.getUsername().equals(username)){
                     myShelf = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
+                    // the index of the private goal (last param) is random at the moment -> to be implemented in config
+                    privateGoalPanel = new PrivateGoalPanel(p.getPrivateGoal(), "visual_components/personal goal cards/", "My Private Goals", 200, 300, 1);
                     background.add(myShelf,BorderLayout.SOUTH);
                 }
                 else{
@@ -510,8 +569,17 @@ public class GraphicalUI extends ClientManager {
                 }
             }
 
-            //creating the privateGoalPanel Panel
-            //setting it to the center-left
+            // creating the Panel containing private and global Goals
+            JPanel goals = new JPanel();
+            goals.setOpaque(false);
+            goals.setLayout(new BoxLayout(shelves,BoxLayout.PAGE_AXIS));
+            background.add(goals ,BorderLayout.EAST);
+            // adding the content
+            goals.add(privateGoalPanel);
+            // the index of the public goal (last param) is random at the moment -> to be implemented in config
+            publicGoalPanel = new PublicGoalPanel(gameView.getGlobalGoals()[0], "visual_components/common goal cards/", "Common Goal", 300, 200, 3);
+            goals.add(publicGoalPanel);
+            add(goals, BorderLayout.EAST);
 
             pack();
             setVisible(true);

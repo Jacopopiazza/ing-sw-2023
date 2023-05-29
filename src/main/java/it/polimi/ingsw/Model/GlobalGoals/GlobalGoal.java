@@ -10,9 +10,9 @@ import java.util.*;
 public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;
 
-    protected final String name;
+    protected final int id;
 
-    protected GlobalGoal(int people, String name) throws InvalidNumberOfPlayersException {
+    protected GlobalGoal(int people, int id) throws InvalidNumberOfPlayersException {
         if( ( people < 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
             throw new InvalidNumberOfPlayersException();
         }
@@ -25,18 +25,23 @@ public abstract class GlobalGoal implements Cloneable {
             if( people >= ggp.players() ) scores.push(ggp.score());
         }
 
-        this.name = name;
+        this.id = id;
 
     }
 
     public abstract boolean check(Shelf s) throws MissingShelfException;
 
     public GlobalGoalView getView(){
-        return new GlobalGoalView(this);
+        try {
+            return new GlobalGoalView(this.clone());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     public int popScore() throws EmptyStackException{

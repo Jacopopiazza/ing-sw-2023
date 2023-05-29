@@ -12,7 +12,7 @@ public class Rows extends GlobalGoal {
     private final int differentTilesPerRow;
 
     public Rows(int people, boolean equal, int numOfRows, int differentTilesPerRow) throws InvalidNumberOfPlayersException {
-        super(people, "Rows");
+        super(people, equal ? 7 : 6);
         this.equal=equal;
         this.numOfRows=numOfRows;
         this.differentTilesPerRow=differentTilesPerRow;

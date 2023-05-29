@@ -7,7 +7,7 @@ import it.polimi.ingsw.Model.TileColor;
 
 public class EightTiles extends GlobalGoal {
     public EightTiles(int people) throws InvalidNumberOfPlayersException {
-        super(people, "EightTiles");
+        super(people, 9);
     }
 
     @Override

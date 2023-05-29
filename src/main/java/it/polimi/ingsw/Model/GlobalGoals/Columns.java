@@ -11,7 +11,7 @@ public class Columns extends GlobalGoal {
     private final int differentTilesPerColumn;
 
     public Columns(int people, boolean equal, int numOfColumns, int differentTilesPerColumn) throws InvalidNumberOfPlayersException {
-        super(people, "Columns");
+        super(people, equal ? 5 : 2);
         this.equal=equal;
         this.numOfColumns=numOfColumns;
         this.differentTilesPerColumn=differentTilesPerColumn;

@@ -6,7 +6,7 @@ import it.polimi.ingsw.Exceptions.*;
 
 public class Stair extends GlobalGoal {
     public Stair(int people) throws InvalidNumberOfPlayersException {
-        super(people, "Stair");
+        super(people, 12);
     }
 
     // Five columns with asc/desc height:

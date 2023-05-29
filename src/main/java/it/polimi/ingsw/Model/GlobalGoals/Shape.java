@@ -14,7 +14,7 @@ public class Shape extends GlobalGoal {
     List<List<Coordinates>> shapes;
 
     public Shape(int people, List<List<Coordinates>> s) throws InvalidNumberOfPlayersException {
-        super(people, myName(s));
+        super(people, myId(s));
         shapes = new ArrayList<List<Coordinates>>();
         List<Coordinates> shape;
         for( List<Coordinates> l : s ){
@@ -65,9 +65,8 @@ public class Shape extends GlobalGoal {
         return false;
     }
 
-    private static String myName(List<List<Coordinates>> shape) {
+    private static int myId(List<List<Coordinates>> shape) {
         // To add a new Shape Global Goal, add its name to the names[] and "Check if it's ..."
-        String names[] = {"Diagonal", "XShape"};
         boolean mayBe;
         boolean tempFlag;
 
@@ -80,7 +79,7 @@ public class Shape extends GlobalGoal {
             }
             if( !tempFlag ) mayBe = false;
         }
-        if( mayBe ) return "Diagonal";
+        if( mayBe ) return 11;
 
         // Check if it's XShape
         mayBe = true;
@@ -91,8 +90,8 @@ public class Shape extends GlobalGoal {
             }
             if( !tempFlag ) mayBe = false;
         }
-        if( mayBe ) return "XShape";
+        if( mayBe ) return 10;
 
-        return "UnimplementedShape";
+        return -1;
     }
 }

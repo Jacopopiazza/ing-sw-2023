@@ -4,7 +4,6 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Tile;
-import it.polimi.ingsw.Model.Utilities.NumberToWord;
 
 public class GroupOfTiles extends GlobalGoal {
 
@@ -12,7 +11,7 @@ public class GroupOfTiles extends GlobalGoal {
     private final int numOfGroups;
 
     public GroupOfTiles(int people, int groupDim, int numOfGroups) throws InvalidNumberOfPlayersException {
-        super(people, myName(groupDim));
+        super(people, myId(groupDim));
         this.groupDim=groupDim;
         this.numOfGroups=numOfGroups;
     }
@@ -81,8 +80,10 @@ public class GroupOfTiles extends GlobalGoal {
         return res;
     }
 
-    private static String myName( int g ){
-        return "GroupOf" + NumberToWord.getWord(Integer.toString(g).toCharArray()) + "Tiles";
+    private static int myId(int g ){
+        if(g == 2) return 4;
+        if(g == 4) return 3;
+        return -1;
     }
 
 

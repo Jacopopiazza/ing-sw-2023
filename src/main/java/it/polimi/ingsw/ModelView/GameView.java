@@ -32,7 +32,7 @@ public class GameView implements Serializable {
             this.goals = new GlobalGoalView[Config.getInstance().getNumOfGlobalGoals()];
             try {
                 for(int i = 0; i < game.getGoals().length; i++)
-                    this.goals[i] = new GlobalGoalView(game.getGoals()[i]);
+                    this.goals[i] = game.getGoals()[i].getView();
             } catch (CloneNotSupportedException e){
                 e.printStackTrace();
             }
@@ -94,7 +94,7 @@ public class GameView implements Serializable {
         if(goals != null){
             this.goals = new GlobalGoalView[goals.length];
             for(int i = 0; i < goals.length; i++)
-                this.goals[i] = new GlobalGoalView(goals[i]);
+                this.goals[i] = goals[i].getView();
         }
         else this.goals = null;
     }

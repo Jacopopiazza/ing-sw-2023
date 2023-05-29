@@ -4,34 +4,30 @@ import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
 
 import java.io.Serializable;
 import java.util.EmptyStackException;
-import java.util.Stack;
 
 public class GlobalGoalView implements Serializable {
 
-    private final Stack<Integer> scores;
-    private final String name;
+    private final int score;
+    private final int id;
 
     public GlobalGoalView(GlobalGoal gg){
-        scores = new Stack<>();
-        Stack<Integer> temp = new Stack<>();
-
+        int temp;
         try {
-            while(true) temp.push(gg.popScore());
+            temp = gg.popScore();
         } catch (EmptyStackException e) {
+            temp = 0;
         }
+        score = temp;
 
-        try {
-            while(true) scores.push(temp.pop());
-        } catch (EmptyStackException e) {
-        }
-
-        name = gg.getName();
+        id = gg.getId();
     }
 
     public int getCurrentScore(){
-        if( scores.empty() )
-            return 0;
-        return this.scores.peek();
+        return score;
+    }
+
+    public int getId(){
+        return id;
     }
 
 }

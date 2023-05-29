@@ -6,7 +6,7 @@ import it.polimi.ingsw.Exceptions.*;
 
 public class Angles extends GlobalGoal {
     public Angles(int people) throws InvalidNumberOfPlayersException {
-        super(people, "Angles");
+        super(people, 8);
     }
 
     @Override

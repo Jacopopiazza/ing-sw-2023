@@ -7,42 +7,80 @@ import it.polimi.ingsw.ModelView.GameBoardView;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The GameBoard class represents the game board in the game.
+ */
 public class GameBoard {
-    private Map<Coordinates,Tile> board;
+    private Map<Coordinates, Tile> board;  // The tiles on the game board
 
-    public GameBoard(int people) throws InvalidNumberOfPlayersException{
-        if( people > Config.getInstance().getMaxNumberOfPlayers() ) {
+    /**
+     * Constructs a game board with the specified number of players.
+     *
+     * @param numberOfPlayers the number of players in the game
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid
+     */
+    public GameBoard(int numberOfPlayers) throws InvalidNumberOfPlayersException{
+        if( numberOfPlayers > Config.getInstance().getMaxNumberOfPlayers() ) {
             throw new InvalidNumberOfPlayersException();
         }
 
         board = new HashMap<>();
-        List<Coordinates> a = Config.getInstance().getGameBoardCoordinates(people);
+        List<Coordinates> a = Config.getInstance().getGameBoardCoordinates(numberOfPlayers);
         for( Coordinates coords : a )
             board.put(coords.clone(), null);
     }
 
+    /**
+     * Gets the view representation of the game board.
+     *
+     * @return the game board view
+     */
     public GameBoardView getView() {
         return new GameBoardView(this);
     }
 
+    /**
+     * Gets the coordinates on the game board.
+     *
+     * @return a set of coordinates
+     */
     public Set<Coordinates> getCoords() {
         return Collections.unmodifiableSet(board.keySet());
     }
 
-    public Tile getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException{
-        if( !board.containsKey(c) ) {
+    /**
+     * Gets the tile at the specified coordinates on the game board.
+     *
+     * @param coordinates the coordinates of the tile
+     * @return the tile at the specified coordinates, or null if there is no tile
+     * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid
+     */
+    public Tile getTile(Coordinates coordinates) throws InvalidCoordinatesForCurrentGameException{
+        if( !board.containsKey(coordinates) ) {
             throw new InvalidCoordinatesForCurrentGameException();
         }
-        return board.get(c) != null ? board.get(c).clone() : null;
+        return board.get(coordinates) != null ? board.get(coordinates).clone() : null;
     }
 
-    public void setTile(Coordinates c, Tile t) throws InvalidCoordinatesForCurrentGameException{
-        if( !board.containsKey(c) ) {
+    /**
+     * Sets the tile at the specified coordinates on the game board.
+     *
+     * @param coordinates the coordinates of the tile
+     * @param tile        the tile to set
+     * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid
+     */
+    public void setTile(Coordinates coordinates, Tile tile) throws InvalidCoordinatesForCurrentGameException{
+        if( !board.containsKey(coordinates) ) {
             throw new InvalidCoordinatesForCurrentGameException();
         }
-        board.put(c, ( t == null ) ? null : t.clone() );
+        board.put(coordinates, ( tile == null ) ? null : tile.clone() );
     }
 
+    /**
+     * Checks if the game board needs to be refilled with tiles.
+     *
+     * @return true if the game board needs to be refilled, false otherwise
+     */
     public boolean toRefill() {
         Coordinates up, down, right, left;
         boolean notYet;
@@ -68,8 +106,16 @@ public class GameBoard {
         return true;
     }
 
-    public static int checkBoardGoal(Shelf s) throws MissingShelfException, ColumnOutOfBoundsException {
-        if( s == null ) {
+    /**
+     * Checks the score for the board goals based on the tiles in the player's shelf.
+     *
+     * @param shelf the player's shelf
+     * @return the total score based on the board goals
+     * @throws MissingShelfException       if the shelf is missing
+     * @throws ColumnOutOfBoundsException if the column index is out of bounds
+     */
+    public static int checkBoardGoal(Shelf shelf) throws MissingShelfException, ColumnOutOfBoundsException {
+        if( shelf == null ) {
             throw new MissingShelfException();
         }
 
@@ -90,7 +136,7 @@ public class GameBoard {
         for( int i = 0; i < r; i++ ) {
             for( int j = 0; j < c; j++ ) {
                 if( checked[i][j] == false ) {
-                    currentGroup = checkFromThisTile(s, new Coordinates(i,j), checked);
+                    currentGroup = checkFromThisTile(shelf, new Coordinates(i,j), checked);
                     for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ) {
                         if( currentGroup == t.tiles() ) totalScore += t.score();
                     }
@@ -104,8 +150,16 @@ public class GameBoard {
         return totalScore;
     }
 
-    private static int checkFromThisTile(Shelf s, Coordinates coord, boolean[][] checked) {
-        Tile t = s.getTile(coord);
+    /**
+     * Recursively checks the number of tiles connected to the given tile on the player's shelf.
+     *
+     * @param shelf   the player's shelf
+     * @param coord   the coordinates of the tile to check
+     * @param checked a 2D boolean array to keep track of checked tiles
+     * @return the number of connected tiles
+     */
+    private static int checkFromThisTile(Shelf shelf, Coordinates coord, boolean[][] checked) {
+        Tile t = shelf.getTile(coord);
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
         int i = coord.getROW();
@@ -118,43 +172,50 @@ public class GameBoard {
 
         //checking the Tile above this one
         if( i>0 && ( checked[i-1][j] == false ) ) {
-            temp = s.getTile(new Coordinates(i-1,j));
-            if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i-1,j),checked);
+            temp = shelf.getTile(new Coordinates(i-1,j));
+            if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i-1,j),checked);
         }
 
         //checking the Tile under this one
         if( ( i < r-1 ) && ( checked[i+1][j] == false ) ) {
-            temp = s.getTile(new Coordinates(i+1,j));
-            if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i+1,j),checked);
+            temp = shelf.getTile(new Coordinates(i+1,j));
+            if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i+1,j),checked);
         }
 
         //checking the Tile to the left of this one
         if( j>0 && checked[i][j-1] == false ) {
-            temp = s.getTile(new Coordinates(i,j-1));
-            if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i,j-1),checked);
+            temp = shelf.getTile(new Coordinates(i,j-1));
+            if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i,j-1),checked);
         }
 
         //checking the Tile to the right of this one
         if( ( j < c-1 ) && ( checked[i][j+1] == false ) ) {
-            temp = s.getTile(new Coordinates(i,j+1));
-            if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(s,new Coordinates(i,j+1),checked);
+            temp = shelf.getTile(new Coordinates(i,j+1));
+            if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i,j+1),checked);
         }
 
         return res;
     }
 
-    public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
-        if( !board.containsKey(c) ) {
+    /**
+     * Checks if a tile at the given coordinates is pickable.
+     *
+     * @param coordinates the coordinates of the tile
+     * @return true if the tile is pickable, false otherwise
+     * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid
+     */
+    public boolean isPickable(Coordinates coordinates) throws InvalidCoordinatesForCurrentGameException {
+        if( !board.containsKey(coordinates) ) {
             throw new InvalidCoordinatesForCurrentGameException();
         }
 
         Coordinates up, down, right, left;
-        up = new Coordinates(c.getROW(), c.getCOL() - 1);
-        down = new Coordinates(c.getROW(), c.getCOL() + 1);
-        right = new Coordinates(c.getROW() + 1, c.getCOL());
-        left = new Coordinates(c.getROW() - 1, c.getCOL());
+        up = new Coordinates(coordinates.getROW(), coordinates.getCOL() - 1);
+        down = new Coordinates(coordinates.getROW(), coordinates.getCOL() + 1);
+        right = new Coordinates(coordinates.getROW() + 1, coordinates.getCOL());
+        left = new Coordinates(coordinates.getROW() - 1, coordinates.getCOL());
 
-        if( board.get(c) == null ) return false;
+        if( board.get(coordinates) == null ) return false;
 
         if( !board.containsKey(up) || ( board.get(up) == null ) ) return true;
         if( !board.containsKey(down) || ( board.get(down) == null ) ) return true;
@@ -164,6 +225,12 @@ public class GameBoard {
         return false;
     }
 
+    /**
+     * Checks if the chosen tiles meet the required conditions.
+     *
+     * @param chosenTiles the coordinates of the chosen tiles
+     * @return true if the chosen tiles are valid, false otherwise
+     */
     public boolean checkChosenTiles(Coordinates[] chosenTiles) {
         //checking that the length of the array is at most 3
         if(chosenTiles.length > 3) return false;

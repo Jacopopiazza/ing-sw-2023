@@ -4,20 +4,34 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
 
 import java.util.*;
-
+/**
+ * The PrivateGoal class represents a private goal card in the game.
+ */
 public final class PrivateGoal {
-    private Coordinates[] coords;
+    private Coordinates[] coords;   // The coordinates associated with the private goal
 
     private PrivateGoal(Coordinates[] coords) {
         this.coords = coords.clone();
     }
 
+    /**
+     * Gets the coordinates associated with the private goal.
+     *
+     * @return an array of coordinates representing the private goal
+     */
     public Coordinates[] getCoordinates() {
         Coordinates[] temp = new Coordinates[coords.length];
         for(int i =0; i< coords.length;i++) temp[i] = coords[i].clone();
         return temp;
     }
 
+    /**
+     * Generates and returns an array of private goals based on the number of players.
+     *
+     * @param people the number of players
+     * @return an array of private goals
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid
+     */
     public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException {
         if( ( people <= 0 ) || ( people > Config.getInstance().getMaxNumberOfPlayers() ) ) {
             throw new InvalidNumberOfPlayersException();
@@ -34,7 +48,14 @@ public final class PrivateGoal {
         return retValue;
     }
 
-
+    /**
+     * Checks the tiles on the shelf for this private goal.
+     *
+     * @param shelf the shelf to check
+     * @return the score based on the correctness of the tiles
+     * @throws MissingShelfException       if the shelf is missing
+     * @throws ColumnOutOfBoundsException if the column index is out of bounds
+     */
     public int check(Shelf shelf) throws MissingShelfException, ColumnOutOfBoundsException {
         if( shelf == null ) {
             throw new MissingShelfException("Missing shelf");

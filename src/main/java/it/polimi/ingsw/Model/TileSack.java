@@ -6,21 +6,34 @@ import it.polimi.ingsw.ModelView.TileSackView;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * The TileSack class represents a sack of tiles in the game.
+ * It keeps track of the remaining tiles of each color and provides methods to retrieve and remove tiles from the sack.
+ */
 public class TileSack {
     private int[] remaining;                                    // Index is the corresponding color in TileColor
     private final static int LEN = TileColor.values().length;   // length of the array
 
+    /**
+     * Constructs a new TileSack object with the initial number of tiles per color.
+     */
     public TileSack() {
         remaining = new int[LEN];
         // initialize the array with the maximum value for every element
         for( int i = 0; i < LEN; i++ ) remaining[i] = Config.getInstance().getNumOfTilesPerColor();
     }
-
+    /**
+     * Constructs a new TileSack object with the initial number of tiles per color.
+     */
     public TileSackView getView() {
         return new TileSackView(this);
     }
 
-    // Generate a Tile with a random color and pops it from the sack
+    /**
+     * Generates a random tile color and removes it from the sack.
+     *
+     * @return the Tile object with the random color, or null if the sack is empty.
+     */
     public Tile pop() {
         int random_color_index = 0;
 
@@ -43,6 +56,11 @@ public class TileSack {
         return null;
     }
 
+    /**
+     * Gets the array of remaining tiles for each color.
+     *
+     * @return an array of integers representing the remaining tiles for each color.
+     */
     public int[] getRemaining() {
         return this.remaining;
     }

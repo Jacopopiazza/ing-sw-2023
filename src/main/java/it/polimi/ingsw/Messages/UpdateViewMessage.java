@@ -10,4 +10,6 @@ public class UpdateViewMessage implements Message, Serializable {
     public UpdateViewMessage(GameView gv) {
         this.gameView = gv;
     }
+
+    public GameView getGameView(){return gameView;}
 }

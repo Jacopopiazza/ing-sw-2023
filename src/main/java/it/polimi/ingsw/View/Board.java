@@ -12,6 +12,7 @@ import it.polimi.ingsw.ModelView.TileView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,11 @@ public class Board extends ClientManager {
             backgroundImage = new ImageIcon(imagePath).getImage();
         }
 
+        private Background(Image image){
+            super();
+            backgroundImage = image;
+        }
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -102,11 +108,35 @@ public class Board extends ClientManager {
             return new ImageIcon(layeredImage);
         }
 
-        private static ImageIcon resizeTileIcon(ImageIcon icon,int width,int height){
+        private static ImageIcon resizeImageIcon(ImageIcon icon, int width, int height){
             Image img = icon.getImage();
-            // dimension calculated from the board size (720x720)
             Image newimg = img.getScaledInstance( width, height,  java.awt.Image.SCALE_SMOOTH ) ;
             return new ImageIcon( newimg );
+        }
+
+        private static ImageIcon rotateImageIcon(ImageIcon imageIcon, double degrees) {
+            Image image = imageIcon.getImage();
+            int width = image.getWidth(null);
+            int height = image.getHeight(null);
+
+            double radians = Math.toRadians(degrees);
+            double sin = Math.abs(Math.sin(radians));
+            double cos = Math.abs(Math.cos(radians));
+
+            int newWidth = (int) Math.round(width * cos + height * sin);
+            int newHeight = (int) Math.round(height * cos + width * sin);
+
+            BufferedImage rotatedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = rotatedImage.createGraphics();
+
+            AffineTransform transform = new AffineTransform();
+            transform.translate((newWidth - width) / 2, (newHeight - height) / 2);
+            transform.rotate(radians, width / 2, height / 2);
+            g2d.drawImage(image, transform, null);
+            g2d.dispose();
+
+
+            return new ImageIcon(rotatedImage);
         }
 
         private static JLabel getVoidLabel(){
@@ -117,19 +147,23 @@ public class Board extends ClientManager {
 
         private static JLabel getTileLabel(TileView tile,int width,int height){
             ImageIcon ic = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
-            return new JLabel(ImageManager.resizeTileIcon(ic,width,height));
+            return new JLabel(ImageManager.resizeImageIcon(ic,width,height));
         }
 
     }
 
     private class GameBoardPanel extends Background{
+        private final static ImageIcon victoryToken = new ImageIcon("visual_components/scoring tokens/end game.jpg");
+        private final static ImageIcon boardIcon = new ImageIcon("visual_components/boards/livingroom.png");
         private int width;
         private int height;
         private static final int gameBoardDim = 9;
-        int numberOfPicks;
+        private boolean isFinished;
+        private int numberOfPicks;
 
-        private GameBoardPanel(GameBoardView gameBoard,int width, int height){
-            super("visual_components/boards/livingroom.png");
+        private GameBoardPanel(GameBoardView gameBoard,int width, int height,boolean isFinished){
+            super(boardIcon.getImage());
+            this.isFinished = isFinished;
             this.width = width;
             this.height = height;
             setToolTipText("Board");
@@ -155,7 +189,7 @@ public class Board extends ClientManager {
 
         private JButton getTileButton(TileView tile, int x, int y){
             ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,true);
-            JButton button = new JButton(ImageManager.resizeTileIcon(icon,(int)(width/10.59),(int)(height/10.59)));
+            JButton button = new JButton(ImageManager.resizeImageIcon(icon,(int)(width/10.59),(int)(height/10.59)));
             button.setBorderPainted(false);
             button.setOpaque(false);
             button.addActionListener((e) -> {
@@ -172,6 +206,14 @@ public class Board extends ClientManager {
             return button;
         }
 
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if(isFinished) return;
+            ImageIcon token = ImageManager.rotateImageIcon(victoryToken,9.5);
+            token = ImageManager.resizeImageIcon(token,(int)(width/9.5),(int)(height/9.5));
+            g.drawImage(token.getImage(),(int)(width/1.235),(int)(height/1.434),this);
+        }
     }
 
     private class ShelfPanel extends Background{
@@ -219,7 +261,7 @@ public class Board extends ClientManager {
             setContentPane(background);
 
             //creating the gameBoard Panel
-            GameBoardPanel gameBoard = new GameBoardPanel(gameBoardView,720,720);
+            GameBoardPanel gameBoard = new GameBoardPanel(gameBoardView,720,720,false);
             // setting it at the center
             add(gameBoard, BorderLayout.CENTER);
 

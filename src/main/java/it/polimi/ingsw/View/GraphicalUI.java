@@ -572,14 +572,14 @@ public class GraphicalUI extends ClientManager {
             // creating the Panel containing private and global Goals
             JPanel goals = new JPanel();
             goals.setOpaque(false);
-            goals.setLayout(new BoxLayout(shelves,BoxLayout.PAGE_AXIS));
+            goals.setLayout(new BoxLayout(goals, BoxLayout.PAGE_AXIS));
             background.add(goals ,BorderLayout.EAST);
             // adding the content
             goals.add(privateGoalPanel);
             // the index of the public goal (last param) is random at the moment -> to be implemented in config
             publicGoalPanel = new PublicGoalPanel(gameView.getGlobalGoals()[0], "visual_components/common goal cards/", "Common Goal", 300, 200, 3);
             goals.add(publicGoalPanel);
-            add(goals, BorderLayout.EAST);
+            background.add(goals, BorderLayout.EAST);
 
             pack();
             setVisible(true);

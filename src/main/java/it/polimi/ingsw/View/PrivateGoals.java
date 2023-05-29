@@ -2,12 +2,9 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Exceptions.InvalidNumberOfPlayersException;
-import it.polimi.ingsw.Exceptions.MissingShelfException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.*;
-import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
 import it.polimi.ingsw.ModelView.*;
 
 import javax.swing.*;
@@ -18,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class Board extends ClientManager {
+public class PrivateGoals extends ClientManager{
+
     Game game = new Game(4);// Instanciated just for try
     GameBoardView gameBoardView;
     ShelfView shelfView;
     PrivateGoalView privateGoalView;
 
     GlobalGoalView globalGoalView;
-    public Board() {
+    public PrivateGoals() {
         game.addPlayer("a", (message -> System.out.println("ciao")));
         game.addPlayer("b", (message -> System.out.println("ciao")));
         game.addPlayer("c", (message -> System.out.println("ciao")));
@@ -52,13 +50,12 @@ public class Board extends ClientManager {
         privateGoalView = new PrivateGoalView(game.getPlayer(0).getPrivateGoal());
         try {
             globalGoalView = new GlobalGoalView(game.getGoals()[0]);
-        }catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-
     }
 
-    public Board(GameBoardView gameBoardView, ShelfView shelfView, PrivateGoalView privateGoalView){
+    public PrivateGoals(GameBoardView gameBoardView, ShelfView shelfView, PrivateGoalView privateGoalView){
         this.gameBoardView = gameBoardView;
         this.shelfView = shelfView;
         this.privateGoalView = privateGoalView;
@@ -70,11 +67,6 @@ public class Board extends ClientManager {
         private Background(String imagePath){
             super();
             backgroundImage = new ImageIcon(imagePath).getImage();
-        }
-
-        private Background(Image image){
-            super();
-            backgroundImage = image;
         }
 
         @Override
@@ -116,8 +108,9 @@ public class Board extends ClientManager {
             return new ImageIcon(layeredImage);
         }
 
-        private static ImageIcon resizeImageIcon(ImageIcon icon, int width, int height){
+        private static ImageIcon resizeIcon(ImageIcon icon, int width, int height){
             Image img = icon.getImage();
+            // dimension calculated from the board size (720x720)
             Image newimg = img.getScaledInstance( width, height,  java.awt.Image.SCALE_SMOOTH ) ;
             return new ImageIcon( newimg );
         }
@@ -153,25 +146,21 @@ public class Board extends ClientManager {
             return label;
         }
 
-        private static JLabel getTileLabel(TileView tile,int width,int height){
+        private static JLabel getTileLabel(TileView tile, int width, int height){
             ImageIcon ic = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
-            return new JLabel(ImageManager.resizeImageIcon(ic,width,height));
+            return new JLabel(ImageManager.resizeIcon(ic,width,height));
         }
 
     }
 
     private class GameBoardPanel extends Background{
-        private final static ImageIcon victoryToken = new ImageIcon("visual_components/scoring tokens/end game.jpg");
-        private final static ImageIcon boardIcon = new ImageIcon("visual_components/boards/livingroom.png");
         private int width;
         private int height;
         private static final int gameBoardDim = 9;
-        private boolean isFinished;
-        private int numberOfPicks;
+        int numberOfPicks;
 
-        private GameBoardPanel(GameBoardView gameBoard,int width, int height,boolean isFinished){
-            super(boardIcon.getImage());
-            this.isFinished = isFinished;
+        private GameBoardPanel(GameBoardView gameBoard,int width, int height){
+            super("visual_components/boards/livingroom.png");
             this.width = width;
             this.height = height;
             setToolTipText("Board");
@@ -197,7 +186,7 @@ public class Board extends ClientManager {
 
         private JButton getTileButton(TileView tile, int x, int y){
             ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,true);
-            JButton button = new JButton(ImageManager.resizeImageIcon(icon,(int)(width/10.59),(int)(height/10.59)));
+            JButton button = new JButton(ImageManager.resizeIcon(icon,(int)(width/10.59),(int)(height/10.59)));
             button.setBorderPainted(false);
             button.setOpaque(false);
             button.addActionListener((e) -> {
@@ -214,14 +203,6 @@ public class Board extends ClientManager {
             return button;
         }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if(isFinished) return;
-            ImageIcon token = ImageManager.rotateImageIcon(victoryToken,9.5);
-            token = ImageManager.resizeImageIcon(token,(int)(width/9.5),(int)(height/9.5));
-            g.drawImage(token.getImage(),(int)(width/1.235),(int)(height/1.434),this);
-        }
     }
 
     private class ShelfPanel extends Background{
@@ -249,8 +230,8 @@ public class Board extends ClientManager {
     }
 
 
-    private class PrivateGoalPanel extends Background {
-        private PrivateGoalPanel(PrivateGoalView privateGoalView, String imagePath, String toolTip, int width, int height, int pvtGoalIndex){
+    private class PrivateGoalPanel extends Background{
+        private PrivateGoalPanel(String imagePath, String toolTip, int width, int height, int pvtGoalIndex){
             super(imagePath + "Personal_Goals" + pvtGoalIndex + ".png");
             setOpaque(false);
             setToolTipText(toolTip);
@@ -261,13 +242,14 @@ public class Board extends ClientManager {
 
     }
 
-    private class PublicGoalPanel extends Background {
+
+    private class PublicGoalPanel extends Background{
         private int displayedScore;
         private ImageIcon scoreIcon;
         private JLabel score;
         private int width;
         private int height;
-        private PublicGoalPanel(GlobalGoalView ggv, String imagePath, String toolTip, int width, int height, int commonGoalCard){
+        private PublicGoalPanel(GlobalGoalView globalGoalView1, String imagePath, String toolTip, int width, int height, int commonGoalCard){
             super(imagePath + commonGoalCard + ".jpg");
             this.width = width;
             this.height = height;
@@ -280,7 +262,7 @@ public class Board extends ClientManager {
 
             // add the scorecard
             score = new JLabel();
-            this.displayedScore = ggv.getCurrentScore();
+            this.displayedScore = globalGoalView.getCurrentScore();
 
             if(displayedScore > 0){
                 scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + displayedScore + ".jpg");
@@ -298,18 +280,16 @@ public class Board extends ClientManager {
         @Override
         protected void paintComponent(Graphics g){
             super.paintComponent(g);
-            scoreIcon = ImageManager.resizeImageIcon(scoreIcon, (int) (width/3.675), (int) (height/2.45));
+            scoreIcon = ImageManager.resizeIcon(scoreIcon, (int) (width/3.675), (int) (height/2.45));
             g.drawImage(scoreIcon.getImage(), (int)(width/1.65), (int)(height/3.8), this);
         }
 
     }
 
-
     private class GameWindow extends JFrame{
         GameBoardPanel gameBoardPanel;
         ShelfPanel shelfPanel;
         PrivateGoalPanel privateGoalPanel;
-
         PublicGoalPanel publicGoalPanel;
         private GameWindow(){
             super("My Shelfie");
@@ -318,13 +298,13 @@ public class Board extends ClientManager {
             setLocationRelativeTo(null);    // in the middle of the screen
 
             //creating the privateGoalPanel Panel
-            privateGoalPanel = new PrivateGoalPanel(privateGoalView, "visual_components/personal goal cards/", "My Private Goals", 200, 300, 1);
+            privateGoalPanel = new PrivateGoalPanel("visual_components/personal goal cards/", "My Private Goals", 200, 300, 1);
 
             //creating the publicGoalsPanel Panel
-            publicGoalPanel = new PublicGoalPanel(globalGoalView, "visual_components/common goal cards/", "Common Goal", 300, 200, 3);
+            publicGoalPanel = new PublicGoalPanel(null, "visual_components/common goal cards/", "Common Goal", 300, 200, 3);
 
             //creating the gameBoard Panel
-            gameBoardPanel = new GameBoardPanel(gameBoardView,720,720, false);
+            gameBoardPanel = new GameBoardPanel(gameBoardView,720,720);
 
             //creating the shelfPanel Panel
             shelfPanel = new ShelfPanel(shelfView,"visual_components/boards/bookshelf_orth.png","My Shelf",500,600);
@@ -341,7 +321,6 @@ public class Board extends ClientManager {
             setContentPane(scrollPane);
             //pack();
             setVisible(true);
-
         }
     }
 
@@ -355,3 +334,4 @@ public class Board extends ClientManager {
         GameWindow gameWindow = new GameWindow();
     }
 }
+

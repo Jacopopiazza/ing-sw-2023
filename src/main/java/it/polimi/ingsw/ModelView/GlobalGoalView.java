@@ -26,7 +26,12 @@ public class GlobalGoalView implements Serializable {
         }
 
         name = gg.getName();
+    }
 
+    public int getCurrentScore(){
+        if( scores.empty() )
+            return 0;
+        return this.scores.peek();
     }
 
 }

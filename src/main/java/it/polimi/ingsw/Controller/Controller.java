@@ -8,6 +8,9 @@ import it.polimi.ingsw.Network.GameServer;
 
 import java.util.*;
 
+/**
+ * The Controller class handles the game logic and manages player actions.
+ */
 public class Controller  {
     private GameServer gameServer;
     private Game model;
@@ -15,6 +18,10 @@ public class Controller  {
     private boolean lastPlayerHasAlreadyDoneTheTurn;
     private final Timer timer = new Timer();
 
+    /**
+     * A TimerTask that runs when the timer expires. It cancels the timer, sets the current player as the winner,
+     * retrieves the list of player usernames, and notifies the server to delete the game.
+     */
     private final TimerTask task = new TimerTask(){
         public void run(){
             timer.cancel();
@@ -26,17 +33,34 @@ public class Controller  {
         }
     };
 
+    /**
+     * Constructs a new Controller object with the specified Game model and GameServer.
+     *
+     * @param model  the Game model to associate with the controller
+     * @param server the GameServer to communicate with
+     */
     public Controller (Game model, GameServer server){
         gameServer = server;
         this.model = model;
         lastPlayerHasAlreadyDoneTheTurn = false;
     }
 
+    /**
+     * Checks if the game has started.
+     *
+     * @return true if the game has started, false otherwise
+     */
     public boolean isGameStarted(){
         return model.isGameStarted();
     }
 
-    //returns true if the lobby is full
+    /**
+     * Adds a player to the game lobby.
+     *
+     * @param username The username of the player.
+     * @param listener The GameListener object for the player.
+     * @return True if the lobby is full and the game is ready to start, false otherwise.
+     */
     public boolean addPlayer(String username, GameListener listener){
         model.addPlayer(username,listener);
         if( model.getNumOfActivePlayers() == model.getNumOfPlayers() ){
@@ -46,6 +70,11 @@ public class Controller  {
         return false;
     }
 
+    /**
+     * Kicks a player from the game.
+     *
+     * @param username The username of the player to kick.
+     */
     public void kick(String username){
         if( !model.isGameStarted() ){
             try {
@@ -56,6 +85,12 @@ public class Controller  {
         }
     }
 
+    /**
+     * Reconnects a player to the game.
+     *
+     * @param username The username of the player.
+     * @param listener The GameListener object for the player.
+     */
     public void reconnect(String username, GameListener listener){
         try {
             model.reconnect(username,listener);
@@ -76,6 +111,11 @@ public class Controller  {
         }
     }
 
+    /**
+     * Disconnects a player from the game.
+     *
+     * @param username The username of the player to disconnect.
+     */
     public void disconnect(String username){
         if( model.isGameStarted() ) {
             try {
@@ -102,10 +142,22 @@ public class Controller  {
         }
     }
 
+    /**
+     * Returns the number of active players in the game.
+     *
+     * @return The number of active players.
+     */
     public int getNumOfActivePlayers(){
         return model.getNumOfActivePlayers();
     }
 
+    /**
+     * Executes a player's turn.
+     *
+     * @param username     The username of the player.
+     * @param chosenTiles  The coordinates of the tiles the player wants to choose.
+     * @param col          The column index where the player wants to insert the chosen tiles.
+     */
     public void doTurn(String username, Coordinates[] chosenTiles, int col){
         // If timer is running, the player should just wait for THEM to win
         if( ( model.getNumOfPlayers() == 1 )){
@@ -199,6 +251,10 @@ public class Controller  {
             lastPlayerHasAlreadyDoneTheTurn = true;
     }
 
+    /**
+     * Ends the game, calculates final scores, and performs necessary cleanup.
+     * Notifies the server to delete the game.
+     */
     private void endGame(){
         model.endGame();
         // Get list of usernames for server's method

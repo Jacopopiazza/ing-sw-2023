@@ -16,4 +16,8 @@ public class PrivateGoalView implements Serializable {
     public Coordinates[] getCoordinates(){
         return coords;
     }
+
+    public int getId(){
+        return 1; //to be implemented
+    }
 }

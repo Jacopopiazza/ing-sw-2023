@@ -51,7 +51,7 @@ public class Board extends ClientManager {
         shelfView = new ShelfView(shelf);
         privateGoalView = new PrivateGoalView(game.getPlayer(0).getPrivateGoal());
         try {
-            globalGoalView = new GlobalGoalView(game.getGoals()[0]);
+            globalGoalView = game.getGoals()[0].getView();
         }catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }

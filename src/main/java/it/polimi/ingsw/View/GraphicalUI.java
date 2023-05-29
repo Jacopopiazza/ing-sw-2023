@@ -4,7 +4,6 @@ import it.polimi.ingsw.Client.AppClientImplementation;
 import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
-import it.polimi.ingsw.Model.GameBoard;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.Model.Utilities.Config;
@@ -470,57 +469,40 @@ public class GraphicalUI extends ClientManager {
 
         }
 
-        private class PrivateGoalPanel extends Background {
-            private PrivateGoalPanel(PrivateGoalView privateGoalView, String imagePath, String toolTip, int width, int height, int pvtGoalIndex){
-                super(imagePath + "Personal_Goals" + pvtGoalIndex + ".png");
-                setOpaque(false);
-                setToolTipText(toolTip);
-                setLayout(new BorderLayout());
+        private class PrivateGoalPanel extends JLabel {
+            private PrivateGoalPanel(int pvtGoalIndex, int width, int height){
+                super(new ImageIcon("visual_components/personal goal cards/Personal_Goals" + pvtGoalIndex + ".png"));
+                setToolTipText("Private goal");
                 setPreferredSize(new Dimension(width,height));
-                setLayout(new FlowLayout());
             }
 
         }
 
-        private class PublicGoalPanel extends Background {
-            private int displayedScore;
+        private class GlobalGoalPanel extends Background {
             private ImageIcon scoreIcon;
-            private JLabel score;
             private int width;
             private int height;
-            private PublicGoalPanel(GlobalGoalView ggv, String imagePath, String toolTip, int width, int height, int commonGoalCard){
-                super(imagePath + commonGoalCard + ".jpg");
+            private GlobalGoalPanel(GlobalGoalView ggv, int width, int height){
+                super("visual_components/common goal cards/" + ggv.getId() + ".jpg");
                 this.width = width;
                 this.height = height;
                 setPreferredSize(new Dimension(this.width, this.height));
-                setLayout(new BorderLayout());
                 setOpaque(false);
-                setToolTipText(toolTip);
-                setLayout(new BorderLayout());
-                setLayout(new FlowLayout());
+                setToolTipText(ggv.getDescription());
 
-                // add the scorecard
-                score = new JLabel();
-                this.displayedScore = ggv.getCurrentScore();
-
-                if(displayedScore > 0){
-                    scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + displayedScore + ".jpg");
-                }else{
-                    scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_EMPTY.jpg");
-                }
-
-                // rotate
-                scoreIcon = ImageManager.rotateImageIcon(scoreIcon, -7);
-
-                score.setToolTipText("Score");
-                add(score);
+                // set scoreIcon
+                if(ggv.getCurrentScore() > 0) scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg");
+                else scoreIcon = null;
             }
 
             @Override
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
-                scoreIcon = ImageManager.resizeImageIcon(scoreIcon, (int) (width/3.675), (int) (height/2.45));
-                g.drawImage(scoreIcon.getImage(), (int)(width/1.65), (int)(height/3.8), this);
+                if(scoreIcon != null){
+                    scoreIcon = ImageManager.resizeImageIcon(scoreIcon, (int) (width/3.675), (int) (height/2.45));
+                    scoreIcon = ImageManager.rotateImageIcon(scoreIcon, -7);
+                    g.drawImage(scoreIcon.getImage(), (int)(width/1.65), (int)(height/3.8), this);
+                }
             }
 
         }
@@ -529,23 +511,23 @@ public class GraphicalUI extends ClientManager {
         private ShelfPanel myShelf;
         private ShelfPanel[] othersSelves;
         private PrivateGoalPanel privateGoalPanel;
-        private PublicGoalPanel publicGoalPanel;
+        private GlobalGoalPanel[] globalGoalPanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(1280, 720); // if not set the window appears in the right bottom corner
+            setSize(1440, 810); // if not set the window appears in the right bottom corner
             setLocationRelativeTo(null);    // in the middle of the screen
 
-            // this background can be resized
+            // set up the background
             JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
             background.setLayout(new BorderLayout());
             JScrollPane scrollPane = new JScrollPane(background);
             scrollPane.setOpaque(false);
-            scrollPane.setPreferredSize(new Dimension(1280,720));
+            scrollPane.setPreferredSize(new Dimension(1440,810));
             add(scrollPane);
 
             //creating the gameBoard Panel
-            gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),720,720,false);
+            gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),400,400,false);
             background.add(gameBoardPanel, BorderLayout.CENTER);
 
             //creating the shelfPanel Panel
@@ -557,13 +539,13 @@ public class GraphicalUI extends ClientManager {
             int i = 0;
             for(PlayerView p : gameView.getPlayers()){
                 if(p.getUsername().equals(username)){
-                    myShelf = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
+                    myShelf = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",200,200);
                     // the index of the private goal (last param) is random at the moment -> to be implemented in config
-                    privateGoalPanel = new PrivateGoalPanel(p.getPrivateGoal(), "visual_components/personal goal cards/", "My Private Goals", 200, 300, 1);
+                    privateGoalPanel = new PrivateGoalPanel(p.getPrivateGoal().getId(), 100, 150);
                     background.add(myShelf,BorderLayout.SOUTH);
                 }
                 else{
-                    othersSelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",200,200);
+                    othersSelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",100,100);
                     shelves.add(othersSelves[i]);
                     i++;
                 }
@@ -575,11 +557,12 @@ public class GraphicalUI extends ClientManager {
             goals.setLayout(new BoxLayout(goals, BoxLayout.PAGE_AXIS));
             background.add(goals ,BorderLayout.EAST);
             // adding the content
+            globalGoalPanel = new GlobalGoalPanel[gameView.getGlobalGoals().length];
+            for(int j=0; j<gameView.getGlobalGoals().length;j++){
+                globalGoalPanel[i] = new GlobalGoalPanel(gameView.getGlobalGoals()[i],150,100 );
+                goals.add(globalGoalPanel[i]);
+            }
             goals.add(privateGoalPanel);
-            // the index of the public goal (last param) is random at the moment -> to be implemented in config
-            publicGoalPanel = new PublicGoalPanel(gameView.getGlobalGoals()[0], "visual_components/common goal cards/", "Common Goal", 300, 200, 3);
-            goals.add(publicGoalPanel);
-            background.add(goals, BorderLayout.EAST);
 
             pack();
             setVisible(true);

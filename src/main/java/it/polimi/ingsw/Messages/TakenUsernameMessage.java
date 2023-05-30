@@ -8,7 +8,7 @@ import java.io.Serializable;
  * The TakenUsernameMessage class represents a message indicating that a username is already taken.
  * It implements the Message and Serializable interfaces.
  */
-public class TakenUsernameMessage implements Message, Serializable {
+public class TakenUsernameMessage extends Message {
     private final String message = "Username already taken";
 
     /**

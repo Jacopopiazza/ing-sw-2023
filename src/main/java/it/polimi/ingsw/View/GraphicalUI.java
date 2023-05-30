@@ -626,7 +626,7 @@ public class GraphicalUI extends ClientManager {
 
     @Override
     public void update(Message m) {
-        AppClientImplementation.logger.log(Level.INFO,"GUI Received message");
+        AppClientImplementation.logger.log(Level.INFO,"GUI Received message: " + m.getClass());
 
         if(m instanceof NoUsernameToReconnectMessage){
             startWindow.askLobby();

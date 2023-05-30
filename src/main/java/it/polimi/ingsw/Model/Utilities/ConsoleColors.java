@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Model.Utilities;
 
+/**
+ * The ConsoleColors enum provides ANSI escape codes for coloring console output.
+ */
 public enum ConsoleColors {
     RESET("\033[m"),
     BLACK("\033[0;30m"),

@@ -1,7 +1,16 @@
 package it.polimi.ingsw.Model.Utilities;
 
+/**
+ * The NumberToWord class provides a method to convert a numeric array into its corresponding word representation.
+ */
 public class NumberToWord {
 
+    /**
+     * Converts a numeric array into its corresponding word representation.
+     *
+     * @param num the numeric array to convert.
+     * @return the word representation of the numeric array.
+     */
     public static String getWord(char num[]) {
         String ret = "";
         int x, len;

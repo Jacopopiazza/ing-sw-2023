@@ -4,18 +4,36 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Tile;
-
+/**
+ * The GroupOfTiles class represents a global goal that requires creating a certain number of groups of tiles on the shelf.
+ * The groups are formed by tiles of the same color adjacent to each other.
+ */
 public class GroupOfTiles extends GlobalGoal {
 
     private final int groupDim;
     private final int numOfGroups;
 
+    /**
+     * Constructs a GroupOfTiles instance with the specified number of players, group dimension, and number of groups.
+     *
+     * @param people           the number of players in the game
+     * @param groupDim         the required size of each group of tiles
+     * @param numOfGroups      the number of groups of tiles required to achieve the goal
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid
+     */
     public GroupOfTiles(int people, int groupDim, int numOfGroups) throws InvalidNumberOfPlayersException {
         super(people, myId(groupDim));
         this.groupDim=groupDim;
         this.numOfGroups=numOfGroups;
     }
 
+    /**
+     * Checks if the specified shelf satisfies the condition of having the required number of groups of tiles.
+     *
+     * @param s the shelf to check
+     * @return true if the shelf satisfies the condition, false otherwise
+     * @throws MissingShelfException   if the shelf is null
+     */
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if( s == null ){
@@ -39,7 +57,14 @@ public class GroupOfTiles extends GlobalGoal {
         return false;
     }
 
-
+    /**
+     * Recursively checks for groups of tiles starting from the specified coordinates on the shelf.
+     *
+     * @param s       the shelf to check
+     * @param coords  the coordinates to start checking from
+     * @param checked a 2D array to keep track of checked tiles
+     * @return the size of the group of tiles starting from the specified coordinates
+     */
     private int checkFromThisTile(Shelf s, Coordinates coords, boolean[][] checked){
         Tile t = s.getTile(coords);
         if( t == null ) return 0;
@@ -80,6 +105,12 @@ public class GroupOfTiles extends GlobalGoal {
         return res;
     }
 
+    /**
+     * Returns the ID of the global goal based on the group dimension.
+     *
+     * @param g the group dimension
+     * @return the ID of the global goal
+     */
     private static int myId(int g ){
         if(g == 2) return 4;
         if(g == 4) return 3;

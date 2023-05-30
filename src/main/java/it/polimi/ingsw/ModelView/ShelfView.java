@@ -6,11 +6,19 @@ import it.polimi.ingsw.Model.Shelf;
 
 import java.io.Serializable;
 
+/**
+ * The ShelfView class represents a view of a player's shelf in the game.
+ * It provides a snapshot of the shelf's attributes in a serializable format.
+ */
 public class ShelfView implements Serializable {
     private static final long serialVersionUID=1L;
-
     private final TileView[][] SHELF;
 
+    /**
+     * Constructs a new ShelfView object based on the given Shelf object.
+     *
+     * @param shelf the Shelf object to create the view from
+     */
     public ShelfView(Shelf shelf){
         this.SHELF = new TileView[Shelf.getRows()][Shelf.getColumns()];
         for(int i = 0; i < Shelf.getRows(); i++){
@@ -20,6 +28,13 @@ public class ShelfView implements Serializable {
         }
     }
 
+    /**
+     * Retrieves the TileView object at the specified coordinates on the shelf.
+     *
+     * @param c the coordinates of the tile to retrieve
+     * @return the TileView object at the specified coordinates
+     * @throws ColumnOutOfBoundsException if the specified coordinates are out of bounds
+     */
     public TileView getTile(Coordinates c) throws ColumnOutOfBoundsException {
 
         if( ( c.getROW() < 0 ) || ( c.getCOL() < 0 ) || ( c.getROW() >= Shelf.getRows() ) || ( c.getCOL() >= Shelf.getColumns() ) ){
@@ -29,6 +44,11 @@ public class ShelfView implements Serializable {
         return SHELF[c.getROW()][c.getCOL()];
     }
 
+    /**
+     * Checks if the shelf is full, i.e., if all positions on the top row of the shelf are occupied by tiles.
+     *
+     * @return true if the shelf is full, false otherwise
+     */
     public boolean isFull(){
 
         for( int j = 0; j < Shelf.getColumns(); j++ ){

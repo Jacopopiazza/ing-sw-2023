@@ -9,9 +9,19 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * The ClientImplementation class is an implementation of the Client interface.
+ */
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private View view;
 
+    /**
+     * Constructs a ClientImplementation instance with the specified view and server.
+     *
+     * @param view   the view associated with the client
+     * @param server the server handling the client's messages
+     * @throws RemoteException if a remote communication error occurs
+     */
     public ClientImplementation(View view, Server server) throws RemoteException{
         super();
         this.view = view;
@@ -26,6 +36,14 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             }
         });
     }
+
+    /**
+     * Updates the client with the specified message.
+     *
+     * @param m the message to update the client with
+     * @throws RemoteException if a remote communication error occurs
+     */
+
 
     @Override
     public void update(Message m) throws RemoteException {

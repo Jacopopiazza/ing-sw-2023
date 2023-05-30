@@ -9,10 +9,20 @@ import it.polimi.ingsw.Model.Utilities.Config;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Shape class represents a global goal that requires matching a specific shape of tiles on the shelf.
+ */
 public class Shape extends GlobalGoal {
 
     List<List<Coordinates>> shapes;
 
+    /**
+     * Constructs a Shape instance with the specified number of players and shape.
+     *
+     * @param people the number of players in the game
+     * @param s      the shape to match
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid
+     */
     public Shape(int people, List<List<Coordinates>> s) throws InvalidNumberOfPlayersException {
         super(people, myId(s));
         shapes = new ArrayList<List<Coordinates>>();
@@ -26,6 +36,13 @@ public class Shape extends GlobalGoal {
         }
     }
 
+    /**
+     * Checks if the specified shelf satisfies the condition of having a matching shape of tiles.
+     *
+     * @param s the shelf to check
+     * @return true if the shelf satisfies the condition, false otherwise
+     * @throws MissingShelfException if the shelf is null
+     */
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if( s == null ) {
@@ -65,6 +82,12 @@ public class Shape extends GlobalGoal {
         return false;
     }
 
+    /**
+     * Determines the ID of the shape based on the given shape configuration.
+     *
+     * @param shape the shape configuration
+     * @return the ID of the shape, or -1 if it doesn't match any predefined shapes
+     */
     private static int myId(List<List<Coordinates>> shape) {
         // To add a new Shape Global Goal, add its name to the names[] and "Check if it's ..."
         boolean mayBe;

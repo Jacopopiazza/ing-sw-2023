@@ -4,16 +4,31 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 
+/**
+ * The Stair class represents a global goal that requires having five columns with ascending or descending heights on the shelf.
+ * Each column must have one more tile than the previous column.
+ * The tiles can have different colors.
+ */
 public class Stair extends GlobalGoal {
+    /**
+     * Constructs a Stair instance with the specified number of players.
+     *
+     * @param people the number of players in the game
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid
+     */
     public Stair(int people) throws InvalidNumberOfPlayersException {
         super(people, 12);
     }
 
-    // Five columns with asc/desc height:
-    // starting from the first column to the left or right
-    // every next column must have one more tile.
-    // The tiles can have different colors.
-
+    /**
+     * Checks if the specified shelf satisfies the condition of having five columns with ascending or descending heights.
+     * Each column must have one more tile than the previous column.
+     * The tiles can have different colors.
+     *
+     * @param s the shelf to check
+     * @return true if the shelf satisfies the condition, false otherwise
+     * @throws MissingShelfException if the shelf is null
+     */
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if( s == null ){

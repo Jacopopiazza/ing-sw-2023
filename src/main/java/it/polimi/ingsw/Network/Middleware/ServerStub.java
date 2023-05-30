@@ -12,6 +12,10 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 
+/**
+ * The ServerStub class represents a client-side stub for the server.
+ * It is responsible for establishing a connection to the server, sending and receiving messages.
+ */
 public class ServerStub implements Server {
     String ip;
     int port;
@@ -19,6 +23,13 @@ public class ServerStub implements Server {
     private ObjectInputStream ois;
     private Socket socket;
 
+    /**
+     * Constructs a ServerStub object with the specified IP address and port number.
+     *
+     * @param ip   the IP address of the server
+     * @param port the port number of the server
+     * @throws RemoteException if an error occurs while connecting to the server
+     */
     public ServerStub(String ip, int port) throws RemoteException {
         this.ip = ip;
         this.port = port;
@@ -42,6 +53,11 @@ public class ServerStub implements Server {
         }
     }
 
+    /**
+     * Closes the connection to the server.
+     *
+     * @throws RemoteException if an error occurs while closing the socket
+     */
     public void close() throws RemoteException {
         try {
             socket.close();
@@ -50,6 +66,13 @@ public class ServerStub implements Server {
         }
     }
 
+    /**
+     * Sends a message to the server.
+     *
+     * @param m      the message to be sent
+     * @param client the client object that sends the message
+     * @throws RemoteException if an error occurs while sending the message
+     */
     public void handleMessage(Message m, Client client) throws RemoteException {
 
         Message toBeSent = m;
@@ -71,6 +94,12 @@ public class ServerStub implements Server {
 
     }
 
+    /**
+     * Receives a message from the server.
+     *
+     * @param client the client object that receives the message
+     * @throws RemoteException if an error occurs while receiving the message
+     */
     public void receive(Client client) throws RemoteException {
         AppClientImplementation.logger.log(Level.INFO, "ServerStub is waiting for a message from server");
 

@@ -1,28 +1,55 @@
 package it.polimi.ingsw.Messages;
 
+/**
+ * The ChatMessage class represents a chat message sent between players.
+ * It implements the Message interface.
+ */
 public class ChatMessage implements Message{
 
-    private String mittente;
+    private String sender;
 
-    private String destinatario;
+    private String recipient;
 
-    private String messaggio;
+    private String message;
 
-    public ChatMessage(String mittente, String messaggio) {
-        this(mittente,null,messaggio);
+    /**
+     * Constructs a new ChatMessage with the specified sender and message.
+     *
+     * @param sender the sender of the message
+     * @param message the message
+     */
+    public ChatMessage(String sender, String message) {
+        this(sender,message,null);
     }
 
-    public ChatMessage(String mittente, String messaggio,String destinatario) {
-        this.mittente = mittente;
-        this.destinatario = destinatario;
-        this.messaggio = messaggio;
+    /**
+     * Constructs a new ChatMessage with the specified sender, recipient and message.
+     *
+     * @param sender the sender of the message
+     * @param recipient the recipient of the message
+     * @param message the message
+     */
+    public ChatMessage(String sender, String message,String recipient) {
+        this.sender = sender;
+        this.recipient = recipient;
+        this.message = message;
     }
 
-    public String getMittente() {
-        return mittente;
+    /**
+     * Returns the sender username.
+     *
+     * @return the sender username
+     */
+    public String getSender() {
+        return sender;
     }
 
-    public String getDestinatario() {
-        return destinatario;
+    /**
+     * Returns the recipient of the message.
+     *
+     * @return the recipient of the message
+     */
+    public String getRecipient() {
+        return recipient;
     }
 }

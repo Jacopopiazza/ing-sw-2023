@@ -20,7 +20,6 @@ public class GameView implements Serializable {
     private final PlayerView[] players;
     private final GlobalGoalView[] goals;
     private final Integer currentPlayer;
-    private final TileSackView sack;
     private final String cheater;
 
     /**
@@ -37,7 +36,6 @@ public class GameView implements Serializable {
                 this.players[i] = game.getPlayer(i).getView();
             this.currentPlayer = game.getCurrentPlayer();
             this.numOfActivePlayers = game.getNumOfActivePlayers();
-            this.sack = game.getTileSack().getView();
             this.cheater = null;
             this.goals = new GlobalGoalView[Config.getInstance().getNumOfGlobalGoals()];
             try {
@@ -53,27 +51,23 @@ public class GameView implements Serializable {
             this.players = null;
             this.currentPlayer = null;
             this.numOfActivePlayers = null;
-            this.sack = null;
             this.cheater = null;
             this.goals = null;
         }
     }
 
     /**
-     * Constructs a GameView object based on the provided GameBoard and TileSack.
+     * Constructs a GameView object based on the provided GameBoard.
      *
      * @param board the game board to include in the view
-     * @param sack  the tile sack to include in the view
      */
-    public GameView(GameBoard board, TileSack sack) {
+    public GameView(GameBoard board) {
         if (board != null ) this.board = board.getView();
         else this.board = null;
         this.numOfPlayers = null;
         this.players = null;
         this.currentPlayer = null;
         this.numOfActivePlayers = null;
-        if (sack != null ) this.sack = sack.getView();
-        else this.sack = null;
         this.cheater = null;
         this.goals = null;
     }
@@ -95,7 +89,6 @@ public class GameView implements Serializable {
         else this.players = null;
         this.currentPlayer = null;
         this.numOfActivePlayers = null;
-        this.sack = null;
         this.cheater = null;
         this.goals = null;
     }
@@ -117,7 +110,6 @@ public class GameView implements Serializable {
         else this.players = null;
         this.currentPlayer = null;
         this.numOfActivePlayers = null;
-        this.sack = null;
         this.cheater = null;
         if(goals != null){
             this.goals = new GlobalGoalView[goals.length];
@@ -138,7 +130,6 @@ public class GameView implements Serializable {
         this.players = null;
         this.currentPlayer = null;
         this.numOfActivePlayers = null;
-        this.sack = null;
         this.cheater = cheater;
         this.goals = null;
     }
@@ -157,7 +148,6 @@ public class GameView implements Serializable {
         else this.currentPlayer = null;
         if(numOfActivePlayers!=null && numOfActivePlayers>=0 && numOfActivePlayers<=Config.getInstance().getMaxNumberOfPlayers()) this.numOfActivePlayers = numOfActivePlayers;
         else this.numOfActivePlayers = null;
-        this.sack = null;
         this.cheater = null;
         this.goals = null;
     }
@@ -176,7 +166,7 @@ public class GameView implements Serializable {
      *
      * @return the number of players
      */
-    public int getNumOfPlayers() {
+    public Integer getNumOfPlayers() {
         return numOfPlayers;
     }
 
@@ -201,18 +191,16 @@ public class GameView implements Serializable {
      *
      * @return the index of the current player
      */
-    public int getCurrentPlayer() {
+    public Integer getCurrentPlayer() {
         return currentPlayer;
     }
 
     /**
-     * Returns the tile sack view.
+     * Returns the number of active players.
      *
-     * @return the tile sack view
+     * @return the number of active players
      */
-    public TileSackView getTileSack() {
-        return sack;
-    }
+    public Integer getNumOfActivePlayers(){return numOfActivePlayers;}
 
     /**
      * Returns the cheater string.

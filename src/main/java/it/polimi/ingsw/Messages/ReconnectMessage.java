@@ -11,7 +11,7 @@ import java.io.Serializable;
  * The ReconnectMessage class represents a message indicating a player's intention to reconnect.
  * It implements the Message interface and is serializable.
  */
-public class ReconnectMessage implements Message, Serializable {
+public class ReconnectMessage extends Message {
     private String username;
 
     /**

@@ -277,7 +277,7 @@ public class Game {
             res[i] = board.getTile(coords[i]);
             board.setTile(coords[i], null);
         }
-        notifyAllListeners(new GameView(board,null));
+        notifyAllListeners(new GameView(board));
         return res;
     }
 
@@ -322,7 +322,7 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        notifyAllListeners(new GameView(board,sack));
+        notifyAllListeners(new GameView(board));
         // at least one Tile was added
         return true;
     }

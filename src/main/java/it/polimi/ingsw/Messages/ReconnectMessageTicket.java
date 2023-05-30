@@ -6,7 +6,7 @@ import java.io.Serializable;
  * The ReconnectMessageTicket class represents a message ticket for reconnecting.
  * It implements the Message interface and is serializable.
  */
-public class ReconnectMessageTicket implements Message, Serializable {
+public class ReconnectMessageTicket extends Message {
     private String username;
 
     /**

@@ -6,7 +6,7 @@ import java.io.Serializable;
  * The RegisterMessageTicket class represents a ticket message for registering a player.
  * It implements the Message and Serializable interfaces.
  */
-public class RegisterMessageTicket implements Message, Serializable {
+public class RegisterMessageTicket extends Message {
     private String username;
     private int numOfPlayers;
 

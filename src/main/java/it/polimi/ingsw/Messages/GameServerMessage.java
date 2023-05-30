@@ -5,7 +5,7 @@ import it.polimi.ingsw.Network.Server;
  * The GameServerMessage class represents a message containing the game server information.
  * It implements the Message interface.
  */
-public class GameServerMessage implements Message {
+public class GameServerMessage extends Message {
     private Server server;
 
     /**

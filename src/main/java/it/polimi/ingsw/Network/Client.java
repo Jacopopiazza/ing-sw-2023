@@ -3,12 +3,13 @@ package it.polimi.ingsw.Network;
 import it.polimi.ingsw.Messages.Message;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
  * The Client interface represents a client in a network communication.
  */
-public interface Client extends Serializable {
+public interface Client extends Remote {
     /**
      * Updates the client with the specified message.
      *

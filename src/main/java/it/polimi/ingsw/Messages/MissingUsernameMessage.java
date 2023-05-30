@@ -6,7 +6,7 @@ import java.io.Serializable;
  * The MissingUsernameMessage class represents a message indicating that the username is missing or null.
  * It implements the Message interface and is serializable.
  */
-public class MissingUsernameMessage implements Message, Serializable {
+public class MissingUsernameMessage extends Message {
     private final String message = "Username is null";
 
     /**

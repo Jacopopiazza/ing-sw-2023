@@ -4,7 +4,7 @@ package it.polimi.ingsw.Messages;
  * The ChatMessage class represents a chat message sent between players.
  * It implements the Message interface.
  */
-public class ChatMessage implements Message{
+public class ChatMessage extends Message{
 
     private String sender;
 

@@ -6,7 +6,7 @@ import java.io.Serializable;
  * The InvalidActionMessage class represents a message indicating an invalid turn action.
  * It implements the Message interface and is serializable.
  */
-public class InvalidActionMessage implements Message, Serializable {
+public class InvalidActionMessage extends Message {
     private final String message = "Invalid turn action";
 
     /**

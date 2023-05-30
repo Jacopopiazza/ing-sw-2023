@@ -486,22 +486,20 @@ public class GraphicalUI extends ClientManager {
                 super("visual_components/common goal cards/" + ggv.getId() + ".jpg");
                 this.width = width;
                 this.height = height;
+                if(ggv.getCurrentScore() > 0) scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg");
+                else scoreIcon = null;
                 setPreferredSize(new Dimension(this.width, this.height));
                 setOpaque(false);
                 setToolTipText(ggv.getDescription());
-
-                // set scoreIcon
-                if(ggv.getCurrentScore() > 0) scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg");
-                else scoreIcon = null;
             }
 
             @Override
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
                 if(scoreIcon != null){
-                    scoreIcon = ImageManager.resizeImageIcon(scoreIcon, (int) (width/3.675), (int) (height/2.45));
-                    scoreIcon = ImageManager.rotateImageIcon(scoreIcon, -7);
-                    g.drawImage(scoreIcon.getImage(), (int)(width/1.65), (int)(height/3.8), this);
+                    ImageIcon token = ImageManager.rotateImageIcon(scoreIcon, -7);
+                    token = ImageManager.resizeImageIcon(token, (int) (width/3.675), (int) (height/2.45));
+                    g.drawImage(token.getImage(), (int)(width/1.65), (int)(height/3.8), this);
                 }
             }
 
@@ -509,7 +507,6 @@ public class GraphicalUI extends ClientManager {
 
         private GameBoardPanel gameBoardPanel;
         private ShelfPanel[] shelves;
-        private PrivateGoalPanel privateGoalPanel;
         private GlobalGoalPanel[] globalGoalPanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
@@ -543,9 +540,8 @@ public class GraphicalUI extends ClientManager {
                 PlayerView p = gameView.getPlayers()[i];
                 if(p.getUsername().equals(username)){
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
-                    privateGoalPanel = new PrivateGoalPanel(p.getPrivateGoal().getId(), 150, 225);
                     lowerPanel.add(shelves[i]);
-                    lowerPanel.add(privateGoalPanel);
+                    lowerPanel.add(new PrivateGoalPanel(p.getPrivateGoal().getId(), 150, 225));
                 }
                 else{
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",225,225);

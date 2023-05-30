@@ -67,6 +67,11 @@ public class Game {
             players[i].init(privateGoals[i]);
         board = new GameBoard(numOfPlayers);
         sack = new TileSack();
+        try {
+            refillGameBoard();
+        } catch (EmptySackException e) {
+            e.printStackTrace();
+        }
         // Shuffle in the same order players and listeners
         Random rnd = new Random(System.currentTimeMillis());
         Collections.shuffle(Arrays.asList(players), rnd );

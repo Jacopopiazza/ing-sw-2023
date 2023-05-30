@@ -6,7 +6,7 @@ import java.io.Serializable;
  * The NoLobbyAvailableMessage class represents a message indicating that no lobby is available.
  * It implements the Message interface and is serializable.
  */
-public class NoLobbyAvailableMessage implements Message, Serializable {
+public class NoLobbyAvailableMessage extends Message {
     private final String message = "No lobby available";
 
     /**

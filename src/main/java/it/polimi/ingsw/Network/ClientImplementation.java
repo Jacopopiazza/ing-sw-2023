@@ -28,12 +28,14 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
         view.addListener((message) -> {
             try {
-                server.handleMessage(message, this);
+                server.handleMessage(message, (Client)this);
             } catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());
                 return;
             }
+
+
         });
     }
 

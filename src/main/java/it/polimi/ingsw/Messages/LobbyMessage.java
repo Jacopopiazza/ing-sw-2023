@@ -10,7 +10,7 @@ import java.util.List;
  * The LobbyMessage class represents a message containing the list of players in the lobby.
  * It implements the Message interface and is serializable.
  */
-public class LobbyMessage implements Message, Serializable {
+public class LobbyMessage extends Message {
 
     private List<String> players;
 

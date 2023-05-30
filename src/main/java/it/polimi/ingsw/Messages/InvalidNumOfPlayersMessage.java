@@ -5,7 +5,7 @@ import java.io.Serializable;
  * The InvalidNumOfPlayersMessage class represents a message indicating an invalid number of players.
  * It implements the Message interface and is serializable.
  */
-public class InvalidNumOfPlayersMessage implements Message, Serializable {
+public class InvalidNumOfPlayersMessage extends Message {
     private final String message = "Invalid number of players";
 
     /**

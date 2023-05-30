@@ -8,7 +8,7 @@ import java.io.Serializable;
  * The UpdateViewMessage class represents a message containing an updated game view.
  * It implements the Message and Serializable interfaces.
  */
-public class UpdateViewMessage implements Message, Serializable {
+public class UpdateViewMessage extends Message {
     private GameView gameView;
 
     /**

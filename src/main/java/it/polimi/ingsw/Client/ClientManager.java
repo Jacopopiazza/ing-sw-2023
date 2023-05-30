@@ -51,6 +51,8 @@ public abstract class ClientManager implements Runnable, View
         Server server = (Server) registry.lookup("G26-MyShelfie-Server");
 
         this.client = new ClientImplementation(this, server);
+
+
     }
 
     protected void setUpSocketClient() throws RemoteException, NotBoundException {

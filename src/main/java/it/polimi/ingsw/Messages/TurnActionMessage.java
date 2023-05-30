@@ -8,7 +8,7 @@ import java.io.Serializable;
  * The TurnActionMessage class represents a message containing the details of a turn action.
  * It implements the Message and Serializable interfaces.
  */
-public class TurnActionMessage implements Message, Serializable {
+public class TurnActionMessage extends Message {
     private String username;
     private Coordinates[] chosenTiles;
     private int column;

@@ -5,11 +5,20 @@ import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
 import java.io.Serializable;
 import java.util.EmptyStackException;
 
+/**
+ * The GlobalGoalView class represents the view of a global goal in the model-view architecture.
+ * It provides a simplified representation of the global goal state for the client-side view.
+ */
 public class GlobalGoalView implements Serializable {
 
     private final int score;
     private final int id;
 
+    /**
+     * Constructs a GlobalGoalView object based on the provided GlobalGoal.
+     *
+     * @param gg the GlobalGoal object to include in the view
+     */
     public GlobalGoalView(GlobalGoal gg){
         int temp;
         try {
@@ -22,14 +31,29 @@ public class GlobalGoalView implements Serializable {
         id = gg.getId();
     }
 
+    /**
+     * Returns the current score of the global goal.
+     *
+     * @return the current score
+     */
     public int getCurrentScore(){
         return score;
     }
 
+    /**
+     * Returns the ID of the global goal.
+     *
+     * @return the ID
+     */
     public int getId(){
         return id;
     }
 
+    /**
+     * Returns the description of the global goal.
+     *
+     * @return the description
+     */
     public String getDescription(){
         switch(id){
             case 1: return "Two groups each containing 4 tiles of\n" +

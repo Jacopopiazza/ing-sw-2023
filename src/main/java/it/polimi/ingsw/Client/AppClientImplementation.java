@@ -8,10 +8,19 @@ import it.polimi.ingsw.View.View;
 import java.io.IOException;
 import java.util.logging.*;
 
+
+/**
+ * The main client application responsible for starting the client user interface.
+ */
 public class AppClientImplementation {
 
     public static final Logger logger = Logger.getLogger(AppClientImplementation.class.getName());
 
+    /**
+     * The main entry point of the client application.
+     *
+     * @param args the command-line arguments
+     */
     public static void main(String[] args) {
 
         setUpLogger();
@@ -29,6 +38,11 @@ public class AppClientImplementation {
 
     }
 
+    /**
+     * Sets up the logger for the client application.
+     * Configures the logger level, creates log file handler and console handler,
+     * and adds the handlers to the logger.
+     */
     private static void setUpLogger(){
         logger.setLevel(Level.ALL); // Imposta il livello di logging desiderato
 

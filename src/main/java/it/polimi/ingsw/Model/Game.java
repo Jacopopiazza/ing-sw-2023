@@ -67,6 +67,11 @@ public class Game {
             players[i].init(privateGoals[i]);
         board = new GameBoard(numOfPlayers);
         sack = new TileSack();
+        try {
+            refillGameBoard();
+        } catch (EmptySackException e) {
+            e.printStackTrace();
+        }
         // Shuffle in the same order players and listeners
         Random rnd = new Random(System.currentTimeMillis());
         Collections.shuffle(Arrays.asList(players), rnd );
@@ -272,7 +277,7 @@ public class Game {
             res[i] = board.getTile(coords[i]);
             board.setTile(coords[i], null);
         }
-        notifyAllListeners(new GameView(board,null));
+        notifyAllListeners(new GameView(board));
         return res;
     }
 
@@ -317,7 +322,7 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        notifyAllListeners(new GameView(board,sack));
+        notifyAllListeners(new GameView(board));
         // at least one Tile was added
         return true;
     }
@@ -392,9 +397,11 @@ public class Game {
      * @param gameView The game view to notify the listeners with.
      */
     private void notifyAllListeners(GameView gameView){
-        Message gv = new UpdateViewMessage(gameView);
-        for( GameListener el : listeners ){
-            if( el != null ) el.update(gv);
+        if(started){
+            Message gv = new UpdateViewMessage(gameView);
+            for( GameListener el : listeners ){
+                if( el != null ) el.update(gv);
+            }
         }
     }
 

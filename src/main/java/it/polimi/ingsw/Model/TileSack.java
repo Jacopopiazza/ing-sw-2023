@@ -22,12 +22,6 @@ public class TileSack {
         // initialize the array with the maximum value for every element
         for( int i = 0; i < LEN; i++ ) remaining[i] = Config.getInstance().getNumOfTilesPerColor();
     }
-    /**
-     * Constructs a new TileSack object with the initial number of tiles per color.
-     */
-    public TileSackView getView() {
-        return new TileSackView(this);
-    }
 
     /**
      * Generates a random tile color and removes it from the sack.

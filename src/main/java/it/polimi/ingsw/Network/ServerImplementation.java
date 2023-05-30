@@ -3,6 +3,7 @@ package it.polimi.ingsw.Network;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
+import it.polimi.ingsw.Tuple;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -54,6 +55,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private List<String> playingUsernames; // to disconnect
     private Map<String, GameServer> disconnectedUsernames;
     private Queue<GameServer> lobbiesWaitingToStart;
+    private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
 
     /**
      * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
@@ -67,17 +69,46 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         playingUsernames = new ArrayList<>();
         disconnectedUsernames = new HashMap<>();
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();
+
+        new Thread(){
+            @Override
+            public void run(){
+
+                while(true){
+
+                    if( isMessagesQueueEmpty(null) ) continue;
+
+                    Tuple<Message,Client> tuple = popFromMessagesQueue();
+                    try {
+                        effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
+                    }catch (RemoteException ex){
+                        logger.log(Level.SEVERE, "Cannot send message to client: " + ex.getMessage());
+                    }
+                }
+            }
+
+        }.start();
     }
 
-    /**
-     * Handles the incoming message from a client. If the message is a register message, it connects the client to their
-     * respective GameServer. If the message is a reconnect message, it reconnects the client to their previous GameServer.
-     *
-     * @param m      the incoming message
-     * @param client the client object associated with the message
-     * @throws RemoteException if there is an error in remote method invocation
-     */
-    public void handleMessage(Message m, Client client) throws RemoteException {
+    private void addToMessagesQueue(Message m, Client c) {
+        synchronized (recievedMessages) {
+            recievedMessages.add(new Tuple<>(m, c));
+        }
+    }
+
+    private boolean isMessagesQueueEmpty(Message m) {
+        synchronized (recievedMessages) {
+            return recievedMessages.isEmpty();
+        }
+    }
+
+    private Tuple<Message, Client> popFromMessagesQueue() {
+        synchronized (recievedMessages) {
+            return recievedMessages.poll();
+        }
+    }
+
+    private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
         if( m instanceof RegisterMessage ) {
             register( ((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers(), ( (message) -> {
                 try {
@@ -97,6 +128,21 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             }) );
         }
         else System.err.println("Message not recognized; ignoring it");
+    }
+
+    /**
+     * Handles the incoming message from a client. If the message is a register message, it connects the client to their
+     * respective GameServer. If the message is a reconnect message, it reconnects the client to their previous GameServer.
+     *
+     * @param m      the incoming message
+     * @param client the client object associated with the message
+     * @throws RemoteException if there is an error in remote method invocation
+     */
+    public void handleMessage(Message m, Client client) throws RemoteException {
+
+        logger.log(Level.INFO, "Recieved message from client: " + m.getClass());
+
+        addToMessagesQueue(m,client);
     }
 
     /**
@@ -374,16 +420,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
         fileHandler.setFormatter(new SimpleFormatter());
 
-        // Crea un gestore di log sulla console
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-
         // Imposta il livello di logging dei gestori
         fileHandler.setLevel(Level.ALL);
-        consoleHandler.setLevel(Level.ALL);
 
         // Aggiungi i gestori al logger
         logger.addHandler(fileHandler);
-        //logger.addHandler(consoleHandler);
 
     }
 

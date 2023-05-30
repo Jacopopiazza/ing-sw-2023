@@ -397,9 +397,11 @@ public class Game {
      * @param gameView The game view to notify the listeners with.
      */
     private void notifyAllListeners(GameView gameView){
-        Message gv = new UpdateViewMessage(gameView);
-        for( GameListener el : listeners ){
-            if( el != null ) el.update(gv);
+        if(started){
+            Message gv = new UpdateViewMessage(gameView);
+            for( GameListener el : listeners ){
+                if( el != null ) el.update(gv);
+            }
         }
     }
 

@@ -85,24 +85,48 @@ public class GameServer extends UnicastRemoteObject implements Server {
         }.start();
     }
 
+    /**
+     * Adds a message and its associated client to the message queue.
+     *
+     * @param m The message to be added to the queue.
+     * @param c The client associated with the message.
+     */
     private void addToMessagesQueue(Message m, Client c) {
         synchronized (recievedMessages) {
             recievedMessages.add(new Tuple<>(m, c));
         }
     }
 
+    /**
+     * Checks if the message queue is empty.
+     *
+     * @return {@code true} if the message queue is empty, {@code false} otherwise.
+     */
     private boolean isMessagesQueueEmpty() {
         synchronized (recievedMessages) {
             return recievedMessages.isEmpty();
         }
     }
 
+    /**
+     * Removes and returns a message from the message queue.
+     *
+     * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
+     */
     private Tuple<Message, Client> popFromMessagesQueue() {
         synchronized (recievedMessages) {
             return recievedMessages.poll();
         }
     }
 
+    /**
+     * Handles a received message and performs appropriate actions based on its type.
+     * This method is called to process messages received by the server.
+     *
+     * @param m      The message to be effectively handled.
+     * @param client The client associated with the message.
+     * @throws RemoteException If a remote exception occurs during message handling.
+     */
     private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;

@@ -3,12 +3,27 @@ package it.polimi.ingsw.Model.GlobalGoals;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Exceptions.*;
 
+/**
+ * The Square class represents a global goal that requires having two separated groups of 2x2 tiles of the same color on the shelf.
+ */
 public class Square extends GlobalGoal {
+    /**
+     * Constructs a Square instance with the specified number of players.
+     *
+     * @param people the number of players in the game
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid
+     */
     public Square(int people) throws InvalidNumberOfPlayersException {
         super(people, 1);
     }
 
-    // 2 separated groups of 2x2 Tiles of the same color
+    /**
+     * Checks if the specified shelf satisfies the condition of having two separated groups of 2x2 tiles of the same color.
+     *
+     * @param s the shelf to check
+     * @return true if the shelf satisfies the condition, false otherwise
+     * @throws MissingShelfException if the shelf is null
+     */
     @Override
     public boolean check(Shelf s) throws MissingShelfException {
         if( s == null ){

@@ -17,6 +17,36 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.*;
 
+/**
+ * The `ServerImplementation` class represents the server implementation for the game. It handles the communication
+ * with clients using both RMI (Remote Method Invocation) and socket protocols.
+ *
+ * The class implements the `Server` interface, which defines the communication methods that clients can invoke.
+ * It extends the `UnicastRemoteObject` class to enable remote method invocation (RMI) functionality.
+ *
+ * The `ServerImplementation` class maintains a list of connected players (`playingUsernames`) and a map of disconnected
+ * players (`disconnectedUsernames`). It also keeps a queue of lobbies waiting to start (`lobbiesWaitingToStart`).
+ *
+ * The class provides methods to handle incoming messages from clients. The `handleMessage` method processes register
+ * messages to connect clients to their respective `GameServer` instances and reconnect messages to reconnect clients
+ * to their previous `GameServer` instances.
+ *
+ * The class also provides methods to delete a game, disconnect a player, kick a player from a lobby, and handle player
+ * reconnection. These methods ensure the appropriate management of players and game instances.
+ *
+ * The `ServerImplementation` class supports both RMI and socket communication protocols. The `startRMI` method starts
+ * the RMI server, while the `startSocket` method starts the socket server. Incoming socket connections are handled
+ * by the `ClientSkeleton` class.
+ *
+ * The class includes a singleton pattern to ensure that only one instance of the server exists. The `getInstance`
+ * method returns the singleton instance of the server.
+ *
+ * The `main` method starts the server by creating the singleton instance and starting the RMI and socket server threads.
+ * It also sets up the logger to log server activities.
+ *
+ * Note: The `ServerImplementation` class assumes that the game logic and state are managed by the `GameServer` class,
+ * which is responsible for handling the game lobby and the game itself.
+ */
 public class ServerImplementation extends UnicastRemoteObject implements Server {
     private static ServerImplementation instance;
     public static final Logger logger = Logger.getLogger("ServerImplementation");
@@ -25,6 +55,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private Map<String, GameServer> disconnectedUsernames;
     private Queue<GameServer> lobbiesWaitingToStart;
 
+    /**
+     * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
+     * and lobbiesWaitingToStart collections.
+     *
+     * @throws RemoteException if there is an error in remote method invocation
+     */
     private ServerImplementation() throws RemoteException {
         super();
         setUpLogger();
@@ -33,8 +69,14 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();
     }
 
-    // it has to handle only the message for connect the client to his GameServer
-    // and to reconnect a client to his GameServer
+    /**
+     * Handles the incoming message from a client. If the message is a register message, it connects the client to their
+     * respective GameServer. If the message is a reconnect message, it reconnects the client to their previous GameServer.
+     *
+     * @param m      the incoming message
+     * @param client the client object associated with the message
+     * @throws RemoteException if there is an error in remote method invocation
+     */
     public void handleMessage(Message m, Client client) throws RemoteException {
         if( m instanceof RegisterMessage ) {
             register( ((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers(), ( (message) -> {
@@ -57,6 +99,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         else System.err.println("Message not recognized; ignoring it");
     }
 
+    /**
+     * Deletes the game associated with the given list of players. Removes the players from the playingUsernames and
+     * disconnectedUsernames collections.
+     *
+     * @param players the list of players to be removed from the game
+     */
     public void deleteGame(List<String> players) {
         logger.log(Level.INFO, "Deleting game");
         synchronized (playingUsernames) {
@@ -69,6 +117,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
+    /**
+     * Disconnects a player from the server. Updates the playingUsernames and disconnectedUsernames collections accordingly.
+     *
+     * @param username   the username of the player to disconnect
+     * @param gameServer the GameServer object associated with the player
+     */
     public void disconnect(String username, GameServer gameServer) {
         logger.log(Level.INFO, "Player " + username + " disconnected");
         synchronized (playingUsernames) {
@@ -80,6 +134,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
+    /**
+     * Kicks a player from the specified lobby. If the lobby becomes empty after the player is kicked, it is removed from
+     * the lobbiesWaitingToStart queue.
+     *
+     * @param username the username of the player to kick
+     * @param lobby    the GameServer object representing the lobby
+     */
     public void kick(String username, GameServer lobby) {
         logger.log(Level.INFO, "Player " + username + " kicked");
 
@@ -91,6 +152,14 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
+    /**
+     * Handles the reconnection request from a player. It checks if the player is already logged in or if the player has a
+     * previous GameServer associated with their username. If the conditions are met, the player is reconnected to the
+     * respective GameServer.
+     *
+     * @param username the username of the player requesting reconnection
+     * @param listener the GameListener object to receive updates from the GameServer
+     */
     private void reconnect(String username, GameListener listener) {
         logger.log(Level.INFO, "Reconnect request for " + username );
         synchronized (playingUsernames) {
@@ -115,7 +184,16 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
-    //numOfPlayers is 1 when the player wants to join a lobby, otherwise is the numOfPlayers for the new lobby
+    /**
+     * Handles the registration request from a player. If the parameters are valid and there is a lobby available, it
+     * registers the player by adding them to the respective GameServer. If the numOfPlayers is 1, it tries to join an
+     * existing lobby; otherwise, it creates a new lobby.
+     *
+     * @param username     the username of the player
+     * @param numOfPlayers the number of players in the lobby (1 for joining an existing lobby, >1 for a new lobby)
+     * @param listener     the GameListener object to receive updates from the GameServer
+     * @throws RemoteException if there is an error in remote method invocation
+     */
     private void register(String username, int numOfPlayers, GameListener listener) throws RemoteException {
         logger.log(Level.INFO, "Register request for player with username:  " + username + " and numOfPlayers: " + numOfPlayers);
 
@@ -158,6 +236,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
+    /**
+     * Starts the RMI server by creating the RMI registry and binding the server instance to a name in the registry.
+     *
+     * @param server the server instance to be bound to the RMI registry
+     * @throws RemoteException if there is an error in remote method invocation
+     */
     private static void startRMI(Server server) throws RemoteException {
         LocateRegistry.createRegistry(1099);
         Registry registry = LocateRegistry.getRegistry();
@@ -165,6 +249,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         System.out.println("In attesa di client RMI...");
     }
 
+    /**
+     * Starts the socket server by creating a ServerSocket and accepting incoming socket connections. Each connection is
+     * handled by a separate thread using the ClientSkeleton class.
+     *
+     * @param server the server instance
+     * @throws RemoteException if there is an error in remote method invocation
+     */
     public static void startSocket(Server server) throws RemoteException {
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
             while(true) {
@@ -201,7 +292,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
 
-    // Return the singleton instance of the server
+    /**
+     * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
+     *
+     * @return the singleton instance of the server
+     */
     public static ServerImplementation getInstance() throws RemoteException{
         if( instance == null ) {
             instance = new ServerImplementation();
@@ -209,6 +304,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         return instance;
     }
 
+    /**
+     * The entry point of the server application. It creates an instance of the server, starts the RMI and socket servers,
+     * and logs the server start.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args){
         ServerImplementation server = null;
 
@@ -255,6 +356,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     }
 
+    /**
+     * Sets up the logger for the server. It configures the logger's level, creates a file handler for logging to a file,
+     * sets up a formatter for the file handler, creates a console handler, and adds the handlers to the logger.
+     */
     private static void setUpLogger(){
         logger.setLevel(Level.ALL); // Imposta il livello di logging desiderato
 

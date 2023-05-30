@@ -14,10 +14,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The Config class is responsible for loading and providing configuration data for the game.
+ */
 public class Config {
 
+    /**
+     * Represents the score for a private goal.
+     */
     public record PrivateGoalScore(int correctPosition, int score) { }
+
+    /**
+     * Represents the score for a global goal.
+     */
     public record GlobalGoalScore(int players, int score) { }
+
+    /**
+     * Represents the score for a board goal.
+     */
     public record BoardGoalScore(int tiles, int score) { }
     private static Config instance;
     private final int maxNumberOfPlayers;
@@ -34,6 +48,9 @@ public class Config {
     private final List<List<Coordinates>> XShapeFromJSON;
     private final List<List<Coordinates>> DiagonalsFromJSON;
 
+    /**
+     * Private constructor to enforce singleton pattern. Loads the configuration data from JSON files.
+     */
     private Config(){
         Gson gson = new Gson();
         Reader readerConfig = new InputStreamReader(this.getClass().getResourceAsStream("/Config.json"));
@@ -86,14 +103,30 @@ public class Config {
 
     }
 
+    /**
+     * Returns the scores for private goals.
+     *
+     * @return an array of PrivateGoalScore objects representing the scores for private goals.
+     */
     public PrivateGoalScore[] getPrivateGoalsScores() {
         return privateGoalsScores;
     }
 
+    /**
+     * Returns the private goals.
+     *
+     * @return a list of Coordinates arrays representing the private goals.
+     */
     public List<Coordinates[]> getPrivateGoals(){
         return privateGoals;
     }
 
+    /**
+     * Returns the game board coordinates for the specified number of players.
+     *
+     * @param people the number of players in the game.
+     * @return a list of Coordinates representing the game board coordinates.
+     */
     public List<Coordinates> getGameBoardCoordinates(int people){
         int currPeople;
         List<Coordinates> gameBoardCoordinates = new ArrayList<>();
@@ -112,44 +145,94 @@ public class Config {
         return gameBoardCoordinates;
     }
 
+    /**
+     * Returns the X shape coordinates from JSON.
+     *
+     * @return a list of Lists of Coordinates representing the X shape coordinates.
+     */
     public List<List<Coordinates>> getXShapeFromJSON() {
         return XShapeFromJSON;
     }
 
+    /**
+     * Returns the diagonal coordinates from JSON.
+     *
+     * @return a list of Lists of Coordinates representing the diagonal coordinates.
+     */
     public List<List<Coordinates>> getDiagonalsFromJSON() {
         return DiagonalsFromJSON;
     }
 
+    /**
+     * Returns the unsorted global goals.
+     *
+     * @return an array of GlobalGoalScore objects representing the unsorted global goals.
+     */
     public GlobalGoalScore[] getUnsortedGlobalGoals() {
         return globalGoals;
     }
 
+    /**
+     * Returns the sorted board goals.
+     *
+     * @return an array of BoardGoalScore objects representing the sorted board goals.
+     */
     public BoardGoalScore[] getSortedBoardGoals() {
         //return (BoardGoalScore[]) Arrays.stream(boardGoals).sorted((t1,t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList()).toArray();
         List<BoardGoalScore> l = Arrays.stream(boardGoals).sorted((t1, t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList());
         return l.toArray(new BoardGoalScore[l.size()]);
     }
 
+    /**
+     * Returns the maximum number of players.
+     *
+     * @return the maximum number of players.
+     */
     public int getMaxNumberOfPlayers() {
         return maxNumberOfPlayers;
     }
 
+    /**
+     * Returns the number of global goals.
+     *
+     * @return the number of global goals.
+     */
     public int getNumOfGlobalGoals() {
         return numOfGlobalGoals;
     }
 
+    /**
+     * Returns the number of rows in the shelf.
+     *
+     * @return the number of rows in the shelf.
+     */
     public int getShelfRows() {
         return shelfRows;
     }
 
+    /**
+     * Returns the number of columns in the shelf.
+     *
+     * @return the number of columns in the shelf.
+     */
     public int getShelfColumns() {
         return shelfColumns;
     }
 
+    /**
+     * Returns the number of tiles per color.
+     *
+     * @return the number of tiles per color.
+     */
     public int getNumOfTilesPerColor() {
         return numOfTilesPerColor;
     }
 
+    /**
+     * Returns the singleton instance of Config.
+     *
+     * @return the Config instance.
+     */
     public static synchronized Config getInstance(){
         if( instance == null ) instance = new Config();
         return instance;

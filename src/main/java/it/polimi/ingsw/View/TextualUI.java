@@ -302,7 +302,7 @@ public class TextualUI extends ClientManager {
         // display names
         out.print("\t\t");
         for(PlayerView p: players){
-            out.print(p.getUsername() + "'s Shelf\t\t\t\t\t\t");
+            out.print(p.getUsername() + "'s Shelf\t\t\t\t\t");
         }
         out.println("\n");
 
@@ -321,13 +321,14 @@ public class TextualUI extends ClientManager {
     }
 
 
-    private List<Coordinates> pickTiles(int numRows, int numCols){
+    private List<Coordinates> pickTiles(GameBoardView gameBoardView, int numRows, int numCols, int rowOffset, int colOffset){
         /* Todo: check that the chosen Tiles from the board are actually pickable, on the same line, maximum 3
          *   -> controller*/
         List<Coordinates> coords = new ArrayList<>();
 
         int row, column, choice;
         String input;
+        Coordinates singleTileCoord;
 
         while(true) {
             choice = readChoiceFromInput("Pick a tile", "Done");
@@ -349,10 +350,18 @@ public class TextualUI extends ClientManager {
                                 "and a column [0 - " + numCols +"]!\n");
                         continue;
                     }
-                    row = (c[0].toUpperCase().charAt(0)) - 'A';
-                    column = c[1].charAt(0) - '0';
-                    coords.add(new Coordinates(row, column));
-                    break;
+
+                    row = (c[0].toUpperCase().charAt(0)) - 'A' + rowOffset;
+                    column = c[1].charAt(0) - '0' + colOffset;
+                    singleTileCoord = new Coordinates(row, column);
+                    // if it isn't already picked
+                    if(gameBoardView.getTile(singleTileCoord) != null){
+                        coords.add(new Coordinates(row, column));
+                        break;
+                    }else{
+                        out.println("This tile was already picked! Pick another one");
+                        // continue;
+                    }
                 }
             } else {
                 break;
@@ -405,13 +414,14 @@ public class TextualUI extends ClientManager {
             showShelves(game.getView().getPlayers());
             showPrivateGoals(modelView.getPlayers()[0].getPrivateGoal().getCoordinates());
 
-            int numRows = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt()
-                    - gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt() - 1;
+            int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+            int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
 
-            int numCols = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt()
-                    - gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt() - 1;
+            int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+            int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
-            coords = pickTiles(numRows, numCols);
+
+            coords = pickTiles(gameBoard, maxRow - minRow, maxCol - minCol, minRow, minCol);
             chosenTiles = new Coordinates[coords.size()];
             for(int i = 0; i < coords.size(); i++){
                 chosenTiles[i] = coords.get(i);
@@ -450,6 +460,66 @@ public class TextualUI extends ClientManager {
             }
             //shelfView = new ShelfView(shelf);
         }
+    }
+
+    private Message doTurnAction(GameBoardView gameBoardView, PlayerView playerView){
+        // to display the gameBoard and pick the tiles correctly
+        int maxRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+        int minRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
+
+        int maxCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+        int minCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
+
+        Coordinates[] chosenTiles;
+        List<Coordinates> coords;
+
+        coords = pickTiles(gameBoardView, maxRow - minRow, maxCol - minCol, minRow, minCol);
+        chosenTiles = new Coordinates[coords.size()];
+        for(int i = 0; i < coords.size(); i++){
+            chosenTiles[i] = coords.get(i);
+        }
+
+        TileView t;
+        int column = 0;
+
+        while(true){
+            out.print("In which column do you want to insert the Tiles? ");
+            String input = in.nextLine();
+            if(!checkUserInput(0, Shelf.getColumns(), input.charAt(0) - '0')) {
+                out.println("\nInsert a valid column!");
+                continue;
+            }
+            try{
+                column = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                out.println("Insert a valid input");
+                continue;
+            }
+            break;
+        }
+
+        // Once I have the Tiles to pick
+        // print the Tiles and ask for the order
+        out.println("Select the order in which you want to insert the tiles in the " + column + " column: ");
+        for(int i = 0; i < chosenTiles.length; i++){
+            t = gameBoardView.getTile(chosenTiles[i]);
+            out.print((i + 1) + ":");
+            printTile(t);
+            out.println("\n");
+        }
+
+        int[] order = new int[chosenTiles.length];
+        for(int i = 0; i < order.length; i++){
+            order[i] = readNumberFromInput(1, chosenTiles.length);
+        }
+
+        // once I have the order, set the Coordinates array to send
+        Coordinates[] orderedChosenTiles = new Coordinates[chosenTiles.length];
+        for(int i = 0; i < chosenTiles.length; i++){
+            orderedChosenTiles[i] = chosenTiles[order[i] - 1];
+        }
+
+        return new TurnActionMessage(playerView.getUsername(), orderedChosenTiles, column);
     }
 
     private void askPlayerNumOfPlayerForLobby(){
@@ -573,6 +643,24 @@ public class TextualUI extends ClientManager {
                 printPlayersInLobby((LobbyMessage) m);
             } else if (m instanceof UpdateViewMessage) {
                 //inizia la partita
+                PlayerView[] playersView = ((UpdateViewMessage) m).getGameView().getPlayers();
+                int myIndex = 0;
+                // get my player index
+                for(int i = 0; i < playersView.length; i++){
+                    if(playersView[i].getUsername().equals(userName))
+                        myIndex = i;
+                }
+                GameBoardView gameBoardView = ((UpdateViewMessage) m).getGameView().getGameBoard();
+                PrivateGoalView privateGoalView = ((UpdateViewMessage) m).getGameView().getPlayers()[myIndex].getPrivateGoal();
+                int playerIndex = (((UpdateViewMessage) m).getGameView().getCurrentPlayer());
+
+                showBoard(gameBoardView);
+                showShelves(playersView);
+                showPrivateGoals(privateGoalView.getCoordinates());
+                Message turnActionMessage = doTurnAction(gameBoardView, playersView[playerIndex]);
+
+                out.println(turnActionMessage);
+
             }else if(m instanceof GameServerMessage){
                 AppClientImplementation.logger.log(Level.INFO,"Switchato listener a GameServer");
                 connectToGameServer((GameServerMessage) m);

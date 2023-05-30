@@ -26,6 +26,8 @@ public class GraphicalUI extends ClientManager {
     private int numOfPlayers;
     private int currentPlayer;
     private int numOfActivePlayers;
+    private int maxFreeSpacesInMyShelf;
+    private Coordinates[] selectedTiles;
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
 
@@ -525,7 +527,10 @@ public class GraphicalUI extends ClientManager {
 
         private GameBoardPanel gameBoardPanel;
         private ShelfPanel[] shelves;
+
+        private JLabel[] scores;
         private GlobalGoalPanel[] globalGoalPanel;
+        private JLabel text;
         private JLabel errorText;
         private JPanel pickedTilesPanel;
         private GameWindow(GameView gameView){
@@ -537,6 +542,8 @@ public class GraphicalUI extends ClientManager {
             //initialize private parameters
             numOfPlayers = gameView.getNumOfPlayers();
             currentPlayer = gameView.getCurrentPlayer();
+            maxFreeSpacesInMyShelf = 0;
+            selectedTiles = new Coordinates[3];
 
             // set up the background
             JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
@@ -564,14 +571,47 @@ public class GraphicalUI extends ClientManager {
             shelvesPanel.setOpaque(false);
             shelvesPanel.setLayout(new BoxLayout(shelvesPanel,BoxLayout.PAGE_AXIS));
             upperPanel.add(shelvesPanel);
+            scores = new JLabel[gameView.getPlayers().length];
             for(int i = 0; i<gameView.getPlayers().length;i++){
                 PlayerView p = gameView.getPlayers()[i];
                 if(p.getUsername().equals(username)){
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
                     lowerPanel.add(shelves[i]);
-                    lowerPanel.add(new PrivateGoalPanel(p.getPrivateGoal().getId(), 150, 225));
+                    JPanel temp = new JPanel();
+                    temp.setLayout(new BoxLayout(temp,BoxLayout.PAGE_AXIS));
+                    temp.setOpaque(false);
+                    JPanel temp1 = new JPanel();
+                    temp1.setOpaque(false);
+                    temp1.add(new PrivateGoalPanel(p.getPrivateGoal().getId(), 150, 225));
+                    temp.add(temp1);
+
+                    temp1 = new JPanel();
+                    temp1.setLayout(new FlowLayout());
+                    temp1.setOpaque(false);
+                    JLabel label = new JLabel("Current score: ");
+                    label.setOpaque(false);
+                    label.setFont(label.getFont().deriveFont(16f));
+                    scores[i] = new JLabel(String.valueOf(gameView.getPlayers()[i].getScore()));
+                    scores[i].setOpaque(false);
+                    scores[i].setFont(scores[i].getFont().deriveFont(16f));
+                    temp1.add(label);
+                    temp1.add(scores[i]);
+                    temp.add(temp1);
+                    lowerPanel.add(temp);
                 }
                 else{
+                    JLabel name = new JLabel(gameView.getPlayers()[i].getUsername().length()>15 ? gameView.getPlayers()[i].getUsername().substring(0,15)+"..." : gameView.getPlayers()[i].getUsername());
+                    name.setOpaque(false);
+                    name.setFont(name.getFont().deriveFont(10f));
+                    scores[i] = new JLabel(String.valueOf(gameView.getPlayers()[i].getScore()));
+                    scores[i].setOpaque(false);
+                    scores[i].setFont(scores[i].getFont().deriveFont(10f));
+                    JPanel temp = new JPanel();
+                    temp.setLayout(new FlowLayout(FlowLayout.CENTER));
+                    temp.setOpaque(false);
+                    temp.add(name);
+                    temp.add(scores[i]);
+                    shelvesPanel.add(temp);
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",225,225);
                     shelvesPanel.add(shelves[i]);
                 }
@@ -593,8 +633,16 @@ public class GraphicalUI extends ClientManager {
             }
 
             // creating the panel containing the error texts and the picked tiles
+            text = new JLabel();
+            text.setOpaque(false);
+            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+            text.setFont(text.getFont().deriveFont(18f));
+            middlePanel.add(text);
             errorText = new JLabel();
             errorText.setOpaque(false);
+            errorText.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+            errorText.setFont(errorText.getFont().deriveFont(16f));
+            errorText.setForeground(Color.RED);
             middlePanel.add(errorText);
             pickedTilesPanel = new JPanel();
             pickedTilesPanel.setOpaque(false);

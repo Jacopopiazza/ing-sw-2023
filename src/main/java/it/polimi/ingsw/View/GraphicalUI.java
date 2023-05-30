@@ -23,6 +23,9 @@ import java.util.List;
 public class GraphicalUI extends ClientManager {
 
     private String username;
+    private int numOfPlayers;
+    private int currentPlayer;
+    private int numOfActivePlayers;
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
 
@@ -400,20 +403,7 @@ public class GraphicalUI extends ClientManager {
                 setBorder(BorderFactory.createEmptyBorder((int)(height/24), (int)(width/23.23), (int)(height/24), (int)(width/19.46)));
                 setLayout(new GridLayout(gameBoardDim, gameBoardDim, (int)(width/144), (int)(height/144)));
 
-                Set<Coordinates> coordinatesSet = gameBoard.getCoords();
-                Coordinates coords;
-                numberOfPicks = 0;
-                for (int i = 0; i < gameBoardDim; i++) {
-                    for (int j = 0; j < gameBoardDim; j++) {
-                        coords = new Coordinates(i,j);
-                        if(coordinatesSet.contains(coords) && gameBoard.getTile(coords) != null){
-                            if(gameBoard.isPickable(coords)) add(getTileButton(gameBoard.getTile(coords), i, j));
-                            else add(ImageManager.getTileLabel( gameBoard.getTile(coords),(int)(width/10.59),(int)(height/10.59) ));
-                        }else{
-                            add(ImageManager.getVoidLabel());
-                        }
-                    }
-                }
+                update(gameBoard);
             }
 
             private JButton getTileButton(TileView tile, int x, int y){
@@ -435,6 +425,23 @@ public class GraphicalUI extends ClientManager {
                 return button;
             }
 
+            private void update(GameBoardView gameBoard){
+                Set<Coordinates> coordinatesSet = gameBoard.getCoords();
+                Coordinates coords;
+                numberOfPicks = 0;
+                for (int i = 0; i < gameBoardDim; i++) {
+                    for (int j = 0; j < gameBoardDim; j++) {
+                        coords = new Coordinates(i,j);
+                        if(coordinatesSet.contains(coords) && gameBoard.getTile(coords) != null){
+                            if(gameBoard.isPickable(coords)) add(getTileButton(gameBoard.getTile(coords), i, j));
+                            else add(ImageManager.getTileLabel( gameBoard.getTile(coords),(int)(width/10.59),(int)(height/10.59) ));
+                        }else{
+                            add(ImageManager.getVoidLabel());
+                        }
+                    }
+                }
+            }
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -448,9 +455,13 @@ public class GraphicalUI extends ClientManager {
         private class ShelfPanel extends Background {
             private static final int rows = Shelf.getRows();
             private static final int cols = Shelf.getColumns();
+            private int width;
+            private int height;
 
             private ShelfPanel(ShelfView shelfView, String imagePath, String toolTip, int width, int height){
                 super(imagePath);
+                this.width = width;
+                this.height = height;
                 setOpaque(false);
                 setToolTipText(toolTip);
                 setLayout(new BorderLayout());
@@ -458,7 +469,10 @@ public class GraphicalUI extends ClientManager {
                 setLayout(new GridLayout(rows, cols, (int)(width/25), (int)(height/62.5)));
                 setBorder(BorderFactory.createEmptyBorder((int)(height/15.625), (int)(width/8.33),
                         (int)(height/8.77), (int)(width/8.77)));
+            }
 
+            private void update(ShelfView shelfView){
+                removeAll();
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < cols; j++) {
                         if(shelfView.getTile(new Coordinates(i,j)) != null) add(ImageManager.getTileLabel( shelfView.getTile(new Coordinates(i,j)),(int)(width/7.35),(int)(height/7.35) ));
@@ -503,16 +517,26 @@ public class GraphicalUI extends ClientManager {
                 }
             }
 
+            private void update(GlobalGoalView ggv){
+                if(ggv.getCurrentScore() == 0) scoreIcon = null;
+                else scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg");
+            }
         }
 
         private GameBoardPanel gameBoardPanel;
         private ShelfPanel[] shelves;
         private GlobalGoalPanel[] globalGoalPanel;
+        private JLabel errorText;
+        private JPanel pickedTilesPanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setSize(1280, 720); // 16:9
             setLocationRelativeTo(null);    // in the middle of the screen
+
+            //initialize private parameters
+            numOfPlayers = gameView.getNumOfPlayers();
+            currentPlayer = gameView.getCurrentPlayer();
 
             // set up the background
             JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
@@ -521,6 +545,10 @@ public class GraphicalUI extends ClientManager {
             upperPanel.setOpaque(false);
             upperPanel.setLayout(new FlowLayout());
             background.add(upperPanel);
+            JPanel middlePanel = new JPanel();
+            middlePanel.setOpaque(false);
+            middlePanel.setLayout(new BoxLayout(middlePanel,BoxLayout.PAGE_AXIS));
+            background.add(middlePanel);
             JPanel lowerPanel = new JPanel();
             lowerPanel.setOpaque(false);
             lowerPanel.setLayout(new FlowLayout());
@@ -530,7 +558,7 @@ public class GraphicalUI extends ClientManager {
             scrollPane.setPreferredSize(new Dimension(1280,720));
             add(scrollPane);
 
-            //creating the shelfPanel Panel
+            //creating the shelfPanels
             shelves = new ShelfPanel[gameView.getPlayers().length];
             JPanel shelvesPanel = new JPanel();
             shelvesPanel.setOpaque(false);
@@ -553,25 +581,44 @@ public class GraphicalUI extends ClientManager {
             gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),700,700,false);
             upperPanel.add(gameBoardPanel);
 
-
-            // creating the Panel containing private and global Goals
+            // creating the Panel containing global Goals
             JPanel goals = new JPanel();
             goals.setOpaque(false);
             goals.setLayout(new BoxLayout(goals, BoxLayout.PAGE_AXIS));
             upperPanel.add(goals);
-            // adding the content
             globalGoalPanel = new GlobalGoalPanel[gameView.getGlobalGoals().length];
             for(int i=0; i<gameView.getGlobalGoals().length;i++){
                 globalGoalPanel[i] = new GlobalGoalPanel(gameView.getGlobalGoals()[i],225,150 );
                 goals.add(globalGoalPanel[i]);
             }
 
+            // creating the panel containing the error texts and the picked tiles
+            errorText = new JLabel();
+            errorText.setOpaque(false);
+            middlePanel.add(errorText);
+            pickedTilesPanel = new JPanel();
+            pickedTilesPanel.setOpaque(false);
+            pickedTilesPanel.setLayout(new FlowLayout());
+
             pack();
             setVisible(true);
         }
 
         private void update(GameView gw){
+            if(gw.getGameBoard() != null) gameBoardPanel.update(gw.getGameBoard());
+            if(gw.getNumOfPlayers() != null) numOfPlayers = gw.getNumOfPlayers();
+            if(gw.getPlayers() != null){
+                for(int i=0;i<gw.getPlayers().length;i++) if(gw.getPlayers()[i] != null) shelves[i].update(gw.getPlayers()[i].getShelf());
+            }
+            if(gw.getCurrentPlayer() != null) currentPlayer = gw.getCurrentPlayer();
+            if(gw.getNumOfActivePlayers() != null) numOfActivePlayers = gw.getNumOfActivePlayers();
+            if(gw.getGlobalGoals() != null){
+                for(int i=0;i<gw.getGlobalGoals().length;i++) if(gw.getGlobalGoals()[i] != null) globalGoalPanel[i].update(gw.getGlobalGoals()[i]);
+            }
+            if(gw.getCheater() != null) errorText.setText(gw.getCheater() + " tried to cheat");
 
+            revalidate();
+            repaint();
         }
     }
 

@@ -5,11 +5,15 @@ import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
+import it.polimi.ingsw.Tuple;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.logging.Level;
 
 /**
  * The `GameServer` class represents the server component responsible for managing the game lobby and the game itself.
@@ -44,6 +48,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private  ServerImplementation serverImplementation = null;
     private List<String> playingUsernames;
     private List<String> disconnectedUsernames;
+    private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
+
 
     /**
      * Constructs a GameServer instance with the specified ServerImplementation and number of players.
@@ -58,17 +64,46 @@ public class GameServer extends UnicastRemoteObject implements Server {
         this.controller = new Controller(new Game(numOfPlayers), this);
         this.playingUsernames = new ArrayList<>();
         this.disconnectedUsernames = new ArrayList<>();
+
+        new Thread(){
+            @Override
+            public void run(){
+
+                while(true){
+
+                    if( isMessagesQueueEmpty(null) ) continue;
+
+                    Tuple<Message,Client> tuple = popFromMessagesQueue();
+                    try {
+                        effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
+                    }catch (RemoteException ex){
+                        ServerImplementation.logger.log(Level.SEVERE, "Cannot send message to client: " + ex.getMessage());
+                    }
+                }
+            }
+
+        }.start();
     }
 
-    /**
-     * Handles the incoming message from the client.
-     *
-     * @param m the message received from the client
-     * @param client  the client sending the message
-     * @throws RemoteException if a remote communication error occurs
-     */
-    @Override
-    public void handleMessage(Message m, Client client) throws RemoteException {
+    private void addToMessagesQueue(Message m, Client c) {
+        synchronized (recievedMessages) {
+            recievedMessages.add(new Tuple<>(m, c));
+        }
+    }
+
+    private boolean isMessagesQueueEmpty(Message m) {
+        synchronized (recievedMessages) {
+            return recievedMessages.isEmpty();
+        }
+    }
+
+    private Tuple<Message, Client> popFromMessagesQueue() {
+        synchronized (recievedMessages) {
+            return recievedMessages.poll();
+        }
+    }
+
+    private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
             doTurn(message.getUsername(),message.getChosenTiles(),message.getColumn());
@@ -80,6 +115,19 @@ public class GameServer extends UnicastRemoteObject implements Server {
         else{
             System.err.println("Message not recognized; ignoring it");
         }
+    }
+
+    /**
+     * Handles the incoming message from the client and adds it to the Queue.
+     *
+     * @param m the message received from the client
+     * @param client  the client sending the message
+     * @throws RemoteException if a remote communication error occurs
+     */
+    @Override
+    public void handleMessage(Message m, Client client) throws RemoteException {
+        ServerImplementation.logger.log(Level.INFO, "Recieved message from client: " + m.getClass());
+        addToMessagesQueue(m,client);
     }
 
     /**

@@ -574,7 +574,7 @@ public class GraphicalUI extends ClientManager {
             scores = new JLabel[gameView.getPlayers().length];
             for(int i = 0; i<gameView.getPlayers().length;i++){
                 PlayerView p = gameView.getPlayers()[i];
-                if(p.getUsername().equals(username)){
+                if(p.getUsername().equals(username)){ // my infos
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
                     lowerPanel.add(shelves[i]);
                     JPanel temp = new JPanel();
@@ -656,7 +656,10 @@ public class GraphicalUI extends ClientManager {
             if(gw.getGameBoard() != null) gameBoardPanel.update(gw.getGameBoard());
             if(gw.getNumOfPlayers() != null) numOfPlayers = gw.getNumOfPlayers();
             if(gw.getPlayers() != null){
-                for(int i=0;i<gw.getPlayers().length;i++) if(gw.getPlayers()[i] != null) shelves[i].update(gw.getPlayers()[i].getShelf());
+                for(int i=0;i<gw.getPlayers().length;i++) if(gw.getPlayers()[i] != null){
+                    shelves[i].update(gw.getPlayers()[i].getShelf());
+                    scores[i].setText(String.valueOf(gw.getPlayers()[i].getScore()));
+                }
             }
             if(gw.getCurrentPlayer() != null) currentPlayer = gw.getCurrentPlayer();
             if(gw.getNumOfActivePlayers() != null) numOfActivePlayers = gw.getNumOfActivePlayers();

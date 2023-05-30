@@ -83,9 +83,9 @@ public abstract class ClientManager implements Runnable, View
      */
     @Override
     public void addListener(ViewListener listener) {
-        //synchronized (listeners) {
+        synchronized (listeners) {
             listeners.add(listener);
-        //}
+        }
     }
 
     /**
@@ -96,20 +96,20 @@ public abstract class ClientManager implements Runnable, View
     @Override
     public void notifyListeners(Message m) {
         AppClientImplementation.logger.log(Level.INFO,"Notifying ClientManager listeners");
-        //synchronized (listeners) {
+        synchronized (listeners) {
             for (ViewListener listener : listeners) {
                 listener.handleMessage(m);
             }
-        //}
+        }
     }
 
     /**
      * Clears the list of listeners, removing all registered listeners.
      */
     public void cleanListeners(){
-        //synchronized (listeners) {
+        synchronized (listeners) {
             listeners.clear();
-        //}
+        }
     }
 
     /**

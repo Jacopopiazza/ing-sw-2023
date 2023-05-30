@@ -45,7 +45,7 @@ import java.util.logging.Level;
  */
 public class GameServer extends UnicastRemoteObject implements Server {
     private Controller controller;
-    private  ServerImplementation serverImplementation = null;
+    private ServerImplementation serverImplementation = null;
     private List<String> playingUsernames;
     private List<String> disconnectedUsernames;
     private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
@@ -71,7 +71,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                 while(true){
 
-                    if( isMessagesQueueEmpty(null) ) continue;
+                    if( isMessagesQueueEmpty() ) continue;
 
                     Tuple<Message,Client> tuple = popFromMessagesQueue();
                     try {
@@ -91,7 +91,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
         }
     }
 
-    private boolean isMessagesQueueEmpty(Message m) {
+    private boolean isMessagesQueueEmpty() {
         synchronized (recievedMessages) {
             return recievedMessages.isEmpty();
         }
@@ -106,10 +106,13 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
+            ServerImplementation.logger.log(Level.INFO, "Started to handle TurnMessage");
             doTurn(message.getUsername(),message.getChosenTiles(),message.getColumn());
         }
         else if( m instanceof DisconnectMessage ) {
             DisconnectMessage message = (DisconnectMessage) m;
+            ServerImplementation.logger.log(Level.INFO, "Started to handle DisconnectMessage");
+
             disconnect(message.getUsername());
         }
         else{
@@ -156,6 +159,12 @@ public class GameServer extends UnicastRemoteObject implements Server {
      */
     public void reconnect(String username, GameListener listener) {
         this.controller.reconnect(username, listener);
+        synchronized (playingUsernames) {
+            playingUsernames.add(username);
+        }
+        synchronized (disconnectedUsernames) {
+            disconnectedUsernames.remove(username);
+        }
     }
 
     /**
@@ -168,6 +177,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
     public boolean addPlayer(String username, GameListener listener) {
         boolean res = this.controller.addPlayer(username, listener);
         listener.update(new GameServerMessage(this));
+        synchronized (playingUsernames) {
+            playingUsernames.add(username);
+        }
         return res;
     }
 

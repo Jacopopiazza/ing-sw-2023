@@ -413,8 +413,8 @@ public class Game {
     private void notifyAllListeners(){
         if( started ){
             Message gv = new UpdateViewMessage(new GameView(this));
-            for( GameListener el : listeners ){
-                if( el != null ) el.update(gv);
+            for(int i = 0;i < listeners.length;i++){
+                if( listeners[i] != null ) listeners[i].update(gv);
             }
         }
         else{

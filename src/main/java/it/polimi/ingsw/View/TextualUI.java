@@ -8,6 +8,8 @@ import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
+import it.polimi.ingsw.Network.ClientImplementation;
+import it.polimi.ingsw.Network.ServerImplementation;
 
 
 import java.io.Console;
@@ -23,6 +25,8 @@ public class TextualUI extends ClientManager {
     private Scanner in;
     private PrintStream out;
     private String userName;
+
+    private boolean gameStarted = false;
 
     private Queue<Message> recievedMessages = new LinkedList<>();
 
@@ -596,19 +600,14 @@ public class TextualUI extends ClientManager {
                 chooseLobby();
                 waitForLoginResponse();
             }
-            else if(m instanceof GameServerMessage){
-                addMessageToQueue(m);
-                waitForLoginResponse();
-            }
             else if(m instanceof LobbyMessage){
                 AppClientImplementation.logger.log(Level.INFO,"Messaggio giocatori in lobby");
                 printPlayersInLobby((LobbyMessage) m);
                 break;
             }
             else{
-                AppClientImplementation.logger.log(Level.INFO,"Invalid message recieved; ignoring it.");
-                AppClientImplementation.logger.log(Level.INFO,m.toString());
-                throw new RuntimeException("Invalid message recieved;");
+                addMessageToQueue(m);
+                waitForLoginResponse();
             }
         }
 
@@ -633,40 +632,77 @@ public class TextualUI extends ClientManager {
         doLogin();
         out.println("Login effettuato con successo!");
         out.println("In attesa dell'inizio della partita");
+
+        while (true){
+            if(isMessagesQueueEmpty()){
+                continue;
+            }
+            Message m = this.getFirstMessageFromQueue();
+            if(m instanceof  LobbyMessage){
+                printPlayersInLobby((LobbyMessage) m);
+            } else if (m instanceof GameServerMessage) {
+                connectToGameServer((GameServerMessage) m);
+                break;
+            } else {
+                addMessageToQueue(m);
+                AppClientImplementation.logger.log(Level.INFO, "Ignored message and readed to queue, still waiting for GameServerMessage");
+            }
+        }
+
+        out.println("Connesso a GameServer in attesa dell'inizio della partita");
+
         while(true){
             if(isMessagesQueueEmpty()){
                 continue;
             }
 
             Message m = this.getFirstMessageFromQueue();
+            AppClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
+
             if(m instanceof  LobbyMessage){
                 printPlayersInLobby((LobbyMessage) m);
             } else if (m instanceof UpdateViewMessage) {
-                //inizia la partita
-                PlayerView[] playersView = ((UpdateViewMessage) m).getGameView().getPlayers();
-                int myIndex = 0;
-                // get my player index
-                for(int i = 0; i < playersView.length; i++){
-                    if(playersView[i].getUsername().equals(userName))
-                        myIndex = i;
+                printTheWholeFGame((UpdateViewMessage) m);
+
+                GameBoardView gameBoardView = ((UpdateViewMessage)m).getGameView().getGameBoard();
+                PlayerView currentPlayer = ((UpdateViewMessage)m).getGameView().getPlayers()[((UpdateViewMessage)m).getGameView().getCurrentPlayer()];
+
+                if(this.userName.equals(currentPlayer.getUsername())){
+                    AppClientImplementation.logger.log(Level.INFO, "E' il mio turno");
+                    Message turnActionMessage = doTurnAction(gameBoardView, currentPlayer);
+                    notifyListeners(turnActionMessage);
+                    AppClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
                 }
-                GameBoardView gameBoardView = ((UpdateViewMessage) m).getGameView().getGameBoard();
-                PrivateGoalView privateGoalView = ((UpdateViewMessage) m).getGameView().getPlayers()[myIndex].getPrivateGoal();
-                int playerIndex = (((UpdateViewMessage) m).getGameView().getCurrentPlayer());
-
-                showBoard(gameBoardView);
-                showShelves(playersView);
-                showPrivateGoals(privateGoalView.getCoordinates());
-                Message turnActionMessage = doTurnAction(gameBoardView, playersView[playerIndex]);
-
-                out.println(turnActionMessage);
+                else {
+                    AppClientImplementation.logger.log(Level.INFO, "Non e' il mio turno");
+                }
 
             }else if(m instanceof GameServerMessage){
                 AppClientImplementation.logger.log(Level.INFO,"Switchato listener a GameServer");
                 connectToGameServer((GameServerMessage) m);
             }
-            System.out.println(m.toString());
+
+            AppClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
+
         }
+    }
+
+    private void printTheWholeFGame(UpdateViewMessage m){
+        //inizia la partita
+        PlayerView[] playersView = m.getGameView().getPlayers();
+        int myIndex = 0;
+        // get my player index
+        for (int i = 0; i < playersView.length; i++) {
+            if (playersView[i].getUsername().equals(userName))
+                myIndex = i;
+        }
+        GameBoardView gameBoardView = m.getGameView().getGameBoard();
+        PrivateGoalView privateGoalView = m.getGameView().getPlayers()[myIndex].getPrivateGoal();
+        int playerIndex = m.getGameView().getCurrentPlayer();
+
+        showBoard(gameBoardView);
+        showShelves(playersView);
+        showPrivateGoals(privateGoalView.getCoordinates());
     }
 
     private void printPlayersInLobby(LobbyMessage m){

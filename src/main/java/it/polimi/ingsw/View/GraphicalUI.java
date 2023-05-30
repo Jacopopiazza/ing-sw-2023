@@ -471,7 +471,7 @@ public class GraphicalUI extends ClientManager {
 
         private class PrivateGoalPanel extends JLabel {
             private PrivateGoalPanel(int pvtGoalIndex, int width, int height){
-                super(new ImageIcon("visual_components/personal goal cards/Personal_Goals" + pvtGoalIndex + ".png"));
+                super(ImageManager.resizeImageIcon(new ImageIcon("visual_components/personal goal cards/Personal_Goals" + pvtGoalIndex + ".png"),width,height));
                 setToolTipText("Private goal");
                 setPreferredSize(new Dimension(width,height));
             }
@@ -508,61 +508,67 @@ public class GraphicalUI extends ClientManager {
         }
 
         private GameBoardPanel gameBoardPanel;
-        private ShelfPanel myShelf;
-        private ShelfPanel[] othersSelves;
+        private ShelfPanel[] shelves;
         private PrivateGoalPanel privateGoalPanel;
         private GlobalGoalPanel[] globalGoalPanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(1440, 810); // if not set the window appears in the right bottom corner
+            setSize(1280, 720); // 16:9
             setLocationRelativeTo(null);    // in the middle of the screen
 
             // set up the background
             JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
-            background.setLayout(new BorderLayout());
+            background.setLayout(new BoxLayout(background,BoxLayout.PAGE_AXIS));
+            JPanel upperPanel = new JPanel();
+            upperPanel.setOpaque(false);
+            upperPanel.setLayout(new FlowLayout());
+            background.add(upperPanel);
+            JPanel lowerPanel = new JPanel();
+            lowerPanel.setOpaque(false);
+            lowerPanel.setLayout(new FlowLayout());
+            background.add(lowerPanel);
             JScrollPane scrollPane = new JScrollPane(background);
             scrollPane.setOpaque(false);
-            scrollPane.setPreferredSize(new Dimension(1440,810));
+            scrollPane.setPreferredSize(new Dimension(1280,720));
             add(scrollPane);
 
-            //creating the gameBoard Panel
-            gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),400,400,false);
-            background.add(gameBoardPanel, BorderLayout.CENTER);
-
             //creating the shelfPanel Panel
-            othersSelves = new ShelfPanel[gameView.getPlayers().length-1];
-            JPanel shelves = new JPanel();
-            shelves.setOpaque(false);
-            shelves.setLayout(new BoxLayout(shelves,BoxLayout.PAGE_AXIS));
-            background.add(shelves,BorderLayout.WEST);
-            int i = 0;
-            for(PlayerView p : gameView.getPlayers()){
+            shelves = new ShelfPanel[gameView.getPlayers().length];
+            JPanel shelvesPanel = new JPanel();
+            shelvesPanel.setOpaque(false);
+            shelvesPanel.setLayout(new BoxLayout(shelvesPanel,BoxLayout.PAGE_AXIS));
+            upperPanel.add(shelvesPanel);
+            for(int i = 0; i<gameView.getPlayers().length;i++){
+                PlayerView p = gameView.getPlayers()[i];
                 if(p.getUsername().equals(username)){
-                    myShelf = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",200,200);
-                    // the index of the private goal (last param) is random at the moment -> to be implemented in config
-                    privateGoalPanel = new PrivateGoalPanel(p.getPrivateGoal().getId(), 100, 150);
-                    background.add(myShelf,BorderLayout.SOUTH);
+                    shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
+                    privateGoalPanel = new PrivateGoalPanel(p.getPrivateGoal().getId(), 150, 225);
+                    lowerPanel.add(shelves[i]);
+                    lowerPanel.add(privateGoalPanel);
                 }
                 else{
-                    othersSelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",100,100);
-                    shelves.add(othersSelves[i]);
-                    i++;
+                    shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",225,225);
+                    shelvesPanel.add(shelves[i]);
                 }
             }
+
+            //creating the gameBoard Panel
+            gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),700,700,false);
+            upperPanel.add(gameBoardPanel);
+
 
             // creating the Panel containing private and global Goals
             JPanel goals = new JPanel();
             goals.setOpaque(false);
             goals.setLayout(new BoxLayout(goals, BoxLayout.PAGE_AXIS));
-            background.add(goals ,BorderLayout.EAST);
+            upperPanel.add(goals);
             // adding the content
             globalGoalPanel = new GlobalGoalPanel[gameView.getGlobalGoals().length];
-            for(int j=0; j<gameView.getGlobalGoals().length;j++){
-                globalGoalPanel[i] = new GlobalGoalPanel(gameView.getGlobalGoals()[i],150,100 );
+            for(int i=0; i<gameView.getGlobalGoals().length;i++){
+                globalGoalPanel[i] = new GlobalGoalPanel(gameView.getGlobalGoals()[i],225,150 );
                 goals.add(globalGoalPanel[i]);
             }
-            goals.add(privateGoalPanel);
 
             pack();
             setVisible(true);

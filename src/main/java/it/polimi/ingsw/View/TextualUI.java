@@ -10,6 +10,7 @@ import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
 
 
+import java.io.Console;
 import java.io.PrintStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -135,6 +136,7 @@ public class TextualUI extends ClientManager {
             out.println("2 - " + option_2 + "\n");
             try{
                 choice = in.nextInt();
+                in.nextLine();
             }catch ( InputMismatchException ex){
                 choice = -1;
             }
@@ -268,7 +270,7 @@ public class TextualUI extends ClientManager {
         }
     }
 
-    public void showShelf(ShelfView shelf){
+    public void showMyShelf(ShelfView shelf){
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
 
@@ -289,6 +291,36 @@ public class TextualUI extends ClientManager {
         }
     }
 
+    public void showShelves(PlayerView[] players){
+        int r = Shelf.getRows();
+        int c = Shelf.getColumns();
+
+        TileView tile;
+
+        out.println("\n\n\n");
+
+        // display names
+        out.print("\t\t");
+        for(PlayerView p: players){
+            out.print(p.getUsername() + "'s Shelf\t\t\t\t\t\t");
+        }
+        out.println("\n");
+
+        for(int i = 0; i < r; i++){
+            for(PlayerView p: players){
+                for(int k = 0; k < c; k++){
+                    tile = p.getShelf().getTile(new Coordinates(i, k));
+                    printTile(tile);
+                    //out.print(ConsoleColors.RESET.getCode() + "");
+                }
+                out.print("\t\t");  // double tab from a player's shelf to another
+            }
+            out.print(ConsoleColors.RESET.getCode() + "");
+            out.print("\n\n");
+        }
+    }
+
+
     private List<Coordinates> pickTiles(int numRows, int numCols){
         /* Todo: check that the chosen Tiles from the board are actually pickable, on the same line, maximum 3
          *   -> controller*/
@@ -299,6 +331,7 @@ public class TextualUI extends ClientManager {
 
         while(true) {
             choice = readChoiceFromInput("Pick a tile", "Done");
+
             if (choice == 1) {
                 // Pick a tile
                 while(true){
@@ -335,9 +368,9 @@ public class TextualUI extends ClientManager {
         //if(!connected)
         //    return;
         out.println("Connected!");
-        readUsername();
 
-        out.println("Your username is: " + this.userName);
+        // readUsername();
+        //out.println("Your username is: " + this.userName);
 
         Game game = new Game(4);// Instanciated just for try
         game.addPlayer("a", (message -> out.println("ciao")));
@@ -351,7 +384,7 @@ public class TextualUI extends ClientManager {
             e.printStackTrace();
         }
 
-        PlayerView me = new PlayerView(game.getPlayer(0));
+        PlayerView me = new PlayerView(game.getPlayer(game.getCurrentPlayer()));
         Coordinates[] pvtGoals = new Coordinates[6]; // num of Coordinates to be read from config
         pvtGoals = me.getPrivateGoal().getCoordinates();
 
@@ -368,7 +401,8 @@ public class TextualUI extends ClientManager {
             GameBoardView gameBoard = modelView.getGameBoard();
 
             showBoard(gameBoard);
-            showShelf(shelfView);
+            //showMyShelf(shelfView);
+            showShelves(game.getView().getPlayers());
             showPrivateGoals(modelView.getPlayers()[0].getPrivateGoal().getCoordinates());
 
             int numRows = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt()
@@ -405,14 +439,16 @@ public class TextualUI extends ClientManager {
                 t = game.getGameBoard().getTile(el);
                 game.getGameBoard().setTile(el, null);
                 try{
-                    shelf.addTile(t, column);
+                    // get shelf ritorna una clone!!! -> stampa sempre shelf vuote perché non vengono aggiornate in game
+                    // ma viene aggiornata solo la loro clone -> inutile
+                    game.getPlayer(0).getShelf().addTile(t, column);
                 } catch (IllegalColumnInsertionException e) {
                     e.printStackTrace();
                 } catch (NoTileException e) {
                     e.printStackTrace();
                 }
             }
-            shelfView = new ShelfView(shelf);
+            //shelfView = new ShelfView(shelf);
         }
     }
 
@@ -542,9 +578,7 @@ public class TextualUI extends ClientManager {
                 connectToGameServer((GameServerMessage) m);
             }
             System.out.println(m.toString());
-
         }
-
     }
 
     private void printPlayersInLobby(LobbyMessage m){

@@ -420,16 +420,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
         fileHandler.setFormatter(new SimpleFormatter());
 
-        // Crea un gestore di log sulla console
-        ConsoleHandler consoleHandler = new ConsoleHandler();
-
         // Imposta il livello di logging dei gestori
         fileHandler.setLevel(Level.ALL);
-        consoleHandler.setLevel(Level.ALL);
 
         // Aggiungi i gestori al logger
         logger.addHandler(fileHandler);
-        //logger.addHandler(consoleHandler);
 
     }
 

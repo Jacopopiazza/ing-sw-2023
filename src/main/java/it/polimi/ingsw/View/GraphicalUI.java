@@ -16,17 +16,22 @@ import java.awt.image.BufferedImage;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GraphicalUI extends ClientManager {
 
     private String username;
     private int currentPlayer;
+    private int myId;
     private int numOfActivePlayers;
+    private boolean isGameFinished;
     private int maxFreeSpacesInMyShelf;
-    private Coordinates[] selectedTiles;
+    private Coordinates[] chosenTiles;
+    private Integer[] chosenOrder;
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
 
@@ -391,12 +396,9 @@ public class GraphicalUI extends ClientManager {
             private int width;
             private int height;
             private static final int gameBoardDim = 9;
-            private boolean isFinished;
-            private int numberOfPicks;
 
-            private GameBoardPanel(GameBoardView gameBoard, int width, int height, boolean isFinished){
+            private GameBoardPanel(GameBoardView gameBoard, int width, int height){
                 super(boardIcon.getImage());
-                this.isFinished = isFinished;
                 this.width = width;
                 this.height = height;
                 setToolTipText("Board");
@@ -407,20 +409,79 @@ public class GraphicalUI extends ClientManager {
                 update(gameBoard);
             }
 
-            private JButton getTileButton(TileView tile, int x, int y){
+            private JButton getTileButton(TileView tile, int row, int col){
                 ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,true);
                 JButton button = new JButton(ImageManager.resizeImageIcon(icon,(int)(width/10.59),(int)(height/10.59)));
                 button.setBorderPainted(false);
                 button.setOpaque(false);
                 button.addActionListener((e) -> {
-                    if(e.getSource() instanceof JButton pressed){
-                        // on every pick check that this tile is on the same line
-                        if(numberOfPicks < 3) {
-                            numberOfPicks++;
-                            System.out.println("Pressed " + x + "-" + y);
-                        }else{
-                            System.out.println("Max number of tiles picked!");
+                    if(e.getSource() instanceof JButton && !isGameFinished){
+                        //checks that one more tile can be picked
+                        if(chosenTiles[chosenTiles.length - 1] != null){
+                            errorText.setText("You can not select more than " + String.valueOf(chosenTiles.length) + " tiles" );
+                            return;
                         }
+                        //checks that one more tile can fit in the shelf
+                        if(chosenTiles[maxFreeSpacesInMyShelf - 1] != null){
+                            errorText.setText("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
+                            return;
+                        }
+                        //checks that this tile has not been already picked and that is next to one of the previously picked ones
+                        boolean nextTo = false;
+                        int i;
+                        for(i = 0;i<chosenTiles.length && chosenTiles[i]!=null;i++){
+                            if(chosenTiles[i].getROW() == row && chosenTiles[i].getCOL() == col){
+                                errorText.setText("You have already selected this tile");
+                                return;
+                            }
+                            if(chosenTiles[i].getCOL()+1 == col || chosenTiles[i].getCOL()-1 == col || chosenTiles[i].getROW()+1 == row || chosenTiles[i].getROW()-1 == row) nextTo=true;
+                        }
+                        if(!nextTo){
+                            errorText.setText("This tile is not next to one of the others you selected");
+                            return;
+                        }
+                        //checks that this tile is on the same column or on the same row with the previously picked ones
+                        boolean sameRow = true;
+                        boolean sameColumn = true;
+                        for(i = 0; i< chosenTiles.length-1 && chosenTiles[i+1]!=null && (sameRow || sameColumn); i++) {
+                            if(chosenTiles[i].getROW() != chosenTiles[i+1].getROW()) sameRow = false;
+                            if(chosenTiles[i].getCOL() != chosenTiles[i+1].getCOL()) sameColumn = false;
+                        }
+                        if( !(sameRow && sameColumn) ){
+                            if( (sameRow && chosenTiles[0].getROW() != row) || (sameColumn && chosenTiles[0].getCOL() != col)){
+                                errorText.setText("The selected tiles must be on the same line");
+                                return;
+                            }
+                        }
+                        //all the checks are done, the selected tile is valid
+                        for(i = 0; i<chosenTiles.length && chosenTiles[i]!=null;i++);
+                        chosenTiles[i] = new Coordinates(row,col);
+                        if(i == chosenTiles.length-1 || i == maxFreeSpacesInMyShelf-1) text.setText("You can not select more tiles, now order them");
+                        //adds the button in the order section
+                        ImageIcon orderButtonIcon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
+                        JButton orderButton =  new JButton(ImageManager.resizeImageIcon(orderButtonIcon,(int)(width/10.59),(int)(height/10.59)));
+                        orderButton.setBorderPainted(false);
+                        orderButton.setOpaque(false);
+                        pickedTilesPanel.add(orderButton);
+                        int myOrderId = i;
+                        orderButton.addActionListener((e1) -> {
+                            if(e1.getSource() instanceof JButton && !isGameFinished){
+                                int j;
+                                for(j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
+                                    if(chosenOrder[j] == myOrderId){
+                                        int k;
+                                        for(k=j;k<chosenOrder.length-1;k++){
+                                            chosenOrder[k] = chosenOrder[k+1];
+                                            if(chosenOrder[k+1] == null) break;
+                                        }
+                                        j = k;
+                                        break;
+                                    }
+                                }
+                                chosenOrder[j] = myOrderId;
+                                if(j == chosenOrder.length-1) text.setText("Now select a column");
+                            }
+                        });
                     }
                 });
                 return button;
@@ -429,7 +490,6 @@ public class GraphicalUI extends ClientManager {
             private void update(GameBoardView gameBoard){
                 Set<Coordinates> coordinatesSet = gameBoard.getCoords();
                 Coordinates coords;
-                numberOfPicks = 0;
                 for (int i = 0; i < gameBoardDim; i++) {
                     for (int j = 0; j < gameBoardDim; j++) {
                         coords = new Coordinates(i,j);
@@ -446,7 +506,7 @@ public class GraphicalUI extends ClientManager {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if(isFinished) return;
+                if(isGameFinished) return;
                 ImageIcon token = ImageManager.rotateImageIcon(victoryToken,9.5);
                 token = ImageManager.resizeImageIcon(token,(int)(width/9.5),(int)(height/9.5));
                 g.drawImage(token.getImage(),(int)(width/1.235),(int)(height/1.434),this);
@@ -526,7 +586,6 @@ public class GraphicalUI extends ClientManager {
 
         private GameBoardPanel gameBoardPanel;
         private ShelfPanel[] shelves;
-
         private JLabel[] scores;
         private GlobalGoalPanel[] globalGoalPanel;
         private JLabel text;
@@ -541,7 +600,9 @@ public class GraphicalUI extends ClientManager {
             //initialize private parameters
             currentPlayer = gameView.getCurrentPlayer();
             maxFreeSpacesInMyShelf = 0;
-            selectedTiles = new Coordinates[3];
+            chosenTiles = new Coordinates[3];
+            chosenOrder = new Integer[3];
+            isGameFinished = false;
 
             // set up the background
             JPanel background = new Background("visual_components/misc/sfondo parquet.jpg");
@@ -573,6 +634,7 @@ public class GraphicalUI extends ClientManager {
             for(int i = 0; i<gameView.getPlayers().length;i++){
                 PlayerView p = gameView.getPlayers()[i];
                 if(p.getUsername().equals(username)){ // my infos
+                    myId = i;
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
                     lowerPanel.add(shelves[i]);
                     JPanel temp = new JPanel();
@@ -616,7 +678,7 @@ public class GraphicalUI extends ClientManager {
             }
 
             //creating the gameBoard Panel
-            gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),700,700,false);
+            gameBoardPanel = new GameBoardPanel(gameView.getGameBoard(),700,700);
             upperPanel.add(gameBoardPanel);
 
             // creating the Panel containing global Goals
@@ -656,10 +718,22 @@ public class GraphicalUI extends ClientManager {
                 for(int i=0;i<gw.getPlayers().length;i++) if(gw.getPlayers()[i] != null){
                     shelves[i].update(gw.getPlayers()[i].getShelf());
                     scores[i].setText(String.valueOf(gw.getPlayers()[i].getScore()));
+                    if(gw.getPlayers()[i].isWinner()) {
+                        if(myId == i) text.setText("YOU WON!");
+                        else text.setText("YOU LOST!");
+                        isGameFinished = true;
+                    }
                 }
             }
-            if(gw.getCurrentPlayer() != null) currentPlayer = gw.getCurrentPlayer();
-            if(gw.getNumOfActivePlayers() != null) numOfActivePlayers = gw.getNumOfActivePlayers();
+            if(gw.getCurrentPlayer() != null) {
+                currentPlayer = gw.getCurrentPlayer();
+                if(myId == currentPlayer) text.setText("It is your turn, choose your tiles from the board");
+            }
+            if(gw.getNumOfActivePlayers() != null) {
+                if(gw.getNumOfActivePlayers() == 1) text.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
+                if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) text.setText("a player reconnected, the game can go on");
+                numOfActivePlayers = gw.getNumOfActivePlayers();
+            }
             if(gw.getGlobalGoals() != null){
                 for(int i=0;i<gw.getGlobalGoals().length;i++) if(gw.getGlobalGoals()[i] != null) globalGoalPanel[i].update(gw.getGlobalGoals()[i]);
             }
@@ -705,7 +779,7 @@ public class GraphicalUI extends ClientManager {
                 startWindow.dispose();
                 gameWindow = new GameWindow(((UpdateViewMessage)m).getGameView());
             }
-            else gameWindow.update(((UpdateViewMessage)m).getGameView());
+            else if(!isGameFinished) gameWindow.update(((UpdateViewMessage)m).getGameView());
         }
         else{
             AppClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");

@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.ModelView.TileSackView;
 
 import java.util.Arrays;
 import java.util.Random;

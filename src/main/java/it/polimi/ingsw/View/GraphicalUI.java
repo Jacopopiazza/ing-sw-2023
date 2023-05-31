@@ -23,7 +23,6 @@ import java.util.List;
 public class GraphicalUI extends ClientManager {
 
     private String username;
-    private int numOfPlayers;
     private int currentPlayer;
     private int numOfActivePlayers;
     private int maxFreeSpacesInMyShelf;
@@ -540,7 +539,6 @@ public class GraphicalUI extends ClientManager {
             setLocationRelativeTo(null);    // in the middle of the screen
 
             //initialize private parameters
-            numOfPlayers = gameView.getNumOfPlayers();
             currentPlayer = gameView.getCurrentPlayer();
             maxFreeSpacesInMyShelf = 0;
             selectedTiles = new Coordinates[3];
@@ -654,7 +652,6 @@ public class GraphicalUI extends ClientManager {
 
         private void update(GameView gw){
             if(gw.getGameBoard() != null) gameBoardPanel.update(gw.getGameBoard());
-            if(gw.getNumOfPlayers() != null) numOfPlayers = gw.getNumOfPlayers();
             if(gw.getPlayers() != null){
                 for(int i=0;i<gw.getPlayers().length;i++) if(gw.getPlayers()[i] != null){
                     shelves[i].update(gw.getPlayers()[i].getShelf());

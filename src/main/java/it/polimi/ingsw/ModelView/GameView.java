@@ -15,7 +15,6 @@ import java.util.Stack;
 public class GameView implements Serializable {
 
     private final GameBoardView board;
-    private final Integer numOfPlayers;
     private final Integer numOfActivePlayers;
     private final PlayerView[] players;
     private final GlobalGoalView[] goals;
@@ -30,9 +29,8 @@ public class GameView implements Serializable {
     public GameView(Game game) {
         if(game != null){
             this.board = game.getGameBoard().getView();
-            this.numOfPlayers = game.getNumOfPlayers();
-            this.players = new PlayerView[this.numOfPlayers];
-            for(int i = 0; i < this.numOfPlayers; i++)
+            this.players = new PlayerView[game.getNumOfPlayers()];
+            for(int i = 0; i < game.getNumOfPlayers(); i++)
                 this.players[i] = game.getPlayer(i).getView();
             this.currentPlayer = game.getCurrentPlayer();
             this.numOfActivePlayers = game.getNumOfActivePlayers();
@@ -47,7 +45,6 @@ public class GameView implements Serializable {
         }
         else{
             this.board = null;
-            this.numOfPlayers = null;
             this.players = null;
             this.currentPlayer = null;
             this.numOfActivePlayers = null;
@@ -64,7 +61,6 @@ public class GameView implements Serializable {
     public GameView(GameBoard board) {
         if (board != null ) this.board = board.getView();
         else this.board = null;
-        this.numOfPlayers = null;
         this.players = null;
         this.currentPlayer = null;
         this.numOfActivePlayers = null;
@@ -79,7 +75,6 @@ public class GameView implements Serializable {
      */
     public GameView(Player[] players) {
         this.board = null;
-        this.numOfPlayers = null;
         if(players != null) {
             this.players = new PlayerView[players.length];
             for(int i = 0; i < players.length; i++){
@@ -102,7 +97,6 @@ public class GameView implements Serializable {
      */
     public GameView(Player p, int index, GlobalGoal[] goals) {
         this.board = null;
-        this.numOfPlayers = null;
         if(index >= 0 && index <= Config.getInstance().getMaxNumberOfPlayers() && p !=null){
             this.players = new PlayerView[Config.getInstance().getMaxNumberOfPlayers()];
             players[index] = p.getView();
@@ -126,7 +120,6 @@ public class GameView implements Serializable {
      */
     public GameView(String cheater) {
         this.board = null;
-        this.numOfPlayers = null;
         this.players = null;
         this.currentPlayer = null;
         this.numOfActivePlayers = null;
@@ -142,7 +135,6 @@ public class GameView implements Serializable {
      */
     public GameView(Integer currentPlayer, Integer numOfActivePlayers) {
         this.board = null;
-        this.numOfPlayers = null;
         this.players = null;
         if(currentPlayer!=null && currentPlayer>=0 && currentPlayer<=Config.getInstance().getMaxNumberOfPlayers()) this.currentPlayer = currentPlayer;
         else this.currentPlayer = null;
@@ -159,15 +151,6 @@ public class GameView implements Serializable {
      */
     public GameBoardView getGameBoard() {
         return board;
-    }
-
-    /**
-     * Returns the number of players in the game.
-     *
-     * @return the number of players
-     */
-    public Integer getNumOfPlayers() {
-        return numOfPlayers;
     }
 
     /**

@@ -186,7 +186,7 @@ public class Controller  {
         }
 
         // Check if the index for the column is valid...
-        if( ( col<0 ) || ( col>Shelf.getColumns() ) ){
+        if( ( col<0 ) || ( col>=Shelf.getColumns() ) ){
             model.addCheater(username);
             return;
         }

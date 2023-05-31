@@ -30,6 +30,7 @@ public class GraphicalUI extends ClientManager {
     private int numOfActivePlayers;
     private boolean isGameFinished;
     private int maxFreeSpacesInMyShelf;
+    private int maxNumOfChosenTiles = 3;
     private Coordinates[] chosenTiles;
     private Integer[] chosenOrder;
     private StartWindow startWindow = null;
@@ -415,14 +416,15 @@ public class GraphicalUI extends ClientManager {
                 button.setBorderPainted(false);
                 button.setOpaque(false);
                 button.addActionListener((e) -> {
-                    if(e.getSource() instanceof JButton && !isGameFinished){
+                    if(e.getSource() instanceof JButton && !isGameFinished && myId == currentPlayer){
                         //checks that one more tile can be picked
                         if(chosenTiles[chosenTiles.length - 1] != null){
                             errorText.setText("You can not select more than " + String.valueOf(chosenTiles.length) + " tiles" );
+
                             return;
                         }
                         //checks that one more tile can fit in the shelf
-                        if(chosenTiles[maxFreeSpacesInMyShelf - 1] != null){
+                        if(maxFreeSpacesInMyShelf < chosenTiles.length && chosenTiles[maxFreeSpacesInMyShelf - 1] != null){
                             errorText.setText("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
                             return;
                         }
@@ -436,7 +438,7 @@ public class GraphicalUI extends ClientManager {
                             }
                             if(chosenTiles[i].getCOL()+1 == col || chosenTiles[i].getCOL()-1 == col || chosenTiles[i].getROW()+1 == row || chosenTiles[i].getROW()-1 == row) nextTo=true;
                         }
-                        if(!nextTo){
+                        if(!nextTo && chosenTiles[0] != null){
                             errorText.setText("This tile is not next to one of the others you selected");
                             return;
                         }
@@ -460,12 +462,12 @@ public class GraphicalUI extends ClientManager {
                         //adds the button in the order section
                         ImageIcon orderButtonIcon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
                         JButton orderButton =  new JButton(ImageManager.resizeImageIcon(orderButtonIcon,(int)(width/10.59),(int)(height/10.59)));
+                        orderButton.setPreferredSize(new Dimension((int)(width/10.59),(int)(height/10.59)));
                         orderButton.setBorderPainted(false);
                         orderButton.setOpaque(false);
-                        pickedTilesPanel.add(orderButton);
                         int myOrderId = i;
                         orderButton.addActionListener((e1) -> {
-                            if(e1.getSource() instanceof JButton && !isGameFinished){
+                            if(e1.getSource() instanceof JButton && !isGameFinished && myId == currentPlayer){
                                 int j;
                                 for(j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
                                     if(chosenOrder[j] == myOrderId){
@@ -479,9 +481,14 @@ public class GraphicalUI extends ClientManager {
                                     }
                                 }
                                 chosenOrder[j] = myOrderId;
-                                if(j == chosenOrder.length-1) text.setText("Now select a column");
+                                for(int k=0;k<chosenTiles.length;k++){
+                                    if(chosenTiles[k] != null && chosenOrder[k] == null) return;
+                                }
+                                text.setText("Now select a column");
+                                showColumnChoiceButtons();
                             }
                         });
+                        pickedTilesPanel.add(orderButton);
                     }
                 });
                 return button;
@@ -536,8 +543,13 @@ public class GraphicalUI extends ClientManager {
                 removeAll();
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < cols; j++) {
-                        if(shelfView.getTile(new Coordinates(i,j)) != null) add(ImageManager.getTileLabel( shelfView.getTile(new Coordinates(i,j)),(int)(width/7.35),(int)(height/7.35) ));
-                        else add(ImageManager.getVoidLabel());
+                        if(shelfView.getTile(new Coordinates(i,j)) != null) {
+                            add(ImageManager.getTileLabel( shelfView.getTile(new Coordinates(i,j)),(int)(width/7.35),(int)(height/7.35) ));
+                        }
+                        else{
+                            add(ImageManager.getVoidLabel());
+                            maxFreeSpacesInMyShelf = i+1;
+                        }
                     }
                 }
             }
@@ -591,6 +603,7 @@ public class GraphicalUI extends ClientManager {
         private JLabel text;
         private JLabel errorText;
         private JPanel pickedTilesPanel;
+        private JPanel columnChoicePanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -599,9 +612,9 @@ public class GraphicalUI extends ClientManager {
 
             //initialize private parameters
             currentPlayer = gameView.getCurrentPlayer();
-            maxFreeSpacesInMyShelf = 0;
-            chosenTiles = new Coordinates[3];
-            chosenOrder = new Integer[3];
+            maxFreeSpacesInMyShelf = Shelf.getRows();
+            chosenTiles = new Coordinates[maxNumOfChosenTiles];
+            chosenOrder = new Integer[chosenTiles.length];
             isGameFinished = false;
 
             // set up the background
@@ -635,16 +648,27 @@ public class GraphicalUI extends ClientManager {
                 PlayerView p = gameView.getPlayers()[i];
                 if(p.getUsername().equals(username)){ // my infos
                     myId = i;
+                    //set up the view of my shelf
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
-                    lowerPanel.add(shelves[i]);
                     JPanel temp = new JPanel();
+                    temp.setOpaque(false);
+                    temp.setLayout(new BoxLayout(temp,BoxLayout.PAGE_AXIS));
+                    columnChoicePanel = new JPanel();
+                    columnChoicePanel.setOpaque(false);
+                    columnChoicePanel.setLayout(new GridLayout(1, Shelf.getColumns(), (int)(shelves[i].width/25), (int)(shelves[i].height/62.5)));
+                    columnChoicePanel.setBorder(BorderFactory.createEmptyBorder(0, (int)(shelves[i].width/8.33), 0, (int)(shelves[i].width/8.77)));
+                    temp.add(columnChoicePanel);
+                    temp.add(shelves[i]);
+                    lowerPanel.add(temp);
+                    //set up the view of my private goal
+                    temp = new JPanel();
                     temp.setLayout(new BoxLayout(temp,BoxLayout.PAGE_AXIS));
                     temp.setOpaque(false);
                     JPanel temp1 = new JPanel();
                     temp1.setOpaque(false);
                     temp1.add(new PrivateGoalPanel(p.getPrivateGoal().getId(), 150, 225));
                     temp.add(temp1);
-
+                    //set up the view of my score
                     temp1 = new JPanel();
                     temp1.setLayout(new FlowLayout());
                     temp1.setOpaque(false);
@@ -660,6 +684,7 @@ public class GraphicalUI extends ClientManager {
                     lowerPanel.add(temp);
                 }
                 else{
+                    //set up the view of opponents username and score
                     JLabel name = new JLabel(gameView.getPlayers()[i].getUsername().length()>15 ? gameView.getPlayers()[i].getUsername().substring(0,15)+"..." : gameView.getPlayers()[i].getUsername());
                     name.setOpaque(false);
                     name.setFont(name.getFont().deriveFont(10f));
@@ -672,6 +697,7 @@ public class GraphicalUI extends ClientManager {
                     temp.add(name);
                     temp.add(scores[i]);
                     shelvesPanel.add(temp);
+                    //set up the view of opponents' shelves
                     shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",225,225);
                     shelvesPanel.add(shelves[i]);
                 }
@@ -693,23 +719,80 @@ public class GraphicalUI extends ClientManager {
             }
 
             // creating the panel containing the error texts and the picked tiles
-            text = new JLabel();
+            text = new JLabel(){
+                @Override
+                public void setText(String s){
+                    super.setText(s);
+                    revalidate();
+                    repaint();
+                }
+            };
             text.setOpaque(false);
             text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             text.setFont(text.getFont().deriveFont(18f));
             middlePanel.add(text);
-            errorText = new JLabel();
+            if(myId == currentPlayer) text.setText("It is your turn, choose your tiles from the board");
+            errorText = new JLabel(){
+                @Override
+                public void setText(String s){
+                    super.setText(s);
+                    revalidate();
+                    repaint();
+                }
+            };
             errorText.setOpaque(false);
             errorText.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             errorText.setFont(errorText.getFont().deriveFont(16f));
             errorText.setForeground(Color.RED);
             middlePanel.add(errorText);
-            pickedTilesPanel = new JPanel();
+            pickedTilesPanel = new JPanel(){
+                @Override
+                public Component add(Component comp){
+                    Component res = super.add(comp);
+                    revalidate();
+                    repaint();
+                    return res;
+                }
+            };
             pickedTilesPanel.setOpaque(false);
             pickedTilesPanel.setLayout(new FlowLayout());
+            middlePanel.add(pickedTilesPanel);
 
             pack();
             setVisible(true);
+        }
+
+        private void showColumnChoiceButtons(){
+            JButton button;
+            for(int i=0;i<Shelf.getColumns();i++){
+                button = new JButton("\u2193"); //unicode code for arrow pointing down
+                button.setLayout(new BoxLayout(button,BoxLayout.PAGE_AXIS));
+                button.setOpaque(false);
+                button.setBorderPainted(false);
+                button.setContentAreaFilled(false);
+                columnChoicePanel.add(button);
+                int chosenColumn = i;
+                button.addActionListener((e) -> {
+                    if(e.getSource() instanceof JButton && !isGameFinished && myId == currentPlayer){
+                        Coordinates[] finalChosenTiles = new Coordinates[chosenTiles.length];
+                        for(int j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
+                            finalChosenTiles[j] = chosenTiles[chosenOrder[j]];
+                            chosenTiles[chosenOrder[j]] = null;
+                            chosenOrder[j] = null;
+                        }
+                        finalChosenTiles = Arrays.stream(finalChosenTiles).filter(x -> x!=null).toArray(Coordinates[]::new);
+                        columnChoicePanel.removeAll();
+                        columnChoicePanel.revalidate();
+                        columnChoicePanel.repaint();
+                        pickedTilesPanel.removeAll();
+                        pickedTilesPanel.revalidate();
+                        pickedTilesPanel.repaint();
+                        notifyListeners(new TurnActionMessage(username,finalChosenTiles,chosenColumn));
+                    }
+                });
+            }
+            columnChoicePanel.revalidate();
+            columnChoicePanel.repaint();
         }
 
         private void update(GameView gw){

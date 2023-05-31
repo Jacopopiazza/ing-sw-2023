@@ -258,11 +258,11 @@ public class GameBoard {
             if( !(row || column) ) return false;
 
             Coordinates c = chosenTiles[i];
-            if(row && Arrays.stream(chosenTiles).filter(x -> c.getROW()-1 == x.getROW() ||
-                    c.getROW()+1 == x.getROW()).collect(Collectors.toList()).size() == 0) return false;
-
-            if(column && Arrays.stream(chosenTiles).filter(x -> c.getCOL()-1 == x.getCOL() ||
+            if(row && Arrays.stream(chosenTiles).filter(x -> c.getCOL()-1 == x.getCOL() ||
                     c.getCOL()+1 == x.getCOL()).collect(Collectors.toList()).size() == 0) return false;
+
+            if(column && Arrays.stream(chosenTiles).filter(x -> c.getROW()-1 == x.getROW() ||
+                    c.getROW()+1 == x.getROW()).collect(Collectors.toList()).size() == 0) return false;
         }
         return true;
     }

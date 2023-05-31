@@ -416,11 +416,16 @@ public class GraphicalUI extends ClientManager {
                 button.setBorderPainted(false);
                 button.setOpaque(false);
                 button.addActionListener((e) -> {
-                    if(e.getSource() instanceof JButton && !isGameFinished && myId == currentPlayer){
+                    errorText.setText("");
+                    if(e.getSource() instanceof JButton && !isGameFinished){
+                        //checks that is my turn
+                        if(myId != currentPlayer){
+                            errorText.setText("It is not your turn");
+                            return;
+                        }
                         //checks that one more tile can be picked
                         if(chosenTiles[chosenTiles.length - 1] != null){
                             errorText.setText("You can not select more than " + String.valueOf(chosenTiles.length) + " tiles" );
-
                             return;
                         }
                         //checks that one more tile can fit in the shelf
@@ -467,7 +472,13 @@ public class GraphicalUI extends ClientManager {
                         orderButton.setOpaque(false);
                         int myOrderId = i;
                         orderButton.addActionListener((e1) -> {
-                            if(e1.getSource() instanceof JButton && !isGameFinished && myId == currentPlayer){
+                            errorText.setText("");
+                            if(e1.getSource() instanceof JButton && !isGameFinished){
+                                //checks that is my turn
+                                if(myId != currentPlayer){
+                                    errorText.setText("It is not your turn");
+                                    return;
+                                }
                                 int j;
                                 for(j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
                                     if(chosenOrder[j] == myOrderId){
@@ -495,6 +506,7 @@ public class GraphicalUI extends ClientManager {
             }
 
             private void update(GameBoardView gameBoard){
+                removeAll();
                 Set<Coordinates> coordinatesSet = gameBoard.getCoords();
                 Coordinates coords;
                 for (int i = 0; i < gameBoardDim; i++) {
@@ -523,10 +535,11 @@ public class GraphicalUI extends ClientManager {
         private class ShelfPanel extends Background {
             private static final int rows = Shelf.getRows();
             private static final int cols = Shelf.getColumns();
+            private static final String imagePath = "visual_components/boards/bookshelf_orth.png";
             private int width;
             private int height;
 
-            private ShelfPanel(ShelfView shelfView, String imagePath, String toolTip, int width, int height){
+            private ShelfPanel(ShelfView shelfView, String toolTip, int width, int height){
                 super(imagePath);
                 this.width = width;
                 this.height = height;
@@ -534,9 +547,10 @@ public class GraphicalUI extends ClientManager {
                 setToolTipText(toolTip);
                 setLayout(new BorderLayout());
                 setPreferredSize(new Dimension(width,height));
-                setLayout(new GridLayout(rows, cols, (int)(width/25), (int)(height/62.5)));
+                setLayout(new GridLayout(rows, cols, (int)(width/26.5), (int)(height/62.5)));
                 setBorder(BorderFactory.createEmptyBorder((int)(height/15.625), (int)(width/8.33),
                         (int)(height/8.77), (int)(width/8.77)));
+                update(shelfView);
             }
 
             private void update(ShelfView shelfView){
@@ -649,7 +663,7 @@ public class GraphicalUI extends ClientManager {
                 if(p.getUsername().equals(username)){ // my infos
                     myId = i;
                     //set up the view of my shelf
-                    shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf.png","My shelf",500,500);
+                    shelves[i] = new ShelfPanel(p.getShelf(),"My shelf",500,500);
                     JPanel temp = new JPanel();
                     temp.setOpaque(false);
                     temp.setLayout(new BoxLayout(temp,BoxLayout.PAGE_AXIS));
@@ -698,7 +712,7 @@ public class GraphicalUI extends ClientManager {
                     temp.add(scores[i]);
                     shelvesPanel.add(temp);
                     //set up the view of opponents' shelves
-                    shelves[i] = new ShelfPanel(p.getShelf(),"visual_components/boards/bookshelf_orth.png",p.getUsername()+"'s shelf",225,225);
+                    shelves[i] = new ShelfPanel(p.getShelf(),p.getUsername()+"'s shelf",225,225);
                     shelvesPanel.add(shelves[i]);
                 }
             }
@@ -773,7 +787,13 @@ public class GraphicalUI extends ClientManager {
                 columnChoicePanel.add(button);
                 int chosenColumn = i;
                 button.addActionListener((e) -> {
-                    if(e.getSource() instanceof JButton && !isGameFinished && myId == currentPlayer){
+                    errorText.setText("");
+                    if(e.getSource() instanceof JButton && !isGameFinished){
+                        //checks that is my turn
+                        if(myId != currentPlayer){
+                            errorText.setText("It is not your turn");
+                            return;
+                        }
                         Coordinates[] finalChosenTiles = new Coordinates[chosenTiles.length];
                         for(int j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
                             finalChosenTiles[j] = chosenTiles[chosenOrder[j]];
@@ -811,6 +831,7 @@ public class GraphicalUI extends ClientManager {
             if(gw.getCurrentPlayer() != null) {
                 currentPlayer = gw.getCurrentPlayer();
                 if(myId == currentPlayer) text.setText("It is your turn, choose your tiles from the board");
+                else text.setText("Wait for your turn");
             }
             if(gw.getNumOfActivePlayers() != null) {
                 if(gw.getNumOfActivePlayers() == 1) text.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");

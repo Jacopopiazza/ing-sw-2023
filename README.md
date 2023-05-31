@@ -12,8 +12,8 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 |:-----------------------|:------------------------------------:|
 | Basic rules | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
 | Complete rules | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
-| Socket | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
-| RMI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| Socket | ![#c5f015](https://placehold.it/15/44bb44/44bb44) |
+| RMI | ![#c5f015](https://placehold.it/15/44bb44/44bb44) |
 | GUI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
 | CLI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00)|
 | Multiple games | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |

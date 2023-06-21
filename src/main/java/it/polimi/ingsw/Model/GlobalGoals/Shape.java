@@ -2,6 +2,7 @@ package it.polimi.ingsw.Model.GlobalGoals;
 
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
+import it.polimi.ingsw.Model.Tile;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.Utilities.Config;
@@ -62,14 +63,17 @@ public class Shape extends GlobalGoal {
                     // if the first of the shape's tiles is inside the shelf (it does not need to be the first one)
                     if( ( ( i + shape.get(0).getROW() ) < rows ) && ( ( j + shape.get(0).getCOL() ) < columns) ){
                         // get its color
-                        color = s.getTile(new Coordinates( i + shape.get(0).getROW(), j + shape.get(0).getCOL()) ).getColor();
-                        // and check if every shape's tile is inside the shelf and has the same color
-                        for( Coordinates coord : shape ){
-                            r = coord.getROW();
-                            c = coord.getCOL();
-                            if( ( ( i + r ) >= rows ) || ( ( j + c ) >= columns ) || !s.getTile(new Coordinates(i+r, j+c)).getColor().equals(color) ){
-                                found = false;
-                                break;
+                        Tile tile = s.getTile(new Coordinates( i + shape.get(0).getROW(), j + shape.get(0).getCOL()) );
+                        if(tile != null){
+                            color = tile.getColor();
+                            // and check if every shape's tile is inside the shelf and has the same color
+                            for( Coordinates coord : shape ){
+                                r = coord.getROW();
+                                c = coord.getCOL();
+                                if( ( ( i + r ) >= rows ) || ( ( j + c ) >= columns ) || !s.getTile(new Coordinates(i+r, j+c)).getColor().equals(color) ){
+                                    found = false;
+                                    break;
+                                }
                             }
                         }
                     }

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GraphicalUI extends ClientManager {
 
@@ -29,7 +28,8 @@ public class GraphicalUI extends ClientManager {
     private int myId;
     private int numOfActivePlayers;
     private boolean isGameFinished;
-    private int maxFreeSpacesInMyShelf;
+    int maxFreeSpacesInMyShelf;
+    private int[] freeSpacesInMyShelf;
     private int maxNumOfChosenTiles = 3;
     private Coordinates[] chosenTiles;
     private Integer[] chosenOrder;
@@ -430,7 +430,7 @@ public class GraphicalUI extends ClientManager {
                         }
                         //checks that one more tile can fit in the shelf
                         if(maxFreeSpacesInMyShelf < chosenTiles.length && chosenTiles[maxFreeSpacesInMyShelf - 1] != null){
-                            errorText.setText("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
+                            errorText.setText("In your shelf there is space for at most " + String.valueOf(freeSpacesInMyShelf) + " tiles");
                             return;
                         }
                         //checks that this tile has not been already picked and that is next to one of the previously picked ones
@@ -463,7 +463,7 @@ public class GraphicalUI extends ClientManager {
                         //all the checks are done, the selected tile is valid
                         for(i = 0; i<chosenTiles.length && chosenTiles[i]!=null;i++);
                         chosenTiles[i] = new Coordinates(row,col);
-                        if(i == chosenTiles.length-1 || i == maxFreeSpacesInMyShelf-1) text.setText("You can not select more tiles, now order them");
+                        if(i == chosenTiles.length-1 || i == maxFreeSpacesInMyShelf -1) text.setText("You can not select more tiles, now order them");
                         //adds the button in the order section
                         ImageIcon orderButtonIcon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
                         JButton orderButton =  new JButton(ImageManager.resizeImageIcon(orderButtonIcon,(int)(width/10.59),(int)(height/10.59)));
@@ -539,7 +539,7 @@ public class GraphicalUI extends ClientManager {
             private int width;
             private int height;
 
-            private ShelfPanel(ShelfView shelfView, String toolTip, int width, int height){
+            private ShelfPanel(PlayerView playerView, String toolTip, int width, int height){
                 super(imagePath);
                 this.width = width;
                 this.height = height;
@@ -550,11 +550,14 @@ public class GraphicalUI extends ClientManager {
                 setLayout(new GridLayout(rows, cols, (int)(width/26.5), (int)(height/62.5)));
                 setBorder(BorderFactory.createEmptyBorder((int)(height/15.625), (int)(width/8.33),
                         (int)(height/8.77), (int)(width/8.77)));
-                update(shelfView);
+                update(playerView.getShelf(), playerView.getUsername().equals(username));
             }
 
-            private void update(ShelfView shelfView){
+            private void update(ShelfView shelfView,boolean mine){
                 removeAll();
+                if(mine){
+                    for(int i = 0; i< freeSpacesInMyShelf.length; i++) freeSpacesInMyShelf[i] = 0;
+                }
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < cols; j++) {
                         if(shelfView.getTile(new Coordinates(i,j)) != null) {
@@ -562,9 +565,13 @@ public class GraphicalUI extends ClientManager {
                         }
                         else{
                             add(ImageManager.getVoidLabel());
-                            maxFreeSpacesInMyShelf = i+1;
+                            if(mine) freeSpacesInMyShelf[j]++;
                         }
                     }
+                }
+                if(mine){
+                    maxFreeSpacesInMyShelf = 0;
+                    for(int i = 0; i< freeSpacesInMyShelf.length; i++) if(freeSpacesInMyShelf[i] > maxFreeSpacesInMyShelf) maxFreeSpacesInMyShelf = freeSpacesInMyShelf[i];
                 }
             }
 
@@ -626,7 +633,7 @@ public class GraphicalUI extends ClientManager {
 
             //initialize private parameters
             currentPlayer = gameView.getCurrentPlayer();
-            maxFreeSpacesInMyShelf = Shelf.getRows();
+            freeSpacesInMyShelf = new int[Shelf.getColumns()];
             chosenTiles = new Coordinates[maxNumOfChosenTiles];
             chosenOrder = new Integer[chosenTiles.length];
             isGameFinished = false;
@@ -663,7 +670,7 @@ public class GraphicalUI extends ClientManager {
                 if(p.getUsername().equals(username)){ // my infos
                     myId = i;
                     //set up the view of my shelf
-                    shelves[i] = new ShelfPanel(p.getShelf(),"My shelf",500,500);
+                    shelves[i] = new ShelfPanel(p,"My shelf",500,500);
                     JPanel temp = new JPanel();
                     temp.setOpaque(false);
                     temp.setLayout(new BoxLayout(temp,BoxLayout.PAGE_AXIS));
@@ -712,7 +719,7 @@ public class GraphicalUI extends ClientManager {
                     temp.add(scores[i]);
                     shelvesPanel.add(temp);
                     //set up the view of opponents' shelves
-                    shelves[i] = new ShelfPanel(p.getShelf(),p.getUsername()+"'s shelf",225,225);
+                    shelves[i] = new ShelfPanel(p,p.getUsername()+"'s shelf",225,225);
                     shelvesPanel.add(shelves[i]);
                 }
             }
@@ -794,6 +801,12 @@ public class GraphicalUI extends ClientManager {
                             errorText.setText("It is not your turn");
                             return;
                         }
+                        for(int j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
+                            if(j+1 > freeSpacesInMyShelf[chosenColumn]){
+                                errorText.setText("There is not enough space in the selected column");
+                                return;
+                            };
+                        }
                         Coordinates[] finalChosenTiles = new Coordinates[chosenTiles.length];
                         for(int j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
                             finalChosenTiles[j] = chosenTiles[chosenOrder[j]];
@@ -819,7 +832,7 @@ public class GraphicalUI extends ClientManager {
             if(gw.getGameBoard() != null) gameBoardPanel.update(gw.getGameBoard());
             if(gw.getPlayers() != null){
                 for(int i=0;i<gw.getPlayers().length;i++) if(gw.getPlayers()[i] != null){
-                    shelves[i].update(gw.getPlayers()[i].getShelf());
+                    shelves[i].update(gw.getPlayers()[i].getShelf(), i == myId);
                     scores[i].setText(String.valueOf(gw.getPlayers()[i].getScore()));
                     if(gw.getPlayers()[i].isWinner()) {
                         if(myId == i) text.setText("YOU WON!");

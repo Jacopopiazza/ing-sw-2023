@@ -142,13 +142,16 @@ public class Game {
      * @param username The username of the player to kick.
      * @throws UsernameNotFoundException if the username is not found in the game.
      */
-    public void kick(String username) throws UsernameNotFoundException {
+    public GameListener kick(String username) throws UsernameNotFoundException {
+        GameListener listener;
         int i;
         for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
         if( i == numOfPlayers ) throw new UsernameNotFoundException();
+        listener = listeners[i];
         listeners[i] = null;
         players[i] = null;
         notifyAllListeners();
+        return listener;
     }
 
     /**
@@ -219,6 +222,20 @@ public class Game {
             throw new InvalidIndexException();
         }
         return players[p];
+    }
+
+    /**
+     * Returns the listener at the specified index.
+     *
+     * @param p The index of the listener to retrieve.
+     * @return The listener at the specified index.
+     * @throws InvalidIndexException if the index is invalid.
+     */
+    public GameListener getlistener(int p) throws InvalidIndexException{
+        if( ( p < 0 ) || ( p >= players.length ) ) {
+            throw new InvalidIndexException();
+        }
+        return listeners[p];
     }
 
     /**

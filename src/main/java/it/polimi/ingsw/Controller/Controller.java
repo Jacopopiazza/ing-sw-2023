@@ -26,10 +26,7 @@ public class Controller  {
         public void run(){
             timer.cancel();
             model.setWinner(model.getCurrentPlayer());
-            List<String> players = new ArrayList<String>();
-            for( int i=0; i<model.getNumOfPlayers(); i++ )
-                players.add( model.getPlayer(i).getUsername() );
-            gameServer.deleteGame(players);
+            endGame();
         }
     };
 
@@ -75,14 +72,15 @@ public class Controller  {
      *
      * @param username The username of the player to kick.
      */
-    public void kick(String username){
+    public GameListener kick(String username){
         if( !model.isGameStarted() ){
             try {
-                model.kick(username);
+               return model.kick(username);
             } catch (UsernameNotFoundException e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     /**
@@ -131,11 +129,7 @@ public class Controller  {
                 return;
             }
             if( model.getNumOfActivePlayers() == 0 ){
-                List<String> players = new ArrayList<String>();
-                for( int i=0; i<model.getNumOfPlayers(); i++ )
-                    players.add(model.getPlayer(i).getUsername());
-                gameServer.deleteGame(players);
-                return;
+                endGame();
             }
             if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
                 if(!model.nextPlayer()) endGame();
@@ -259,9 +253,12 @@ public class Controller  {
         model.endGame();
         // Get list of usernames for server's method
         List<String> players = new ArrayList<String>();
-        for( int i=0; i<model.getNumOfPlayers(); i++ )
+        List<GameListener> listeners = new ArrayList<GameListener>();
+        for( int i=0; i<model.getNumOfPlayers(); i++ ){
             players.add(model.getPlayer(i).getUsername());
+            if(model.getlistener(i) != null) listeners.add(model.getlistener(i));
+        }
         // Delete game from server
-        gameServer.deleteGame(players);
+        gameServer.deleteGame(players,listeners);
     }
 }

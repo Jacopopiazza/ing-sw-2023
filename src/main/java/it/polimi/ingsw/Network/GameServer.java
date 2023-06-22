@@ -171,8 +171,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
      *
      * @param players the list of players in the game
      */
-    public void deleteGame(List<String> players) {
+    public void deleteGame(List<String> players,List<GameListener> listeners) {
         this.serverImplementation.deleteGame(players);
+        for(GameListener listener : listeners) listener.update(new GameServerMessage(serverImplementation));
     }
 
     /**
@@ -235,8 +236,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
                 serverImplementation.disconnect(username, this);
             }
             else {
-                controller.kick(username);
+                GameListener disconnected_listener = controller.kick(username);
                 serverImplementation.kick(username, this);
+                disconnected_listener.update(new GameServerMessage(serverImplementation));
             }
 
         }

@@ -430,7 +430,7 @@ public class GraphicalUI extends ClientManager {
                         }
                         //checks that one more tile can fit in the shelf
                         if(maxFreeSpacesInMyShelf < chosenTiles.length && chosenTiles[maxFreeSpacesInMyShelf - 1] != null){
-                            errorText.setText("In your shelf there is space for at most " + String.valueOf(freeSpacesInMyShelf) + " tiles");
+                            errorText.setText("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
                             return;
                         }
                         //checks that this tile has not been already picked and that is next to one of the previously picked ones
@@ -441,7 +441,7 @@ public class GraphicalUI extends ClientManager {
                                 errorText.setText("You have already selected this tile");
                                 return;
                             }
-                            if(chosenTiles[i].getCOL()+1 == col || chosenTiles[i].getCOL()-1 == col || chosenTiles[i].getROW()+1 == row || chosenTiles[i].getROW()-1 == row) nextTo=true;
+                            if(( ( chosenTiles[i].getCOL()+1 == col || chosenTiles[i].getCOL()-1 == col ) && chosenTiles[i].getROW() == row ) || ( ( chosenTiles[i].getROW()+1 == row || chosenTiles[i].getROW()-1 == row ) && chosenTiles[i].getCOL() == col )) nextTo=true;
                         }
                         if(!nextTo && chosenTiles[0] != null){
                             errorText.setText("This tile is not next to one of the others you selected");
@@ -784,6 +784,7 @@ public class GraphicalUI extends ClientManager {
         }
 
         private void showColumnChoiceButtons(){
+            columnChoicePanel.removeAll();
             JButton button;
             for(int i=0;i<Shelf.getColumns();i++){
                 button = new JButton("\u2193"); //unicode code for arrow pointing down
@@ -854,7 +855,10 @@ public class GraphicalUI extends ClientManager {
             if(gw.getGlobalGoals() != null){
                 for(int i=0;i<gw.getGlobalGoals().length;i++) if(gw.getGlobalGoals()[i] != null) globalGoalPanel[i].update(gw.getGlobalGoals()[i]);
             }
-            if(gw.getCheater() != null) errorText.setText(gw.getCheater() + " tried to cheat");
+            if(gw.getCheater() != null){
+                errorText.setText(gw.getCheater() + " tried to cheat");
+                text.setText("It is your turn, choose your tiles from the board");
+            }
 
             revalidate();
             repaint();

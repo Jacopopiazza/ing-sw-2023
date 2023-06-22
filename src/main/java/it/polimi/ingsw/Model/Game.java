@@ -371,7 +371,7 @@ public class Game {
         }
 
         // Set the game winner
-        players[winner].setWinner();
+        this.setWinner(winner);
     }
 
     /**

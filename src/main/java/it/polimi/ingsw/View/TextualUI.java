@@ -6,6 +6,7 @@ import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
+import it.polimi.ingsw.Network.ClientImplementation;
 
 
 import java.io.PrintStream;

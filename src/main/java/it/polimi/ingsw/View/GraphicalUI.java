@@ -33,6 +33,7 @@ public class GraphicalUI extends ClientManager {
     private int maxNumOfChosenTiles = 3;
     private Coordinates[] chosenTiles;
     private Integer[] chosenOrder;
+    private JLabel[] orderNumbers;
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
 
@@ -463,14 +464,44 @@ public class GraphicalUI extends ClientManager {
                         //all the checks are done, the selected tile is valid
                         for(i = 0; i<chosenTiles.length && chosenTiles[i]!=null;i++);
                         chosenTiles[i] = new Coordinates(row,col);
-                        if(i == chosenTiles.length-1 || i == maxFreeSpacesInMyShelf -1) text.setText("You can not select more tiles, now order them");
-                        //adds the button in the order section
+                        int myOrderId = i;
+                        if(i == chosenTiles.length-1 || i == maxFreeSpacesInMyShelf -1) text.setText("You can not select more tiles, reorder the selected ones if you want and choose a column to end your turn");
+                        else {
+                            if (i == 0) text.setText("select another tile or choose a column to end your turn");
+                            else text.setText("select another tile, reorder the selected ones or choose a column to end your turn");
+                        }
+                        for(i = 0; i<chosenOrder.length && chosenOrder[i]!=null;i++);
+                        chosenOrder[i] = myOrderId;
+
+                        //create the panel for the tile and its order number
+                        JPanel panel = new JPanel();
+                        panel.setOpaque(false);
+                        panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
+                        pickedTilesPanel.add(panel);
+
+                        //create the JLabel for the order number
+                        orderNumbers[myOrderId] = new JLabel(String.valueOf(i+1)){
+                            @Override
+                            public void setText(String s){
+                                super.setText(s);
+                                revalidate();
+                                repaint();
+                            }
+                        };
+                        orderNumbers[myOrderId].setOpaque(false);
+                        orderNumbers[myOrderId].setAlignmentX(JLabel.CENTER_ALIGNMENT);
+                        orderNumbers[myOrderId].setFont(orderNumbers[myOrderId].getFont().deriveFont(14f));
+                        JPanel numberWrapper = new JPanel();
+                        numberWrapper.setOpaque(false);
+                        numberWrapper.setLayout(new FlowLayout());
+                        numberWrapper.add(orderNumbers[myOrderId]);
+
+                        //create the order button
                         ImageIcon orderButtonIcon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
                         JButton orderButton =  new JButton(ImageManager.resizeImageIcon(orderButtonIcon,(int)(width/10.59),(int)(height/10.59)));
                         orderButton.setPreferredSize(new Dimension((int)(width/10.59),(int)(height/10.59)));
                         orderButton.setBorderPainted(false);
                         orderButton.setOpaque(false);
-                        int myOrderId = i;
                         orderButton.addActionListener((e1) -> {
                             errorText.setText("");
                             if(e1.getSource() instanceof JButton && !isGameFinished){
@@ -479,27 +510,30 @@ public class GraphicalUI extends ClientManager {
                                     errorText.setText("It is not your turn");
                                     return;
                                 }
-                                int j;
-                                for(j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
+                                for(int j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
                                     if(chosenOrder[j] == myOrderId){
                                         int k;
                                         for(k=j;k<chosenOrder.length-1;k++){
                                             chosenOrder[k] = chosenOrder[k+1];
-                                            if(chosenOrder[k+1] == null) break;
+                                            if(chosenOrder[k] != null) orderNumbers[chosenOrder[k]].setText(String.valueOf(k+1));
+                                            else break;
                                         }
-                                        j = k;
+                                        chosenOrder[k] = myOrderId;
+                                        orderNumbers[myOrderId].setText(String.valueOf(k+1));
                                         break;
                                     }
                                 }
-                                chosenOrder[j] = myOrderId;
-                                for(int k=0;k<chosenTiles.length;k++){
-                                    if(chosenTiles[k] != null && chosenOrder[k] == null) return;
-                                }
-                                text.setText("Now select a column");
-                                showColumnChoiceButtons();
                             }
                         });
-                        pickedTilesPanel.add(orderButton);
+                        JPanel buttonWrapper = new JPanel();
+                        buttonWrapper.setOpaque(false);
+                        buttonWrapper.setLayout(new FlowLayout());
+                        buttonWrapper.add(orderButton);
+
+                        //add order button and number to the panel
+                        panel.add(buttonWrapper);
+                        panel.add(numberWrapper);
+                        if(myOrderId == 0) showColumnChoiceButtons();
                     }
                 });
                 return button;
@@ -636,6 +670,7 @@ public class GraphicalUI extends ClientManager {
             freeSpacesInMyShelf = new int[Shelf.getColumns()];
             chosenTiles = new Coordinates[maxNumOfChosenTiles];
             chosenOrder = new Integer[chosenTiles.length];
+            orderNumbers = new JLabel[chosenTiles.length];
             isGameFinished = false;
 
             // set up the background
@@ -812,6 +847,7 @@ public class GraphicalUI extends ClientManager {
                         for(int j=0;j<chosenOrder.length && chosenOrder[j]!=null;j++){
                             finalChosenTiles[j] = chosenTiles[chosenOrder[j]];
                             chosenTiles[chosenOrder[j]] = null;
+                            orderNumbers[chosenOrder[j]] = null;
                             chosenOrder[j] = null;
                         }
                         finalChosenTiles = Arrays.stream(finalChosenTiles).filter(x -> x!=null).toArray(Coordinates[]::new);

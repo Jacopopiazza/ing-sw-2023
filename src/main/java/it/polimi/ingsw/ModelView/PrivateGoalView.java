@@ -12,22 +12,18 @@ import java.io.Serializable;
 
 public class PrivateGoalView implements Serializable {
 
+    private final int id;
+    private final Coordinates[] coords;
+
     /**
      * Constructs a new PrivateGoalView object based on the given PrivateGoal object.
      *
      * @param goal the PrivateGoal object to create the view from
      */
 
-    private final Coordinates[] coords;
-
-    /**
-     * Retrieves the array of coordinates associated with the private goal.
-     *
-     * @return an array of Coordinates representing the associated coordinates
-     */
-
     public PrivateGoalView(PrivateGoal goal){
         coords = goal.getCoordinates();
+        id = goal.getId();
     }
 
     /**
@@ -47,6 +43,6 @@ public class PrivateGoalView implements Serializable {
      */
 
     public int getId(){
-        return 1; //to be implemented
+        return id;
     }
 }

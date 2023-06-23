@@ -8,10 +8,13 @@ import java.util.*;
  * The PrivateGoal class represents a private goal card in the game.
  */
 public final class PrivateGoal {
+    private int id; // id used by the GUI
     private Coordinates[] coords;   // The coordinates associated with the private goal
 
-    private PrivateGoal(Coordinates[] coords) {
+
+    private PrivateGoal(Coordinates[] coords,int id) {
         this.coords = coords.clone();
+        this.id = id;
     }
 
     /**
@@ -23,6 +26,15 @@ public final class PrivateGoal {
         Coordinates[] temp = new Coordinates[coords.length];
         for(int i =0; i< coords.length;i++) temp[i] = coords[i].clone();
         return temp;
+    }
+
+    /**
+     * Gets Id associated with the private goal.
+     *
+     * @return an integer representing the private goal
+     */
+    public int getId(){
+        return id;
     }
 
     /**
@@ -39,11 +51,11 @@ public final class PrivateGoal {
 
         PrivateGoal[] retValue = new PrivateGoal[people];
 
-        List<Coordinates[]> allPrivateGoals = Config.getInstance().getPrivateGoals();
+        List<Coordinates[]> allPrivateGoals = new ArrayList<Coordinates[]>(Config.getInstance().getPrivateGoals());
         Collections.shuffle(allPrivateGoals);
 
         for( int i = 0; i < people; i++ )
-            retValue[i] = new PrivateGoal(allPrivateGoals.get(i));
+            retValue[i] = new PrivateGoal(allPrivateGoals.get(i),Config.getInstance().getPrivateGoals().indexOf(allPrivateGoals.get(i))+1);
 
         return retValue;
     }

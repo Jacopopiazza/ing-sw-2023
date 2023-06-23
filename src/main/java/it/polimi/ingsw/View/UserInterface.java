@@ -8,7 +8,6 @@ import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.ClientImplementation;
 import it.polimi.ingsw.Network.Middleware.ServerStub;
 import it.polimi.ingsw.Network.Server;
-import it.polimi.ingsw.View.View;
 import it.polimi.ingsw.Listener.ViewListener;
 
 import java.rmi.NotBoundException;
@@ -20,11 +19,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * The ClientManager class is an abstract class responsible for managing the client-side functionality.
+ * The UserInterface class is an abstract class responsible for managing the client-side functionality.
  * It provides methods for setting up the RMI and socket clients, adding and notifying listeners,
  * and performing actions such as reconnecting, connecting, and quitting the game.
  */
-public abstract class ClientManager implements Runnable, View
+public abstract class UserInterface implements Runnable, View
 {
     protected Client client;
     List<ViewListener> listeners;
@@ -35,7 +34,7 @@ public abstract class ClientManager implements Runnable, View
      * @throws RemoteException    if there is a remote communication error
      * @throws NotBoundException  if the server stub is not found in the registry
      */
-    public ClientManager() {
+    public UserInterface() {
         this.listeners = new ArrayList<>();
     }
 
@@ -95,7 +94,7 @@ public abstract class ClientManager implements Runnable, View
      */
     @Override
     public void notifyListeners(Message m) {
-        ClientImplementation.logger.log(Level.INFO,"Notifying ClientManager listeners");
+        ClientImplementation.logger.log(Level.INFO,"Notifying UserInterface listeners");
         synchronized (listeners) {
             for (ViewListener listener : listeners) {
                 listener.handleMessage(m);

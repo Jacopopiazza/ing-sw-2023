@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 
-public class TextualUI extends ClientManager {
+public class TextualUI extends UserInterface {
 
     private Scanner in;
     private PrintStream out;

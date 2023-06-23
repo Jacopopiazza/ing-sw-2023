@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.List;
 
-public class GraphicalUI extends ClientManager {
+public class GraphicalUI extends UserInterface {
 
     private String username;
     private int currentPlayer;

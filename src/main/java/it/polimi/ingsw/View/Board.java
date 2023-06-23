@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class Board extends ClientManager {
+public class Board extends UserInterface {
     Game game = new Game(4);// Instanciated just for try
     GameBoardView gameBoardView;
     ShelfView shelfView;

@@ -27,7 +27,7 @@ public class ColumnsOrRows extends GlobalGoal {
      * @throws InvalidNumberOfPlayersException if the number of players is invalid.
      */
     public ColumnsOrRows(int people, boolean equal, boolean checkColumns, int numOfLines, int differentTilesPerLine) throws InvalidNumberOfPlayersException {
-        super(people, equal ? 5 : 2);
+        super(people, checkColumns? (equal ? 5 : 2) : (equal ? 7 : 6));
         this.equal=equal;
         this.checkColumns = checkColumns;
         this.numOfLines = numOfLines;

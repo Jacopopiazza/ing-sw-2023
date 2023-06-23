@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Client;
+package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Messages.DisconnectMessage;
 import it.polimi.ingsw.Messages.Message;
@@ -95,7 +95,7 @@ public abstract class ClientManager implements Runnable, View
      */
     @Override
     public void notifyListeners(Message m) {
-        AppClientImplementation.logger.log(Level.INFO,"Notifying ClientManager listeners");
+        ClientImplementation.logger.log(Level.INFO,"Notifying ClientManager listeners");
         synchronized (listeners) {
             for (ViewListener listener : listeners) {
                 listener.handleMessage(m);
@@ -118,7 +118,7 @@ public abstract class ClientManager implements Runnable, View
      * @param username the username of the player to reconnect
      */
     protected void doReconnect(String username){
-        AppClientImplementation.logger.log(Level.INFO,"Sending reconnect message");
+        ClientImplementation.logger.log(Level.INFO,"Sending reconnect message");
         notifyListeners(new ReconnectMessage(username));
     }
 
@@ -129,7 +129,7 @@ public abstract class ClientManager implements Runnable, View
      * @param numOfPlayers the number of players in the game
      */
     protected void doConnect(String username, int numOfPlayers){
-        AppClientImplementation.logger.log(Level.INFO,"Sending register message with numOfPlayer=" + numOfPlayers);
+        ClientImplementation.logger.log(Level.INFO,"Sending register message with numOfPlayer=" + numOfPlayers);
         notifyListeners(new RegisterMessage(username,numOfPlayers));
     }
 
@@ -139,7 +139,7 @@ public abstract class ClientManager implements Runnable, View
      * @param username the username of the player who quit
      */
     protected void doQuit(String username){
-        AppClientImplementation.logger.log(Level.INFO,username + "left the game");
+        ClientImplementation.logger.log(Level.INFO,username + "left the game");
         notifyListeners(new DisconnectMessage(username));
     }
 

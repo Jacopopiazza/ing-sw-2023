@@ -1,13 +1,9 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Exceptions.InvalidNumberOfPlayersException;
-import it.polimi.ingsw.Exceptions.MissingShelfException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.*;
-import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
 import it.polimi.ingsw.ModelView.*;
 
 import javax.swing.*;

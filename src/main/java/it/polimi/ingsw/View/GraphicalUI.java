@@ -1,13 +1,12 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Client.AppClientImplementation;
-import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.ModelView.*;
+import it.polimi.ingsw.Network.ClientImplementation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -905,7 +904,7 @@ public class GraphicalUI extends ClientManager {
 
     @Override
     public void update(Message m) {
-        AppClientImplementation.logger.log(Level.INFO,"GUI Received message: " + m.getClass());
+        ClientImplementation.logger.log(Level.INFO,"GUI Received message: " + m.getClass());
 
         if(m instanceof NoUsernameToReconnectMessage){
             startWindow.askLobby();
@@ -939,7 +938,7 @@ public class GraphicalUI extends ClientManager {
             else if(!isGameFinished) gameWindow.update(((UpdateViewMessage)m).getGameView());
         }
         else{
-            AppClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");
+            ClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");
         }
     }
 

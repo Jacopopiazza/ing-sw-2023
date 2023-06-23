@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Network.Middleware;
 
-import it.polimi.ingsw.Client.AppClientImplementation;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Network.Client;
+import it.polimi.ingsw.Network.ClientImplementation;
 import it.polimi.ingsw.Network.Server;
 
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class ServerStub implements Server {
 
         Message toBeSent = m;
 
-        AppClientImplementation.logger.log(Level.INFO, "ServerStub is sending message to server");
+        ClientImplementation.logger.log(Level.INFO, "ServerStub is sending message to server");
 
         if( m instanceof ReconnectMessage ){
             toBeSent = new ReconnectMessageTicket(((ReconnectMessage) m).getUsername() );
@@ -90,7 +90,7 @@ public class ServerStub implements Server {
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }
-        AppClientImplementation.logger.log(Level.INFO, "ServerStub sent message to server");
+        ClientImplementation.logger.log(Level.INFO, "ServerStub sent message to server");
 
     }
 
@@ -101,7 +101,7 @@ public class ServerStub implements Server {
      * @throws RemoteException if an error occurs while receiving the message
      */
     public void receive(Client client) throws RemoteException {
-        AppClientImplementation.logger.log(Level.INFO, "ServerStub is waiting for a message from server");
+        ClientImplementation.logger.log(Level.INFO, "ServerStub is waiting for a message from server");
 
         Message m;
         try {
@@ -111,7 +111,7 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("ServerStub: Cannot deserialize model view from server", e);
         }
-        AppClientImplementation.logger.log(Level.INFO, "Server stub received message: " + m.toString());
+        ClientImplementation.logger.log(Level.INFO, "Server stub received message: " + m.toString());
 
         if( m instanceof GameServerMessageTicket)
             client.update(new GameServerMessage(this));

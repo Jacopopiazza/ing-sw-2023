@@ -1,18 +1,13 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Client.AppClientImplementation;
-import it.polimi.ingsw.Client.ClientManager;
 import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
 import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.ModelView.*;
-import it.polimi.ingsw.Network.ClientImplementation;
-import it.polimi.ingsw.Network.ServerImplementation;
 
 
-import java.io.Console;
 import java.io.PrintStream;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -535,7 +530,7 @@ public class TextualUI extends ClientManager {
 
     @Override
     public void update(Message m){
-        AppClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
+        ClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
 
         addMessageToQueue(m);
         synchronized (lockLogin) {
@@ -549,12 +544,12 @@ public class TextualUI extends ClientManager {
                 lockLogin.wait();
             }catch (InterruptedException e){
                 System.err.println("Interrupted while waiting for server: " + e.getMessage());
-                AppClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+                ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
                 throw new RuntimeException(e);
             }
         }
 
-        AppClientImplementation.logger.log(Level.INFO,"CLI: received Reconnect response from server");
+        ClientImplementation.logger.log(Level.INFO,"CLI: received Reconnect response from server");
 
     }
 
@@ -566,11 +561,11 @@ public class TextualUI extends ClientManager {
         if(!connected){
             return;
         }
-        AppClientImplementation.logger.log(Level.INFO,"Connected to server!");
+        ClientImplementation.logger.log(Level.INFO,"Connected to server!");
 
         readUsername();
         out.println("Hai scelto l'username: " + this.userName);
-        AppClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
+        ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
 
         boolean validUsername = false;
 
@@ -582,26 +577,26 @@ public class TextualUI extends ClientManager {
             Message m = this.getFirstMessageFromQueue();
 
             if(m instanceof NoUsernameToReconnectMessage){
-                AppClientImplementation.logger.log(Level.INFO,"L'username scelto è di un nuovo utente");
+                ClientImplementation.logger.log(Level.INFO,"L'username scelto è di un nuovo utente");
                 chooseLobby();
                 waitForLoginResponse();
             }
             else if(m instanceof TakenUsernameMessage){
-                AppClientImplementation.logger.log(Level.INFO,"L'username scelto è già in uso");
+                ClientImplementation.logger.log(Level.INFO,"L'username scelto è già in uso");
                 readUsername();
                 out.println("Hai scelto l'username: " + this.userName);
                 doReconnect(this.userName);
                 waitForLoginResponse();
-                AppClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
+                ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
             }
             else if(m instanceof NoLobbyAvailableMessage){
-                AppClientImplementation.logger.log(Level.INFO,"Nessuna lobby esistente");
+                ClientImplementation.logger.log(Level.INFO,"Nessuna lobby esistente");
                 out.println("Nessuna lobby esistente. Ripeti la selezione");
                 chooseLobby();
                 waitForLoginResponse();
             }
             else if(m instanceof LobbyMessage){
-                AppClientImplementation.logger.log(Level.INFO,"Messaggio giocatori in lobby");
+                ClientImplementation.logger.log(Level.INFO,"Messaggio giocatori in lobby");
                 printPlayersInLobby((LobbyMessage) m);
                 break;
             }
@@ -645,7 +640,7 @@ public class TextualUI extends ClientManager {
                 break;
             } else {
                 addMessageToQueue(m);
-                AppClientImplementation.logger.log(Level.INFO, "Ignored message and readed to queue, still waiting for GameServerMessage");
+                ClientImplementation.logger.log(Level.INFO, "Ignored message and readed to queue, still waiting for GameServerMessage");
             }
         }
 
@@ -657,7 +652,7 @@ public class TextualUI extends ClientManager {
             }
 
             Message m = this.getFirstMessageFromQueue();
-            AppClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
+            ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
 
             if(m instanceof  LobbyMessage){
                 printPlayersInLobby((LobbyMessage) m);
@@ -668,21 +663,21 @@ public class TextualUI extends ClientManager {
                 PlayerView currentPlayer = ((UpdateViewMessage)m).getGameView().getPlayers()[((UpdateViewMessage)m).getGameView().getCurrentPlayer()];
 
                 if(this.userName.equals(currentPlayer.getUsername())){
-                    AppClientImplementation.logger.log(Level.INFO, "E' il mio turno");
+                    ClientImplementation.logger.log(Level.INFO, "E' il mio turno");
                     Message turnActionMessage = doTurnAction(gameBoardView, currentPlayer);
                     notifyListeners(turnActionMessage);
-                    AppClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
+                    ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
                 }
                 else {
-                    AppClientImplementation.logger.log(Level.INFO, "Non e' il mio turno");
+                    ClientImplementation.logger.log(Level.INFO, "Non e' il mio turno");
                 }
 
             }else if(m instanceof GameServerMessage){
-                AppClientImplementation.logger.log(Level.INFO,"Switchato listener a GameServer");
+                ClientImplementation.logger.log(Level.INFO,"Switchato listener a GameServer");
                 connectToGameServer((GameServerMessage) m);
             }
 
-            AppClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
+            ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
 
         }
     }

@@ -18,7 +18,7 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 | CLI | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00)|
 | Multiple games | ![#c5f015](https://placehold.it/15/44bb44/44bb44) |
 | Persistence | ![#c5f015](https://placehold.it/15/f03c15/f03c15) |
-| Chat | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
+| Chat | ![#c5f015](https://placehold.it/15/f03c15/f03c15) |
 | Disconnections | ![#c5f015](https://placehold.it/15/ffdd00/ffdd00) |
 
 <!--

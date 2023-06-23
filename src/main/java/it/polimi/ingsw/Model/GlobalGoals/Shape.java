@@ -35,6 +35,8 @@ public class Shape extends GlobalGoal {
             }
             shapes.add(shape);
         }
+        if(myId(s) == 10) this.description = "Five tiles of the same type forming an X.";
+        if(myId(s) == 11) this.description = "Five tiles of the same type forming a diagonal.";
     }
 
     /**

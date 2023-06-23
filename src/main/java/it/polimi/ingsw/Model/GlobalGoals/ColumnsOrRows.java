@@ -32,6 +32,24 @@ public class ColumnsOrRows extends GlobalGoal {
         this.checkColumns = checkColumns;
         this.numOfLines = numOfLines;
         this.differentTilesPerLine =differentTilesPerLine;
+        if(checkColumns){
+            if(equal) this.description = "Three columns each formed by 6 tiles Five tiles of the same type forming an X. " +
+                    "of maximum three different types. One " +
+                    "column can show the same or a different " +
+                    "combination of another column.";
+            else this.description = "Two columns each formed by 6 " +
+                    "different types of tiles.";
+        }
+        else{
+            if(equal) this.description = "Four lines each formed by 5 tiles of " +
+                    "maximum three different types. One " +
+                    "line can show the same or a different " +
+                    "combination of another line.";
+            else this.description = "Two lines each formed by 5 different " +
+                    "types of tiles. One line can show the " +
+                    "same or a different combination of the " +
+                    "other line.";
+        }
     }
 
     /**

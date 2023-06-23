@@ -18,6 +18,8 @@ public class EightTiles extends GlobalGoal {
      */
     public EightTiles(int people) throws InvalidNumberOfPlayersException {
         super(people, 9);
+        this.description = "Eight tiles of the same type. There’s no " +
+                "restriction about the position of these tiles.";
     }
 
     /**

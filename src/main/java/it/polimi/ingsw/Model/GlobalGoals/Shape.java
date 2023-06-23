@@ -60,22 +60,25 @@ public class Shape extends GlobalGoal {
             for( int j = 0; j < columns; j++ ){
                 for( List<Coordinates> shape : shapes ){
                     found = true;
-                    // if the first of the shape's tiles is inside the shelf (it does not need to be the first one)
+                    // if the first tile coordinates are inside the bounds of the shelf (it does not need to be the first one)
                     if( ( ( i + shape.get(0).getROW() ) < rows ) && ( ( j + shape.get(0).getCOL() ) < columns) ){
-                        // get its color
+                        //if at that coordinates there is effectively a tile
                         Tile tile = s.getTile(new Coordinates( i + shape.get(0).getROW(), j + shape.get(0).getCOL()) );
                         if(tile != null){
+                            // get its color
                             color = tile.getColor();
                             // and check if every shape's tile is inside the shelf and has the same color
                             for( Coordinates coord : shape ){
                                 r = coord.getROW();
                                 c = coord.getCOL();
-                                if( ( ( i + r ) >= rows ) || ( ( j + c ) >= columns ) || !s.getTile(new Coordinates(i+r, j+c)).getColor().equals(color) ){
+                                if( ( ( i + r ) >= rows ) || ( ( j + c ) >= columns ) ||
+                                        s.getTile(new Coordinates(i+r, j+c)) == null || !s.getTile(new Coordinates(i+r, j+c)).getColor().equals(color) ){
                                     found = false;
                                     break;
                                 }
                             }
                         }
+                        else found = false;
                     }
                     else found = false;
 

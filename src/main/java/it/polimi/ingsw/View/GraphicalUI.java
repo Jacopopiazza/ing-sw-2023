@@ -23,16 +23,6 @@ import java.util.List;
 public class GraphicalUI extends UserInterface {
 
     private String username;
-    private int currentPlayer;
-    private int myId;
-    private int numOfActivePlayers;
-    private boolean isGameFinished;
-    int maxFreeSpacesInMyShelf;
-    private int[] freeSpacesInMyShelf;
-    private int maxNumOfChosenTiles = 3;
-    private Coordinates[] chosenTiles;
-    private Integer[] chosenOrder;
-    private JLabel[] orderNumbers;
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
 
@@ -650,6 +640,19 @@ public class GraphicalUI extends UserInterface {
             }
         }
 
+        //attributes related to game
+        private int currentPlayer;
+        private int myId;
+        private int numOfActivePlayers;
+        private boolean isGameFinished;
+        int maxFreeSpacesInMyShelf;
+        private int[] freeSpacesInMyShelf;
+        private int maxNumOfChosenTiles = 3;
+        private Coordinates[] chosenTiles;
+        private Integer[] chosenOrder;
+        private JLabel[] orderNumbers;
+
+        //attributes related to the view
         private GameBoardPanel gameBoardPanel;
         private ShelfPanel[] shelves;
         private JLabel[] scores;
@@ -814,6 +817,8 @@ public class GraphicalUI extends UserInterface {
             middlePanel.add(pickedTilesPanel);
 
             pack();
+            startWindow.dispose();
+            startWindow = null;
             setVisible(true);
         }
 
@@ -822,7 +827,6 @@ public class GraphicalUI extends UserInterface {
             JButton button;
             for(int i=0;i<Shelf.getColumns();i++){
                 button = new JButton("\u2193"); //unicode code for arrow pointing down
-                button.setLayout(new BoxLayout(button,BoxLayout.PAGE_AXIS));
                 button.setOpaque(false);
                 button.setBorderPainted(false);
                 button.setContentAreaFilled(false);
@@ -873,6 +877,22 @@ public class GraphicalUI extends UserInterface {
                     if(gw.getPlayers()[i].isWinner()) {
                         if(myId == i) text.setText("YOU WON!");
                         else text.setText("YOU LOST!");
+                        JButton close = new JButton("Return to Starting Menù");
+                        close.setOpaque(false);
+                        close.setBorderPainted(false);
+                        close.setContentAreaFilled(false);
+                        close.addActionListener((e) -> {
+                            errorText.setText("");
+                            if(e.getSource() instanceof JButton){
+                                username = null;
+                                gameWindow.dispose();
+                                gameWindow = null;
+                                startWindow = new StartWindow();
+                                startWindow.askUsername();
+                            }
+                        });
+                        pickedTilesPanel.add(close);
+
                         isGameFinished = true;
                     }
                 }
@@ -932,10 +952,9 @@ public class GraphicalUI extends UserInterface {
         }
         else if(m instanceof UpdateViewMessage){
             if(gameWindow == null){
-                startWindow.dispose();
                 gameWindow = new GameWindow(((UpdateViewMessage)m).getGameView());
             }
-            else if(!isGameFinished) gameWindow.update(((UpdateViewMessage)m).getGameView());
+            else if(!gameWindow.isGameFinished) gameWindow.update(((UpdateViewMessage)m).getGameView());
         }
         else{
             ClientImplementation.logger.log(Level.INFO,"CLI: received message from server of type: " + m.getClass().getSimpleName() + " , but no notify has been implemented for this type of message");

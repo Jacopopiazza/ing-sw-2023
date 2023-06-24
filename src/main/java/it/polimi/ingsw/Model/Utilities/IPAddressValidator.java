@@ -30,6 +30,9 @@ public abstract class IPAddressValidator {
         if (ip == null) {
             return false;
         }
+        if(ip.equals("localhost")){
+            return true;
+        }
 
         // Pattern class contains matcher() method
         // to find matching between given IP address

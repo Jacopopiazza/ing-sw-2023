@@ -138,6 +138,7 @@ public class TextualUI extends UserInterface {
                 this.setUpSocketClient(ip, port);
             }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
                 out.println("Cannot connect with socket. Make sure the IP and Port provided are valid and try again later...");
+                out.println("Cannot connect with socket. Make sure the IP and Port provided are valid and try again later...");
                 return false;
             }
         }

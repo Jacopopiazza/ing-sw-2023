@@ -66,6 +66,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private ServerImplementation() throws RemoteException {
         super();
         setUpLogger();
+        System.setProperty("java.rmi.server.hostname","0.0.0.0");
         playingUsernames = new ArrayList<>();
         disconnectedUsernames = new HashMap<>();
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();

@@ -55,7 +55,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private List<String> playingUsernames; // to disconnect
     private Map<String, GameServer> disconnectedUsernames;
     private Queue<GameServer> lobbiesWaitingToStart;
-    private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
+    private Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
 
     /**
      * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
@@ -81,7 +81,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                     Tuple<Message,Client> tuple = popFromMessagesQueue();
                     try {
                         effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
-                    }catch (RemoteException ex){
+                    } catch (RemoteException ex){
                         logger.log(Level.SEVERE, "Cannot send message to client: " + ex.getMessage());
                     }
                 }
@@ -97,8 +97,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @param c The client associated with the message.
      */
     private void addToMessagesQueue(Message m, Client c) {
-        synchronized (recievedMessages) {
-            recievedMessages.add(new Tuple<>(m, c));
+        synchronized (receivedMessages) {
+            receivedMessages.add(new Tuple<>(m, c));
         }
     }
 
@@ -108,8 +108,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @return {@code true} if the message queue is empty, {@code false} otherwise.
      */
     private boolean isMessagesQueueEmpty() {
-        synchronized (recievedMessages) {
-            return recievedMessages.isEmpty();
+        synchronized (receivedMessages) {
+            return receivedMessages.isEmpty();
         }
     }
 
@@ -119,8 +119,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
      */
     private Tuple<Message, Client> popFromMessagesQueue() {
-        synchronized (recievedMessages) {
-            return recievedMessages.poll();
+        synchronized (receivedMessages) {
+            return receivedMessages.poll();
         }
     }
 
@@ -163,7 +163,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      */
     public void handleMessage(Message m, Client client) throws RemoteException {
 
-        logger.log(Level.INFO, "Recieved message from client: " + m.getClass());
+        logger.log(Level.INFO, "Received message from client: " + m.getClass());
 
         addToMessagesQueue(m,client);
     }

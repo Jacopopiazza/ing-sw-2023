@@ -82,7 +82,7 @@ public abstract class UserInterface implements Runnable, View
      */
     protected void setUpRMIClient(String ip, String port) throws RemoteException, NotBoundException, InvalidIPAddress, InvalidPort {
 
-        if(ip == null || ip.isEmpty() || !ip.equals("localhost") || !IPAddressValidator.isValidIPAddress(ip)) {
+        if(ip == null || ip.isEmpty() || !IPAddressValidator.isValidIPAddress(ip)) {
             throw new InvalidIPAddress("Invalid IP address");
         }
         if(port == null || port.isEmpty() || !IPAddressValidator.isValidPort(port)) {
@@ -118,7 +118,7 @@ public abstract class UserInterface implements Runnable, View
 
     protected void setUpSocketClient(String ip, String port) throws RemoteException, NotBoundException, InvalidIPAddress, InvalidPort{
 
-        if(ip == null || ip.isEmpty() || !ip.equals("localhost") || !IPAddressValidator.isValidIPAddress(ip)) {
+        if(ip == null || ip.isEmpty() || !IPAddressValidator.isValidIPAddress(ip)) {
             throw new InvalidIPAddress("Invalid IP address");
         }
         if(port == null || port.isEmpty() || !IPAddressValidator.isValidPort(port)) {

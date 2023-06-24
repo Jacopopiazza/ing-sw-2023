@@ -178,7 +178,7 @@ public class GraphicalUI extends UserInterface {
             error.setText("");
 
             //set up the question
-            request.add(getStandardLabel("Set up the connection"));
+            request.add(getStandardLabel("Set up the connection you want to use"));
 
             //set up the text fields for server IP and Port
             JPanel wrapper = new JPanel();
@@ -934,7 +934,16 @@ public class GraphicalUI extends UserInterface {
                         pickedTilesPanel.removeAll();
                         pickedTilesPanel.revalidate();
                         pickedTilesPanel.repaint();
-                        notifyListeners(new TurnActionMessage(username,finalChosenTiles,chosenColumn));
+                        Coordinates[] temp = finalChosenTiles;
+                        //disable user actions and send the message to the server
+                        currentPlayer = -1;
+                        new SwingWorker<Void,Void>(){
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                notifyListeners(new TurnActionMessage(username,temp,chosenColumn));
+                                return null;
+                            }
+                        }.execute();
                     }
                 });
             }

@@ -23,6 +23,7 @@ public class TextualUI extends UserInterface {
     private String userName;
 
     private boolean gameStarted = false;
+    private boolean gameEnded = false;
 
     private Queue<Message> recievedMessages = new LinkedList<>();
 
@@ -37,9 +38,17 @@ public class TextualUI extends UserInterface {
     String r8 = "           |__/";
 
     GameBoard gameBoard;
+    GameView gameView;
+
+    private boolean isUIClosable(){
+        synchronized (lockMainThread){
+            return this.gameEnded;
+        }
+    }
 
     private final Object lockLogin = new Object();
     private final Object lockQueue = new Object();
+    private final Object lockMainThread = new Object();
 
     private boolean isMessagesQueueEmpty(){
         synchronized (lockQueue){
@@ -116,7 +125,7 @@ public class TextualUI extends UserInterface {
             try{
                 this.setUpSocketClient();
             }catch (RemoteException | NotBoundException ex ){
-                out.println("Cannot connect with RMI. Trying with socket...");
+                out.println("Cannot connect with socket. Trying again later...");
                 return false;
             }
         }
@@ -370,98 +379,6 @@ public class TextualUI extends UserInterface {
         return coords;
     }
 
-    public void showProva() {
-        showTitle();
-        //boolean connected;
-        //connected = chooseConnection();
-        //if(!connected)
-        //    return;
-        out.println("Connected!");
-
-        // readUsername();
-        //out.println("Your username is: " + this.userName);
-
-        Game game = new Game(4);// Instanciated just for try
-        game.addPlayer("a", (message -> out.println("ciao")));
-        game.addPlayer("b", (message -> out.println("ciao")));
-        game.addPlayer("c", (message -> out.println("ciao")));
-        game.addPlayer("d", (message -> out.println("ciao")));
-        game.init();
-        try {
-            game.refillGameBoard();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        PlayerView me = new PlayerView(game.getPlayer(game.getCurrentPlayer()));
-        Coordinates[] pvtGoals = new Coordinates[6]; // num of Coordinates to be read from config
-        pvtGoals = me.getPrivateGoal().getCoordinates();
-
-        Shelf shelf = new Shelf();
-        Shelf privateGoals = new Shelf();
-
-        ShelfView shelfView = new ShelfView(shelf);
-
-        Coordinates[] chosenTiles;
-        List<Coordinates> coords;
-
-        while(true){
-            GameView modelView = new GameView(game);
-            GameBoardView gameBoard = modelView.getGameBoard();
-
-            showBoard(gameBoard);
-            //showMyShelf(shelfView);
-            showShelves(game.getView().getPlayers());
-            showPrivateGoals(modelView.getPlayers()[0].getPrivateGoal().getCoordinates());
-
-            int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-            int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
-
-            int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
-            int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
-
-
-            coords = pickTiles(gameBoard, maxRow - minRow, maxCol - minCol, minRow, minCol);
-            chosenTiles = new Coordinates[coords.size()];
-            for(int i = 0; i < coords.size(); i++){
-                chosenTiles[i] = coords.get(i);
-            }
-
-            Tile t;
-            int column = 0;
-            while(true){
-                out.print("In which column do you want to insert the Tiles? ");
-                String input = in.nextLine();
-                if(!checkUserInput(0, 4, input.charAt(0) - '0')) {
-                    out.println("\nInsert a valid column!");
-                    continue;
-                }
-                try{
-                    column = Integer.parseInt(input);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-
-            // Once I have the Tiles to pick
-            for(Coordinates el: chosenTiles){
-                t = game.getGameBoard().getTile(el);
-                game.getGameBoard().setTile(el, null);
-                try{
-                    // get shelf ritorna una clone!!! -> stampa sempre shelf vuote perché non vengono aggiornate in game
-                    // ma viene aggiornata solo la loro clone -> inutile
-                    game.getPlayer(0).getShelf().addTile(t, column);
-                } catch (IllegalColumnInsertionException e) {
-                    e.printStackTrace();
-                } catch (NoTileException e) {
-                    e.printStackTrace();
-                }
-            }
-            //shelfView = new ShelfView(shelf);
-        }
-    }
-
     private Message doTurnAction(GameBoardView gameBoardView, PlayerView playerView){
         // to display the gameBoard and pick the tiles correctly
         int maxRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
@@ -611,7 +528,9 @@ public class TextualUI extends UserInterface {
 
     private void connectToGameServer(GameServerMessage m){
 
-        cleanListeners();
+        //ClientImplementation.logger.log(Level.INFO,"CLI: received GameServerMessage from server");
+
+        /*cleanListeners();
 
         addListener((message) -> {
             try {
@@ -619,7 +538,7 @@ public class TextualUI extends UserInterface {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        });
+        });*/
     }
 
     @Override
@@ -629,72 +548,124 @@ public class TextualUI extends UserInterface {
         out.println("Login effettuato con successo!");
         out.println("In attesa dell'inizio della partita");
 
-        while (true){
+        /*while (true){
             if(isMessagesQueueEmpty()){
                 continue;
             }
             Message m = this.getFirstMessageFromQueue();
             if(m instanceof  LobbyMessage){
                 printPlayersInLobby((LobbyMessage) m);
-            } else if (m instanceof GameServerMessage) {
+            }
+            else if (m instanceof GameServerMessage) {
                 connectToGameServer((GameServerMessage) m);
                 break;
-            } else {
+            }
+            else {
                 addMessageToQueue(m);
                 ClientImplementation.logger.log(Level.INFO, "Ignored message and readed to queue, still waiting for GameServerMessage");
             }
+        }*/
+
+        //out.println("Connesso a GameServer in attesa dell'inizio della partita");
+
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                while(true){
+                    if(isMessagesQueueEmpty()){
+                        continue;
+                    }
+
+                    Message m = getFirstMessageFromQueue();
+                    ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
+
+                    if(m instanceof  LobbyMessage){
+                        printPlayersInLobby((LobbyMessage) m);
+                    } else if (m instanceof UpdateViewMessage) {
+                        //printTheWholeFGame((UpdateViewMessage) m);
+
+                        synchronized (lockMainThread){
+                            gameView = ((UpdateViewMessage)m).getGameView();
+                            printTheWholeFGame(gameView);
+                            lockMainThread.notifyAll();
+                        }
+
+                    }
+                    /*else if(m instanceof GameServerMessage) {
+                        ClientImplementation.logger.log(Level.INFO, "Switchato listener a GameServer");
+                        connectToGameServer((GameServerMessage) m);
+                    }*/
+
+                    ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
+
+                }
+            }
+        }.start();
+
+        try{
+            synchronized (lockMainThread){
+                lockMainThread.wait();
+            }
+        }catch (InterruptedException e){
+            System.err.println("Interrupted while waiting for server: " + e.getMessage());
+            ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+            throw new RuntimeException(e);
         }
 
-        out.println("Connesso a GameServer in attesa dell'inizio della partita");
+        while(!gameEnded){
 
-        while(true){
-            if(isMessagesQueueEmpty()){
-                continue;
+            clearConsole();
+            PlayerView currentPlayer;
+            GameBoardView gameBoardView;
+
+            out.println("Please choose your action:");
+            out.println("/help for help");
+            String sChoice = in.nextLine();
+            switch (sChoice){
+                case "/help":
+                    printHelp();
+                    break;
+
+                case "/play":
+                    synchronized (lockMainThread){
+                        currentPlayer = gameView.getPlayers()[gameView.getCurrentPlayer()];
+                        gameBoardView = gameView.getGameBoard();
+                    }
+                    if(currentPlayer.getUsername().equals(userName)){
+                        Message turnActionMessage = doTurnAction(gameBoardView, currentPlayer);
+                        notifyListeners(turnActionMessage);
+                        ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
+                    }
+                    else{
+                        out.println("Not your turn!");
+                    }
+                    break;
             }
-
-            Message m = this.getFirstMessageFromQueue();
-            ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
-
-            if(m instanceof  LobbyMessage){
-                printPlayersInLobby((LobbyMessage) m);
-            } else if (m instanceof UpdateViewMessage) {
-                printTheWholeFGame((UpdateViewMessage) m);
-
-                GameBoardView gameBoardView = ((UpdateViewMessage)m).getGameView().getGameBoard();
-                PlayerView currentPlayer = ((UpdateViewMessage)m).getGameView().getPlayers()[((UpdateViewMessage)m).getGameView().getCurrentPlayer()];
-
-                if(this.userName.equals(currentPlayer.getUsername())){
-                    ClientImplementation.logger.log(Level.INFO, "E' il mio turno");
-                    Message turnActionMessage = doTurnAction(gameBoardView, currentPlayer);
-                    notifyListeners(turnActionMessage);
-                    ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
-                }
-                else {
-                    ClientImplementation.logger.log(Level.INFO, "Non e' il mio turno");
-                }
-
-            }else if(m instanceof GameServerMessage){
-                ClientImplementation.logger.log(Level.INFO,"Switchato listener a GameServer");
-                connectToGameServer((GameServerMessage) m);
-            }
-
-            ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
 
         }
+
+
     }
 
-    private void printTheWholeFGame(UpdateViewMessage m){
+    private void printHelp(){
+        out.println("Commands:");
+        out.println("/play to play your turn");
+        out.println("/help to show this message");
+    }
+
+    private void printTheWholeFGame(GameView gameView){
         //inizia la partita
-        PlayerView[] playersView = m.getGameView().getPlayers();
+        PlayerView[] playersView = gameView.getPlayers();
         int myIndex = 0;
         // get my player index
         for (int i = 0; i < playersView.length; i++) {
             if (playersView[i].getUsername().equals(userName))
                 myIndex = i;
         }
-        GameBoardView gameBoardView = m.getGameView().getGameBoard();
-        PrivateGoalView privateGoalView = m.getGameView().getPlayers()[myIndex].getPrivateGoal();
-        int playerIndex = m.getGameView().getCurrentPlayer();
+        GameBoardView gameBoardView = gameView.getGameBoard();
+        PrivateGoalView privateGoalView = gameView.getPlayers()[myIndex].getPrivateGoal();
+        int playerIndex = gameView.getCurrentPlayer();
 
         showBoard(gameBoardView);
         showShelves(playersView);
@@ -722,6 +693,27 @@ public class TextualUI extends UserInterface {
                 break;
         }
     }
+
+    public final static void clearConsole()
+    {
+        try
+        {
+            final String os = System.getProperty("os.name");
+            if (os.contains("Windows"))
+            {
+                Runtime.getRuntime().exec("cls");
+            }
+            else
+            {
+                Runtime.getRuntime().exec("clear");
+            }
+        }
+        catch (final Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }

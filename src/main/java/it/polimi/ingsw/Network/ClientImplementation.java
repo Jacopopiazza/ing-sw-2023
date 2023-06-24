@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Network;
 
+import it.polimi.ingsw.Messages.GameServerMessage;
 import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.PingMessage;
 import it.polimi.ingsw.View.GraphicalUI;
 import it.polimi.ingsw.View.TextualUI;
 import it.polimi.ingsw.View.View;
@@ -18,6 +20,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private View view;
+    private Server server;
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
 
     /**
@@ -30,7 +33,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     public ClientImplementation(View view, Server server) throws RemoteException{
         super();
         this.view = view;
-
+        this.server = server;
         view.addListener((message) -> {
             try {
                 server.handleMessage(message, (Client)this);
@@ -54,7 +57,41 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
     @Override
     public void update(Message m) throws RemoteException {
+
+        if(m instanceof GameServerMessage){
+            changeServer(((GameServerMessage) m).getServer());
+        }
+        if(m instanceof PingMessage){
+            try{
+                this.server.handleMessage(m, this);
+            }catch (RemoteException e) {
+                System.err.println(e.getMessage());
+                System.err.println(e.getCause());
+                return;
+            }
+            return;
+        }
+
         this.view.update(m);
+    }
+
+    public void changeServer(Server server){
+        this.server = server;
+
+        view.cleanListeners();
+
+        view.addListener((message) -> {
+            try {
+                server.handleMessage(message, (Client)this);
+            } catch (RemoteException e) {
+                System.err.println(e.getMessage());
+                System.err.println(e.getCause());
+                return;
+            }
+
+
+        });
+
     }
 
 

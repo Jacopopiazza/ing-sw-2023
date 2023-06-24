@@ -25,6 +25,12 @@ public interface View {
     void notifyListeners(Message m);
 
     /**
+     * Remove all registered listeners.
+     *
+     */
+    void cleanListeners();
+
+    /**
      * Adds a listener to the view.
      *
      * @param listener the listener to be added

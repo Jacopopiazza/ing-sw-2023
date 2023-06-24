@@ -1,5 +1,7 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Exceptions.InvalidIPAddress;
+import it.polimi.ingsw.Exceptions.InvalidPort;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
@@ -176,32 +178,77 @@ public class GraphicalUI extends UserInterface {
             error.setText("");
 
             //set up the question
-            request.add(getStandardText("Do you want to use RMI or Socket?"));
+            request.add(getStandardLabel("Set up the connection"));
+
+            //set up the text fields for server IP and Port
+            JPanel wrapper = new JPanel();
+            wrapper.setOpaque(false);
+            wrapper.setLayout(new FlowLayout());
+            wrapper.setMaximumSize(new Dimension(450,60));
+            request.add(wrapper);
+
+            JPanel ipPanel = new JPanel();
+            ipPanel.setOpaque(false);
+            ipPanel.setLayout(new BoxLayout(ipPanel,BoxLayout.PAGE_AXIS));
+            wrapper.add(ipPanel);
+            JLabel ip = new JLabel("IP:");
+            ip.setFont(ip.getFont().deriveFont(14f));
+            ip.setForeground(Color.decode("14929049"));
+            ipPanel.add(ip);
+            JTextField ipTextField = getStandardTextField(150,25,14f);
+            ipPanel.add(ipTextField);
+
+            JPanel portPanel = new JPanel();
+            portPanel.setOpaque(false);
+            portPanel.setLayout(new BoxLayout(portPanel,BoxLayout.PAGE_AXIS));
+            wrapper.add(portPanel);
+            JLabel port = new JLabel("Port:");
+            port.setFont(port.getFont().deriveFont(14f));
+            port.setForeground(Color.decode("14929049"));
+            portPanel.add(port);
+            JTextField portTextField = getStandardTextField(150,25,14f);
+            portPanel.add(portTextField);
 
             //set up the options
             JPanel choices = new JPanel();
             choices.setOpaque(false);
             choices.setLayout(new FlowLayout());
             JButton rmi = getStandardButton("RMI");
+            rmi.setPreferredSize(new Dimension(150,40));
             rmi.addActionListener((e) -> {
-                if(e.getSource() instanceof JButton button){
-                    if(connectionChosen(button)) {
-                        askUsername();
-                    }
-                    else{
+                if(e.getSource() instanceof JButton){
+                    try{
+                        setUpRMIClient(ipTextField.getText(),portTextField.getText());
+                    }catch (RemoteException | NotBoundException ex ){
                         error.setText("Unable to connect with RMI");
+                        return;
+                    } catch (InvalidIPAddress ex) {
+                        error.setText("IP not found");
+                        return;
+                    } catch (InvalidPort ex) {
+                        error.setText("Port not valid");
+                        return;
                     }
+                    askUsername();
                 }
             });
             JButton socket = getStandardButton("Socket");
+            socket.setPreferredSize(new Dimension(150,40));
             socket.addActionListener((e) -> {
-                if(e.getSource() instanceof JButton button){
-                    if(connectionChosen(button)){
-                        askUsername();
-                    }
-                    else{
+                if(e.getSource() instanceof JButton){
+                    try{
+                        setUpSocketClient(ipTextField.getText(),portTextField.getText());
+                    }catch (RemoteException | NotBoundException ex ){
                         error.setText("Unable to connect with Socket");
+                        return;
+                    } catch (InvalidIPAddress ex) {
+                        error.setText("IP not found");
+                        return;
+                    } catch (InvalidPort ex) {
+                        error.setText("Port not valid");
+                        return;
                     }
+                    askUsername();
                 }
             });
             choices.add(rmi);
@@ -216,18 +263,14 @@ public class GraphicalUI extends UserInterface {
             error.setText("");
 
             //set up the question
-            request.add(getStandardText("Insert the username"));
+            request.add(getStandardLabel("Insert the username"));
 
             JPanel panel = new JPanel();
             panel.setOpaque(false);
             panel.setLayout(new FlowLayout());
 
-            //set up the username text box
-            JTextField inputText = new JTextField();
-            inputText.setPreferredSize(new Dimension(450,40));
-            inputText.setFont(inputText.getFont().deriveFont(20f));
-            inputText.setBackground(Color.decode("14929049"));
-            inputText.setForeground(Color.decode("5776384"));
+            //set up the username text field
+            JTextField inputText = getStandardTextField(450,40,20f);
 
             //set up the submit button
             JButton submit = getStandardButton("Submit");
@@ -255,7 +298,7 @@ public class GraphicalUI extends UserInterface {
             error.setText("");
 
             //set up the question
-            request.add(getStandardText("Do you want to create a lobby or to join a lobby?"));
+            request.add(getStandardLabel("Do you want to create a lobby or to join a lobby?"));
 
             //set up the options
             JPanel choices = new JPanel();
@@ -264,17 +307,13 @@ public class GraphicalUI extends UserInterface {
             JButton create = getStandardButton("Create");
             create.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
-                    if(button.getText().equals("Create")) {
-                        askNumOfPlayersInLobby();
-                    }
+                    askNumOfPlayersInLobby();
                 }
             });
             JButton join = getStandardButton("Join");
             join.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton button){
-                    if(button.getText().equals("Join")) {
-                        doConnect(username,1);
-                    }
+                    doConnect(username,1);
                 }
             });
             choices.add(create);
@@ -289,7 +328,7 @@ public class GraphicalUI extends UserInterface {
             error.setText("");
 
             //set up the question
-            request.add(getStandardText("How many players do you want in your lobby?"));
+            request.add(getStandardLabel("How many players do you want in your lobby?"));
 
             JPanel panel = new JPanel();
             panel.setOpaque(false);
@@ -319,8 +358,8 @@ public class GraphicalUI extends UserInterface {
             error.setText("");
 
             //set up the question
-            request.add(getStandardText("players in lobby:"));
-            for(String p : players) request.add(getStandardText(p));
+            request.add(getStandardLabel("players in lobby:"));
+            for(String p : players) request.add(getStandardLabel(p));
 
             //set up the exit button
             JPanel panel = new JPanel();
@@ -351,12 +390,21 @@ public class GraphicalUI extends UserInterface {
             return button;
         }
 
-        private JLabel getStandardText(String text){
+        private JLabel getStandardLabel(String text){
             JLabel label = new JLabel(text);
             label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             label.setFont(label.getFont().deriveFont(20f));
             label.setForeground(Color.decode("14929049"));
             return label;
+        }
+
+        private JTextField getStandardTextField(int width, int height, float font){
+            JTextField textField = new JTextField();
+            textField.setPreferredSize(new Dimension(width,height));
+            textField.setFont(textField.getFont().deriveFont(font));
+            textField.setBackground(Color.decode("14929049"));
+            textField.setForeground(Color.decode("5776384"));
+            return textField;
         }
 
         private boolean connectionChosen (JButton button) {
@@ -462,6 +510,32 @@ public class GraphicalUI extends UserInterface {
                         for(i = 0; i<chosenOrder.length && chosenOrder[i]!=null;i++);
                         chosenOrder[i] = myOrderId;
 
+                        //show the button to restart the turn
+                        if(myOrderId == 0){
+                            JButton restart = new JButton("Redo");
+                            restart.setOpaque(false);
+                            restart.setBorderPainted(false);
+                            restart.setContentAreaFilled(false);
+                            restart.addActionListener((e1) -> {
+                                errorText.setText("");
+                                if (e1.getSource() instanceof JButton && !isGameFinished) {
+                                    for (int j = 0; j < chosenOrder.length && chosenOrder[j] != null; j++) {
+                                        chosenTiles[chosenOrder[j]] = null;
+                                        orderNumbers[chosenOrder[j]] = null;
+                                        chosenOrder[j] = null;
+                                    }
+                                    columnChoicePanel.removeAll();
+                                    columnChoicePanel.revalidate();
+                                    columnChoicePanel.repaint();
+                                    pickedTilesPanel.removeAll();
+                                    pickedTilesPanel.revalidate();
+                                    pickedTilesPanel.repaint();
+                                    text.setText("Choose your tiles from the board");
+                                }
+                            });
+                            pickedTilesPanel.add(restart);
+                        }
+
                         //create the panel for the tile and its order number
                         JPanel panel = new JPanel();
                         panel.setOpaque(false);
@@ -491,9 +565,9 @@ public class GraphicalUI extends UserInterface {
                         orderButton.setPreferredSize(new Dimension((int)(width/10.59),(int)(height/10.59)));
                         orderButton.setBorderPainted(false);
                         orderButton.setOpaque(false);
-                        orderButton.addActionListener((e1) -> {
+                        orderButton.addActionListener((e2) -> {
                             errorText.setText("");
-                            if(e1.getSource() instanceof JButton && !isGameFinished){
+                            if(e2.getSource() instanceof JButton && !isGameFinished){
                                 //checks that is my turn
                                 if(myId != currentPlayer){
                                     errorText.setText("It is not your turn");
@@ -939,16 +1013,6 @@ public class GraphicalUI extends UserInterface {
         }
         else if(m instanceof LobbyMessage){
             startWindow.showLobby(((LobbyMessage) m).getPlayers());
-        }
-        else if(m instanceof GameServerMessage){
-            cleanListeners();
-            addListener((message) -> {
-                try{
-                    ((GameServerMessage) m).getServer().handleMessage(message,client);
-                }catch (RemoteException e){
-                    e.printStackTrace();
-                }
-            });
         }
         else if(m instanceof UpdateViewMessage){
             if(gameWindow == null){

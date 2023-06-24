@@ -1,8 +1,11 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Exceptions.InvalidIPAddress;
+import it.polimi.ingsw.Exceptions.InvalidPort;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
+import it.polimi.ingsw.Model.Utilities.IPAddressValidator;
 import it.polimi.ingsw.ModelView.*;
 import it.polimi.ingsw.Network.ClientImplementation;
 
@@ -110,20 +113,31 @@ public class TextualUI extends UserInterface {
             }
         } while (!validConnection);
 
+        String ip;
+        String port;
+        do{
+            out.println("Please provide the IP address of the server:");
+            ip = in.nextLine();
+            out.println("Please provide the port of the " + (choice == 1 ? "RMI" : "Socket") + " server:");
+            port = in.nextLine();
+        }while(!IPAddressValidator.isValidIPAddress(ip) || !IPAddressValidator.isValidPort(port));
+
         if(choice == 1){
+
             out.println("Connecting with RMI...");
             try{
-                this.setUpRMIClient();
-            }catch (RemoteException | NotBoundException ex ){
-                out.println("Cannot connect with RMI. Trying with socket...");
+                this.setUpRMIClient(ip,port);
+            }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
+                out.println("Cannot connect with RMI. Make sure the IP and Port provided are valid and try again later...");
                 return false;
             }
         }else{
+
             out.println("Connecting with socket...");
             try{
-                this.setUpSocketClient();
-            }catch (RemoteException | NotBoundException ex ){
-                out.println("Cannot connect with socket. Trying again later...");
+                this.setUpSocketClient(ip, port);
+            }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
+                out.println("Cannot connect with socket. Make sure the IP and Port provided are valid and try again later...");
                 return false;
             }
         }
@@ -470,12 +484,12 @@ public class TextualUI extends UserInterface {
     }
 
 
-    private void doLogin() {
+    private boolean doLogin() {
         boolean connected;
 
         connected = chooseConnection();
         if(!connected){
-            return;
+            return false;
         }
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");
 
@@ -522,49 +536,20 @@ public class TextualUI extends UserInterface {
             }
         }
 
+        return true;
     }
 
-    private void connectToGameServer(GameServerMessage m){
 
-        //ClientImplementation.logger.log(Level.INFO,"CLI: received GameServerMessage from server");
-
-        /*cleanListeners();
-
-        addListener((message) -> {
-            try {
-                m.getServer().handleMessage(message, client);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        });*/
-    }
 
     @Override
     public void run() {
         showTitle();
-        doLogin();
+        if(!doLogin()){
+            out.println("An error happened while loggin in, retry later!");
+            return;
+        }
         out.println("Login effettuato con successo!");
         out.println("In attesa dell'inizio della partita");
-
-        /*while (true){
-            if(isMessagesQueueEmpty()){
-                continue;
-            }
-            Message m = this.getFirstMessageFromQueue();
-            if(m instanceof  LobbyMessage){
-                printPlayersInLobby((LobbyMessage) m);
-            }
-            else if (m instanceof GameServerMessage) {
-                connectToGameServer((GameServerMessage) m);
-                break;
-            }
-            else {
-                addMessageToQueue(m);
-                ClientImplementation.logger.log(Level.INFO, "Ignored message and readed to queue, still waiting for GameServerMessage");
-            }
-        }*/
-
-        //out.println("Connesso a GameServer in attesa dell'inizio della partita");
 
         new Thread(){
             @Override
@@ -590,10 +575,6 @@ public class TextualUI extends UserInterface {
                         }
 
                     }
-                    /*else if(m instanceof GameServerMessage) {
-                        ClientImplementation.logger.log(Level.INFO, "Switchato listener a GameServer");
-                        connectToGameServer((GameServerMessage) m);
-                    }*/
 
                     ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
 

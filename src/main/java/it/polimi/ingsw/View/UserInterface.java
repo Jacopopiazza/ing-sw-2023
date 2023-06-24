@@ -175,7 +175,7 @@ public abstract class UserInterface implements Runnable, View
     /**
      * Clears the list of listeners, removing all registered listeners.
      */
-    public void cleanListeners(){
+    public void clearListeners(){
         synchronized (listeners) {
             listeners.clear();
         }

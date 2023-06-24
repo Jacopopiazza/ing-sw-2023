@@ -78,7 +78,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     private void changeServer(Server server){
         this.server = server;
 
-        view.cleanListeners();
+        view.clearListeners();
 
         view.addListener((message) -> {
             try {

@@ -28,7 +28,7 @@ public interface View {
      * Remove all registered listeners.
      *
      */
-    void cleanListeners();
+    void clearListeners();
 
     /**
      * Adds a listener to the view.

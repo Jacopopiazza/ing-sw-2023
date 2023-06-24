@@ -35,6 +35,8 @@ public class Shape extends GlobalGoal {
             }
             shapes.add(shape);
         }
+        if(myId(s) == 10) this.description = "Five tiles of the same type forming an X.";
+        if(myId(s) == 11) this.description = "Five tiles of the same type forming a diagonal.";
     }
 
     /**
@@ -116,7 +118,7 @@ public class Shape extends GlobalGoal {
         for( List<Coordinates> l1 : shape ){
             tempFlag = false;
             for( List<Coordinates> l2 : Config.getInstance().getXShapeFromJSON() ){
-                if( !tempFlag && l1.containsAll(l2) && ( l1.size() == l2.size() ) ) tempFlag = false;
+                if( !tempFlag && l1.containsAll(l2) && ( l1.size() == l2.size() ) ) tempFlag = true;
             }
             if( !tempFlag ) mayBe = false;
         }

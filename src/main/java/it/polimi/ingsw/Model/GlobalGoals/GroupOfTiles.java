@@ -25,6 +25,16 @@ public class GroupOfTiles extends GlobalGoal {
         super(people, myId(groupDim));
         this.groupDim=groupDim;
         this.numOfGroups=numOfGroups;
+        if(myId(groupDim) == 4) this.description = "Six groups each containing at least " +
+                "2 tiles of the same type (not necessarily " +
+                "in the depicted shape). " +
+                "The tiles of one group can be different " +
+                "from those of another group.";
+        if(myId(groupDim) == 3) this.description = "Four groups each containing at least " +
+                "4 tiles of the same type (not necessarily " +
+                "in the depicted shape). " +
+                "The tiles of one group can be different " +
+                "from those of another group.";
     }
 
     /**

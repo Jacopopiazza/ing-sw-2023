@@ -18,6 +18,11 @@ public class Stair extends GlobalGoal {
      */
     public Stair(int people) throws InvalidNumberOfPlayersException {
         super(people, 12);
+        this.description = "Five columns of increasing or decreasing " +
+                "height. Starting from the first column on " +
+                "the left or on the right, each next column " +
+                "must be made of exactly one more tile. " +
+                "Tiles can be of any type.";
     }
 
     /**

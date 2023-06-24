@@ -19,6 +19,8 @@ public class Angles extends GlobalGoal {
      */
     public Angles(int people) throws InvalidNumberOfPlayersException {
         super(people, 8);
+        this.description = "Four tiles of the same type in the four " +
+                "corners of the bookshelf.";
     }
 
     /**

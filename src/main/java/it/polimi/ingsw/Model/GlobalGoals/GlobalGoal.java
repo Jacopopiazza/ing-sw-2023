@@ -14,6 +14,7 @@ import java.util.*;
 public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;
     protected final int id;
+    protected String description;
 
     /**
      * Constructs a GlobalGoal with the specified number of players and ID.
@@ -70,6 +71,13 @@ public abstract class GlobalGoal implements Cloneable {
     public int getId() {
         return id;
     }
+
+    /**
+     * Gets the description of the global goal.
+     *
+     * @return the description of the global goal.
+     */
+    public String getDescription(){return description;}
 
     /**
      * Removes and returns the next score from the stack of scores.

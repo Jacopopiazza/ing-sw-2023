@@ -240,7 +240,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 }
                 else if( !(disconnectedUsernames.containsKey(username)) ) {
                     logger.log(Level.INFO, "No player ever played with username:  " + username);
-                    listener.update(new NoUsernameToReconnectMessage());
+                    listener.update(new UsernameNotFoundMessage());
                     return;
                 }
                 logger.log(Level.INFO, "Reconnecting player with username:  " + username);

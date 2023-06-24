@@ -1,12 +1,10 @@
 package it.polimi.ingsw.Messages;
 
-import java.io.Serializable;
-
 /**
- * The NoUsernameToReconnectMessage class represents a message indicating that there is no username to reconnect.
+ * The UsernameNotFoundMessage class represents a message indicating that there is no username to reconnect.
  * It implements the Message interface and is serializable.
  */
-public class NoUsernameToReconnectMessage extends Message {
+public class UsernameNotFoundMessage extends Message {
     private final String message = "No Username to reconnect";
 
     /**

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Exceptions.IllegalColumnInsertionException;
-import it.polimi.ingsw.Exceptions.NoTileException;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
@@ -494,7 +492,7 @@ public class TextualUI extends UserInterface {
         {
             Message m = this.getFirstMessageFromQueue();
 
-            if(m instanceof NoUsernameToReconnectMessage){
+            if(m instanceof UsernameNotFoundMessage){
                 ClientImplementation.logger.log(Level.INFO,"L'username scelto è di un nuovo utente");
                 chooseLobby();
                 waitForLoginResponse();

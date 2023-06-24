@@ -926,7 +926,7 @@ public class GraphicalUI extends UserInterface {
     public void update(Message m) {
         ClientImplementation.logger.log(Level.INFO,"GUI Received message: " + m.getClass());
 
-        if(m instanceof NoUsernameToReconnectMessage){
+        if(m instanceof UsernameNotFoundMessage){
             startWindow.askLobby();
         }
         else if(m instanceof TakenUsernameMessage){

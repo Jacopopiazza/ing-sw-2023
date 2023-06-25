@@ -2,6 +2,7 @@ package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Messages.GameServerMessage;
 import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Messages.PingAckMessage;
 import it.polimi.ingsw.Messages.PingMessage;
 import it.polimi.ingsw.View.GraphicalUI;
 import it.polimi.ingsw.View.TextualUI;
@@ -63,7 +64,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         }
         if(m instanceof PingMessage){
             try{
-                this.server.handleMessage(m, this);
+                this.server.handleMessage(new PingAckMessage(((PingMessage) m).getpingNumber()), this);
             }catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());

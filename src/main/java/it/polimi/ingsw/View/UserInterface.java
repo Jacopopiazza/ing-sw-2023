@@ -59,6 +59,7 @@ public abstract class UserInterface implements Runnable, View
         }
         catch (InvalidIPAddress | InvalidPort ex){
             //Do nothing, impossible to happen
+            throw new RuntimeException("Impossible to happen, but it somehow happened");
         }
 
     }
@@ -111,6 +112,7 @@ public abstract class UserInterface implements Runnable, View
         }
         catch (InvalidIPAddress | InvalidPort ex){
             //Do nothing, impossible to happen
+            throw new RuntimeException("Impossible to happen, but it somehow happened");
         }
 
 

@@ -261,4 +261,8 @@ public class Controller  {
         // Delete game from server
         gameServer.deleteGame(players,listeners);
     }
+
+    public GameListener getListener(Integer index){
+        return model.getlistener(index);
+    }
 }

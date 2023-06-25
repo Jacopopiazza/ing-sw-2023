@@ -9,10 +9,7 @@ import it.polimi.ingsw.Tuple;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -49,6 +46,11 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private List<String> playingUsernames;
     private List<String> disconnectedUsernames;
     private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
+    private Integer nextIdPing = 0;
+    private Thread pingThread;
+    private Integer[] idPingToBeAnswered;
+    private Timer[] playersTimers;
+    private TimerTask[] playersTimersTasks;
 
 
     /**
@@ -83,7 +85,83 @@ public class GameServer extends UnicastRemoteObject implements Server {
             }
 
         }.start();
+
+        idPingToBeAnswered = new Integer[numOfPlayers];
+        playersTimers = new Timer[numOfPlayers];
+        playersTimersTasks= new TimerTask[numOfPlayers];
+
+        new Thread(){
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(30000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    synchronized (playingUsernames){
+                        for(int index = 0;index<playingUsernames.size();index++){
+
+                            GameListener listener = controller.getListener(index);
+                            if(listener == null || playingUsernames.get(index) == null) continue;
+
+                            PingMessage pingMessage = new PingMessage(nextIdPing);
+                            idPingToBeAnswered[index] = nextIdPing;
+                            nextIdPing++;
+
+                            final String usernameForThread = playingUsernames.get(index);
+
+                            listener.update(pingMessage);
+
+                            playersTimers[index] = new Timer();
+
+                            final int indexThread = index;
+                            playersTimersTasks[index] = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    synchronized (playingUsernames){
+                                        if(idPingToBeAnswered[indexThread] != null){
+                                            //player has not answered to ping
+                                            //disconnect player
+                                            disconnect(usernameForThread);
+                                        }
+                                    }
+                                }
+                            };
+
+                            playersTimers[index].schedule(playersTimersTasks[index], 10000);
+                        }
+                    }
+                }
+            }
+        }.start();
     }
+
+    public void resetTimerAndPing(PingAckMessage message){
+        //get index of element in idPingToBeAnswered with value message.getpingNumber()
+        int index = -1;
+        for(int i = 0; i < idPingToBeAnswered.length; i++){
+            if(idPingToBeAnswered[i] == message.getpingNumber()){
+                index = i;
+                break;
+            }
+        }
+
+        if(index == -1) return;
+
+        synchronized (playingUsernames){
+            idPingToBeAnswered[index] = null;
+            if(playersTimers
+                    [index] != null){
+                playersTimersTasks[index].cancel();
+                playersTimers[index].cancel();
+            }
+
+        }
+
+    }
+
+
 
     /**
      * Adds a message and its associated client to the message queue.
@@ -138,6 +216,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
             ServerImplementation.logger.log(Level.INFO, "Started to handle DisconnectMessage");
 
             disconnect(message.getUsername());
+        }
+        else if(m instanceof PingAckMessage){
+            //TODO: HANDLE PING ACK
+            resetTimerAndPing((PingAckMessage) m);
         }
         else{
             System.err.println("Message not recognized; ignoring it");
@@ -200,9 +282,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @return true if the player is added successfully, false otherwise
      */
     public boolean addPlayer(String username, GameListener listener) {
-        boolean res = this.controller.addPlayer(username, listener);
-        listener.update(new GameServerMessage(this));
+        boolean res;
         synchronized (playingUsernames) {
+            res = this.controller.addPlayer(username, listener);
+            listener.update(new GameServerMessage(this));
             playingUsernames.add(username);
         }
         return res;
@@ -214,6 +297,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @return the number of active players
      */
     public int getNumOfActivePlayers() {
+
         return this.controller.getNumOfActivePlayers();
     }
 

@@ -443,4 +443,9 @@ public class Game {
         }
     }
 
+    private GameListener getListener(int index){
+        if( index < 0 || index >= listeners.length ) return null;
+        return listeners[index];
+    }
+
 }

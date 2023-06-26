@@ -102,6 +102,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
+                    ServerImplementation.logger.log(Level.INFO, "NEW ROUND OF PINGS");
                     synchronized (playingUsernames){
                         for(int index = 0;index<playingUsernames.size();index++){
 
@@ -116,10 +117,6 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                             nextIdPing = (nextIdPing+1) % 100000;
 
-
-                            listener.update(pingMessage);
-                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getpingNumber() + " to " + usernameForThread);
-
                             playersTimers[index] = new Timer();
 
                             final int indexThread = index;
@@ -129,7 +126,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                     synchronized (playingUsernames){
                                         //player has not answered to ping
                                         //disconnect player
-
+                                        ServerImplementation.logger.log(Level.INFO, usernameForThread + " has not answered to ping #" + idPingToBeAnswered[indexThread] + " in time; DISCONNECTING HIM");
                                         disconnect(usernameForThread);
 
 
@@ -138,6 +135,17 @@ public class GameServer extends UnicastRemoteObject implements Server {
                             };
 
                             playersTimers[index].schedule(playersTimersTasks[index], 7500);
+
+                            try{
+                                listener.update(pingMessage);
+                            }catch (Exception ex){
+                                ServerImplementation.logger.log(Level.SEVERE, "Cannot send ping message to client: " + ex.getMessage());
+                                continue;
+                            }
+
+                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getpingNumber() + " to " + usernameForThread);
+
+
                         }
                     }
                 }
@@ -152,10 +160,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
             int index = -1;
             for(int i = 0; i < idPingToBeAnswered.length; i++){
                 boolean resCheck = idPingToBeAnswered[i] == message.getpingNumber();
-                ServerImplementation.logger.log(Level.INFO,"Check for player at index i="+i + " , if idpingAnswered:" + idPingToBeAnswered[i] + " == messageRecivevedPing:" + message.getpingNumber() + " : " + resCheck);
                 if(resCheck){
                     index = i;
-                    ServerImplementation.logger.log(Level.INFO,"Found it is the ping for player at index i="+i);
+                    ServerImplementation.logger.log(Level.INFO,"Ping of player " + playingUsernames.get(i) + " at index i=" + i);
                     break;
                 }
             }
@@ -168,7 +175,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                 playersTimers[index].cancel();
             }
 
-            ServerImplementation.logger.log(Level.INFO,"Reset timer and ping for player at index i="+index);
+            ServerImplementation.logger.log(Level.INFO,"Reset timer and ping for player " + playingUsernames.get(index) + " at index i="+index);
 
         }
 

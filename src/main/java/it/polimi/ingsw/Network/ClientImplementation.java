@@ -10,6 +10,8 @@ import it.polimi.ingsw.View.View;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +23,9 @@ import java.util.logging.SimpleFormatter;
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private View view;
     private Server server;
+    private boolean inGameServer = false;
+    private Queue<Message> messageList = new LinkedList<>();
+    private Thread thread;
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
 
     /**
@@ -45,6 +50,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
 
         });
+
     }
 
     /**
@@ -62,7 +68,9 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             changeServer(((GameServerMessage) m).getServer());
             return;
         }
+
         if(m instanceof PingMessage){
+            ClientImplementation.logger.log(Level.INFO, "Ping #" + ((PingMessage) m).getpingNumber() + " received");
             try{
                 this.server.handleMessage(new PingMessage(((PingMessage) m).getpingNumber()), this);
             }catch (RemoteException e) {
@@ -92,6 +100,8 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
 
         });
+
+        this.inGameServer = true;
 
     }
 

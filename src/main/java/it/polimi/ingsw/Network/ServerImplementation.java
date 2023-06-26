@@ -139,7 +139,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 try {
                     client.update(message);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    System.err.println("Cannot send message to client");
                 }
             }) );
         }

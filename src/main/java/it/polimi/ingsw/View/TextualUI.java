@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.InvalidIPAddress;
 import it.polimi.ingsw.Exceptions.InvalidPort;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.ConsoleColors;
 import it.polimi.ingsw.Model.Utilities.IPAddressValidator;
 import it.polimi.ingsw.ModelView.*;
@@ -31,11 +32,7 @@ public class TextualUI extends UserInterface {
     private int numOfActivePlayers;
     private int currentPlayer;
     private GlobalGoalView[] globalGoals;
-
-    private boolean gameStarted = false;
     private boolean gameEnded = false;
-    private GameView gameView;
-
     private Queue<Message> recievedMessages = new LinkedList<>();
 
     // Write this title in a config file
@@ -48,7 +45,83 @@ public class TextualUI extends UserInterface {
     String r7 = "            _/ |";
     String r8 = "           |__/";
 
-    //GameBoard gameBoard;
+    private void showTitle(){
+        out.println(r1);
+        out.println(r2);
+        out.println(r3);
+        out.println(r4);
+        out.println(r5);
+        out.println(r6);
+        out.println(r7);
+        out.println(r8);
+    }
+
+    private String getColorCode(TileView tile){
+        TileColor tc = tile.getCOLOR();
+        switch(tc) {
+            case WHITE: {
+                return ConsoleColors.WHITE_BACKGROUND_BRIGHT.getCode();
+            }
+            case FUCHSIA:{
+                return ConsoleColors.PURPLE_BACKGROUND_BRIGHT.getCode();
+            }
+            case BLUE:{
+                return ConsoleColors.BLUE_BACKGROUND_BRIGHT.getCode();
+            }
+            case CYAN:{
+                return ConsoleColors.CYAN_BACKGROUND_BRIGHT.getCode();
+            }
+            case GREEN:{
+                return ConsoleColors.GREEN_BACKGROUND_BRIGHT.getCode();
+            }
+            case YELLOW:{
+                return ConsoleColors.YELLOW_BACKGROUND.getCode();
+            }
+        }
+        return ConsoleColors.RESET.getCode();
+    }
+
+    private int readChoiceFromInput(String option_1, String option_2){
+        int choice = -1;
+
+        do{
+            out.println("1 - " + option_1);
+            out.println("2 - " + option_2 + "\n");
+            try{
+                choice = in.nextInt();
+                in.nextLine();
+            }catch ( InputMismatchException ex){
+                choice = -1;
+            }
+            if(choice<1 || choice>2) out.println("Invalid selection!");
+        }while (choice<1 || choice>2);
+
+        return choice;
+    }
+
+    private int readNumberFromInput(Integer lowerBound, Integer upperBound){
+        String input;
+        boolean valid = false;
+        int number = -1;
+
+        do{
+            input = in.nextLine();
+
+            try {
+                number = Integer.parseInt(input);
+                valid = number >= lowerBound && number <= upperBound;
+            }catch (NumberFormatException ex){
+                valid = false;
+            }
+
+        }while (!valid);
+
+        return number;
+    }
+
+    private boolean checkUserInput(int lowerBound, int upperBound, int input){
+        return input >= lowerBound && input <= upperBound;
+    }
 
     private boolean isUIClosable(){
         synchronized (lockMainThread){
@@ -77,8 +150,6 @@ public class TextualUI extends UserInterface {
             this.recievedMessages.add(m);
         }
     }
-
-
     // Needs the view
 
     public TextualUI() {
@@ -97,49 +168,20 @@ public class TextualUI extends UserInterface {
 
     }
 
-    private void showTitle(){
-        out.println(r1);
-        out.println(r2);
-        out.println(r3);
-        out.println(r4);
-        out.println(r5);
-        out.println(r6);
-        out.println(r7);
-        out.println(r8);
-    }
-
     public boolean chooseConnection(){
-        int choice = -1;
-        boolean validConnection = false;
-
         out.println("Choose the connection type:");
-        out.println("1 - RMI");
-        out.println("2 - SOCKET\n");
-
-        do {
-            if (in.hasNextInt()) {
-                choice = in.nextInt();
-                in.nextLine();
-
-                if (choice >= 1 && choice <= 2) {
-                    validConnection = true;
-                } else {
-                    out.println("Invalid selection!");
-                }
-            } else {
-                in.nextLine();
-                out.println("Invalid integer provided!");
-            }
-        } while (!validConnection);
+        int choice = readChoiceFromInput("RMI","SOCKET");
 
         String ip;
         String port;
-        do{
+        do {
             out.println("Please provide the IP address of the server:");
             ip = in.nextLine();
+        }while(!IPAddressValidator.isValidIPAddress(ip));
+        do{
             out.println("Please provide the port of the " + (choice == 1 ? "RMI" : "Socket") + " server:");
             port = in.nextLine();
-        }while(!IPAddressValidator.isValidIPAddress(ip) || !IPAddressValidator.isValidPort(port));
+        }while(!IPAddressValidator.isValidPort(port));
 
         if(choice == 1){
 
@@ -157,53 +199,10 @@ public class TextualUI extends UserInterface {
                 this.setUpSocketClient(ip, port);
             }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
                 out.println("Cannot connect with socket. Make sure the IP and Port provided are valid and try again later...");
-                out.println("Cannot connect with socket. Make sure the IP and Port provided are valid and try again later...");
                 return false;
             }
         }
         return true;
-    }
-
-    private boolean checkUserInput(int lowerBound, int upperBound, int input){
-        return input >= lowerBound && input <= upperBound;
-    }
-
-    private int readChoiceFromInput(String option_1, String option_2){
-        String input;
-        int choice = -1;
-
-        do{
-            out.println("1 - " + option_1);
-            out.println("2 - " + option_2 + "\n");
-            try{
-                choice = in.nextInt();
-                in.nextLine();
-            }catch ( InputMismatchException ex){
-                choice = -1;
-            }
-        }while (choice<1 || choice>2);
-
-        return choice;
-    }
-
-    private int readNumberFromInput(Integer lowerBound, Integer upperBound){
-        String input;
-        boolean valid = false;
-        int number = -1;
-
-        do{
-            input = in.nextLine();
-
-            try {
-                number = Integer.parseInt(input);
-                valid = number >= lowerBound && number <= upperBound;
-            }catch (NumberFormatException ex){
-                valid = false;
-            }
-
-        }while (!valid);
-
-        return number;
     }
 
     private void readUsername(){
@@ -213,36 +212,77 @@ public class TextualUI extends UserInterface {
             if(this.username.contains(" ")) out.println("Spaces are not allowed in the username");
         }while(this.username.contains(" "));
 
+        ClientImplementation.logger.log(Level.INFO,"The user chose the username: " + this.username);
+        doReconnect(this.username);
+        waitForLoginResponse();
     }
+
+    private void chooseLobby(){
+        out.println("Choose to create a lobby or to join a lobby:");
+        int choice = readChoiceFromInput("Create a new lobby","Join an existing lobby");
+
+        switch (choice){
+            case 1:
+                askPlayerNumOfPlayerForLobby();
+                break;
+            case 2:
+                doConnect(this.username, 1);
+                break;
+        }
+        waitForLoginResponse();
+    }
+
+    private void askPlayerNumOfPlayerForLobby(){
+        out.println("Insert the number of players for the game:");
+        int numOfPlayers = readNumberFromInput(2,Config.getInstance().getMaxNumberOfPlayers());
+        doConnect(this.username, numOfPlayers);
+    }
+
+    private void printPlayersInLobby(LobbyMessage m){
+        out.println("Playes in lobby:");
+        m.getPlayers().stream().forEach(x -> out.println(x));
+    }
+
+    private boolean doLogin() {
+
+        readUsername();
+
+        while(true)
+        {
+            Message m = this.getFirstMessageFromQueue();
+
+            if(m instanceof UsernameNotFoundMessage){
+                ClientImplementation.logger.log(Level.INFO,"The chosen username is not taken");
+                chooseLobby();
+            }
+            else if(m instanceof TakenUsernameMessage){
+                ClientImplementation.logger.log(Level.INFO,"The chosen username is already taken");
+                out.println("The chosen username is already taken");
+                readUsername();
+            }
+            else if(m instanceof NoLobbyAvailableMessage){
+                ClientImplementation.logger.log(Level.INFO,"There are no lobbies available at the moment");
+                out.println("There are no lobbies available at the moment, create a new one");
+                chooseLobby();
+            }
+            else if(m instanceof LobbyMessage){
+                ClientImplementation.logger.log(Level.INFO,"Players in lobby message");
+                printPlayersInLobby((LobbyMessage) m);
+                break;
+            }
+            else{
+                addMessageToQueue(m);
+                waitForLoginResponse();
+            }
+        }
+
+        return true;
+    }
+
 
     public void initializePlayer(String username){
         // Send the Reconnect
         //if i can't -> send the register
-    }
-
-    private String getColorCode(TileView tile){
-        TileColor tc = tile.getCOLOR();
-        switch(tc) {
-            case WHITE: {
-                return ConsoleColors.WHITE_BACKGROUND_BRIGHT.getCode();
-            }
-            case FUCHSIA:{
-                return ConsoleColors.PURPLE_BACKGROUND_BRIGHT.getCode();
-            }
-            case BLUE:{
-                return ConsoleColors.BLUE_BACKGROUND_BRIGHT.getCode();
-            }
-            case CYAN:{
-                return ConsoleColors.CYAN_BACKGROUND_BRIGHT.getCode();
-            }
-            case GREEN:{
-                return ConsoleColors.GREEN_BACKGROUND_BRIGHT.getCode();
-            }
-            case YELLOW:{
-                return ConsoleColors.YELLOW_BACKGROUND.getCode();
-            }
-        }
-        return ConsoleColors.RESET.getCode();
     }
 
     public void showBoard(GameBoardView gameBoard){
@@ -535,13 +575,6 @@ public class TextualUI extends UserInterface {
         return new TurnActionMessage(playerView.getUsername(), orderedChosenTiles, column);
     }
 
-    private void askPlayerNumOfPlayerForLobby(){
-        out.println("Insert the number of players for the game:");
-        int numOfPlayers = readNumberFromInput(2,4);
-
-        doConnect(this.username, numOfPlayers);
-    }
-
     @Override
     public void update(Message m){
         ClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
@@ -567,65 +600,11 @@ public class TextualUI extends UserInterface {
 
     }
 
-
-    private boolean doLogin() {
-        boolean connected;
-
-        connected = chooseConnection();
-        if(!connected){
-            return false;
-        }
-        ClientImplementation.logger.log(Level.INFO,"Connected to server!");
-
-        readUsername();
-        out.println("You chose the username: " + this.username);
-        ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.username);
-
-        boolean validUsername = false;
-
-        doReconnect(this.username);
-        waitForLoginResponse();
-
-        while(true)
-        {
-            Message m = this.getFirstMessageFromQueue();
-
-            if(m instanceof UsernameNotFoundMessage){
-                ClientImplementation.logger.log(Level.INFO,"L'username scelto è di un nuovo utente");
-                chooseLobby();
-                waitForLoginResponse();
-            }
-            else if(m instanceof TakenUsernameMessage){
-                ClientImplementation.logger.log(Level.INFO,"L'username scelto è già in uso");
-                readUsername();
-                out.println("Hai scelto l'username: " + this.username);
-                doReconnect(this.username);
-                waitForLoginResponse();
-                ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.username);
-            }
-            else if(m instanceof NoLobbyAvailableMessage){
-                ClientImplementation.logger.log(Level.INFO,"Nessuna lobby esistente");
-                out.println("Nessuna lobby esistente. Ripeti la selezione");
-                chooseLobby();
-                waitForLoginResponse();
-            }
-            else if(m instanceof LobbyMessage){
-                ClientImplementation.logger.log(Level.INFO,"Messaggio giocatori in lobby");
-                printPlayersInLobby((LobbyMessage) m);
-                break;
-            }
-            else{
-                addMessageToQueue(m);
-                waitForLoginResponse();
-            }
-        }
-
-        return true;
-    }
-
     @Override
     public void run() {
         showTitle();
+        while(!chooseConnection());
+        ClientImplementation.logger.log(Level.INFO,"Connected to server!");
         if(!doLogin()){
             out.println("An error happened while loggin in, retry later!");
             return;
@@ -775,28 +754,6 @@ public class TextualUI extends UserInterface {
         showGlobalGoals(this.globalGoals);
         showPrivateGoals(myPrivateGoalView.getCoordinates());
 
-    }
-
-    private void printPlayersInLobby(LobbyMessage m){
-        out.println("Playes in lobby:");
-        m.getPlayers().stream().forEach(x -> out.println(x));
-    }
-
-    private void chooseLobby(){
-        out.println("Choose a lobby:");
-        out.println("1. Create a new lobby");
-        out.println("2. Join an existing lobby");
-
-        int choice = readNumberFromInput(1,2);
-
-        switch (choice){
-            case 1:
-                askPlayerNumOfPlayerForLobby();
-                break;
-            case 2:
-                doConnect(this.username, 1);
-                break;
-        }
     }
 
     public final static void clearConsole()

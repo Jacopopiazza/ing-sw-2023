@@ -1,14 +1,14 @@
 package it.polimi.ingsw.Messages;
 
 public class PingMessage extends Message {
-    private final Integer pingNumber;
+    private final int pingNumber;
 
     /**
      * Constructs a PingMessage with the specified message.
      *
      * @param pingNumber the message
      */
-    public PingMessage(Integer pingNumber) {
+    public PingMessage(int pingNumber) {
         this.pingNumber = pingNumber;
     }
 
@@ -18,7 +18,7 @@ public class PingMessage extends Message {
      *
      * @return the pingNumber
      */
-    public Integer getpingNumber() {
+    public int getpingNumber() {
         return this.pingNumber;
     }
 }

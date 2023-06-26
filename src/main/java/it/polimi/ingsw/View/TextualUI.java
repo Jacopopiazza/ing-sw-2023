@@ -19,12 +19,22 @@ import java.util.logging.Level;
 
 public class TextualUI extends UserInterface {
 
-    private Scanner in;
-    private PrintStream out;
-    private String userName;
+    private final Scanner in;
+    private final PrintStream out;
+    private String username;
+
+    private int[] freeSpacesInMyShelf;
+    private int maxFreeSpacesInMyShelf;
+    private GameBoardView gameBoardView;
+    private PlayerView[] players;
+    private String cheater;
+    private int numOfActivePlayers;
+    private int currentPlayer;
+    private GlobalGoalView[] globalGoals;
 
     private boolean gameStarted = false;
     private boolean gameEnded = false;
+    private GameView gameView;
 
     private Queue<Message> recievedMessages = new LinkedList<>();
 
@@ -38,8 +48,7 @@ public class TextualUI extends UserInterface {
     String r7 = "            _/ |";
     String r8 = "           |__/";
 
-    GameBoard gameBoard;
-    GameView gameView;
+    //GameBoard gameBoard;
 
     private boolean isUIClosable(){
         synchronized (lockMainThread){
@@ -76,6 +85,16 @@ public class TextualUI extends UserInterface {
         super();
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
+        /*
+        this.gameView =
+        this.players = gameView.
+
+        this.maxFreeSpacesInMyShelf = 0;
+        this.freeSpacesInMyShelf = new int[Shelf.getColumns()];
+        for(int i = 0; i < freeSpacesInMyShelf.length; i++){
+            freeSpacesInMyShelf[i] = 0;
+        }*/
+
     }
 
     private void showTitle(){
@@ -126,7 +145,7 @@ public class TextualUI extends UserInterface {
 
             out.println("Connecting with RMI...");
             try{
-                this.setUpRMIClient(ip,port);
+                this.setUpRMIClient(ip, port);
             }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
                 out.println("Cannot connect with RMI. Make sure the IP and Port provided are valid and try again later...");
                 return false;
@@ -190,9 +209,9 @@ public class TextualUI extends UserInterface {
     private void readUsername(){
         do{
             out.println("Insert username:");
-            this.userName = in.nextLine();
-            if(this.userName.contains(" ")) out.println("Spaces are not allowed in the username");
-        }while(this.userName.contains(" "));
+            this.username = in.nextLine();
+            if(this.username.contains(" ")) out.println("Spaces are not allowed in the username");
+        }while(this.username.contains(" "));
 
     }
 
@@ -228,10 +247,10 @@ public class TextualUI extends UserInterface {
 
     public void showBoard(GameBoardView gameBoard){
         // print the board -> using a 4 player board for a first try
-        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt() + 1;
         int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
 
-        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt() + 1;
         int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
         String color;
@@ -292,6 +311,7 @@ public class TextualUI extends UserInterface {
         }
     }
 
+    /*
     public void showMyShelf(ShelfView shelf){
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
@@ -312,19 +332,19 @@ public class TextualUI extends UserInterface {
             out.print("\n\n");
         }
     }
+    */
 
     public void showShelves(PlayerView[] players){
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
 
         TileView tile;
-
         out.println("\n\n\n");
 
-        // display names
-        out.print("\t\t");
-        for(PlayerView p: players){
-            out.print(p.getUsername() + "'s Shelf\t\t\t\t\t");
+        // display names and scores
+        out.print("\t");
+        for(int i = 0; i < players.length; i++){
+            out.print(players[i].getUsername() + "'s Shelf [" + players[i].getScore() + "]\t\t\t\t");
         }
         out.println("\n");
 
@@ -342,15 +362,25 @@ public class TextualUI extends UserInterface {
         }
     }
 
+    private void showCheater(String cheater){
+        out.println(cheater + " tried to cheat!");
+    }
 
-    private List<Coordinates> pickTiles(GameBoardView gameBoardView, int numRows, int numCols, int rowOffset, int colOffset){
-        /* Todo: check that the chosen Tiles from the board are actually pickable, on the same line, maximum 3
-         *   -> controller*/
+    private void showGlobalGoals(GlobalGoalView[] globalGoals){
+        out.println("Global goals: ");
+        for(int i = 0; i < globalGoals.length; i++){
+            out.println((i + 1) + globalGoals[i].getDescription() + "[" + globalGoals[i].getCurrentScore() + "]");
+        }
+    }
+
+    private List<Coordinates> pickTiles(GameBoardView gameBoard, int numRows, int numCols, int rowOffset, int colOffset) {
         List<Coordinates> coords = new ArrayList<>();
 
-        int row, column, choice;
+        int chosenRow, chosenColumn, choice;
         String input;
         Coordinates singleTileCoord;
+
+        int maxPickableTiles = 3;
 
         while(true) {
             choice = readChoiceFromInput("Pick a tile", "Done");
@@ -358,27 +388,75 @@ public class TextualUI extends UserInterface {
             if (choice == 1) {
                 // Pick a tile
                 while(true){
+                    //checks that one more tile can be picked
+                    if(coords.size() == maxPickableTiles ){
+                        out.println("Max number of tiles [" + maxPickableTiles + "] selected" );
+                        break;
+                    }
+                    //checks that one more tile can fit in the shelf
+                    if(maxFreeSpacesInMyShelf == coords.size()){
+                        out.println("In your shelf there is space for at most " + maxFreeSpacesInMyShelf + " tiles");
+                        break;
+                    }
+
                     System.out.print("Insert the coordinates [ROW] [COLUMN]: ");
                     input = in.nextLine();
-                    String[] c;
-                    c = input.split("\\s+");    // split with one or multiple spaces
-                    if( (c.length > 2) || (c.length < 2)
-                            || c[0].length() > 1 || c[0].length() <= 0
-                            || c[1].length() > 1 || c[1].length() <= 0
-                            || !checkUserInput('A', numRows + 'A', c[0].toUpperCase().charAt(0))
-                            || !checkUserInput(0, numCols, c[1].charAt(0) - '0'))
+                    String[] readCoords;
+                    readCoords = input.split("\\s+");    // split with one or multiple spaces
+                    if( (readCoords.length > 2) || (readCoords.length < 2)
+                            || readCoords[0].length() > 1 || readCoords[0].length() <= 0
+                            || readCoords[1].length() > 1 || readCoords[1].length() <= 0
+                            || !checkUserInput('A', numRows + 'A', readCoords[0].toUpperCase().charAt(0))
+                            || !checkUserInput(0, numCols, readCoords[1].charAt(0) - '0'))
                     {
                         System.out.print("\nInsert a row [A - " + (char)(numRows + 'A') + "]" +
                                 "and a column [0 - " + numCols +"]!\n");
                         continue;
                     }
 
-                    row = (c[0].toUpperCase().charAt(0)) - 'A' + rowOffset;
-                    column = c[1].charAt(0) - '0' + colOffset;
-                    singleTileCoord = new Coordinates(row, column);
+                    chosenRow = (readCoords[0].toUpperCase().charAt(0)) - 'A' + rowOffset;
+                    chosenColumn = readCoords[1].charAt(0) - '0' + colOffset;
+                    singleTileCoord = new Coordinates(chosenRow, chosenColumn);
+
+                    if(!gameBoard.getCoords().contains(singleTileCoord)){
+                        System.out.println("Insert valid coordinates!");
+                        continue;
+                    }
                     // if it isn't already picked
-                    if(gameBoardView.getTile(singleTileCoord) != null){
-                        coords.add(new Coordinates(row, column));
+                    if(gameBoard.getTile(singleTileCoord) != null){
+                        //checks that this tile has not been already picked and that is next to one of the previously picked ones
+                        boolean nextTo = false;
+                        int i;
+                        for(i = 0; i < coords.size(); i++){
+                            if(coords.get(i).getROW() == chosenRow && coords.get(i).getCOL() == chosenColumn){
+                                out.println("You have already selected this tile");
+                                break;
+                            }
+                            if(( ( coords.get(i).getCOL() + 1 == chosenColumn || coords.get(i).getCOL() - 1 == chosenColumn ) && coords.get(i).getROW() == chosenRow )
+                                    || ( ( coords.get(i).getROW() + 1 == chosenRow || coords.get(i).getROW() - 1 == chosenRow ) && coords.get(i).getCOL() == chosenColumn ))
+                                nextTo = true;
+                        }
+                        if(!nextTo && coords.size() > 0){
+                            out.println("This tile is not next to one of the others you selected");
+                            break;
+                        }
+                        //checks that this tile is on the same column or on the same row with the previously picked ones
+                        boolean sameRow = true;
+                        boolean sameColumn = true;
+                        for(i = 0; i < coords.size() && (sameRow || sameColumn); i++) {
+                            if(coords.get(i).getROW() != chosenRow) sameRow = false;
+                            if(coords.get(i).getCOL() != chosenColumn) sameColumn = false;
+                        }
+                        //coords size può essere 0
+                        if( !(sameRow && sameColumn) ){
+                            // qui c'è un errore nell'if
+                            if( coords.size() > 0 && (!sameRow && !sameColumn)){
+                                out.println("The selected tiles must be on the same line");
+                                break;
+                            }
+                        }
+                        // all the checks are done, it can be added to the list of coords
+                        coords.add(new Coordinates(chosenRow, chosenColumn));
                         break;
                     }else{
                         out.println("This tile was already picked! Pick another one");
@@ -392,19 +470,20 @@ public class TextualUI extends UserInterface {
         return coords;
     }
 
-    private Message doTurnAction(GameBoardView gameBoardView, PlayerView playerView){
+    private Message doTurnAction(GameBoardView gameBoard, PlayerView playerView){
         // to display the gameBoard and pick the tiles correctly
-        int maxRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-        int minRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
+        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+        int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
 
-        int maxCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
-        int minCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
+        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+        int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
         Coordinates[] chosenTiles;
         List<Coordinates> coords;
 
-        coords = pickTiles(gameBoardView, maxRow - minRow, maxCol - minCol, minRow, minCol);
-        chosenTiles = new Coordinates[coords.size()];
+        coords = pickTiles(gameBoard,maxRow - minRow, maxCol - minCol, minRow, minCol);
+        int numOfChosenTiles = coords.size();
+        chosenTiles = new Coordinates[numOfChosenTiles];
         for(int i = 0; i < coords.size(); i++){
             chosenTiles[i] = coords.get(i);
         }
@@ -425,6 +504,10 @@ public class TextualUI extends UserInterface {
                 out.println("Insert a valid input");
                 continue;
             }
+            if(this.freeSpacesInMyShelf[column] < numOfChosenTiles){
+                out.println("The tiles chosen cannot fit in the " + column + " column!");
+                continue;
+            }
             break;
         }
 
@@ -432,7 +515,7 @@ public class TextualUI extends UserInterface {
         // print the Tiles and ask for the order
         out.println("Select the order in which you want to insert the tiles in the " + column + " column: ");
         for(int i = 0; i < chosenTiles.length; i++){
-            t = gameBoardView.getTile(chosenTiles[i]);
+            t = gameBoard.getTile(chosenTiles[i]);
             out.print((i + 1) + ":");
             printTile(t);
             out.println("\n");
@@ -456,7 +539,7 @@ public class TextualUI extends UserInterface {
         out.println("Insert the number of players for the game:");
         int numOfPlayers = readNumberFromInput(2,4);
 
-        doConnect(this.userName, numOfPlayers);
+        doConnect(this.username, numOfPlayers);
     }
 
     @Override
@@ -495,12 +578,12 @@ public class TextualUI extends UserInterface {
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");
 
         readUsername();
-        out.println("Hai scelto l'username: " + this.userName);
-        ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
+        out.println("You chose the username: " + this.username);
+        ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.username);
 
         boolean validUsername = false;
 
-        doReconnect(this.userName);
+        doReconnect(this.username);
         waitForLoginResponse();
 
         while(true)
@@ -515,10 +598,10 @@ public class TextualUI extends UserInterface {
             else if(m instanceof TakenUsernameMessage){
                 ClientImplementation.logger.log(Level.INFO,"L'username scelto è già in uso");
                 readUsername();
-                out.println("Hai scelto l'username: " + this.userName);
-                doReconnect(this.userName);
+                out.println("Hai scelto l'username: " + this.username);
+                doReconnect(this.username);
                 waitForLoginResponse();
-                ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.userName);
+                ClientImplementation.logger.log(Level.INFO,"L'utente ha scelto l'username: " + this.username);
             }
             else if(m instanceof NoLobbyAvailableMessage){
                 ClientImplementation.logger.log(Level.INFO,"Nessuna lobby esistente");
@@ -539,8 +622,6 @@ public class TextualUI extends UserInterface {
 
         return true;
     }
-
-
 
     @Override
     public void run() {
@@ -568,17 +649,14 @@ public class TextualUI extends UserInterface {
                         printPlayersInLobby((LobbyMessage) m);
                     } else if (m instanceof UpdateViewMessage) {
                         //printTheWholeFGame((UpdateViewMessage) m);
-
                         synchronized (lockMainThread){
-                            gameView = ((UpdateViewMessage)m).getGameView();
-                            printTheWholeFGame(gameView);
+                            update(((UpdateViewMessage) m).getGameView());
+                            printTheWholeFGame();
                             lockMainThread.notifyAll();
                         }
 
                     }
-
                     ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
-
                 }
             }
         }.start();
@@ -595,25 +673,25 @@ public class TextualUI extends UserInterface {
 
         while(!gameEnded){
 
-            clearConsole();
-            PlayerView currentPlayer;
-            GameBoardView gameBoardView;
+            //clearConsole();
+            PlayerView currPlayer;
+            //GameBoardView gameBoardView;
 
             out.println("Please choose your action:");
             out.println("/help for help");
             String sChoice = in.nextLine();
             switch (sChoice){
-                case "/help":
+                case "/help": {
                     printHelp();
                     break;
-
-                case "/play":
+                }
+                case "/play": {
                     synchronized (lockMainThread){
-                        currentPlayer = gameView.getPlayers()[gameView.getCurrentPlayer()];
-                        gameBoardView = gameView.getGameBoard();
+                        currPlayer = this.players[this.currentPlayer];
+                        //gameBoardView = this.gameView.getGameBoard();
                     }
-                    if(currentPlayer.getUsername().equals(userName)){
-                        Message turnActionMessage = doTurnAction(gameBoardView, currentPlayer);
+                    if(currPlayer.getUsername().equals(username)){
+                        Message turnActionMessage = doTurnAction(this.gameBoardView, currPlayer);
                         notifyListeners(turnActionMessage);
                         ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
                     }
@@ -621,11 +699,53 @@ public class TextualUI extends UserInterface {
                         out.println("Not your turn!");
                     }
                     break;
+                }
             }
-
         }
+    }
 
+    private GameView update(GameView gv){
+        if(gv.getGameBoard() != null) this.gameBoardView = gv.getGameBoard();
+        if(this.players == null)
+            this.players = new PlayerView[gv.getPlayers().length];
+        if(gv.getPlayers() != null){
+            for(int i = 0; i < gv.getPlayers().length; i++){
+                if(gv.getPlayers()[i] != null) {
+                    this.players[i] = gv.getPlayers()[i];
+                }
+            }
+        }
+        //once i got the players, update the maxFreeSpaces in my shelf
+        int myIndex = -1;
+        for (int i = 0; i < this.players.length; i++) {
+            if (this.players[i].getUsername().equals(username))
+                // IT HAS TO GET HERE, IT'S IMPOSSIBLE TO SKIP -> invece un player è null :)
+            {
+                myIndex = i;
+            }
+        }
+        this.freeSpacesInMyShelf = new int[Shelf.getColumns()];
+        for(int i = 0; i < this.freeSpacesInMyShelf.length; i++)
+            this.freeSpacesInMyShelf[i] = 0;
 
+        for(int i = 0; i< freeSpacesInMyShelf.length; i++) freeSpacesInMyShelf[i] = 0;
+        for (int i = 0; i < Shelf.getRows(); i++) {
+            for (int j = 0; j < Shelf.getColumns(); j++) {
+                if(this.players[myIndex].getShelf().getTile(new Coordinates(i,j)) == null) {
+                    freeSpacesInMyShelf[j]++;
+                }
+            }
+        }
+        this.maxFreeSpacesInMyShelf = 0;
+        for(int i = 0; i < freeSpacesInMyShelf.length; i++)
+            if(freeSpacesInMyShelf[i] > maxFreeSpacesInMyShelf)
+                maxFreeSpacesInMyShelf = freeSpacesInMyShelf[i];
+
+        this.cheater = gv.getCheater(); // can be null if no-one cheated
+        if(gv.getNumOfActivePlayers() != null) this.numOfActivePlayers = gv.getNumOfActivePlayers();
+        if(gv.getGlobalGoals() != null) this.globalGoals = gv.getGlobalGoals();
+        if(gv.getCurrentPlayer() != null) this.currentPlayer = gv.getCurrentPlayer();
+        return gv;
     }
 
     private void printHelp(){
@@ -634,22 +754,27 @@ public class TextualUI extends UserInterface {
         out.println("/help to show this message");
     }
 
-    private void printTheWholeFGame(GameView gameView){
-        //inizia la partita
-        PlayerView[] playersView = gameView.getPlayers();
+    private void printTheWholeFGame(){
+        // start the game
         int myIndex = 0;
         // get my player index
-        for (int i = 0; i < playersView.length; i++) {
-            if (playersView[i].getUsername().equals(userName))
+        for (int i = 0; i < this.players.length; i++) {
+            if (this.players[i].getUsername().equals(username))
                 myIndex = i;
         }
-        GameBoardView gameBoardView = gameView.getGameBoard();
-        PrivateGoalView privateGoalView = gameView.getPlayers()[myIndex].getPrivateGoal();
-        int playerIndex = gameView.getCurrentPlayer();
 
-        showBoard(gameBoardView);
-        showShelves(playersView);
-        showPrivateGoals(privateGoalView.getCoordinates());
+
+        PrivateGoalView myPrivateGoalView = this.players[myIndex].getPrivateGoal();
+        int playerIndex = this.currentPlayer;
+        //numOfActivePlayers;
+
+        if(this.cheater != null)
+            showCheater(this.cheater);
+        showShelves(this.players);
+        showBoard(this.gameBoardView);
+        showGlobalGoals(this.globalGoals);
+        showPrivateGoals(myPrivateGoalView.getCoordinates());
+
     }
 
     private void printPlayersInLobby(LobbyMessage m){
@@ -669,13 +794,16 @@ public class TextualUI extends UserInterface {
                 askPlayerNumOfPlayerForLobby();
                 break;
             case 2:
-                doConnect(this.userName, 1);
+                doConnect(this.username, 1);
                 break;
         }
     }
 
     public final static void clearConsole()
     {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+        /*
         try
         {
             final String os = System.getProperty("os.name");
@@ -687,13 +815,12 @@ public class TextualUI extends UserInterface {
             {
                 Runtime.getRuntime().exec("clear");
             }
+
         }
         catch (final Exception e)
         {
             e.printStackTrace();
-        }
+        }*/
     }
-
-
 
 }

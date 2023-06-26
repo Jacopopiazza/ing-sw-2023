@@ -26,14 +26,15 @@ public class TextualUI extends UserInterface {
 
     private int[] freeSpacesInMyShelf;
     private int maxFreeSpacesInMyShelf;
+    private final int maxNumOfChosenTiles = 3;
     private GameBoardView gameBoardView;
     private PlayerView[] players;
     private String cheater;
     private int numOfActivePlayers;
     private int currentPlayer;
     private GlobalGoalView[] globalGoals;
-    private boolean gameEnded = false;
-    private Queue<Message> recievedMessages = new LinkedList<>();
+    private boolean gameEnded;
+    private Queue<Message> receivedMessages;
 
     // Write this title in a config file
     String r1 = " __    __           ______ _           _  __  _";
@@ -44,6 +45,52 @@ public class TextualUI extends UserInterface {
     String r6 = "|_|    |_|\\__, |   |_____/|_| |_|\\___/|_|_|  |_|\\___/";
     String r7 = "            _/ |";
     String r8 = "           |__/";
+
+    private final Object lockLogin;
+    private final Object lockQueue;
+    private final Object lockMainThread;
+
+    public TextualUI() {
+        super();
+        in = new Scanner(System.in);
+        out = new PrintStream(System.out, true);
+
+        freeSpacesInMyShelf = new int[Shelf.getColumns()];
+        gameEnded = false;
+
+        receivedMessages = new LinkedList<>();
+        lockLogin = new Object();
+        lockQueue = new Object();
+        lockMainThread = new Object();
+    }
+
+    @Override
+    public void update(Message m){
+        ClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
+
+        addMessageToQueue(m);
+        synchronized (lockLogin) {
+            lockLogin.notifyAll();
+        }
+    }
+
+    private boolean isMessagesQueueEmpty(){
+        synchronized (lockQueue){
+            return this.receivedMessages.isEmpty();
+        }
+    }
+
+    private Message getFirstMessageFromQueue(){
+        synchronized (lockQueue){
+            return this.receivedMessages.poll();
+        }
+    }
+
+    private void addMessageToQueue(Message m){
+        synchronized (lockQueue){
+            this.receivedMessages.add(m);
+        }
+    }
 
     private void showTitle(){
         out.println(r1);
@@ -123,48 +170,18 @@ public class TextualUI extends UserInterface {
         return input >= lowerBound && input <= upperBound;
     }
 
-    private boolean isUIClosable(){
-        synchronized (lockMainThread){
-            return this.gameEnded;
+    private void waitForLoginResponse(){
+        synchronized (lockLogin){
+            try{
+                lockLogin.wait();
+            }catch (InterruptedException e){
+                System.err.println("Interrupted while waiting for server: " + e.getMessage());
+                ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
         }
-    }
 
-    private final Object lockLogin = new Object();
-    private final Object lockQueue = new Object();
-    private final Object lockMainThread = new Object();
-
-    private boolean isMessagesQueueEmpty(){
-        synchronized (lockQueue){
-            return this.recievedMessages.isEmpty();
-        }
-    }
-
-    private Message getFirstMessageFromQueue(){
-        synchronized (lockQueue){
-            return this.recievedMessages.poll();
-        }
-    }
-
-    private void addMessageToQueue(Message m){
-        synchronized (lockQueue){
-            this.recievedMessages.add(m);
-        }
-    }
-    // Needs the view
-
-    public TextualUI() {
-        super();
-        in = new Scanner(System.in);
-        out = new PrintStream(System.out, true);
-        /*
-        this.gameView =
-        this.players = gameView.
-
-        this.maxFreeSpacesInMyShelf = 0;
-        this.freeSpacesInMyShelf = new int[Shelf.getColumns()];
-        for(int i = 0; i < freeSpacesInMyShelf.length; i++){
-            freeSpacesInMyShelf[i] = 0;
-        }*/
+        ClientImplementation.logger.log(Level.INFO,"CLI: received Reconnect response from server");
 
     }
 
@@ -279,45 +296,62 @@ public class TextualUI extends UserInterface {
         return true;
     }
 
+    private void update(GameView gv){
+        if(gv.getGameBoard() != null) this.gameBoardView = gv.getGameBoard();
+        if(gv.getPlayers() != null){
+            if(this.players == null) this.players = new PlayerView[gv.getPlayers().length];
+            int myIndex = -1;
+            for(int i = 0; i < gv.getPlayers().length; i++){
+                if(gv.getPlayers()[i] != null) {
+                    this.players[i] = gv.getPlayers()[i];
+                    if(gv.getPlayers()[i].getUsername().equals(username)) myIndex = i;
+                }
+            }
+            if(myIndex != -1){
+                for(int i = 0; i < this.freeSpacesInMyShelf.length; i++)
+                    freeSpacesInMyShelf[i] = 0;
+                maxFreeSpacesInMyShelf = 0;
 
-    public void initializePlayer(String username){
-        // Send the Reconnect
-        //if i can't -> send the register
+                for (int i = 0; i < Shelf.getRows(); i++) {
+                    for (int j = 0; j < Shelf.getColumns(); j++) {
+                        if(this.players[myIndex].getShelf().getTile(new Coordinates(i,j)) == null) {
+                            freeSpacesInMyShelf[j]++;
+                            if(freeSpacesInMyShelf[j] > maxFreeSpacesInMyShelf) maxFreeSpacesInMyShelf = freeSpacesInMyShelf[j];
+                        }
+                    }
+                }
+            }
+        }
+
+        this.cheater = gv.getCheater(); // can be null if no-one cheated
+        if(gv.getNumOfActivePlayers() != null) this.numOfActivePlayers = gv.getNumOfActivePlayers();
+        if(gv.getGlobalGoals() != null) this.globalGoals = gv.getGlobalGoals();
+        if(gv.getCurrentPlayer() != null) this.currentPlayer = gv.getCurrentPlayer();
     }
 
-    public void showBoard(GameBoardView gameBoard){
-        // print the board -> using a 4 player board for a first try
-        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt() + 1;
-        int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
-
-        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt() + 1;
-        int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
-
-        String color;
-
-        Set<Coordinates> coords = gameBoard.getCoords();
-
-        out.println("\n\n\n\n\t\t\t\tGame Board");
-        out.print("     ");
-
-        for(int c = minCol; c < maxCol; c++){
-            out.print(" " + (c - minCol) + "   ");
+    private void printTheWholeGame(){
+        // start the game
+        int myIndex = 0;
+        // get my player index
+        for (int i = 0; i < this.players.length; i++) {
+            if (this.players[i].getUsername().equals(username))
+                myIndex = i;
         }
-        out.print("\n\n");
 
-        for(int r = minRow; r < maxRow; r++){
-            out.print(" " + (char)(r + 65 - minRow) + "   ");
-            for(int c = minCol; c < maxCol; c++){
-                if(coords.contains(new Coordinates(r, c)) && gameBoard.getTile(new Coordinates(r, c)) != null){
-                    color = getColorCode(gameBoard.getTile(new Coordinates(r, c)));
-                }else{
-                    color = ConsoleColors.RESET.getCode();
-                }
-                out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
-            }
-            out.print(ConsoleColors.RESET.getCode() + "");
-            out.print("\n\n");
+        showShelves();
+        showBoard();
+        showGlobalGoals();
+        showPrivateGoal(this.players[myIndex].getPrivateGoal().getCoordinates());
+        if(cheater != null){
+            out.println(cheater + " tried to cheat!");
+            cheater = null;
         }
+    }
+
+    private void printHelp(){
+        out.println("Commands:");
+        out.println("/play to play your turn");
+        out.println("/help to show this message");
     }
 
     private void printTile(TileView tileView){
@@ -330,7 +364,42 @@ public class TextualUI extends UserInterface {
         out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
     }
 
-    public void showPrivateGoals(Coordinates[] privateGoals){
+    public void showBoard(){
+        // print the board -> using a 4 player board for a first try
+        int maxRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt() + 1;
+        int minRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
+
+        int maxCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt() + 1;
+        int minCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
+
+        String color;
+
+        Set<Coordinates> coords = gameBoardView.getCoords();
+
+        out.println("\n\n\n\n\t\t\t\tGame Board");
+        out.print("     ");
+
+        for(int c = minCol; c < maxCol; c++){
+            out.print(" " + (c - minCol) + "   ");
+        }
+        out.print("\n\n");
+
+        for(int r = minRow; r < maxRow; r++){
+            out.print(" " + (char)(r + 65 - minRow) + "   ");
+            for(int c = minCol; c < maxCol; c++){
+                if(coords.contains(new Coordinates(r, c)) && gameBoardView.getTile(new Coordinates(r, c)) != null){
+                    color = getColorCode(gameBoardView.getTile(new Coordinates(r, c)));
+                }else{
+                    color = ConsoleColors.RESET.getCode();
+                }
+                out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
+            }
+            out.print(ConsoleColors.RESET.getCode() + "");
+            out.print("\n\n");
+        }
+    }
+
+    public void showPrivateGoal(Coordinates[] privateGoal){
         out.println("\n\n\tMy private goals\n\n");
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
@@ -338,8 +407,8 @@ public class TextualUI extends UserInterface {
 
         for(int i = 0; i < r; i++){
             for(int k = 0; k < c; k++){
-                for(int color = 0; color < privateGoals.length; color++){
-                    if(privateGoals[color].equals(new Coordinates(i, k))){
+                for(int color = 0; color < privateGoal.length; color++){
+                    if(privateGoal[color].equals(new Coordinates(i, k))){
                         tile = new TileView(new Tile(TileColor.values()[color], 0));
                     }
                 }
@@ -351,30 +420,7 @@ public class TextualUI extends UserInterface {
         }
     }
 
-    /*
-    public void showMyShelf(ShelfView shelf){
-        int r = Shelf.getRows();
-        int c = Shelf.getColumns();
-
-        TileView tile;
-
-        out.println("\n\n\n\n\t\tMy Shelf\n\n");
-        for(int i = 0; i < c; i++)
-            out.print(" " + i + "   ");
-        out.print("\n\n");
-
-        for(int i = 0; i < r; i++){
-            for(int k = 0; k < c; k++){
-                tile = shelf.getTile(new Coordinates(i, k));
-                printTile(tile);
-            }
-            out.print(ConsoleColors.RESET.getCode() + "");
-            out.print("\n\n");
-        }
-    }
-    */
-
-    public void showShelves(PlayerView[] players){
+    public void showShelves(){
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
 
@@ -384,7 +430,7 @@ public class TextualUI extends UserInterface {
         // display names and scores
         out.print("\t");
         for(int i = 0; i < players.length; i++){
-            out.print(players[i].getUsername() + "'s Shelf [" + players[i].getScore() + "]\t\t\t\t");
+            out.print( ( players[i].getUsername().equals(username) ? "My" : (players[i].getUsername() + "'s") ) + " Shelf [" + players[i].getScore() + "]\t\t\t\t");
         }
         out.println("\n");
 
@@ -402,44 +448,42 @@ public class TextualUI extends UserInterface {
         }
     }
 
-    private void showCheater(String cheater){
-        out.println(cheater + " tried to cheat!");
-    }
-
-    private void showGlobalGoals(GlobalGoalView[] globalGoals){
+    private void showGlobalGoals(){
         out.println("Global goals: ");
         for(int i = 0; i < globalGoals.length; i++){
             out.println((i + 1) + globalGoals[i].getDescription() + "[" + globalGoals[i].getCurrentScore() + "]");
         }
     }
 
-    private List<Coordinates> pickTiles(GameBoardView gameBoard, int numRows, int numCols, int rowOffset, int colOffset) {
+    private List<Coordinates> pickTiles(int numRows, int numCols, int rowOffset, int colOffset) {
         List<Coordinates> coords = new ArrayList<>();
 
         int chosenRow, chosenColumn, choice;
         String input;
         Coordinates singleTileCoord;
 
-        int maxPickableTiles = 3;
-
         while(true) {
-            choice = readChoiceFromInput("Pick a tile", "Done");
+            if(coords.size() != 0)choice = readChoiceFromInput("Pick another tile", "Order the chosen tiles");
+            else{
+                out.println("Pick a tile");
+                choice = 1;
+            }
 
             if (choice == 1) {
                 // Pick a tile
                 while(true){
                     //checks that one more tile can be picked
-                    if(coords.size() == maxPickableTiles ){
-                        out.println("Max number of tiles [" + maxPickableTiles + "] selected" );
+                    if(coords.size() == maxNumOfChosenTiles ){
+                        out.println("You can not select more than " + String.valueOf(maxNumOfChosenTiles) + " tiles" );
                         break;
                     }
                     //checks that one more tile can fit in the shelf
                     if(maxFreeSpacesInMyShelf == coords.size()){
-                        out.println("In your shelf there is space for at most " + maxFreeSpacesInMyShelf + " tiles");
+                        out.println("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
                         break;
                     }
 
-                    System.out.print("Insert the coordinates [ROW] [COLUMN]: ");
+                    out.println("Insert the coordinates [ROW] [COLUMN]: ");
                     input = in.nextLine();
                     String[] readCoords;
                     readCoords = input.split("\\s+");    // split with one or multiple spaces
@@ -449,8 +493,8 @@ public class TextualUI extends UserInterface {
                             || !checkUserInput('A', numRows + 'A', readCoords[0].toUpperCase().charAt(0))
                             || !checkUserInput(0, numCols, readCoords[1].charAt(0) - '0'))
                     {
-                        System.out.print("\nInsert a row [A - " + (char)(numRows + 'A') + "]" +
-                                "and a column [0 - " + numCols +"]!\n");
+                        out.println("Insert a row [A - " + (char)(numRows + 'A') + "]" +
+                                "and a column [0 - " + numCols +"]");
                         continue;
                     }
 
@@ -458,50 +502,57 @@ public class TextualUI extends UserInterface {
                     chosenColumn = readCoords[1].charAt(0) - '0' + colOffset;
                     singleTileCoord = new Coordinates(chosenRow, chosenColumn);
 
-                    if(!gameBoard.getCoords().contains(singleTileCoord)){
-                        System.out.println("Insert valid coordinates!");
+                    //check that the coordinates correspond to a tile on the board
+                    if(!gameBoardView.getCoords().contains(singleTileCoord) || gameBoardView.getTile(singleTileCoord) == null){
+                        out.println("These coordinates are not valid");
                         continue;
                     }
-                    // if it isn't already picked
-                    if(gameBoard.getTile(singleTileCoord) != null){
-                        //checks that this tile has not been already picked and that is next to one of the previously picked ones
-                        boolean nextTo = false;
-                        int i;
-                        for(i = 0; i < coords.size(); i++){
-                            if(coords.get(i).getROW() == chosenRow && coords.get(i).getCOL() == chosenColumn){
-                                out.println("You have already selected this tile");
-                                break;
-                            }
-                            if(( ( coords.get(i).getCOL() + 1 == chosenColumn || coords.get(i).getCOL() - 1 == chosenColumn ) && coords.get(i).getROW() == chosenRow )
-                                    || ( ( coords.get(i).getROW() + 1 == chosenRow || coords.get(i).getROW() - 1 == chosenRow ) && coords.get(i).getCOL() == chosenColumn ))
-                                nextTo = true;
-                        }
-                        if(!nextTo && coords.size() > 0){
-                            out.println("This tile is not next to one of the others you selected");
+
+                    //checks that the chosen tile is pickable
+                    if(!gameBoardView.isPickable(singleTileCoord)){
+                        out.println("You can not pick this tile");
+                        continue;
+                    }
+
+                    //checks that this tile has not been already picked and that is next to one of the previously picked ones
+                    boolean nextTo = false;
+                    boolean alreadyPicked = false;
+                    int i;
+                    for(i = 0; i < coords.size(); i++){
+                        if(coords.get(i).getROW() == chosenRow && coords.get(i).getCOL() == chosenColumn){
+                            alreadyPicked = true;
                             break;
                         }
-                        //checks that this tile is on the same column or on the same row with the previously picked ones
-                        boolean sameRow = true;
-                        boolean sameColumn = true;
-                        for(i = 0; i < coords.size() && (sameRow || sameColumn); i++) {
-                            if(coords.get(i).getROW() != chosenRow) sameRow = false;
-                            if(coords.get(i).getCOL() != chosenColumn) sameColumn = false;
-                        }
-                        //coords size può essere 0
-                        if( !(sameRow && sameColumn) ){
-                            // qui c'è un errore nell'if
-                            if( coords.size() > 0 && (!sameRow && !sameColumn)){
-                                out.println("The selected tiles must be on the same line");
-                                break;
-                            }
-                        }
-                        // all the checks are done, it can be added to the list of coords
-                        coords.add(new Coordinates(chosenRow, chosenColumn));
-                        break;
-                    }else{
-                        out.println("This tile was already picked! Pick another one");
-                        // continue;
+                        if(( ( coords.get(i).getCOL() + 1 == chosenColumn || coords.get(i).getCOL() - 1 == chosenColumn ) && coords.get(i).getROW() == chosenRow )
+                                || ( ( coords.get(i).getROW() + 1 == chosenRow || coords.get(i).getROW() - 1 == chosenRow ) && coords.get(i).getCOL() == chosenColumn ))
+                            nextTo = true;
                     }
+                    if(alreadyPicked){
+                        out.println("You have already selected this tile");
+                        continue;
+                    }
+                    if(!nextTo && coords.size() > 0){
+                        out.println("This tile is not next to one of the others you selected");
+                        continue;
+                    }
+                    //checks that this tile is on the same column or on the same row with the previously picked ones
+                    boolean sameRow = true;
+                    boolean sameColumn = true;
+                    for(i = 0; i < coords.size()-1 && (sameRow || sameColumn); i++) {
+                        if(coords.get(i).getROW() != coords.get(i+1).getROW()) sameRow = false;
+                        if(coords.get(i).getCOL() != coords.get(i+1).getCOL()) sameColumn = false;
+                    }
+                    //coords size can be 0 or 1
+                    if( !(sameRow && sameColumn) ){
+                        // qui c'è un errore nell'if
+                        if( (sameRow && coords.get(0).getROW() != chosenRow) || (sameColumn && coords.get(0).getCOL() != chosenColumn)){
+                            out.println("The selected tiles must be on the same line");
+                            continue;
+                        }
+                    }
+                    // all the checks are done, it can be added to the list of coords
+                    coords.add(new Coordinates(chosenRow, chosenColumn));
+                    break;
                 }
             } else {
                 break;
@@ -510,18 +561,18 @@ public class TextualUI extends UserInterface {
         return coords;
     }
 
-    private Message doTurnAction(GameBoardView gameBoard, PlayerView playerView){
+    private Message doTurnAction(){
         // to display the gameBoard and pick the tiles correctly
-        int maxRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
-        int minRow = gameBoard.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
+        int maxRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt();
+        int minRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
 
-        int maxCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
-        int minCol = gameBoard.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
+        int maxCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
+        int minCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
         Coordinates[] chosenTiles;
         List<Coordinates> coords;
 
-        coords = pickTiles(gameBoard,maxRow - minRow, maxCol - minCol, minRow, minCol);
+        coords = pickTiles(maxRow - minRow, maxCol - minCol, minRow, minCol);
         int numOfChosenTiles = coords.size();
         chosenTiles = new Coordinates[numOfChosenTiles];
         for(int i = 0; i < coords.size(); i++){
@@ -555,7 +606,7 @@ public class TextualUI extends UserInterface {
         // print the Tiles and ask for the order
         out.println("Select the order in which you want to insert the tiles in the " + column + " column: ");
         for(int i = 0; i < chosenTiles.length; i++){
-            t = gameBoard.getTile(chosenTiles[i]);
+            t = gameBoardView.getTile(chosenTiles[i]);
             out.print((i + 1) + ":");
             printTile(t);
             out.println("\n");
@@ -572,32 +623,7 @@ public class TextualUI extends UserInterface {
             orderedChosenTiles[i] = chosenTiles[order[i] - 1];
         }
 
-        return new TurnActionMessage(playerView.getUsername(), orderedChosenTiles, column);
-    }
-
-    @Override
-    public void update(Message m){
-        ClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
-
-        addMessageToQueue(m);
-        synchronized (lockLogin) {
-            lockLogin.notifyAll();
-        }
-    }
-
-    private void waitForLoginResponse(){
-        synchronized (lockLogin){
-            try{
-                lockLogin.wait();
-            }catch (InterruptedException e){
-                System.err.println("Interrupted while waiting for server: " + e.getMessage());
-                ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
-
-        ClientImplementation.logger.log(Level.INFO,"CLI: received Reconnect response from server");
-
+        return new TurnActionMessage(username, orderedChosenTiles, column);
     }
 
     @Override
@@ -605,12 +631,10 @@ public class TextualUI extends UserInterface {
         showTitle();
         while(!chooseConnection());
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");
-        if(!doLogin()){
-            out.println("An error happened while loggin in, retry later!");
-            return;
-        }
-        out.println("Login effettuato con successo!");
-        out.println("In attesa dell'inizio della partita");
+
+        while(!doLogin());
+
+        out.println("The game is starting...");
 
         new Thread(){
             @Override
@@ -630,7 +654,7 @@ public class TextualUI extends UserInterface {
                         //printTheWholeFGame((UpdateViewMessage) m);
                         synchronized (lockMainThread){
                             update(((UpdateViewMessage) m).getGameView());
-                            printTheWholeFGame();
+                            printTheWholeGame();
                             lockMainThread.notifyAll();
                         }
 
@@ -670,8 +694,7 @@ public class TextualUI extends UserInterface {
                         //gameBoardView = this.gameView.getGameBoard();
                     }
                     if(currPlayer.getUsername().equals(username)){
-                        Message turnActionMessage = doTurnAction(this.gameBoardView, currPlayer);
-                        notifyListeners(turnActionMessage);
+                        notifyListeners(doTurnAction());
                         ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
                     }
                     else{
@@ -683,81 +706,7 @@ public class TextualUI extends UserInterface {
         }
     }
 
-    private GameView update(GameView gv){
-        if(gv.getGameBoard() != null) this.gameBoardView = gv.getGameBoard();
-        if(this.players == null)
-            this.players = new PlayerView[gv.getPlayers().length];
-        if(gv.getPlayers() != null){
-            for(int i = 0; i < gv.getPlayers().length; i++){
-                if(gv.getPlayers()[i] != null) {
-                    this.players[i] = gv.getPlayers()[i];
-                }
-            }
-        }
-        //once i got the players, update the maxFreeSpaces in my shelf
-        int myIndex = -1;
-        for (int i = 0; i < this.players.length; i++) {
-            if (this.players[i].getUsername().equals(username))
-                // IT HAS TO GET HERE, IT'S IMPOSSIBLE TO SKIP -> invece un player è null :)
-            {
-                myIndex = i;
-            }
-        }
-        this.freeSpacesInMyShelf = new int[Shelf.getColumns()];
-        for(int i = 0; i < this.freeSpacesInMyShelf.length; i++)
-            this.freeSpacesInMyShelf[i] = 0;
-
-        for(int i = 0; i< freeSpacesInMyShelf.length; i++) freeSpacesInMyShelf[i] = 0;
-        for (int i = 0; i < Shelf.getRows(); i++) {
-            for (int j = 0; j < Shelf.getColumns(); j++) {
-                if(this.players[myIndex].getShelf().getTile(new Coordinates(i,j)) == null) {
-                    freeSpacesInMyShelf[j]++;
-                }
-            }
-        }
-        this.maxFreeSpacesInMyShelf = 0;
-        for(int i = 0; i < freeSpacesInMyShelf.length; i++)
-            if(freeSpacesInMyShelf[i] > maxFreeSpacesInMyShelf)
-                maxFreeSpacesInMyShelf = freeSpacesInMyShelf[i];
-
-        this.cheater = gv.getCheater(); // can be null if no-one cheated
-        if(gv.getNumOfActivePlayers() != null) this.numOfActivePlayers = gv.getNumOfActivePlayers();
-        if(gv.getGlobalGoals() != null) this.globalGoals = gv.getGlobalGoals();
-        if(gv.getCurrentPlayer() != null) this.currentPlayer = gv.getCurrentPlayer();
-        return gv;
-    }
-
-    private void printHelp(){
-        out.println("Commands:");
-        out.println("/play to play your turn");
-        out.println("/help to show this message");
-    }
-
-    private void printTheWholeFGame(){
-        // start the game
-        int myIndex = 0;
-        // get my player index
-        for (int i = 0; i < this.players.length; i++) {
-            if (this.players[i].getUsername().equals(username))
-                myIndex = i;
-        }
-
-
-        PrivateGoalView myPrivateGoalView = this.players[myIndex].getPrivateGoal();
-        int playerIndex = this.currentPlayer;
-        //numOfActivePlayers;
-
-        if(this.cheater != null)
-            showCheater(this.cheater);
-        showShelves(this.players);
-        showBoard(this.gameBoardView);
-        showGlobalGoals(this.globalGoals);
-        showPrivateGoals(myPrivateGoalView.getCoordinates());
-
-    }
-
-    public final static void clearConsole()
-    {
+    public final static void clearConsole() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
         /*

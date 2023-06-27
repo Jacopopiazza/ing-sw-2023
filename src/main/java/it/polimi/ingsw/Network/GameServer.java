@@ -12,7 +12,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The `GameServer` class represents the server component responsible for managing the game lobby and the game itself.
@@ -121,7 +120,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                             PingMessage pingMessage = new PingMessage(nextIdPing);
                             idPingToBeAnswered[index] = nextIdPing;
-                            ServerImplementation.logger.log(Level.INFO,"Set ping #" + pingMessage.getpingNumber() + " for player " + username + "(index: " + index + ")");
+                            ServerImplementation.logger.log(Level.INFO,"Set ping #" + pingMessage.getPingNumber() + " for player " + username + "(index: " + index + ")");
 
                             nextIdPing = (nextIdPing+1) % 100000;
 
@@ -151,7 +150,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                 continue;
                             }
 
-                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getpingNumber() + " to " + username);
+                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getPingNumber() + " to " + username);
 
 
                         }
@@ -163,14 +162,14 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
     public void resetTimerAndPing(PingMessage message){
         //get index of element in idPingToBeAnswered with value message.getpingNumber()
-        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getpingNumber());
+        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getPingNumber());
         synchronized (playingUsernames){
             int index = -1;
             for(int i = 0; i < idPingToBeAnswered.length; i++){
-                boolean resCheck = idPingToBeAnswered[i] == message.getpingNumber();
+                boolean resCheck = idPingToBeAnswered[i] == message.getPingNumber();
                 if(resCheck){
                     index = i;
-                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getpingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
+                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getPingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
                     break;
                 }
             }

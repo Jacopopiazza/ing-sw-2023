@@ -10,8 +10,6 @@ import it.polimi.ingsw.View.View;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,9 +64,9 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
 
         if(m instanceof PingMessage){
-            ClientImplementation.logger.log(Level.INFO, "Ping #" + ((PingMessage) m).getpingNumber() + " received");
+            ClientImplementation.logger.log(Level.INFO, "Ping #" + ((PingMessage) m).getPingNumber() + " received");
             try{
-                this.server.handleMessage(new PingMessage(((PingMessage) m).getpingNumber()), this);
+                this.server.handleMessage(new PingMessage(((PingMessage) m).getPingNumber()), this);
             }catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());

@@ -747,6 +747,7 @@ public class GraphicalUI extends UserInterface {
             chosenTiles = new Coordinates[maxNumOfChosenTiles];
             chosenOrder = new Integer[chosenTiles.length];
             orderNumbers = new JLabel[chosenTiles.length];
+            numOfActivePlayers = 0;
             isGameFinished = false;
 
             // set up the background
@@ -988,10 +989,12 @@ public class GraphicalUI extends UserInterface {
                 else text.setText("Wait for your turn");
             }
             if(gw.getNumOfActivePlayers() != null) {
-                if(gw.getNumOfActivePlayers() == 1) errorText.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
-                else if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) errorText.setText("a player reconnected, the game can go on");
-                else if(gw.getNumOfActivePlayers() > numOfActivePlayers) errorText.setText("a player reconnected");
-                else if(gw.getNumOfActivePlayers() < numOfActivePlayers) errorText.setText("a player disconnected");
+                if(numOfActivePlayers != 0){
+                    if(gw.getNumOfActivePlayers() == 1) errorText.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
+                    else if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) errorText.setText("a player reconnected, the game can go on");
+                    else if(gw.getNumOfActivePlayers() > numOfActivePlayers) errorText.setText("a player reconnected");
+                    else if(gw.getNumOfActivePlayers() < numOfActivePlayers) errorText.setText("a player disconnected");
+                }
 
                 numOfActivePlayers = gw.getNumOfActivePlayers();
             }
@@ -1000,7 +1003,6 @@ public class GraphicalUI extends UserInterface {
             }
             if(gw.getCheater() != null){
                 errorText.setText(gw.getCheater() + " tried to cheat");
-                text.setText("It is your turn, choose your tiles from the board");
             }
 
             revalidate();

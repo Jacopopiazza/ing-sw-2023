@@ -29,7 +29,6 @@ public class TextualUI extends UserInterface {
     private final int maxNumOfChosenTiles = 3;
     private GameBoardView gameBoardView;
     private PlayerView[] players;
-    private String cheater;
     private int numOfActivePlayers;
     private int currentPlayer;
     private GlobalGoalView[] globalGoals;
@@ -54,14 +53,24 @@ public class TextualUI extends UserInterface {
         super();
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
-
-        freeSpacesInMyShelf = new int[Shelf.getColumns()];
-        gameEnded = false;
-
-        receivedMessages = new LinkedList<>();
         lockLogin = new Object();
         lockQueue = new Object();
         lockMainThread = new Object();
+        init();
+    }
+
+    private void init(){
+        username = null;
+        freeSpacesInMyShelf = new int[Shelf.getColumns()];
+        maxFreeSpacesInMyShelf = 0;
+        gameBoardView = null;
+        players = null;
+        numOfActivePlayers = 0;
+        currentPlayer = -1;
+        globalGoals = null;
+        gameEnded = false;
+
+        receivedMessages = new LinkedList<>();
     }
 
     @Override
@@ -160,6 +169,7 @@ public class TextualUI extends UserInterface {
             }catch (NumberFormatException ex){
                 valid = false;
             }
+            if(!valid) out.println("Input is not valid");
 
         }while (!valid);
 
@@ -185,7 +195,7 @@ public class TextualUI extends UserInterface {
 
     }
 
-    public boolean chooseConnection(){
+    private boolean chooseConnection(){
         out.println("Choose the connection type:");
         int choice = readChoiceFromInput("RMI","SOCKET");
 
@@ -323,31 +333,42 @@ public class TextualUI extends UserInterface {
             }
         }
 
-        this.cheater = gv.getCheater(); // can be null if no-one cheated
-        if(gv.getNumOfActivePlayers() != null) this.numOfActivePlayers = gv.getNumOfActivePlayers();
+        if(gv.getCheater() != null) out.println(gv.getCheater() + " tried to cheat!");
+        if(gv.getNumOfActivePlayers() != null) {
+            if(numOfActivePlayers != 0){
+                if(gv.getNumOfActivePlayers() == 1) out.println("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
+                else if(gv.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) out.println("a player reconnected, the game can go on");
+                else if(gv.getNumOfActivePlayers() > numOfActivePlayers) out.println("a player reconnected");
+                else if(gv.getNumOfActivePlayers() < numOfActivePlayers) out.println("a player disconnected");
+            }
+
+            numOfActivePlayers = gv.getNumOfActivePlayers();
+        }
         if(gv.getGlobalGoals() != null) this.globalGoals = gv.getGlobalGoals();
         if(gv.getCurrentPlayer() != null) this.currentPlayer = gv.getCurrentPlayer();
     }
 
     private void printTheWholeGame(){
-        // start the game
-        int myIndex = 0;
-        // get my player index
+        int myIndex = -1;
+        int winnerIndex = -1;
         for (int i = 0; i < this.players.length; i++) {
-            if (this.players[i].getUsername().equals(username))
+            if (players[i].getUsername().equals(username))
                 myIndex = i;
+            if(players[i].isWinner())
+                winnerIndex = i;
         }
 
         showBoard();
         showGlobalGoals();
         showShelves();
         showPrivateGoal(this.players[myIndex].getPrivateGoal().getCoordinates());
-        if(cheater != null){
-            out.println(cheater + " tried to cheat!");
-            cheater = null;
+        if(winnerIndex != -1){
+            gameEnded = true;
+            if(myIndex == winnerIndex) out.println("YOU WON!");
+            else out.println("YOU LOST!");
         }
-        if(currentPlayer != -1)
-            out.println("It is "+ ( players[currentPlayer].getUsername().equals(username)? "your" : ( players[currentPlayer].getUsername() + "'s" ) ) + " turn" );
+        else if(currentPlayer != -1)
+            out.println("It is "+ ( currentPlayer == myIndex ? "your" : ( players[currentPlayer].getUsername() + "'s" ) ) + " turn" );
     }
 
     private void printTile(TileView tileView){
@@ -360,7 +381,7 @@ public class TextualUI extends UserInterface {
         out.print(color + "   " + ConsoleColors.RESET.getCode() + "  ");
     }
 
-    public void showBoard(){
+    private void showBoard(){
         // print the board -> using a 4 player board for a first try
         int maxRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).max().getAsInt() + 1;
         int minRow = gameBoardView.getCoords().stream().mapToInt(x -> x.getROW()).min().getAsInt();
@@ -395,8 +416,8 @@ public class TextualUI extends UserInterface {
         }
     }
 
-    public void showPrivateGoal(Coordinates[] privateGoal){
-        out.println("\n\n\tMy private goals\n\n");
+    private void showPrivateGoal(Coordinates[] privateGoal){
+        out.println("\n\n\tMy private goal\n\n");
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
         TileView tile = null;
@@ -426,7 +447,9 @@ public class TextualUI extends UserInterface {
         // display names and scores
         out.print("\t");
         for(int i = 0; i < players.length; i++){
-            out.print( ( players[i].getUsername().equals(username) ? "My" : (players[i].getUsername() + "'s") ) + " Shelf [" + players[i].getScore() + "]\t\t\t\t");
+            String currUser = players[i].getUsername();
+            out.print( ( currUser.equals(username) ? "My" :
+                    ( (currUser.length()>15 ? currUser.substring(0,15)+"..." : currUser ) + "'s") ) + " Shelf [" + players[i].getScore() + "]\t\t\t\t");
         }
         out.println("\n");
 
@@ -625,50 +648,62 @@ public class TextualUI extends UserInterface {
         while(!chooseConnection());
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");
 
-        while(!doLogin());
+        while(true){
 
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                while(true){
-                    if(isMessagesQueueEmpty()){
-                        continue;
-                    }
+            while(!doLogin());
 
-                    Message m = getFirstMessageFromQueue();
-                    ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
-
-                    if(m instanceof  LobbyMessage){
-                        printPlayersInLobby((LobbyMessage) m);
-                    } else if (m instanceof UpdateViewMessage) {
-                        synchronized (lockMainThread){
-                            update(((UpdateViewMessage) m).getGameView());
-                            printTheWholeGame();
-                            lockMainThread.notifyAll();
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    while(true){
+                        if(isMessagesQueueEmpty()){
+                            continue;
                         }
 
-                    }
-                    ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
-                }
-            }
-        }.start();
+                        Message m = getFirstMessageFromQueue();
+                        ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
 
-        while(!gameEnded){
+                        if(m instanceof  LobbyMessage){
+                            printPlayersInLobby((LobbyMessage) m);
+                        } else if (m instanceof UpdateViewMessage) {
+                            synchronized (lockMainThread){
+                                update(((UpdateViewMessage) m).getGameView());
+                                //this if ensures that the game is printed only when it is necessary
+                                if(((UpdateViewMessage) m).getGameView().getCurrentPlayer() != null || ( ((UpdateViewMessage) m).getGameView().getPlayers() != null &&
+                                        Arrays.stream(((UpdateViewMessage) m).getGameView().getPlayers()).filter(x -> x!=null).count() > 1 ) ) printTheWholeGame();
+                                lockMainThread.notifyAll();
+                            }
 
-            synchronized (lockMainThread){
-                while(gameBoardView == null || currentPlayer == -1 || !players[currentPlayer].getUsername().equals(username)) {
-                    try {
-                        lockMainThread.wait();
-                    } catch (InterruptedException e) {
-                        System.err.println("Interrupted while waiting for server: " + e.getMessage());
-                        ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
-                        throw new RuntimeException(e);
+                        }
+                        ClientImplementation.logger.log(Level.INFO, "Fine gestione messaggio: " + m.getClass());
+                        if(gameEnded) break;
                     }
                 }
+            }.start();
+
+            while(true){
+
+                synchronized (lockMainThread){
+                    while( (gameBoardView == null || currentPlayer == -1 || !players[currentPlayer].getUsername().equals(username)) && !gameEnded) {
+                        try {
+                            lockMainThread.wait();
+                        } catch (InterruptedException e) {
+                            System.err.println("Interrupted while waiting for server: " + e.getMessage());
+                            ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                if(gameEnded) break;
+                notifyListeners(doTurnAction());
+                ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
             }
-            notifyListeners(doTurnAction());
-            ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
+
+            out.println("Insert 0 to go back to the starting menù: ");
+            readNumberFromInput(0,0);
+            init();
+            showTitle();
         }
     }
 

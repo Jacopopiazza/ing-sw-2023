@@ -63,6 +63,58 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      *
      * @throws RemoteException if there is an error in remote method invocation
      */
+
+    /**
+     * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
+     *
+     * @return the singleton instance of the server
+     */
+    public static ServerImplementation getInstance() throws RemoteException{
+        if( instance == null ) {
+            instance = new ServerImplementation();
+        }
+        return instance;
+    }
+
+    /**
+     * The entry point of the server application. It creates an instance of the server, starts the RMI and socket servers,
+     * and logs the server start.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args){
+
+        Thread rmiThread = new Thread() {
+            @Override
+            public void run() {
+                logger.log(Level.INFO, "Start RMI");
+                try {
+                    startRMI(getInstance());
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI. This protocol will be disabled.");
+                }
+            }
+        };
+        rmiThread.start();
+
+        Thread socketThread = new Thread() {
+            @Override
+            public void run() {
+                logger.log(Level.INFO, "Start Socket");
+
+                try {
+                    startSocket(getInstance());
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI server");
+                    System.err.println(e.getMessage());
+                }
+            }
+        };
+        socketThread.start();
+
+        logger.log(Level.INFO, "Server started");
+    }
+
     private ServerImplementation() throws RemoteException {
         super();
         setUpLogger();
@@ -238,7 +290,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
                 if( playingUsernames.contains(username) ) {
-                    logger.log(Level.INFO, "A player with username:  " + username + " is already loggedin");
+                    logger.log(Level.INFO, "A player with username:  " + username + " already logged in");
                     listener.update(new TakenUsernameMessage());
                     return;
                 }
@@ -319,7 +371,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         LocateRegistry.createRegistry(1099);
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind("G26-MyShelfie-Server", server);
-        System.out.println("In attesa di client RMI...");
+        System.out.println("Waiting for a new RMI client...");
     }
 
     /**
@@ -332,25 +384,20 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     public static void startSocket(Server server) throws RemoteException {
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
             while(true) {
-                System.out.println("In attesa di un client via socket...");
-                logger.log(Level.INFO, "In attesa di un client via socket...");
+                logger.log(Level.INFO, "Waiting for a new socket...");
                 Socket socket = serverSocket.accept();
-                System.out.println("Socket Client connected");
-                logger.log(Level.INFO, "Nuova connessione via socket accettata");
+                logger.log(Level.INFO, "Socket client connected");
 
-                instance.executorService.execute(() -> {
+                getInstance().executorService.execute(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(server, socket);
                         while(true) {
                             clientSkeleton.receive();
                         }
                     } catch (RemoteException e) {
-                        System.err.println("Cannot receive from client. Closing this connection...");
-                        logger.log(Level.SEVERE, "Errore nella ricezione da client");
-
+                        logger.log(Level.SEVERE, "Cannot receive from client. Closing this connection...");
                     } finally {
-                        System.out.println("Client disconnected");
-                        logger.log(Level.INFO, "Client socket disconnesso");
+                        logger.log(Level.INFO, "Client disconnected");
 
                         try {
                             socket.close();
@@ -363,70 +410,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         } catch (IOException e) {
             throw new RemoteException("Cannot start socket server", e);
         }
-    }
-
-    /**
-     * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
-     *
-     * @return the singleton instance of the server
-     */
-    public static ServerImplementation getInstance() throws RemoteException{
-        if( instance == null ) {
-            instance = new ServerImplementation();
-        }
-        return instance;
-    }
-
-    /**
-     * The entry point of the server application. It creates an instance of the server, starts the RMI and socket servers,
-     * and logs the server start.
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args){
-        ServerImplementation server = null;
-
-        try {
-            server = getInstance();
-        } catch (RemoteException e) {
-            System.err.println("Cannot get server");
-            System.err.println(e.getMessage());
-            return;
-        }
-
-        Thread rmiThread = new Thread() {
-            @Override
-            public void run() {
-                logger.log(Level.INFO, "Avvio servizio RMI");
-                try {
-                    startRMI(getInstance());
-                } catch (RemoteException e) {
-                    System.err.println("Cannot start RMI. This protocol will be disabled.");
-                }
-            }
-        };
-
-        rmiThread.start();
-
-        Thread socketThread = new Thread() {
-            @Override
-            public void run() {
-                logger.log(Level.INFO, "Avvio servizio Socket");
-
-                try {
-                    startSocket(getInstance());
-                } catch (RemoteException e) {
-                    System.err.println("Cannot start RMI server");
-                    System.err.println(e.getMessage());
-                }
-            }
-        };
-
-        socketThread.start();
-
-        System.out.println("Server started");
-        logger.log(Level.INFO, "Server avviato");
-
     }
 
     /**

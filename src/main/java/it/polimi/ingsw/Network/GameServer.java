@@ -163,7 +163,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
     public void resetTimerAndPing(PingMessage message){
         //get index of element in idPingToBeAnswered with value message.getpingNumber()
-        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getpingNumber() + " from sender: " + message.getSender());
+        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getpingNumber());
         synchronized (playingUsernames){
             int index = -1;
             for(int i = 0; i < idPingToBeAnswered.length; i++){
@@ -245,7 +245,6 @@ public class GameServer extends UnicastRemoteObject implements Server {
             disconnect(message.getUsername());
         }
         else if(m instanceof PingMessage){
-            //TODO: HANDLE PING ACK
             resetTimerAndPing((PingMessage) m);
         }
         else{

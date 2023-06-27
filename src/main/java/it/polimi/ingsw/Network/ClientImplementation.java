@@ -73,7 +73,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         if(m instanceof PingMessage){
             ClientImplementation.logger.log(Level.INFO, "Ping #" + ((PingMessage) m).getpingNumber() + " received");
             try{
-                this.server.handleMessage(new PingMessage(((PingMessage) m).getpingNumber(), chiSono), this);
+                this.server.handleMessage(new PingMessage(((PingMessage) m).getpingNumber()), this);
             }catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());
@@ -105,9 +105,6 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         this.inGameServer = true;
 
     }
-
-    //TODO:REMOVE
-    public String chiSono = null;
 
 
     /**

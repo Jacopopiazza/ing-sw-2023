@@ -256,14 +256,10 @@ public class Controller  {
         List<GameListener> listeners = new ArrayList<GameListener>();
         for( int i=0; i<model.getNumOfPlayers(); i++ ){
             players.add(model.getPlayer(i).getUsername());
-            if(model.getlistener(i) != null) listeners.add(model.getlistener(i));
+            if(model.getListener(i) != null) listeners.add(model.getListener(i));
         }
         // Delete game from server
         gameServer.deleteGame(players,listeners);
-    }
-
-    public GameListener getListener(Integer index){
-        return model.getlistener(index);
     }
 
     public GameListener getListener(String username) throws UsernameNotFoundException{

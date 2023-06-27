@@ -338,20 +338,16 @@ public class TextualUI extends UserInterface {
                 myIndex = i;
         }
 
-        showShelves();
         showBoard();
         showGlobalGoals();
+        showShelves();
         showPrivateGoal(this.players[myIndex].getPrivateGoal().getCoordinates());
         if(cheater != null){
             out.println(cheater + " tried to cheat!");
             cheater = null;
         }
-    }
-
-    private void printHelp(){
-        out.println("Commands:");
-        out.println("/play to play your turn");
-        out.println("/help to show this message");
+        if(currentPlayer != -1)
+            out.println("It is "+ ( players[currentPlayer].getUsername().equals(username)? "your" : ( players[currentPlayer].getUsername() + "'s" ) ) + " turn" );
     }
 
     private void printTile(TileView tileView){
@@ -569,61 +565,58 @@ public class TextualUI extends UserInterface {
         int maxCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).max().getAsInt();
         int minCol = gameBoardView.getCoords().stream().mapToInt(y -> y.getCOL()).min().getAsInt();
 
-        Coordinates[] chosenTiles;
-        List<Coordinates> coords;
+        while (true) {
+            List<Coordinates> coords = pickTiles(maxRow - minRow, maxCol - minCol, minRow, minCol);
 
-        coords = pickTiles(maxRow - minRow, maxCol - minCol, minRow, minCol);
-        int numOfChosenTiles = coords.size();
-        chosenTiles = new Coordinates[numOfChosenTiles];
-        for(int i = 0; i < coords.size(); i++){
-            chosenTiles[i] = coords.get(i);
-        }
-
-        TileView t;
-        int column = 0;
-
-        while(true){
-            out.print("In which column do you want to insert the Tiles? ");
-            String input = in.nextLine();
-            if(!checkUserInput(0, Shelf.getColumns(), input.charAt(0) - '0')) {
-                out.println("\nInsert a valid column!");
-                continue;
+            // Once I have the Tiles to pick, print those Tiles and ask for their order
+            out.println("Insert the numbers corresponding to the tiles in the order according to which you want them:");
+            for (int i = 0; i < coords.size(); i++) {
+                TileView t = gameBoardView.getTile(coords.get(i));
+                out.print((i + 1) + ": ");
+                printTile(t);
+                out.print("\n");
             }
-            try{
-                column = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                out.println("Insert a valid input");
-                continue;
+
+            int[] order = new int[coords.size()];
+            for (int i = 0; i < order.length; i++) {
+                order[i] = readNumberFromInput(1, coords.size()) - 1;
             }
-            if(this.freeSpacesInMyShelf[column] < numOfChosenTiles){
-                out.println("The tiles chosen cannot fit in the " + column + " column!");
-                continue;
+
+            int column = -1;
+
+            while (column == -1) {
+                out.print("If you want to redo the turn insert 0, otherwise select in which column you want to insert the selected tiles [1 - " + Shelf.getColumns() + "]: ");
+                String input = in.nextLine();
+                if (!checkUserInput(0, Shelf.getColumns(), input.charAt(0) - '0')) {
+                    out.println("Insert a valid input");
+                    continue;
+                }
+                try {
+                    column = Integer.parseInt(input) - 1;
+                } catch (NumberFormatException e) {
+                    out.println("Insert a valid input");
+                    continue;
+                }
+                //in case the user wants to redo the turn
+                if (column == -1) break;
+                if (this.freeSpacesInMyShelf[column] < coords.size()) {
+                    out.println("The chosen tiles can not fit in the column number " + String.valueOf(column + 1));
+                    continue;
+                }
+                break;
             }
-            break;
-        }
 
-        // Once I have the Tiles to pick
-        // print the Tiles and ask for the order
-        out.println("Select the order in which you want to insert the tiles in the " + column + " column: ");
-        for(int i = 0; i < chosenTiles.length; i++){
-            t = gameBoardView.getTile(chosenTiles[i]);
-            out.print((i + 1) + ":");
-            printTile(t);
-            out.println("\n");
-        }
+            if(column  == -1) continue;
 
-        int[] order = new int[chosenTiles.length];
-        for(int i = 0; i < order.length; i++){
-            order[i] = readNumberFromInput(1, chosenTiles.length);
-        }
+            Coordinates[] chosenTiles = new Coordinates[coords.size()];
+            for(int i = 0; i < coords.size(); i++){
+                chosenTiles[i] = coords.get(order[i]);
+            }
 
-        // once I have the order, set the Coordinates array to send
-        Coordinates[] orderedChosenTiles = new Coordinates[chosenTiles.length];
-        for(int i = 0; i < chosenTiles.length; i++){
-            orderedChosenTiles[i] = chosenTiles[order[i] - 1];
+            // mark that the turn has been played
+            currentPlayer = -1;
+            return new TurnActionMessage(username, chosenTiles, column);
         }
-
-        return new TurnActionMessage(username, orderedChosenTiles, column);
     }
 
     @Override
@@ -633,8 +626,6 @@ public class TextualUI extends UserInterface {
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");
 
         while(!doLogin());
-
-        out.println("The game is starting...");
 
         new Thread(){
             @Override
@@ -651,7 +642,6 @@ public class TextualUI extends UserInterface {
                     if(m instanceof  LobbyMessage){
                         printPlayersInLobby((LobbyMessage) m);
                     } else if (m instanceof UpdateViewMessage) {
-                        //printTheWholeFGame((UpdateViewMessage) m);
                         synchronized (lockMainThread){
                             update(((UpdateViewMessage) m).getGameView());
                             printTheWholeGame();
@@ -664,45 +654,21 @@ public class TextualUI extends UserInterface {
             }
         }.start();
 
-        try{
-            synchronized (lockMainThread){
-                lockMainThread.wait();
-            }
-        }catch (InterruptedException e){
-            System.err.println("Interrupted while waiting for server: " + e.getMessage());
-            ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
-
         while(!gameEnded){
 
-            //clearConsole();
-            PlayerView currPlayer;
-            //GameBoardView gameBoardView;
-
-            out.println("Please choose your action:");
-            out.println("/help for help");
-            String sChoice = in.nextLine();
-            switch (sChoice){
-                case "/help": {
-                    printHelp();
-                    break;
-                }
-                case "/play": {
-                    synchronized (lockMainThread){
-                        currPlayer = this.players[this.currentPlayer];
-                        //gameBoardView = this.gameView.getGameBoard();
+            synchronized (lockMainThread){
+                while(gameBoardView == null || currentPlayer == -1 || !players[currentPlayer].getUsername().equals(username)) {
+                    try {
+                        lockMainThread.wait();
+                    } catch (InterruptedException e) {
+                        System.err.println("Interrupted while waiting for server: " + e.getMessage());
+                        ClientImplementation.logger.log(Level.SEVERE, e.getMessage(), e);
+                        throw new RuntimeException(e);
                     }
-                    if(currPlayer.getUsername().equals(username)){
-                        notifyListeners(doTurnAction());
-                        ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
-                    }
-                    else{
-                        out.println("Not your turn!");
-                    }
-                    break;
                 }
             }
+            notifyListeners(doTurnAction());
+            ClientImplementation.logger.log(Level.INFO, "Sent TurnActionMessage to listeners");
         }
     }
 

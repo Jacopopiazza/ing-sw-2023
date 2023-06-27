@@ -75,18 +75,10 @@ public class ServerStub implements Server {
      */
     public void handleMessage(Message m, Client client) throws RemoteException {
 
-        Message toBeSent = m;
-
         ClientImplementation.logger.log(Level.INFO, "ServerStub is sending message to server");
 
-        if( m instanceof ReconnectMessage ){
-            toBeSent = new ReconnectMessageTicket(((ReconnectMessage) m).getUsername() );
-        }
-        else if( m instanceof RegisterMessage){
-            toBeSent = new RegisterMessageTicket(((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers() );
-        }
         try {
-            oos.writeObject(toBeSent);
+            oos.writeObject(m);
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }

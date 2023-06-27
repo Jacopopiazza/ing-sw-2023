@@ -93,7 +93,7 @@ public abstract class UserInterface implements Runnable, View
         Registry registry = LocateRegistry.getRegistry(ip, Integer.parseInt(port));
         Server server = (Server) registry.lookup("G26-MyShelfie-Server");
 
-        this.client = new ClientImplementation(this, server);
+        this.client = ClientImplementation.getInstance(this, server);
 
 
     }
@@ -128,7 +128,7 @@ public abstract class UserInterface implements Runnable, View
         }
 
         ServerStub serverStub = new ServerStub(ip, Integer.parseInt(port));
-        this.client = new ClientImplementation(this, serverStub);
+        this.client = ClientImplementation.getInstance(this, serverStub);
         new Thread() {
             @Override
             public void run() {

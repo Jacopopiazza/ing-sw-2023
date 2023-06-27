@@ -12,7 +12,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The `GameServer` class represents the server component responsible for managing the game lobby and the game itself.
@@ -47,7 +46,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private ServerImplementation serverImplementation = null;
     private String[] playingUsernames;
     private List<String> disconnectedUsernames;
-    private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
+    private Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
     private int nextIdPing = 0;
     private int[] idPingToBeAnswered;
     private Timer[] playersTimers;
@@ -78,7 +77,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                     Tuple<Message,Client> tuple = popFromMessagesQueue();
                     try {
-                        effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
+                        effectivelyHandleMessage(tuple.getFirst(), tuple.getSecond());
                     }catch (RemoteException ex){
                         ServerImplementation.logger.log(Level.SEVERE, "Failed to handle message of client: " + ex.getMessage());
                     }
@@ -121,7 +120,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                             PingMessage pingMessage = new PingMessage(nextIdPing);
                             idPingToBeAnswered[index] = nextIdPing;
-                            ServerImplementation.logger.log(Level.INFO,"Set ping #" + pingMessage.getpingNumber() + " for player " + username + "(index: " + index + ")");
+                            ServerImplementation.logger.log(Level.INFO,"Set ping #" + pingMessage.getPingNumber() + " for player " + username + "(index: " + index + ")");
 
                             nextIdPing = (nextIdPing+1) % 100000;
 
@@ -151,7 +150,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                 continue;
                             }
 
-                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getpingNumber() + " to " + username);
+                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getPingNumber() + " to " + username);
 
 
                         }
@@ -163,14 +162,14 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
     public void resetTimerAndPing(PingMessage message){
         //get index of element in idPingToBeAnswered with value message.getpingNumber()
-        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getpingNumber());
+        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getPingNumber());
         synchronized (playingUsernames){
             int index = -1;
             for(int i = 0; i < idPingToBeAnswered.length; i++){
-                boolean resCheck = idPingToBeAnswered[i] == message.getpingNumber();
+                boolean resCheck = idPingToBeAnswered[i] == message.getPingNumber();
                 if(resCheck){
                     index = i;
-                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getpingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
+                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getPingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
                     break;
                 }
             }
@@ -197,8 +196,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @param c The client associated with the message.
      */
     private void addToMessagesQueue(Message m, Client c) {
-        synchronized (recievedMessages) {
-            recievedMessages.add(new Tuple<>(m, c));
+        synchronized (receivedMessages) {
+            receivedMessages.add(new Tuple<>(m, c));
         }
     }
 
@@ -208,8 +207,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @return {@code true} if the message queue is empty, {@code false} otherwise.
      */
     private boolean isMessagesQueueEmpty() {
-        synchronized (recievedMessages) {
-            return recievedMessages.isEmpty();
+        synchronized (receivedMessages) {
+            return receivedMessages.isEmpty();
         }
     }
 
@@ -219,8 +218,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
      */
     private Tuple<Message, Client> popFromMessagesQueue() {
-        synchronized (recievedMessages) {
-            return recievedMessages.poll();
+        synchronized (receivedMessages) {
+            return receivedMessages.poll();
         }
     }
 
@@ -232,7 +231,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @param client The client associated with the message.
      * @throws RemoteException If a remote exception occurs during message handling.
      */
-    private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
+    private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
             ServerImplementation.logger.log(Level.INFO, "Started to handle TurnMessage");
@@ -261,7 +260,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      */
     @Override
     public void handleMessage(Message m, Client client) throws RemoteException {
-        ServerImplementation.logger.log(Level.INFO, "Recieved message from client: " + m.getClass());
+        ServerImplementation.logger.log(Level.INFO, "Received message from client: " + m.getClass());
         addToMessagesQueue(m,client);
     }
 

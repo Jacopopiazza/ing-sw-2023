@@ -17,7 +17,7 @@ public class PingMessage extends Message {
      *
      * @return the pingNumber
      */
-    public int getpingNumber() {
+    public int getPingNumber() {
         return this.pingNumber;
     }
 }

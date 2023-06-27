@@ -123,9 +123,13 @@ public class Controller  {
                 return;
             }
             if( model.getNumOfActivePlayers() == 1 ) {
-                if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
-                    if(!model.nextPlayer()) endGame();
-                    else timer.schedule(task,0,timerLength*1000);
+                if (model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)){
+                    if (!model.nextPlayer()) {
+                        endGame();
+                        return;
+                    }
+                }
+                timer.schedule(task,timerLength*1000);
                 return;
             }
             if( model.getNumOfActivePlayers() == 0 ){

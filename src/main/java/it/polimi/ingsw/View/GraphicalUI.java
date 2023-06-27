@@ -937,6 +937,7 @@ public class GraphicalUI extends UserInterface {
                         Coordinates[] temp = finalChosenTiles;
                         //disable user actions and send the message to the server
                         currentPlayer = -1;
+                        text.setText("");
                         new SwingWorker<Void,Void>(){
                             @Override
                             protected Void doInBackground() throws Exception {
@@ -974,6 +975,7 @@ public class GraphicalUI extends UserInterface {
                                 startWindow.askUsername();
                             }
                         });
+                        pickedTilesPanel.removeAll();
                         pickedTilesPanel.add(close);
 
                         isGameFinished = true;
@@ -986,8 +988,8 @@ public class GraphicalUI extends UserInterface {
                 else text.setText("Wait for your turn");
             }
             if(gw.getNumOfActivePlayers() != null) {
-                if(gw.getNumOfActivePlayers() == 1) text.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
-                if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) text.setText("a player reconnected, the game can go on");
+                if(gw.getNumOfActivePlayers() == 1) errorText.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
+                if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) errorText.setText("a player reconnected, the game can go on");
                 numOfActivePlayers = gw.getNumOfActivePlayers();
             }
             if(gw.getGlobalGoals() != null){

@@ -122,8 +122,10 @@ public class Game {
             int i;
             for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
             if( i == numOfPlayers ) throw new UsernameNotFoundException();
-            listeners[i] = listener;
             notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+            listeners[i] = listener;
+            listener.update(new UpdateViewMessage(new GameView(this)));
+
         }
 
     }

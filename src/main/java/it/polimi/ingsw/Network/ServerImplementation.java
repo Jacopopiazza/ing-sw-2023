@@ -58,13 +58,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
 
     /**
-     * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
-     * and lobbiesWaitingToStart collections.
-     *
-     * @throws RemoteException if there is an error in remote method invocation
-     */
-
-    /**
      * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
      *
      * @return the singleton instance of the server
@@ -87,23 +80,24 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         Thread rmiThread = new Thread() {
             @Override
             public void run() {
-                logger.log(Level.INFO, "Start RMI");
+                logger.log(Level.INFO, "Start RMI service");
                 try {
-                    startRMI(getInstance());
+                    startRMI();
                 } catch (RemoteException e) {
                     System.err.println("Cannot start RMI. This protocol will be disabled.");
                 }
             }
         };
+
         rmiThread.start();
 
         Thread socketThread = new Thread() {
             @Override
             public void run() {
-                logger.log(Level.INFO, "Start Socket");
+                logger.log(Level.INFO, "Start Socket service");
 
                 try {
-                    startSocket(getInstance());
+                    startSocket();
                 } catch (RemoteException e) {
                     System.err.println("Cannot start RMI server");
                     System.err.println(e.getMessage());
@@ -111,10 +105,15 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             }
         };
         socketThread.start();
-
-        logger.log(Level.INFO, "Server started");
+        logger.log(Level.INFO, "Start server");
     }
 
+    /**
+     * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
+     * and lobbiesWaitingToStart collections.
+     *
+     * @throws RemoteException if there is an error in remote method invocation
+     */
     private ServerImplementation() throws RemoteException {
         super();
         setUpLogger();
@@ -128,9 +127,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             public void run(){
 
                 while(true){
-
-                    if( isMessagesQueueEmpty() ) continue;
-
+                    if( isMessagesQueueEmpty() )
+                        continue;
                     Tuple<Message,Client> tuple = popFromMessagesQueue();
                     try {
                         effectivelyHandleMessage(tuple.getFirst(), tuple.getSecond());
@@ -178,6 +176,18 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
+     * Handles the incoming message from a client. It adds the message to the queue of messages to be processed.
+     *
+     * @param m      the incoming message
+     * @param client the client object associated with the message
+     * @throws RemoteException if there is an error in remote method invocation
+     */
+    public void handleMessage(Message m, Client client) throws RemoteException {
+        logger.log(Level.INFO, "Received message from client: " + m.getClass());
+        addToMessagesQueue(m,client);
+    }
+
+    /**
      * Handles a received message and performs appropriate actions based on its type.
      * This method is called to process messages received by the server.
      *
@@ -203,25 +213,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 } catch (RemoteException e) {
                     System.err.println("Cannot send message to client of: " + ((ReconnectMessage) m).getUsername());
                     System.err.println("Error: " + e.getMessage());
-
                 }
             }) );
         }
         else System.err.println("Message not recognized; ignoring it");
-    }
-
-    /**
-     * Handles the incoming message from a client. It adds the message to the queue of messages to be processed.
-     *
-     * @param m      the incoming message
-     * @param client the client object associated with the message
-     * @throws RemoteException if there is an error in remote method invocation
-     */
-    public void handleMessage(Message m, Client client) throws RemoteException {
-
-        logger.log(Level.INFO, "Received message from client: " + m.getClass());
-
-        addToMessagesQueue(m,client);
     }
 
     /**
@@ -290,7 +285,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
                 if( playingUsernames.contains(username) ) {
-                    logger.log(Level.INFO, "A player with username:  " + username + " already logged in");
+                    logger.log(Level.INFO, "A player with username:  " + username + " is already loggedin");
                     listener.update(new TakenUsernameMessage());
                     return;
                 }
@@ -364,41 +359,35 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     /**
      * Starts the RMI server by creating the RMI registry and binding the server instance to a name in the registry.
      *
-     * @param server the server instance to be bound to the RMI registry
      * @throws RemoteException if there is an error in remote method invocation
      */
-    private static void startRMI(Server server) throws RemoteException {
+    private static void startRMI() throws RemoteException {
         LocateRegistry.createRegistry(1099);
         Registry registry = LocateRegistry.getRegistry();
-        registry.rebind("G26-MyShelfie-Server", server);
-        System.out.println("Waiting for a new RMI client...");
+        registry.rebind("G26-MyShelfie-Server", getInstance());
     }
 
     /**
      * Starts the socket server by creating a ServerSocket and accepting incoming socket connections. Each connection is
      * handled by a separate thread using the ClientSkeleton class.
      *
-     * @param server the server instance
      * @throws RemoteException if there is an error in remote method invocation
      */
-    public static void startSocket(Server server) throws RemoteException {
+    public static void startSocket() throws RemoteException {
         try (ServerSocket serverSocket = new ServerSocket(1234)) {
             while(true) {
                 logger.log(Level.INFO, "Waiting for a new socket...");
                 Socket socket = serverSocket.accept();
-                logger.log(Level.INFO, "Socket client connected");
-
+                logger.log(Level.INFO, "New socket accepted");
                 getInstance().executorService.execute(() -> {
                     try {
-                        ClientSkeleton clientSkeleton = new ClientSkeleton(server, socket);
-                        while(true) {
+                        ClientSkeleton clientSkeleton = new ClientSkeleton(getInstance(), socket);
+                        while(true)
                             clientSkeleton.receive();
-                        }
                     } catch (RemoteException e) {
-                        logger.log(Level.SEVERE, "Cannot receive from client. Closing this connection...");
+                        logger.log(Level.SEVERE, "Error receiving from client");
                     } finally {
-                        logger.log(Level.INFO, "Client disconnected");
-
+                        logger.log(Level.INFO, "Socket client disconnected");
                         try {
                             socket.close();
                         } catch (IOException e) {
@@ -417,24 +406,16 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * sets up a formatter for the file handler, creates a console handler, and adds the handlers to the logger.
      */
     private static void setUpLogger(){
-
         FileHandler fileHandler;
-
-        // Crea un gestore di log su file
         try{
             fileHandler = new FileHandler("server.log");
-        }catch (IOException ex){
+        } catch (IOException ex){
             System.err.println("Cannot create log file. Halting...");
             return;
         }
         fileHandler.setFormatter(new SimpleFormatter());
-
-        // Imposta il livello di logging dei gestori
         fileHandler.setLevel(Level.SEVERE);
-
-        // Aggiungi i gestori al logger
         logger.addHandler(fileHandler);
-
     }
 
 }

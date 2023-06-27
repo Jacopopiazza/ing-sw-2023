@@ -8,16 +8,6 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidCoordinatesForCurrentGameException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidCoordinatesForCurrentGameException with the specified error message.
-     *
-     * @param errorMessage the error message describing the exception
-     */
-
-    public InvalidCoordinatesForCurrentGameException(String errorMessage) {
-        super(errorMessage);
-    }
-
-    /**
      * Constructs a new InvalidCoordinatesForCurrentGameException with no error message.
      */
 

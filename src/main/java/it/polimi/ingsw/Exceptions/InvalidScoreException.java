@@ -8,16 +8,6 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidScoreException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidScoreException with the specified error message.
-     *
-     * @param errorMessage the error message describing the exception
-     */
-
-    public InvalidScoreException(String errorMessage) {
-        super(errorMessage);
-    }
-
-    /**
      * Constructs a new InvalidScoreException with no error message.
      */
 

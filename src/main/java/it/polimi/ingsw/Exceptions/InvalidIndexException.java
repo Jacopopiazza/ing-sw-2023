@@ -8,16 +8,6 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidIndexException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidIndexException with the specified error message.
-     *
-     * @param errorMessage the error message describing the exception
-     */
-
-    public InvalidIndexException(String errorMessage) {
-        super(errorMessage);
-    }
-
-    /**
      * Constructs a new InvalidIndexException with no error message.
      */
 

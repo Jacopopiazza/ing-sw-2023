@@ -7,15 +7,6 @@ package it.polimi.ingsw.Exceptions;
 public class EmptySackException extends Exception {
 
     /**
-     * Constructs a new EmptySackException with the specified error message.
-     *
-     * @param errorMessage the error message describing the exception
-     */
-    public EmptySackException(String errorMessage) {
-        super(errorMessage);
-    }
-
-    /**
      * Constructs a new EmptySackException with no error message.
      */
     public EmptySackException(){

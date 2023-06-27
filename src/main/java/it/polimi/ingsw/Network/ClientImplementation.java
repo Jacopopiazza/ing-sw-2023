@@ -23,9 +23,6 @@ import java.util.logging.SimpleFormatter;
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private View view;
     private Server server;
-    private boolean inGameServer = false;
-    private Queue<Message> messageList = new LinkedList<>();
-    private Thread thread;
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
 
     /**
@@ -45,9 +42,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             } catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());
-                return;
             }
-
 
         });
 
@@ -102,7 +97,6 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
         });
 
-        this.inGameServer = true;
 
     }
 

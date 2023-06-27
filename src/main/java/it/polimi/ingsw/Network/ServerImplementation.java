@@ -218,6 +218,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         logger.log(Level.INFO, "Player " + username + " kicked");
 
         synchronized (playingUsernames) {
+
+            playingUsernames.remove(username);
+
             if( lobby == lobbiesWaitingToStart.peek() && lobby.getNumOfActivePlayers() == 0 ) {
                 lobbiesWaitingToStart.poll();
                 while( lobbiesWaitingToStart.peek() != null && lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 ) lobbiesWaitingToStart.poll();

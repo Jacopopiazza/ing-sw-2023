@@ -18,7 +18,6 @@ import java.util.logging.Level;
  */
 public class ClientSkeleton implements Client {
     private Server server;
-
     private Socket socket;
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
@@ -53,7 +52,6 @@ public class ClientSkeleton implements Client {
      * @throws RemoteException if an error occurs while sending the message
      */
     public void update(Message m) throws RemoteException {
-        System.out.println("ClientSkeleton is sending message to client");
         ServerImplementation.logger.log(Level.INFO, "ClientSkeleton is sending " + m.toString() + " message.");
         if( m instanceof GameServerMessage){
             server = ((GameServerMessage) m).getServer();
@@ -65,8 +63,7 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send message", e);
         }
 
-        ServerImplementation.logger.log(Level.INFO, "ClientSkeleton sent " + m.toString() + " message succesfully.");
-
+        ServerImplementation.logger.log(Level.INFO, "ClientSkeleton sent " + m.toString() + " message successfully.");
     }
 
     /**
@@ -97,16 +94,7 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot deserialize choice from client", e);
         }
 
-        System.out.println("Received message: " + m.toString());
-
-        if( m instanceof ReconnectMessageTicket ){
-            Message packed = new ReconnectMessage(((ReconnectMessageTicket) m).getUsername());
-            server.handleMessage(packed, this);
-        }
-        else if( m instanceof RegisterMessageTicket ){
-            server.handleMessage(new RegisterMessage(((RegisterMessageTicket) m).getUsername(), ((RegisterMessageTicket) m).getNumOfPlayers()), this);
-        }
-        else server.handleMessage(m, this);
+        server.handleMessage(m, this);
     }
 
 

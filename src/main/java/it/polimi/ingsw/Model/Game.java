@@ -122,7 +122,7 @@ public class Game {
             int i;
             for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
             if( i == numOfPlayers ) throw new UsernameNotFoundException();
-            notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+            notifyAllListeners(new GameView(null,getNumOfActivePlayers()+1));
             listeners[i] = listener;
             listener.update(new UpdateViewMessage(new GameView(this)));
 

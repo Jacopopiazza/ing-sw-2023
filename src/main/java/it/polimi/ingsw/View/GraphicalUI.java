@@ -989,7 +989,10 @@ public class GraphicalUI extends UserInterface {
             }
             if(gw.getNumOfActivePlayers() != null) {
                 if(gw.getNumOfActivePlayers() == 1) errorText.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
-                if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) errorText.setText("a player reconnected, the game can go on");
+                else if(gw.getNumOfActivePlayers() == 2 && numOfActivePlayers == 1) errorText.setText("a player reconnected, the game can go on");
+                else if(gw.getNumOfActivePlayers() > numOfActivePlayers) errorText.setText("a player reconnected");
+                else if(gw.getNumOfActivePlayers() < numOfActivePlayers) errorText.setText("a player disconnected");
+
                 numOfActivePlayers = gw.getNumOfActivePlayers();
             }
             if(gw.getGlobalGoals() != null){

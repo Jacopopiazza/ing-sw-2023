@@ -254,7 +254,7 @@ public class Game {
      * @return The listener at the specified index.
      * @throws InvalidIndexException if the index is invalid.
      */
-    public GameListener getlistener(int p) throws InvalidIndexException{
+    public GameListener getListener(int p) throws InvalidIndexException{
         synchronized (players){
             if( ( p < 0 ) || ( p >= players.length ) ) {
                 throw new InvalidIndexException();
@@ -469,11 +469,6 @@ public class Game {
                 }
             }
         }
-    }
-
-    public GameListener getListener(int index){
-        if( index < 0 || index >= listeners.length ) return null;
-        return listeners[index];
     }
 
     public GameListener getListener(String username) throws UsernameNotFoundException{

@@ -122,9 +122,9 @@ public class Controller  {
                 e.printStackTrace();
                 return;
             }
-            if( model.getNumOfActivePlayers() == 1 ) {
-                if (model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username)){
-                    if (!model.nextPlayer()) {
+            if( model.getNumOfActivePlayers() == 1 ){
+                if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) ){
+                    if (!model.nextPlayer()){
                         endGame();
                         return;
                     }
@@ -132,11 +132,12 @@ public class Controller  {
                 timer.schedule(task,timerLength*1000);
                 return;
             }
-            if( model.getNumOfActivePlayers() == 0 ){
+            if( model.getNumOfActivePlayers() == 0 )
                 endGame();
+            if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) ) {
+                if( !model.nextPlayer() )
+                    endGame();
             }
-            if( model.getPlayer(model.getCurrentPlayer()).getUsername().equals(username) )
-                if(!model.nextPlayer()) endGame();
         }
     }
 

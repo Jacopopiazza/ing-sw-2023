@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Controller.Controller;
+import it.polimi.ingsw.Exceptions.UsernameNotFoundException;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
@@ -44,7 +45,7 @@ import java.util.logging.Logger;
 public class GameServer extends UnicastRemoteObject implements Server {
     private Controller controller;
     private ServerImplementation serverImplementation = null;
-    private List<String> playingUsernames;
+    private String[] playingUsernames;
     private List<String> disconnectedUsernames;
     private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
     private int nextIdPing = 0;
@@ -64,7 +65,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
         super();
         this.serverImplementation = ServerImplementation.getInstance();
         this.controller = new Controller(new Game(numOfPlayers), this);
-        this.playingUsernames = new ArrayList<>();
+        this.playingUsernames = new String[numOfPlayers];
         this.disconnectedUsernames = new ArrayList<>();
 
         new Thread(){
@@ -79,7 +80,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                     try {
                         effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
                     }catch (RemoteException ex){
-                        ServerImplementation.logger.log(Level.SEVERE, "Cannot send message to client: " + ex.getMessage());
+                        ServerImplementation.logger.log(Level.SEVERE, "Failed to handle message of client: " + ex.getMessage());
                     }
                 }
             }
@@ -98,22 +99,29 @@ public class GameServer extends UnicastRemoteObject implements Server {
             public void run() {
                 while(true){
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(20000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                     ServerImplementation.logger.log(Level.INFO, "NEW ROUND OF PINGS");
                     synchronized (playingUsernames){
-                        for(int index = 0;index<playingUsernames.size();index++){
+                        for(int index = 0;index<playingUsernames.length;index++){
 
-                            GameListener listener = controller.getListener(index);
-                            if(listener == null || playingUsernames.get(index) == null) continue;
-                            final String usernameForThread = playingUsernames.get(index);
+                            final String username = playingUsernames[index];
 
+                            if(username == null) continue;
+                            ServerImplementation.logger.log(Level.INFO,"Pinging player " + username + "(index: " + index + ") for ping #" + nextIdPing);
+
+                            GameListener listener;
+                            try{
+                                listener = controller.getListener(username);
+                            }catch (UsernameNotFoundException ex){
+                                continue;
+                            }
 
                             PingMessage pingMessage = new PingMessage(nextIdPing);
                             idPingToBeAnswered[index] = nextIdPing;
-                            ServerImplementation.logger.log(Level.INFO,"Set ping #" + pingMessage.getpingNumber() + " for player " + usernameForThread + "(index: " + index + ")");
+                            ServerImplementation.logger.log(Level.INFO,"Set ping #" + pingMessage.getpingNumber() + " for player " + username + "(index: " + index + ")");
 
                             nextIdPing = (nextIdPing+1) % 100000;
 
@@ -126,15 +134,15 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                     synchronized (playingUsernames){
                                         //player has not answered to ping
                                         //disconnect player
-                                        ServerImplementation.logger.log(Level.INFO, usernameForThread + " has not answered to ping #" + idPingToBeAnswered[indexThread] + " in time; DISCONNECTING HIM");
-                                        disconnect(usernameForThread);
+                                        ServerImplementation.logger.log(Level.INFO, username + " has not answered to ping #" + idPingToBeAnswered[indexThread] + " in time; DISCONNECTING HIM");
+                                        disconnect(username);
 
 
                                     }
                                 }
                             };
 
-                            playersTimers[index].schedule(playersTimersTasks[index], 7500);
+                            playersTimers[index].schedule(playersTimersTasks[index], 12500);
 
                             try{
                                 listener.update(pingMessage);
@@ -143,7 +151,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                 continue;
                             }
 
-                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getpingNumber() + " to " + usernameForThread);
+                            ServerImplementation.logger.log(Level.INFO,"Sent ping #" + pingMessage.getpingNumber() + " to " + username);
 
 
                         }
@@ -155,14 +163,14 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
     public void resetTimerAndPing(PingMessage message){
         //get index of element in idPingToBeAnswered with value message.getpingNumber()
-        ServerImplementation.logger.log(Level.INFO,"Startd to handle ping #" + message.getpingNumber());
+        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getpingNumber() + " from sender: " + message.getSender());
         synchronized (playingUsernames){
             int index = -1;
             for(int i = 0; i < idPingToBeAnswered.length; i++){
                 boolean resCheck = idPingToBeAnswered[i] == message.getpingNumber();
                 if(resCheck){
                     index = i;
-                    ServerImplementation.logger.log(Level.INFO,"Ping of player " + playingUsernames.get(i) + " at index i=" + i);
+                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getpingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
                     break;
                 }
             }
@@ -171,11 +179,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
 
             if(playersTimers[index] != null){
+                ServerImplementation.logger.log(Level.INFO,"Reset timer and ping for player " + playingUsernames[index] + " (player index i="+index + ")");
                 playersTimersTasks[index].cancel();
                 playersTimers[index].cancel();
             }
-
-            ServerImplementation.logger.log(Level.INFO,"Reset timer and ping for player " + playingUsernames.get(index) + " at index i="+index);
 
         }
 
@@ -287,7 +294,12 @@ public class GameServer extends UnicastRemoteObject implements Server {
     public void reconnect(String username, GameListener listener) {
         this.controller.reconnect(username, listener);
         synchronized (playingUsernames) {
-            playingUsernames.add(username);
+            for(int i = 0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] == null){
+                    playingUsernames[i] = username;
+                    break;
+                }
+            }
         }
         synchronized (disconnectedUsernames) {
             disconnectedUsernames.remove(username);
@@ -306,7 +318,12 @@ public class GameServer extends UnicastRemoteObject implements Server {
         synchronized (playingUsernames) {
             res = this.controller.addPlayer(username, listener);
             listener.update(new GameServerMessage(this));
-            playingUsernames.add(username);
+            for(int i = 0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] == null){
+                    playingUsernames[i] = username;
+                    break;
+                }
+            }
         }
         return res;
     }
@@ -329,9 +346,14 @@ public class GameServer extends UnicastRemoteObject implements Server {
      */
     private void disconnect(String username) {
         synchronized (playingUsernames) {
-            if( !playingUsernames.contains(username) ) return;
-
-            playingUsernames.remove(username);
+            int i = 0;
+            for(i=0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] != null && playingUsernames[i].equals(username)){
+                    playingUsernames[i] = null;
+                    break;
+                }
+            }
+            if(i == playingUsernames.length) return; // username not found
             if( isGameStarted() ) {
                 synchronized (disconnectedUsernames) {
                     disconnectedUsernames.add(username);
@@ -357,7 +379,13 @@ public class GameServer extends UnicastRemoteObject implements Server {
      */
     private void doTurn(String username, Coordinates[] chosenTiles, int column) {
         synchronized (playingUsernames) {
-            if( !playingUsernames.contains(username) || !isGameStarted() ) return; // message is ignored
+            int i = 0;
+            for(i=0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] != null && playingUsernames[i].equals(username)){
+                    break;
+                }
+            }
+            if( i == playingUsernames.length || !isGameStarted() ) return; // message is ignored
             controller.doTurn(username,chosenTiles,column);
         }
     }

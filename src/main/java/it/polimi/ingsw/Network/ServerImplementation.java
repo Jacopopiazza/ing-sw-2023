@@ -83,7 +83,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                     try {
                         effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
                     } catch (RemoteException ex){
-                        logger.log(Level.SEVERE, "Cannot send message to client: " + ex.getMessage());
+                        logger.log(Level.SEVERE, "Failed to handle message from client: " + ex.getMessage());
                     }
                 }
             }
@@ -139,7 +139,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 try {
                     client.update(message);
                 } catch (RemoteException e) {
-                    System.err.println("Cannot send message to client");
+                    System.err.println("Cannot send message to client of: " + ((RegisterMessage)m).getUsername());
+                    System.err.println("Error: " + e.getMessage());
                 }
             }) );
         }
@@ -148,7 +149,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 try {
                     client.update(message);
                 } catch (RemoteException e) {
-                    System.err.println("Cannot send message to client");
+                    System.err.println("Cannot send message to client of: " + ((ReconnectMessage) m).getUsername());
+                    System.err.println("Error: " + e.getMessage());
+
                 }
             }) );
         }
@@ -431,7 +434,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * sets up a formatter for the file handler, creates a console handler, and adds the handlers to the logger.
      */
     private static void setUpLogger(){
-        logger.setLevel(Level.ALL); // Imposta il livello di logging desiderato
 
         FileHandler fileHandler;
 
@@ -445,7 +447,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         fileHandler.setFormatter(new SimpleFormatter());
 
         // Imposta il livello di logging dei gestori
-        fileHandler.setLevel(Level.ALL);
+        fileHandler.setLevel(Level.SEVERE);
 
         // Aggiungi i gestori al logger
         logger.addHandler(fileHandler);

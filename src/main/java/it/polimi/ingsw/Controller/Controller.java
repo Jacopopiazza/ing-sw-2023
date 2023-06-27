@@ -265,4 +265,8 @@ public class Controller  {
     public GameListener getListener(Integer index){
         return model.getlistener(index);
     }
+
+    public GameListener getListener(String username) throws UsernameNotFoundException{
+        return model.getListener(username);
+    }
 }

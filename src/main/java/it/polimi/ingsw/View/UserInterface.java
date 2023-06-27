@@ -190,6 +190,8 @@ public abstract class UserInterface implements Runnable, View
      */
     protected void doReconnect(String username){
         ClientImplementation.logger.log(Level.INFO,"Sending reconnect message");
+        //TODO: REMOVE
+        ((ClientImplementation)client).chiSono = username;
         notifyListeners(new ReconnectMessage(username));
     }
 

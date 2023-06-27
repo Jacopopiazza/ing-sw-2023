@@ -62,25 +62,26 @@ public class Game {
      * picking global goals, and marking the game as started.
      */
     public void init() {
-        PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(numOfPlayers);
-        for( int i = 0; i < numOfPlayers; i++ )
-            players[i].init(privateGoals[i]);
-        board = new GameBoard(numOfPlayers);
-        sack = new TileSack();
-        try {
-            refillGameBoard();
-        } catch (EmptySackException e) {
-            e.printStackTrace();
+
+        synchronized (players) {
+            PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(numOfPlayers);
+            for (int i = 0; i < numOfPlayers; i++)
+                players[i].init(privateGoals[i]);
+            board = new GameBoard(numOfPlayers);
+            sack = new TileSack();
+            try {
+                refillGameBoard();
+            } catch (EmptySackException e) {
+                e.printStackTrace();
+            }
+
+            //Randomly select first player
+            currentPlayer = new Random().nextInt(numOfPlayers);
+            goals = this.pickTwoGlobalGoals();
+            cheaters = new Stack<String>();
+            started = true;
+            notifyAllListeners();
         }
-        // Shuffle in the same order players and listeners
-        Random rnd = new Random(System.currentTimeMillis());
-        Collections.shuffle(Arrays.asList(players), rnd );
-        Collections.shuffle(Arrays.asList(listeners), rnd );
-        currentPlayer = 0;
-        goals = this.pickTwoGlobalGoals();
-        cheaters = new Stack<String>();
-        started = true;
-        notifyAllListeners();
     }
 
     /**
@@ -99,12 +100,14 @@ public class Game {
      * @param listener The listener for the player.
      */
     public void addPlayer(String username, GameListener listener) {
-        int i;
-        for( i=0; ( i<numOfPlayers ) && ( players[i] != null ); i++ );
-        players[i] = new Player(username);
-        listeners[i] = listener;
-        if( currentPlayer == -1 ) currentPlayer = 0;
-        notifyAllListeners();
+        synchronized (players){
+            int i;
+            for( i=0; ( i<numOfPlayers ) && ( players[i] != null ); i++ );
+            players[i] = new Player(username);
+            listeners[i] = listener;
+            if( currentPlayer == -1 ) currentPlayer = 0;
+            notifyAllListeners();
+        }
     }
 
     /**
@@ -115,11 +118,14 @@ public class Game {
      * @throws UsernameNotFoundException if the specified username is not found in the game.
      */
     public void reconnect(String username, GameListener listener) throws UsernameNotFoundException {
-        int i;
-        for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
-        if( i == numOfPlayers ) throw new UsernameNotFoundException();
-        listeners[i] = listener;
-        notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+        synchronized (players){
+            int i;
+            for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
+            if( i == numOfPlayers ) throw new UsernameNotFoundException();
+            listeners[i] = listener;
+            notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+        }
+
     }
 
     /**
@@ -129,11 +135,14 @@ public class Game {
      * @throws UsernameNotFoundException if the username is not found in the game.
      */
     public void disconnect(String username) throws UsernameNotFoundException {
-        int i;
-        for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
-        if( i == numOfPlayers ) throw new UsernameNotFoundException();
-        listeners[i] = null;
-        notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+        synchronized (players){
+            int i;
+            for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
+            if( i == numOfPlayers ) throw new UsernameNotFoundException();
+            listeners[i] = null;
+            notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+        }
+
     }
 
     /**
@@ -143,15 +152,19 @@ public class Game {
      * @throws UsernameNotFoundException if the username is not found in the game.
      */
     public GameListener kick(String username) throws UsernameNotFoundException {
-        GameListener listener;
-        int i;
-        for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
-        if( i == numOfPlayers ) throw new UsernameNotFoundException();
-        listener = listeners[i];
-        listeners[i] = null;
-        players[i] = null;
-        notifyAllListeners();
-        return listener;
+        synchronized (players){
+            GameListener listener;
+            int i;
+            for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
+            if( i == numOfPlayers ) throw new UsernameNotFoundException();
+            listener = listeners[i];
+            listeners[i] = null;
+            players[i] = null;
+            notifyAllListeners();
+            return listener;
+        }
+
+
     }
 
     /**
@@ -160,7 +173,9 @@ public class Game {
      * @return The number of players in the game.
      */
     public int getNumOfPlayers() {
-        return numOfPlayers;
+        synchronized (players){
+            return numOfPlayers;
+        }
     }
 
     /**
@@ -178,9 +193,12 @@ public class Game {
      * @return The number of active players in the game.
      */
     public int getNumOfActivePlayers() {
-        int result = 0;
-        for( int i=0; i<numOfPlayers; i++ ) if( listeners[i] != null ) result++;
-        return result;
+        synchronized (players){
+            int result = 0;
+            for( int i=0; i<numOfPlayers; i++ ) if( listeners[i] != null ) result++;
+            return result;
+        }
+
     }
 
     /**
@@ -189,11 +207,13 @@ public class Game {
      * @return true if the game is not over, false if the game is over.
      */
     public boolean nextPlayer() {
-        currentPlayer = (currentPlayer+1) % players.length;
-        while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
-        if( players[currentPlayer].getShelf().isFull() )
-            return false;
-        notifyAllListeners(new GameView(currentPlayer,null));
+        synchronized (players){
+            currentPlayer = (currentPlayer+1) % players.length;
+            while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
+            if( players[currentPlayer].getShelf().isFull() )
+                return false;
+            notifyAllListeners(new GameView(currentPlayer,null));
+        }
         return true;
     }
 
@@ -218,10 +238,13 @@ public class Game {
      * @throws InvalidIndexException if the index is invalid.
      */
     public Player getPlayer(int p) throws InvalidIndexException{
-        if( ( p < 0 ) || ( p >= players.length ) ) {
-            throw new InvalidIndexException();
+        synchronized (players){
+            if( ( p < 0 ) || ( p >= players.length ) ) {
+                throw new InvalidIndexException();
+            }
+            return players[p];
         }
-        return players[p];
+
     }
 
     /**
@@ -232,10 +255,13 @@ public class Game {
      * @throws InvalidIndexException if the index is invalid.
      */
     public GameListener getlistener(int p) throws InvalidIndexException{
-        if( ( p < 0 ) || ( p >= players.length ) ) {
-            throw new InvalidIndexException();
+        synchronized (players){
+            if( ( p < 0 ) || ( p >= players.length ) ) {
+                throw new InvalidIndexException();
+            }
+            return listeners[p];
         }
-        return listeners[p];
+
     }
 
     /**
@@ -428,24 +454,42 @@ public class Game {
      * If the game has not started, it sends a lobby message with the player usernames.
      */
     private void notifyAllListeners(){
-        if( started ){
-            Message gv = new UpdateViewMessage(new GameView(this));
-            for(int i = 0;i < listeners.length;i++){
-                if( listeners[i] != null ) listeners[i].update(gv);
+        synchronized (players){
+            if( started ){
+                Message gv = new UpdateViewMessage(new GameView(this));
+                for(int i = 0;i < listeners.length;i++){
+                    if( listeners[i] != null ) listeners[i].update(gv);
+                }
             }
-        }
-        else{
-            List<String> players = Arrays.stream(this.players).filter(x -> x!=null).map(x -> x.getUsername()).toList();
-            Message lobby = new LobbyMessage(players);
-            for( GameListener el : listeners ){
-                if( el != null ) el.update(lobby);
+            else{
+                List<String> players = Arrays.stream(this.players).filter(x -> x!=null).map(x -> x.getUsername()).toList();
+                Message lobby = new LobbyMessage(players);
+                for( GameListener el : listeners ){
+                    if( el != null ) el.update(lobby);
+                }
             }
         }
     }
 
-    private GameListener getListener(int index){
+    public GameListener getListener(int index){
         if( index < 0 || index >= listeners.length ) return null;
         return listeners[index];
+    }
+
+    public GameListener getListener(String username) throws UsernameNotFoundException{
+        synchronized (players){
+            int i;
+            for(i = 0;i<players.length;i++){
+                if(players[i] != null && players[i].getUsername().equals(username)) break;
+            }
+
+            if(i >= players.length){
+                throw new UsernameNotFoundException();
+            }
+
+            return listeners[i];
+        }
+
     }
 
 }

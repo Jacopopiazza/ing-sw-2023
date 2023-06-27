@@ -46,7 +46,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private ServerImplementation serverImplementation = null;
     private String[] playingUsernames;
     private List<String> disconnectedUsernames;
-    private Queue<Tuple<Message, Client>> recievedMessages = new LinkedList<>();
+    private Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
     private int nextIdPing = 0;
     private int[] idPingToBeAnswered;
     private Timer[] playersTimers;
@@ -196,8 +196,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @param c The client associated with the message.
      */
     private void addToMessagesQueue(Message m, Client c) {
-        synchronized (recievedMessages) {
-            recievedMessages.add(new Tuple<>(m, c));
+        synchronized (receivedMessages) {
+            receivedMessages.add(new Tuple<>(m, c));
         }
     }
 
@@ -207,8 +207,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @return {@code true} if the message queue is empty, {@code false} otherwise.
      */
     private boolean isMessagesQueueEmpty() {
-        synchronized (recievedMessages) {
-            return recievedMessages.isEmpty();
+        synchronized (receivedMessages) {
+            return receivedMessages.isEmpty();
         }
     }
 
@@ -218,8 +218,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
      */
     private Tuple<Message, Client> popFromMessagesQueue() {
-        synchronized (recievedMessages) {
-            return recievedMessages.poll();
+        synchronized (receivedMessages) {
+            return receivedMessages.poll();
         }
     }
 
@@ -260,7 +260,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      */
     @Override
     public void handleMessage(Message m, Client client) throws RemoteException {
-        ServerImplementation.logger.log(Level.INFO, "Recieved message from client: " + m.getClass());
+        ServerImplementation.logger.log(Level.INFO, "Received message from client: " + m.getClass());
         addToMessagesQueue(m,client);
     }
 

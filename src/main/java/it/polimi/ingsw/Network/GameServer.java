@@ -77,7 +77,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                     Tuple<Message,Client> tuple = popFromMessagesQueue();
                     try {
-                        effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
+                        effectivelyHandleMessage(tuple.getFirst(), tuple.getSecond());
                     }catch (RemoteException ex){
                         ServerImplementation.logger.log(Level.SEVERE, "Failed to handle message of client: " + ex.getMessage());
                     }
@@ -231,7 +231,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * @param client The client associated with the message.
      * @throws RemoteException If a remote exception occurs during message handling.
      */
-    private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
+    private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
             ServerImplementation.logger.log(Level.INFO, "Started to handle TurnMessage");

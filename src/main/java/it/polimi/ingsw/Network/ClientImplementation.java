@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Network;
 
+import it.polimi.ingsw.Exceptions.SingletonException;
 import it.polimi.ingsw.Messages.GameServerMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.PingMessage;
@@ -19,10 +20,10 @@ import java.util.logging.SimpleFormatter;
  * The ClientImplementation class is an implementation of the Client interface.
  */
 public class ClientImplementation extends UnicastRemoteObject implements Client {
+    private static ClientImplementation instance;
     private View view;
     private Server server;
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
-
     /**
      * Constructs a ClientImplementation instance with the specified view and server.
      *
@@ -30,7 +31,27 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
      * @param server the server handling the client's messages
      * @throws RemoteException if a remote communication error occurs
      */
-    public ClientImplementation(View view, Server server) throws RemoteException{
+
+    /**
+     * The main entry point of the client application.
+     *
+     * @param args the command-line arguments
+     */
+    public static void main(String[] args) {
+        setUpLogger();
+        View ui = ( ( args.length>0 ) && args[0].equals("cli") ) ? new TextualUI() : new GraphicalUI();
+        ui.run();
+    }
+
+    public static ClientImplementation getInstance(View view, Server server) throws SingletonException, RemoteException {
+        if( instance == null )
+            instance = new ClientImplementation(view, server);
+        if( ( instance.view != view ) || ( instance.server != server ) )
+            throw new SingletonException();
+        return instance;
+    }
+
+    private ClientImplementation(View view, Server server) throws RemoteException{
         super();
         this.view = view;
         this.server = server;
@@ -52,7 +73,6 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
      * @param m the message to update the client with
      * @throws RemoteException if a remote communication error occurs
      */
-
 
     @Override
     public void update(Message m) throws RemoteException {
@@ -98,29 +118,6 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
     }
 
-
-    /**
-     * The main entry point of the client application.
-     *
-     * @param args the command-line arguments
-     */
-    public static void main(String[] args) {
-
-        setUpLogger();
-
-        View ui;
-
-        if(args.length > 0 && args[0].equals("cli"))
-            ui = new TextualUI();
-        else{
-            ui = new GraphicalUI();
-        }
-
-        ui.run();
-
-
-    }
-
     /**
      * Sets up the logger for the client application.
      * Configures the logger level, creates log file handler and console handler,
@@ -132,21 +129,17 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         FileHandler fileHandler;
 
         // Crea un gestore di log su file
-        try{
+        try {
             fileHandler = new FileHandler("client.log");
-        }catch (IOException ex){
+        } catch (IOException ex) {
             System.err.println("Cannot create log file. Halting...");
             return;
         }
         fileHandler.setFormatter(new SimpleFormatter());
-
-
         // Imposta il livello di logging dei gestori
         fileHandler.setLevel(Level.SEVERE);
-
         // Aggiungi i gestori al logger
         logger.addHandler(fileHandler);
-
     }
 
 

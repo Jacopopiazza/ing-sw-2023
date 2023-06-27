@@ -81,7 +81,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
                     Tuple<Message,Client> tuple = popFromMessagesQueue();
                     try {
-                        effectivelyHandlMessage(tuple.getFirst(), tuple.getSecond());
+                        effectivelyHandleMessage(tuple.getFirst(), tuple.getSecond());
                     } catch (RemoteException ex){
                         logger.log(Level.SEVERE, "Failed to handle message from client: " + ex.getMessage());
                     }
@@ -133,7 +133,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @param client The client associated with the message.
      * @throws RemoteException If a remote exception occurs during message handling.
      */
-    private void effectivelyHandlMessage(Message m, Client client) throws RemoteException {
+    private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {
         if( m instanceof RegisterMessage ) {
             register( ((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers(), ( (message) -> {
                 try {

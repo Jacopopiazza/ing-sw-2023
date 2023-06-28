@@ -182,21 +182,21 @@ public class GraphicalUI extends UserInterface {
             //set up the text field for server IP
             JPanel wrapper = new JPanel();
             wrapper.setOpaque(false);
-            wrapper.setLayout(new FlowLayout());
-            wrapper.setMaximumSize(new Dimension(450,60));
+            wrapper.setLayout(new BoxLayout(wrapper,BoxLayout.PAGE_AXIS));
+            wrapper.setMaximumSize(new Dimension(500,60));
             request.add(wrapper);
 
-            //TODO: Fix position of IP: label in menu
             JPanel ipPanel = new JPanel();
             ipPanel.setOpaque(false);
-            ipPanel.setLayout(new BoxLayout(ipPanel,BoxLayout.PAGE_AXIS));
+            ipPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            ipPanel.setMaximumSize(new Dimension(305,60));
             wrapper.add(ipPanel);
             JLabel ip = new JLabel("IP:");
             ip.setFont(ip.getFont().deriveFont(14f));
             ip.setForeground(Color.decode("14929049"));
             ipPanel.add(ip);
-            JTextField ipTextField = getStandardTextField(260,25,14f);
-            ipPanel.add(ipTextField);
+            JTextField ipTextField = getStandardTextField(305,25,14f);
+            wrapper.add(ipTextField);
 
 
             //set up the options
@@ -384,30 +384,11 @@ public class GraphicalUI extends UserInterface {
 
         private JTextField getStandardTextField(int width, int height, float font){
             JTextField textField = new JTextField();
-            textField.setPreferredSize(new Dimension(width,height));
+            textField.setMaximumSize(new Dimension(width,height));
             textField.setFont(textField.getFont().deriveFont(font));
             textField.setBackground(Color.decode("14929049"));
             textField.setForeground(Color.decode("5776384"));
             return textField;
-        }
-
-        private boolean connectionChosen (JButton button) {
-            if(button.getText().equals("RMI")){
-                try{
-                    setUpRMIClient();
-                    return true;
-                }catch (RemoteException | NotBoundException ex ){
-                    return false;
-                }
-            } else if (button.getText().equals("Socket")) {
-                try{
-                    setUpSocketClient();
-                    return true;
-                }catch (RemoteException | NotBoundException ex ){
-                    return false;
-                }
-            }
-            return false;
         }
 
     }

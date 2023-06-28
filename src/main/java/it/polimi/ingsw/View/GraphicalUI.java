@@ -976,10 +976,11 @@ public class GraphicalUI extends UserInterface {
                 }
             }
             if( gw.getCurrentPlayer() != null ){
-                errorText.setText("");
                 currentPlayer = gw.getCurrentPlayer();
-                if( myId == currentPlayer )
+                if( myId == currentPlayer ){
+                    if(errorText.getText().equals("It is not your turn")) errorText.setText("");
                     text.setText("It is your turn, choose your tiles from the board");
+                }
                 else
                     text.setText("Wait for your turn");
             }

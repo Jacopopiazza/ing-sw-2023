@@ -138,20 +138,28 @@ public class TextualUI extends UserInterface {
     }
 
     private int readChoiceFromInput(String option_1, String option_2){
+        String inputRead;
         int choice = -1;
 
-        do{
+        while(true){
             out.println("1 - " + option_1);
             out.println("2 - " + option_2 + "\n");
             try{
-                choice = in.nextInt();
-                in.nextLine();
+                inputRead = in.nextLine();
             }catch ( InputMismatchException ex){
-                choice = -1;
+                out.println("Invalid selection!");
+                continue;
             }
-            if(choice<1 || choice>2) out.println("Invalid selection!");
-        }while (choice<1 || choice>2);
 
+            try{
+                choice = Integer.parseInt(inputRead);
+            } catch (NumberFormatException e) {
+                out.println("Invalid selection!");
+                continue;
+            }
+            if(choice != 1 && choice != 2) out.println("Invalid selection!");
+            else break;
+        }
         return choice;
     }
 

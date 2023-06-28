@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public class ShelfView implements Serializable {
     private static final long serialVersionUID=1L;
-    private final TileView[][] SHELF;
+    private final TileView[][] shelf;
 
     /**
      * Constructs a new ShelfView object based on the given Shelf object.
@@ -20,10 +20,10 @@ public class ShelfView implements Serializable {
      * @param shelf the Shelf object to create the view from
      */
     public ShelfView(Shelf shelf){
-        this.SHELF = new TileView[Shelf.getRows()][Shelf.getColumns()];
+        this.shelf = new TileView[Shelf.getRows()][Shelf.getColumns()];
         for(int i = 0; i < Shelf.getRows(); i++){
             for(int j = 0; j < Shelf.getColumns(); j++){
-                this.SHELF[i][j] = ( shelf.getTile(new Coordinates(i,j)) == null ) ? null : new TileView( shelf.getTile(new Coordinates(i,j) ) );
+                this.shelf[i][j] = ( shelf.getTile(new Coordinates(i,j)) == null ) ? null : new TileView( shelf.getTile(new Coordinates(i,j) ) );
             }
         }
     }
@@ -41,20 +41,7 @@ public class ShelfView implements Serializable {
             throw new ColumnOutOfBoundsException();
         }
 
-        return SHELF[c.getROW()][c.getCOL()];
+        return shelf[c.getROW()][c.getCOL()];
     }
 
-    /**
-     * Checks if the shelf is full, i.e., if all positions on the top row of the shelf are occupied by tiles.
-     *
-     * @return true if the shelf is full, false otherwise
-     */
-    public boolean isFull(){
-
-        for( int j = 0; j < Shelf.getColumns(); j++ ){
-            if( SHELF[0][j] == null ) return false;
-        }
-
-        return true;
-    }
 }

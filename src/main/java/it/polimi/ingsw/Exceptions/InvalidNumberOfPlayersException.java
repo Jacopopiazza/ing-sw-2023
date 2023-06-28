@@ -8,19 +8,17 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidNumberOfPlayersException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidNumberOfPlayersException with the specified error message.
+     * Constructs a new {@code InvalidNumberOfPlayersException} with the specified error message.
      *
      * @param errorMessage the error message describing the exception
      */
-
     public InvalidNumberOfPlayersException(String errorMessage) {
         super(errorMessage);
     }
 
     /**
-     * Constructs a new InvalidNumberOfPlayersException with no error message.
+     * Constructs a new {@code InvalidNumberOfPlayersException} with no error message.
      */
-
     public InvalidNumberOfPlayersException() {
 
     }

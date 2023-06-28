@@ -8,7 +8,7 @@ package it.polimi.ingsw.Exceptions;
 public class IllegalColumnInsertionException extends Exception{
 
     /**
-     * Constructs a new IllegalColumnInsertionException with the specified error message.
+     * Constructs a new {@code IllegalColumnInsertionException} with the specified error message.
      *
      * @param errorMessage the error message describing the exception
      */
@@ -18,7 +18,7 @@ public class IllegalColumnInsertionException extends Exception{
     }
 
     /**
-     * Constructs a new IllegalColumnInsertionException with no error message.
+     * Constructs a new {@code IllegalColumnInsertionException} with no error message.
      */
 
     public IllegalColumnInsertionException() {

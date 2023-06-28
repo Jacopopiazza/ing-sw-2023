@@ -8,7 +8,7 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidIndexException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidIndexException with no error message.
+     * Constructs a new {@code InvalidIndexException} with no error message.
      */
 
     public InvalidIndexException() {

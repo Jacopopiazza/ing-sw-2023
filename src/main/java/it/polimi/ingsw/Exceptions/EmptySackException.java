@@ -7,7 +7,7 @@ package it.polimi.ingsw.Exceptions;
 public class EmptySackException extends Exception {
 
     /**
-     * Constructs a new EmptySackException with no error message.
+     * Constructs a new {@code EmptySackException} with no error message.
      */
     public EmptySackException(){
 

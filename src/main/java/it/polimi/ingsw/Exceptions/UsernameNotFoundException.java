@@ -8,9 +8,8 @@ package it.polimi.ingsw.Exceptions;
 public class UsernameNotFoundException extends Exception{
 
     /**
-     * Constructs a new UsernameNotFoundException with no error message.
+     * Constructs a new {@code UsernameNotFoundException} with no error message.
      */
-
     public UsernameNotFoundException(){
 
     }

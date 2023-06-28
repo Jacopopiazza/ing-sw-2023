@@ -114,6 +114,51 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
+     * Starts the RMI server by creating the RMI registry and binding the server instance to a name in the registry.
+     *
+     * @throws RemoteException if there is an error in remote method invocation
+     */
+    private static void startRMI() throws RemoteException {
+        LocateRegistry.createRegistry(Config.getInstance().getRmiPort());
+        Registry registry = LocateRegistry.getRegistry();
+        registry.rebind("G26-MyShelfie-Server", getInstance());
+    }
+
+    /**
+     * Starts the socket server by creating a ServerSocket and accepting incoming socket connections. Each connection is
+     * handled by a separate thread using the ClientSkeleton class.
+     *
+     * @throws RemoteException if there is an error in remote method invocation
+     */
+    private static void startSocket() throws RemoteException {
+        try (ServerSocket serverSocket = new ServerSocket(Config.getInstance().getSocketPort())) {
+            while(true) {
+                logger.log(Level.INFO, "Waiting for a new socket...");
+                Socket socket = serverSocket.accept();
+                logger.log(Level.INFO, "New socket accepted");
+                getInstance().executorService.execute(() -> {
+                    try {
+                        ClientSkeleton clientSkeleton = new ClientSkeleton(getInstance(), socket);
+                        while(true)
+                            clientSkeleton.receive();
+                    } catch (RemoteException e) {
+                        logger.log(Level.SEVERE, "Error receiving from client");
+                    } finally {
+                        logger.log(Level.INFO, "Socket client disconnected");
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            System.err.println("Cannot close socket");
+                        }
+                    }
+                });
+            }
+        } catch (IOException e) {
+            throw new RemoteException("Cannot start socket server", e);
+        }
+    }
+
+    /**
      * Sets up the logger for the server. It configures the logger's level, creates a file handler for logging to a file,
      * sets up a formatter for the file handler, creates a console handler, and adds the handlers to the logger.
      */
@@ -377,51 +422,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             }) );
         }
         else System.err.println("Message not recognized; ignoring it");
-    }
-
-    /**
-     * Starts the RMI server by creating the RMI registry and binding the server instance to a name in the registry.
-     *
-     * @throws RemoteException if there is an error in remote method invocation
-     */
-    private static void startRMI() throws RemoteException {
-        LocateRegistry.createRegistry(Config.getInstance().getRmiPort());
-        Registry registry = LocateRegistry.getRegistry();
-        registry.rebind("G26-MyShelfie-Server", getInstance());
-    }
-
-    /**
-     * Starts the socket server by creating a ServerSocket and accepting incoming socket connections. Each connection is
-     * handled by a separate thread using the ClientSkeleton class.
-     *
-     * @throws RemoteException if there is an error in remote method invocation
-     */
-    public static void startSocket() throws RemoteException {
-        try (ServerSocket serverSocket = new ServerSocket(Config.getInstance().getSocketPort())) {
-            while(true) {
-                logger.log(Level.INFO, "Waiting for a new socket...");
-                Socket socket = serverSocket.accept();
-                logger.log(Level.INFO, "New socket accepted");
-                getInstance().executorService.execute(() -> {
-                    try {
-                        ClientSkeleton clientSkeleton = new ClientSkeleton(getInstance(), socket);
-                        while(true)
-                            clientSkeleton.receive();
-                    } catch (RemoteException e) {
-                        logger.log(Level.SEVERE, "Error receiving from client");
-                    } finally {
-                        logger.log(Level.INFO, "Socket client disconnected");
-                        try {
-                            socket.close();
-                        } catch (IOException e) {
-                            System.err.println("Cannot close socket");
-                        }
-                    }
-                });
-            }
-        } catch (IOException e) {
-            throw new RemoteException("Cannot start socket server", e);
-        }
     }
 
 }

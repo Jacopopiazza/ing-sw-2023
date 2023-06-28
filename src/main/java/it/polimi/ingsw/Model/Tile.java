@@ -4,8 +4,8 @@ package it.polimi.ingsw.Model;
  * The Tile class represents a tile in the game.
  */
 public class Tile implements Cloneable{
-    private final TileColor COLOR;  // The color of the tile
-    private final int ID;           // The ID of the tile
+    private final TileColor color;  // The color of the tile
+    private final int id;           // The ID of the tile
 
     /**
      * Constructs a new Tile object with the specified color and ID.
@@ -14,8 +14,8 @@ public class Tile implements Cloneable{
      * @param id    the ID of the tile
      */
     public Tile(TileColor color, int id) {
-        this.COLOR = color;
-        this.ID = id;
+        this.color = color;
+        this.id = id;
     }
 
     /**
@@ -24,7 +24,7 @@ public class Tile implements Cloneable{
      * @return the color of the tile
      */
     public TileColor getColor() {
-        return COLOR;
+        return color;
     }
 
     /**
@@ -33,7 +33,7 @@ public class Tile implements Cloneable{
      * @return the ID of the tile
      */
     public int getId() {
-        return ID;
+        return id;
     }
 
     /**
@@ -43,7 +43,7 @@ public class Tile implements Cloneable{
      */
     @Override
     public Tile clone() {
-        return new Tile(this.COLOR,this.ID);
+        return new Tile(this.color, this.id);
     }
 
     /**
@@ -60,7 +60,7 @@ public class Tile implements Cloneable{
         if( ( o == null ) || ( this.getClass() != o.getClass() ) )
             return false;
         Tile tile = (Tile) o;
-        return ( tile.ID == this.ID ) && ( tile.COLOR == this.COLOR );
+        return ( tile.id == this.id) && ( tile.color == this.color);
     }
 
 }

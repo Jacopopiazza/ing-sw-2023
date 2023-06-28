@@ -634,6 +634,7 @@ public class TextualUI extends UserInterface {
                 if (column == -1) break;
                 if (this.freeSpacesInMyShelf[column] < coords.size()) {
                     out.println("The chosen tiles can not fit in the column number " + String.valueOf(column + 1));
+                    column = -1;
                     continue;
                 }
                 break;

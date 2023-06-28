@@ -17,6 +17,30 @@ public abstract class GlobalGoal implements Cloneable {
     protected String description;
 
     /**
+     * Gets instances of global goals based on the number of players.
+     *
+     * @param people the number of players.
+     * @return a list of global goals.
+     * @throws InvalidNumberOfPlayersException if the number of players is invalid.
+     */
+    public static List<GlobalGoal> getInstances(int people) throws InvalidNumberOfPlayersException {
+        List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
+        goals.add(new Angles(people));
+        goals.add(new Shape(people,Config.getInstance().getDiagonalsFromJSON()));
+        goals.add(new ColumnsOrRows(people, false, true, 2, Shelf.getRows()));
+        goals.add(new ColumnsOrRows(people, false, false, 2, Shelf.getColumns()));
+        goals.add(new EightTiles(people));
+        goals.add(new ColumnsOrRows(people, true, true, 3, 3));
+        goals.add(new ColumnsOrRows(people, true, false, 4, 3));
+        goals.add(new GroupOfTiles(people,4,4));
+        goals.add(new Square(people));
+        goals.add(new Stair(people));
+        goals.add(new GroupOfTiles(people,2,6));
+        goals.add(new Shape(people,Config.getInstance().getXShapeFromJSON()));
+        return goals;
+    }
+
+    /**
      * Constructs a GlobalGoal with the specified number of players and ID.
      *
      * @param people the number of players.
@@ -33,21 +57,13 @@ public abstract class GlobalGoal implements Cloneable {
 
         scores = new Stack<Integer>();
         for( Config.GlobalGoalScore ggp : globalGoalScores ){
-            if( people >= ggp.players() ) scores.push(ggp.score());
+            if( people >= ggp.players() )
+                scores.push(ggp.score());
         }
 
         this.id = id;
 
     }
-
-    /**
-     * Checks if the given shelf satisfies the global goal.
-     *
-     * @param s the shelf to check.
-     * @return true if the shelf satisfies the global goal, false otherwise.
-     * @throws MissingShelfException if the shelf is missing or null.
-     */
-    public abstract boolean check(Shelf s) throws MissingShelfException;
 
     /**
      * Gets the view representation of the global goal.
@@ -64,6 +80,15 @@ public abstract class GlobalGoal implements Cloneable {
     }
 
     /**
+     * Checks if the given shelf satisfies the global goal.
+     *
+     * @param s the shelf to check.
+     * @return true if the shelf satisfies the global goal, false otherwise.
+     * @throws MissingShelfException if the shelf is missing or null.
+     */
+    public abstract boolean check(Shelf s) throws MissingShelfException;
+
+    /**
      * Gets the ID of the global goal.
      *
      * @return the ID of the global goal.
@@ -77,7 +102,9 @@ public abstract class GlobalGoal implements Cloneable {
      *
      * @return the description of the global goal.
      */
-    public String getDescription(){return description;}
+    public String getDescription(){
+        return description;
+    }
 
     /**
      * Removes and returns the next score from the stack of scores.
@@ -100,30 +127,6 @@ public abstract class GlobalGoal implements Cloneable {
         GlobalGoal gg = (GlobalGoal) super.clone();
         gg.scores = (Stack) scores.clone();
         return gg;
-    }
-
-    /**
-     * Gets instances of global goals based on the number of players.
-     *
-     * @param people the number of players.
-     * @return a list of global goals.
-     * @throws InvalidNumberOfPlayersException if the number of players is invalid.
-     */
-    public static List<GlobalGoal> getInstances(int people) throws InvalidNumberOfPlayersException {
-        List<GlobalGoal> goals = new ArrayList<GlobalGoal>();
-        goals.add(new Angles(people));
-        goals.add(new Shape(people,Config.getInstance().getDiagonalsFromJSON()));
-        goals.add(new ColumnsOrRows(people, false, true, 2, Shelf.getRows()));
-        goals.add(new ColumnsOrRows(people, false, false, 2, Shelf.getColumns()));
-        goals.add(new EightTiles(people));
-        goals.add(new ColumnsOrRows(people, true, true, 3, 3));
-        goals.add(new ColumnsOrRows(people, true, false, 4, 3));
-        goals.add(new GroupOfTiles(people,4,4));
-        goals.add(new Square(people));
-        goals.add(new Stair(people));
-        goals.add(new GroupOfTiles(people,2,6));
-        goals.add(new Shape(people,Config.getInstance().getXShapeFromJSON()));
-        return goals;
     }
 
 }

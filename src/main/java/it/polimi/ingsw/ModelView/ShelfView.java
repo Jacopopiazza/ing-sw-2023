@@ -15,9 +15,9 @@ public class ShelfView implements Serializable {
     private final TileView[][] shelf;
 
     /**
-     * Constructs a new {@code ShelfView} object based on the given {@link it.polimi.ingsw.Model.Shelf} object.
+     * Constructs a new {@code ShelfView} object based on the given {@code Shelf} object.
      *
-     * @param shelf the {@link it.polimi.ingsw.Model.Shelf} object to create the view from
+     * @param shelf the {@link Shelf} object to create the view from
      */
     public ShelfView(Shelf shelf){
         this.shelf = new TileView[Shelf.getRows()][Shelf.getColumns()];
@@ -29,9 +29,9 @@ public class ShelfView implements Serializable {
     }
 
     /**
-     * Retrieves the {@link TileView} object at the specified coordinates on the shelf.
+     * Retrieves the {@code TileView} object at the specified coordinates on the shelf.
      *
-     * @param c the coordinates of the tile to retrieve
+     * @param c the {@link Coordinates} of the tile to retrieve
      * @return the {@link TileView} object at the specified coordinates
      * @throws ColumnOutOfBoundsException if the specified coordinates are out of bounds
      */

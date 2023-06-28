@@ -3,6 +3,7 @@ package it.polimi.ingsw.ModelView;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.GameBoard;
+import it.polimi.ingsw.Model.Player;
 
 import java.io.Serializable;
 import java.util.*;
@@ -33,17 +34,17 @@ public class GameBoardView implements Serializable {
     /**
      * Returns the set of coordinates on the game board.
      *
-     * @return the set of coordinates
+     * @return the set of {@link Coordinates}
      */
     public Set<Coordinates> getCoords(){
         return Collections.unmodifiableSet(board.keySet());
     }
 
     /**
-     * Retrieves the tile view at the specified coordinates.
+     * Retrieves the {@code TileView} at the specified coordinates.
      *
-     * @param c the coordinates of the tile
-     * @return the tile view at the specified coordinates
+     * @param c the {@link Coordinates} of the tile
+     * @return the {@link TileView} at the specified {@link Coordinates}
      * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid for the current game
      */
     public TileView getTile(Coordinates c) throws InvalidCoordinatesForCurrentGameException {
@@ -57,7 +58,7 @@ public class GameBoardView implements Serializable {
      * Checks if the tile at the specified coordinates is pickable.
      *
      * @param c the coordinates of the tile
-     * @return true if the tile is pickable, false otherwise
+     * @return {@code true} if the tile is pickable, {@code false} otherwise
      * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid for the current game
      */
     public boolean isPickable(Coordinates c) throws InvalidCoordinatesForCurrentGameException{

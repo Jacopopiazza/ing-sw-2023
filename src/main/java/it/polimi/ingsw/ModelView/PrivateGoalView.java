@@ -15,9 +15,9 @@ public class PrivateGoalView implements Serializable {
     private final Coordinates[] coords;
 
     /**
-     * Constructs a new {@code PrivateGoalView} object based on the given {@link it.polimi.ingsw.Model.PrivateGoal} object.
+     * Constructs a new {@code PrivateGoalView} object based on the given {@code PrivateGoal} object.
      *
-     * @param goal the {@link it.polimi.ingsw.Model.PrivateGoal} object to create the view from
+     * @param goal the {@link PrivateGoal} object to create the view from
      */
 
     public PrivateGoalView(PrivateGoal goal){
@@ -26,9 +26,9 @@ public class PrivateGoalView implements Serializable {
     }
 
     /**
-     * Retrieves the array of coordinates associated with the private goal.
+     * Retrieves the array of {@code Coordinates} associated with the private goal.
      *
-     * @return an array of {@link it.polimi.ingsw.Model.Coordinates} representing the associated coordinates
+     * @return an array of {@link Coordinates} representing the associated coordinates
      */
 
     public Coordinates[] getCoordinates(){

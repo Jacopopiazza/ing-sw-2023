@@ -18,9 +18,9 @@ public class PlayerView implements Serializable {
     private final boolean winner;
 
     /**
-     * Constructs a new {@code PlayerView} object based on the given {@link it.polimi.ingsw.Model.Player} object.
+     * Constructs a new {@code PlayerView} object based on the given {@code Player} object.
      *
-     * @param player the {@link it.polimi.ingsw.Model.Player} object to create the view from
+     * @param player the {@link Player} object to create the view from
      */
 
     public PlayerView(Player player){
@@ -43,7 +43,7 @@ public class PlayerView implements Serializable {
     /**
      * Retrieves the view of the player's shelf.
      *
-     * @return the {@link it.polimi.ingsw.ModelView.ShelfView} object representing the player's shelf
+     * @return the {@link ShelfView} object representing the player's shelf
      */
 
     public ShelfView getShelf() {
@@ -53,7 +53,7 @@ public class PlayerView implements Serializable {
     /**
      * Retrieves the view of the player's private goal.
      *
-     * @return the {@link it.polimi.ingsw.ModelView.PrivateGoalView} object representing the player's private goal
+     * @return the {@link PrivateGoalView} object representing the player's private goal
      */
 
     public PrivateGoalView getPrivateGoal() {

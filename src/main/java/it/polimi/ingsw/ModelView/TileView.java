@@ -15,9 +15,9 @@ public class TileView implements Serializable {
     private final int id;
 
     /**
-     * Constructs a new {@code TileView} object based on the given {@link it.polimi.ingsw.Model.Tile} object.
+     * Constructs a new {@code TileView} object based on the given {@code Tile} object.
      *
-     * @param tile the {@link it.polimi.ingsw.Model.Tile} object to create the view from
+     * @param tile the {@link Tile} object to create the view from
      */
 
     public TileView(Tile tile){

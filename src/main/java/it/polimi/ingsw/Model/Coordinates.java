@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Represents the coordinates of a position on a game board.
+ * Represents the coordinates of a position on a {@link GameBoard}.
  */
 public class Coordinates implements Serializable {
     private final int ROW;

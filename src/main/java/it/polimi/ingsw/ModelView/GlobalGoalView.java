@@ -16,9 +16,9 @@ public class GlobalGoalView implements Serializable {
     private final String description;
 
     /**
-     * Constructs a {@code GlobalGoalView} object based on the provided GlobalGoal.
+     * Constructs a {@code GlobalGoalView} object based on the provided {@code GlobalGoal}.
      *
-     * @param gg the {@link it.polimi.ingsw.Model.GlobalGoals.GlobalGoal} object to include in the view
+     * @param gg the {@link GlobalGoal} object to include in the view
      */
     public GlobalGoalView(GlobalGoal gg){
         int temp;

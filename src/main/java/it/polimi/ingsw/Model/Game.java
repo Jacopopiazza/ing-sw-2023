@@ -51,7 +51,7 @@ public class Game {
     /**
      * Returns the ModelView representation of the current game state.
      *
-     * @return The {@code GameView} object representing the current game state.
+     * @return The {@link GameView} object representing the current game state.
      */
     public GameView getView() {
         return new GameView(this);
@@ -98,7 +98,7 @@ public class Game {
      * all the other listeners.
      *
      * @param username The username of the player.
-     * @param listener The listener for the player.
+     * @param listener The {@link GameListener} for the player.
      */
     public void addPlayer(String username, GameListener listener) {
         synchronized (players){
@@ -116,7 +116,7 @@ public class Game {
      * and notifies all the other listeners of the reconnection.
      *
      * @param username The username of the player.
-     * @param listener The listener for the player.
+     * @param listener The {@link GameListener} for the player.
      * @throws UsernameNotFoundException if the specified username is not found in the game.
      */
     public void reconnect(String username, GameListener listener) throws UsernameNotFoundException {
@@ -226,7 +226,7 @@ public class Game {
     /**
      * Returns a clone of the global goals in the game.
      *
-     * @return A clone of the global goals in the game.
+     * @return A clone of the {@link GlobalGoal} of the game.
      * @throws CloneNotSupportedException if cloning fails.
      */
     public GlobalGoal[] getGoals() throws CloneNotSupportedException {
@@ -240,7 +240,7 @@ public class Game {
      * Returns the player at the specified index.
      *
      * @param p The index of the player to retrieve.
-     * @return The player at the specified index.
+     * @return The {@link Player} at the specified index.
      * @throws InvalidIndexException if the index is invalid.
      */
     public Player getPlayer(int p) throws InvalidIndexException{
@@ -257,7 +257,7 @@ public class Game {
      * Returns the listener at the specified index.
      *
      * @param p The index of the listener to retrieve.
-     * @return The listener at the specified index.
+     * @return The {@link GameListener} at the specified index.
      * @throws InvalidIndexException if the index is invalid.
      */
     public GameListener getListener(int p) throws InvalidIndexException{
@@ -274,7 +274,7 @@ public class Game {
      * Returns the listener of the player with the specified username.
      *
      * @param username The username of the player to retrieve.
-     * @return The listener of the player with the specified username.
+     * @return The {@link GameListener} of the player with the specified username.
      * @throws UsernameNotFoundException if the username is not found in the game.
      */
     public GameListener getListener(String username) throws UsernameNotFoundException{
@@ -319,7 +319,7 @@ public class Game {
     /**
      * Returns the tile sack of the game.
      *
-     * @return The tile sack of the game.
+     * @return The {@link TileSack} of the game.
      */
     public TileSack getTileSack() {
         return sack;
@@ -328,7 +328,7 @@ public class Game {
     /**
      * Returns the game board of the game.
      *
-     * @return The game board of the game.
+     * @return The {@link GameBoard} of the game.
      */
     public GameBoard getGameBoard() {
         return board;
@@ -338,7 +338,7 @@ public class Game {
      * Picks tiles from the game board at the specified coordinates.
      *
      * @param coords The coordinates of the tiles to pick.
-     * @return An array of picked tiles.
+     * @return An array of picked {@link Tile}.
      * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid for the current game.
      */
     public Tile[] pickTilesFromBoard(Coordinates[] coords) throws InvalidCoordinatesForCurrentGameException {
@@ -354,8 +354,8 @@ public class Game {
     /**
      * Inserts the given tiles into the specified column of the player's shelf.
      *
-     * @param p       The player to insert the tiles.
-     * @param t       The tiles to insert.
+     * @param p       The {@link Player} to insert the tiles.
+     * @param t       The array of {@link Tile} to insert.
      * @param column  The column index to insert the tiles.
      * @throws IllegalColumnInsertionException if the column insertion is illegal.
      * @throws NoTileException                 if no tiles are provided to insert.
@@ -446,7 +446,7 @@ public class Game {
     /**
      * Picks two global goals randomly from the available global goals.
      *
-     * @return An array of two global goals.
+     * @return An array of two {@link GlobalGoal}.
      */
     private GlobalGoal[] pickTwoGlobalGoals() throws InvalidNumberOfPlayersException {
         List<GlobalGoal> goals = GlobalGoal.getInstances(players.length);
@@ -462,7 +462,7 @@ public class Game {
     /**
      * Notifies all the game listeners with the provided game view.
      *
-     * @param gameView The game view to notify the listeners with.
+     * @param gameView The {@link GameView} to notify the listeners with.
      */
     private void notifyAllListeners(GameView gameView){
         if(started){

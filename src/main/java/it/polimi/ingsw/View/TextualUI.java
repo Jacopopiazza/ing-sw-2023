@@ -300,6 +300,11 @@ public class TextualUI extends UserInterface {
                 printPlayersInLobby((LobbyMessage) m);
                 break;
             }
+            else if(m instanceof UpdateViewMessage){
+                ClientImplementation.logger.log(Level.INFO,"Update view message");
+                addMessageToQueue(m);
+                break;
+            }
             else{
                 addMessageToQueue(m);
                 waitForLoginResponse();

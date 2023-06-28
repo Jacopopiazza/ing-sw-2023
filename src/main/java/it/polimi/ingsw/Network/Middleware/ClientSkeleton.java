@@ -23,10 +23,10 @@ public class ClientSkeleton implements Client {
     private final ObjectInputStream ois;
 
     /**
-     * Constructs a new ClientSkeleton instance.
+     * Constructs a new {@code ClientSkeleton} instance.
      *
-     * @param server      the server instance
-     * @param socket the socket representing the client's connection
+     * @param server      the {@link Server} instance
+     * @param socket the {@link Socket} representing the {@code Client}'s connection
      * @throws RemoteException if an error occurs during the creation of input/output streams
      */
     public ClientSkeleton(Server server, Socket socket) throws RemoteException {
@@ -46,9 +46,9 @@ public class ClientSkeleton implements Client {
     }
 
     /**
-     * Sends a message to the client.
+     * Sends a {@code Message} to the {@code Client}.
      *
-     * @param m the message to be sent
+     * @param m the {@link Message} to be sent
      * @throws RemoteException if an error occurs while sending the message
      */
     public void update(Message m) throws RemoteException {

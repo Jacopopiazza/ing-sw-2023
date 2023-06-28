@@ -14,32 +14,32 @@ import java.util.*;
 import java.util.logging.Level;
 
 /**
- * The `GameServer` class represents the server component responsible for managing the game lobby and the game itself.
+ * The {@code GameServer} class represents the server component responsible for managing the game lobby and the game itself.
  * It acts as a lobby before the game starts, allowing players to join and wait for the game to begin. Once the game starts,
  * it serves as the server for the ongoing game, handling player actions and managing the game state.
  *
- * The `GameServer` implements the `Server` interface, which defines the communication protocol between the server and clients.
+ * The {@code GameServer} implements the {@link Server} interface, which defines the communication protocol between the server and clients.
  * It extends the `UnicastRemoteObject` class to enable remote method invocation (RMI) functionality.
  *
- * The `GameServer` maintains a reference to the `Controller` responsible for managing the game logic and state. It also holds
- * references to the `ServerImplementation` and acts as a mediator between the game and the server.
+ * The {@code GameServer} maintains a reference to the {@link Controller} responsible for managing the game logic and state. It also holds
+ * references to the {@link ServerImplementation} and acts as a mediator between the game and the server.
  *
- * The `GameServer` keeps track of the players in the lobby using the `playingUsernames` list and the disconnected players using
+ * The {@code GameServer} keeps track of the players in the lobby using the `playingUsernames` list and the disconnected players using
  * the `disconnectedUsernames` list. The `playingUsernames` list contains the usernames of players who are currently connected
  * and actively participating in the game. The `disconnectedUsernames` map stores the usernames of players who were previously
- * connected but got disconnected. The map holds the username as the key and the corresponding `GameServer` object as the value,
+ * connected but got disconnected. The map holds the username as the key and the corresponding {@code GameServer} object as the value,
  * allowing for easy reconnection of players.
  *
- * The `GameServer` class provides methods to handle incoming messages from clients. It distinguishes between turn action messages
+ * The {@code GameServer} class provides methods to handle incoming messages from clients. It distinguishes between turn action messages
  * and disconnect messages. For turn action messages, it calls the `doTurn` method to process the player's turn. For disconnect
  * messages, it triggers the `disconnect` method to handle the player's disconnection.
  *
  * The class also provides methods to check if the game has started, delete the game and remove players from the game, reconnect
  * disconnected players, add new players to the lobby, and retrieve the number of active players in the game.
  *
- * Note: The `GameServer` class is meant to be used in a distributed environment and supports both RMI and socket communication
- * protocols. It acts as a server for RMI-based clients and uses the `ClientSkeleton` class to handle socket-based clients.
- * The `ServerImplementation` class is responsible for managing the server-side logic and communication protocols.
+ * Note: The {@code GameServer} class is meant to be used in a distributed environment and supports both RMI and socket communication
+ * protocols. It acts as a server for RMI-based clients and uses the {@link it.polimi.ingsw.Network.Middleware.ClientSkeleton} class to handle socket-based clients.
+ * The {@link ServerImplementation} class is responsible for managing the server-side logic and communication protocols.
  */
 public class GameServer extends UnicastRemoteObject implements Server {
     private Controller controller;
@@ -54,10 +54,11 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
 
     /**
-     * Constructs a GameServer instance with the specified number of players.
+     * Creates a new {@code GameServer} object by setting the number of players in the game and initializing the {@code Controller}.
+     * It also starts the thread responsible for handling incoming messages from clients and pings.
      *
-     * @param numOfPlayers         the number of players in the game
-     * @throws RemoteException if a remote communication error occurs
+     * @param numOfPlayers The number of players in the game.
+     * @throws RemoteException If the remote method invocation fails.
      */
     public GameServer(int numOfPlayers) throws RemoteException {
         super();
@@ -160,11 +161,11 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Handles the incoming message from the client and adds it to the Queue.
+     * Handles the specified {@code Message} by calling the appropriate method.
      *
-     * @param m the message received from the client
-     * @param client unused
-     * @throws RemoteException if a remote communication error occurs
+     * @param m the {@link Message} to handle
+     * @param client the {@link Client} that sent the message
+     * @throws RemoteException if the remote method invocation fails
      */
     @Override
     public void handleMessage(Message m, Client client) throws RemoteException {
@@ -173,10 +174,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Deletes the game associated with the specified players.
+     * Deletes the game associated with the specified {@code Player}s.
      *
-     * @param players the list of players in the game
-     * @param listeners the listeners to notify
+     * @param players the list of {@link it.polimi.ingsw.Model.Player} in the game
+     * @param listeners the {@link GameListener} to notify
      */
     public void deleteGame(List<String> players,List<GameListener> listeners) {
         this.serverImplementation.deleteGame(players);
@@ -184,10 +185,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Reconnects the player with the specified username and assigns him the specified listener.
+     * Reconnects the player with the specified username and assigns him the specified {@code GameListener}.
      *
      * @param username the username of the player reconnecting
-     * @param listener the listener to assign to the game
+     * @param listener the {@link GameListener} to assign to the game
      */
     protected void reconnect(String username, GameListener listener) {
         this.controller.reconnect(username, listener);
@@ -205,10 +206,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Adds a player with the specified username and assigns him the given listener.
+     * Adds a player with the specified username and assigns him the given {@code GameListener}.
      *
      * @param username the username of the player to add
-     * @param listener the listener to assign to the game
+     * @param listener the {@link GameListener} to assign to the game
      * @return true if the player is added successfully, false otherwise
      */
     protected boolean addPlayer(String username, GameListener listener) {
@@ -277,9 +278,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Adds a message and its associated client to the message queue.
+     * Adds a {@code Message} to the message queue.
      *
-     * @param m The message to be added to the queue.
+     * @param m The {@link Message} to be added to the queue.
      */
     private void addToMessagesQueue(Message m) {
         synchronized (receivedMessages) {
@@ -299,9 +300,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Removes and returns a message from the message queue.
+     * Removes and returns a {@code Message} from the message queue.
      *
-     * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
+     * @return The {@link Message} or {@code null} if the queue is empty.
      */
     private Message popFromMessagesQueue() {
         synchronized (receivedMessages) {
@@ -310,10 +311,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Handles a received message and performs appropriate actions based on its type.
+     * Handles a received {@code Message} and performs appropriate actions based on its type.
      * This method is called to process messages received by the server.
      *
-     * @param m      The message to be effectively handled.
+     * @param m      The {@link Message} to be effectively handled.
      * @throws RemoteException If a remote exception occurs during message handling.
      */
     private void effectivelyHandleMessage(Message m) throws RemoteException {
@@ -339,7 +340,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     /**
      * Handles the ping response, it resets the ping timer for the player who sent the response
      *
-     * @param message the ping message to be handled
+     * @param message the {@link PingMessage} to be handled
      */
     private void handlePingResponse(PingMessage message){
         //get index of element in idPingToBeAnswered with value message.getpingNumber()
@@ -372,7 +373,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * Handles the turn action of the player with the specified username.
      *
      * @param username     the username of the player
-     * @param chosenTiles  the chosen tiles for the turn
+     * @param chosenTiles  the {@link Coordinates} of the chosen tiles for the turn
      * @param column       the column to place the chosen tiles
      */
     private void doTurn(String username, Coordinates[] chosenTiles, int column) {

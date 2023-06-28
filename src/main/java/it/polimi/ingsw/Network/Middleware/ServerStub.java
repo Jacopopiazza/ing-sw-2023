@@ -49,10 +49,10 @@ public class ServerStub implements Server {
     }
 
     /**
-     * Sends a message to the server.
+     * Sends a {@code Message} to the server.
      *
-     * @param m      the message to be sent
-     * @param client the client object that sends the message
+     * @param m      the {@link Message} to be sent
+     * @param client the {@link Client} object that sends the message
      * @throws RemoteException if an error occurs while sending the message
      */
     public void handleMessage(Message m, Client client) throws RemoteException {
@@ -69,9 +69,9 @@ public class ServerStub implements Server {
     }
 
     /**
-     * Receives a message from the server.
+     * Receives a {@code Message} from the server.
      *
-     * @param client the client object that receives the message
+     * @param client the {@link Client} object that receives the message
      * @throws RemoteException if an error occurs while receiving the message
      */
     public void receive(Client client) throws RemoteException {

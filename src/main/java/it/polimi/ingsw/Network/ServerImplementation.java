@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Network;
 
+import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Utilities.Config;
@@ -63,7 +64,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     /**
      * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
      *
-     * @return the singleton instance of the server
+     * @return the singleton instance of the {@code ServerImplementation}
      */
     public static ServerImplementation getInstance() throws RemoteException{
         if( instance == null ) {
@@ -125,8 +126,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Starts the socket server by creating a ServerSocket and accepting incoming socket connections. Each connection is
-     * handled by a separate thread using the ClientSkeleton class.
+     * Starts the socket server by creating a {@code ServerSocket} and accepting incoming socket connections. Each connection is
+     * handled by a separate thread using the {@link ClientSkeleton} class.
      *
      * @throws RemoteException if there is an error in remote method invocation
      */
@@ -176,8 +177,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
-     * and lobbiesWaitingToStart collections.
+     * Constructs a new instance of the {@code ServerImplementation} class for the singleton pattern.
+     * It initializes the active and disconnected players collections, as well as the collection for the lobbies.
      *
      * @throws RemoteException if there is an error in remote method invocation
      */
@@ -209,10 +210,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Handles the incoming message from a client. It adds the message to the queue of messages to be processed.
+     * Handles the incoming {@code Message} from a {@code Client}. It adds the message to the queue of messages to be processed.
      *
-     * @param m      the incoming message
-     * @param client the client object associated with the message
+     * @param m      the incoming {@link Message}
+     * @param client the {@link Client} object associated with the message
      * @throws RemoteException if there is an error in remote method invocation
      */
     public void handleMessage(Message m, Client client) throws RemoteException {
@@ -221,10 +222,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Deletes the game associated with the given list of players. Removes the players from the playingUsernames and
-     * disconnectedUsernames collections.
+     * Deletes the game associated with the given list of {@code Player}s. Removes the players from the active and
+     * disconnected players collections.
      *
-     * @param players the list of players to be removed from the game
+     * @param players the list of {@link it.polimi.ingsw.Model.Player} to be removed from the game
      */
     protected void deleteGame(List<String> players) {
         logger.log(Level.INFO, "Deleting game");
@@ -239,10 +240,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Disconnects a player from the server. Updates the playingUsernames and disconnectedUsernames collections accordingly.
+     * Disconnects a player from the server. Updates collections of active and disconnected players accordingly.
      *
      * @param username   the username of the player to disconnect
-     * @param gameServer the GameServer object associated with the player
+     * @param gameServer the {@link GameServer} object associated with the player
      */
     protected void disconnect(String username, GameServer gameServer) {
         logger.log(Level.INFO, "Player " + username + " disconnected");
@@ -257,10 +258,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     /**
      * Kicks a player from the specified lobby. If the lobby becomes empty after the player is kicked, it is removed from
-     * the lobbiesWaitingToStart queue.
+     * the lobbies queue.
      *
      * @param username the username of the player to kick
-     * @param lobby    the GameServer object representing the lobby
+     * @param lobby    the {@link GameServer} object representing the lobby
      */
     protected void kick(String username, GameServer lobby) {
         logger.log(Level.INFO, "Player " + username + " kicked");
@@ -276,11 +277,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     /**
      * Handles the reconnection request from a player. It checks if the player is already logged in or if the player has a
-     * previous GameServer associated with their username. If the conditions are met, the player is reconnected to the
-     * respective GameServer.
+     * previous {@code GameServer} associated with their username. If the conditions are met, the player is reconnected to the
+     * respective {@link GameServer}.
      *
      * @param username the username of the player requesting reconnection
-     * @param listener the GameListener object to receive updates from the GameServer
+     * @param listener the {@link GameListener} object to receive updates from the {@link GameServer}
      */
     private void reconnect(String username, GameListener listener) {
         logger.log(Level.INFO, "Reconnect request for " + username );
@@ -308,12 +309,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
     /**
      * Handles the registration request from a player. If the parameters are valid and there is a lobby available, it
-     * registers the player by adding them to the respective GameServer. If the numOfPlayers is 1, it tries to join an
+     * registers the player by adding them to the respective GameServer. If the number of players is 1, it tries to join an
      * existing lobby; otherwise, it creates a new lobby.
      *
      * @param username     the username of the player
      * @param numOfPlayers the number of players in the lobby (1 for joining an existing lobby, >1 for a new lobby)
-     * @param listener     the GameListener object to receive updates from the GameServer
+     * @param listener     the {@link GameListener} object to receive updates from the {@link GameServer}
      * @throws RemoteException if there is an error in remote method invocation
      */
     private void register(String username, int numOfPlayers, GameListener listener) throws RemoteException {
@@ -359,10 +360,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         }
     }
     /**
-     * Adds a message and its associated client to the message queue.
+     * Adds a {@code Message} and its associated {@code Client} to the message queue.
      *
-     * @param m The message to be added to the queue.
-     * @param c The client associated with the message.
+     * @param m The {@link Message} to be added to the queue.
+     * @param c The {@link Client} associated with the message.
      */
     private void addToMessagesQueue(Message m, Client c) {
         synchronized (receivedMessages) {
@@ -371,7 +372,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Checks if the message queue is empty.
+     * Checks if the messages queue is empty.
      *
      * @return {@code true} if the message queue is empty, {@code false} otherwise.
      */
@@ -382,9 +383,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Removes and returns a message from the message queue.
+     * Removes and returns a message from the {@code Message} queue.
      *
-     * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
+     * @return The {@link Message} and associated {@link Client} as a {@link Tuple}, or {@code null} if the queue is empty.
      */
     private Tuple<Message, Client> popFromMessagesQueue() {
         synchronized (receivedMessages) {
@@ -393,11 +394,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Handles a received message and performs appropriate actions based on its type.
-     * This method is called to process messages received by the server.
+     * Handles a received {@code Message} and performs appropriate actions based on its type.
+     * This method is called to process {@code Message}s received by the server.
      *
-     * @param m      The message to be effectively handled.
-     * @param client The client associated with the message.
+     * @param m      The {@link Message} to be effectively handled.
+     * @param client The {@link Client} associated with the message.
      * @throws RemoteException If a remote exception occurs during message handling.
      */
     private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {

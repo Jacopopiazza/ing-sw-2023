@@ -17,7 +17,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * The ClientImplementation class is an implementation of the Client interface.
+ * The ClientImplementation class is an implementation of the {@link Client} interface.
+ * It extends the {@link UnicastRemoteObject} class and provides methods for updating the client with a {@link Message}.
  */
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private static ClientImplementation instance;
@@ -26,10 +27,10 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     private Server server;
 
     /**
-     * Constructs a ClientImplementation instance with the specified view and server.
+     * Constructs a new {@code ClientImplementation} object with the specified {@code View} and {@code Server}.
      *
-     * @param view   the view associated with the client
-     * @param server the server handling the client's messages
+     * @param view   the {@link View} associated with the client
+     * @param server the {@link Server} handling the client's messages
      * @throws RemoteException if a remote communication error occurs
      */
 
@@ -73,6 +74,13 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         logger.addHandler(fileHandler);
     }
 
+    /**
+     * Constructs a new {@code ClientImplementation} object with the specified {@code View} and {@code Server}.
+     *
+     * @param view   the {@link View} associated with the client
+     * @param server the {@link Server} handling the client's messages
+     * @throws RemoteException if a remote communication error occurs
+     */
     private ClientImplementation(View view, Server server) throws RemoteException{
         super();
         this.view = view;
@@ -90,9 +98,9 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     }
 
     /**
-     * Updates the client with the specified message.
+     * Updates the client with the specified {@code Message}.
      *
-     * @param m the message to update the client with
+     * @param m the {@link Message} to update the client with
      * @throws RemoteException if a remote communication error occurs
      */
 
@@ -120,6 +128,11 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         this.view.update(m);
     }
 
+    /**
+     * Changes the {@code Server} handling the client's messages.
+     *
+     * @param server the new {@link Server} handling the client's messages
+     */
     private void changeServer(Server server){
         this.server = server;
 

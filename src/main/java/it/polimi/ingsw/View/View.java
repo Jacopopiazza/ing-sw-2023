@@ -2,6 +2,7 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Listener.ViewListener;
 import it.polimi.ingsw.Messages.Message;
+import it.polimi.ingsw.Network.GameServer;
 
 /**
  * The View interface represents the view component of the client application.
@@ -11,29 +12,29 @@ import it.polimi.ingsw.Messages.Message;
 public interface View {
 
     /**
-     * Updates the view with the given message.
+     * Updates the {@code View} with the given {@code Message}.
      *
-     * @param m the message to be displayed or processed by the view
+     * @param m the {@link Message} to be processed by the view
      */
     void update(Message m);
 
     /**
-     * Notifies the registered listeners about a new message.
+     * Notifies the registered {@code ViewListener} about a new {@code Message}.
      *
-     * @param m the message to be notified to the listeners
+     * @param m the {@link Message} to be notified to the {@link ViewListener}
      */
     void notifyListeners(Message m);
 
     /**
-     * Remove all registered listeners.
+     * Remove all registered {@code ViewListener}s.
      *
      */
     void clearListeners();
 
     /**
-     * Adds a listener to the view.
+     * Adds a {@code ViewListener} to the view.
      *
-     * @param listener the listener to be added
+     * @param listener the {@link ViewListener} to be added
      */
     void addListener(ViewListener listener);
 

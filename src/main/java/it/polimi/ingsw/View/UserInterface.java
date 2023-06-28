@@ -26,26 +26,25 @@ import java.util.logging.Level;
  * The UserInterface class is an abstract class responsible for managing the client-side functionality.
  * It provides methods for setting up the RMI and socket clients, adding and notifying listeners,
  * and performing actions such as reconnecting, connecting, and quitting the game.
+ * It implements the {@code Runnable} interface, allowing it to be run as a thread; and the {@link View} interface,
+ * allowing it to be used as the base class for view implementations.
  */
 public abstract class UserInterface implements Runnable, View
 {
     protected Client client;
-    List<ViewListener> listeners;
+    protected List<ViewListener> listeners;
 
     /**
-     * Sets up the RMI client by obtaining the server stub from the RMI registry.
-     *
-     * @throws RemoteException    if there is a remote communication error
-     * @throws NotBoundException  if the server stub is not found in the registry
+     * Constructs a new {@code UserInterface} object.
      */
     public UserInterface() {
         this.listeners = new ArrayList<>();
     }
 
     /**
-     * Adds a ViewListener to the list of listeners. The listener will be notified when events occur.
+     * Adds a {@code ViewListener} to the list of listeners. The listener will be notified when events occur.
      *
-     * @param listener the ViewListener to add
+     * @param listener the {@link ViewListener} to add
      */
     @Override
     public void addListener(ViewListener listener) {
@@ -55,7 +54,7 @@ public abstract class UserInterface implements Runnable, View
     }
 
     /**
-     * Clears the list of listeners, removing all registered listeners.
+     * Clears the list of {@code ViewListener}, removing all registered {@code ViewListener}.
      */
     public void clearListeners(){
         synchronized (listeners) {
@@ -64,9 +63,10 @@ public abstract class UserInterface implements Runnable, View
     }
 
     /**
-     * Notifies all the registered listeners with the specified Message. The listeners will handle the message accordingly.
+     * Notifies all the registered {@code ViewListener} with the specified {@code Message}. The listeners will handle
+     * the message accordingly.
      *
-     * @param m the Message to notify the listeners with
+     * @param m the {@link Message} to notify the {@code ViewListener}s with
      */
     @Override
     public void notifyListeners(Message m) {
@@ -109,6 +109,20 @@ public abstract class UserInterface implements Runnable, View
 
     }
 
+    /**
+     * Sets up the socket client by connecting to the socket server located at the specified IP and port.
+     * Throws exceptions if the IP address or port is invalid or if the socket server is not bound.
+     *
+     * @param ip the IP address of the socket server
+     *
+     * @throws RemoteException if a remote communication error occurs
+     *
+     * @throws NotBoundException if the socket server is not bound
+     *
+     * @throws InvalidIPAddress if the provided IP address is invalid
+     *
+     * @throws InvalidPort if the provided port number is invalid
+     */
     protected void setUpSocketClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress{
 
         if(ip == null || ip.isEmpty() || (!IPAddressValidator.isValidIPAddress(ip) && !IPAddressValidator.isValidURL(ip))) {
@@ -136,7 +150,7 @@ public abstract class UserInterface implements Runnable, View
     }
 
     /**
-     * Sends a reconnect message to the listeners.
+     * Sends a {@code ReconnectMessage} to the {@code ViewListener}s.
      *
      * @param username the username of the player to reconnect
      */
@@ -146,7 +160,7 @@ public abstract class UserInterface implements Runnable, View
     }
 
     /**
-     * Sends a register message to the listeners to connect to the game.
+     * Sends a {@code RegisterMessage} to the {@code ViewListener}s to connect to the game.
      *
      * @param username     the username of the player
      * @param numOfPlayers the number of players in the game
@@ -157,7 +171,7 @@ public abstract class UserInterface implements Runnable, View
     }
 
     /**
-     * Notifies the listeners that a player has quit the game.
+     * Notifies the {@code ViewListener}s that a player has quit the game.
      *
      * @param username the username of the player who quit
      */

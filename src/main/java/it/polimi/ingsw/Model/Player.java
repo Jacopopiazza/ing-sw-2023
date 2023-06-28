@@ -16,7 +16,7 @@ public class Player{
     private boolean winner;                      // Indicates if the player is the winner
 
     /**
-     * Constructs a player with the specified username.
+     * Constructs a new {@code Player} object with the specified username.
      *
      * @param u the username of the player
      */
@@ -30,7 +30,7 @@ public class Player{
     }
 
     /**
-     * Gets the view representation of the player.
+     * Gets the ModelView representation of the player.
      *
      * @return the player view
      */
@@ -191,7 +191,7 @@ public class Player{
     }
 
     /**
-     * Checks the correctness of the player's private goal and updates the score accordingly.
+     * Checks if the player's private goal is satisfied and updates the score accordingly.
      *
      * @return true if the private goal is correct, false otherwise
      * @throws MissingShelfException       if the shelf is missing

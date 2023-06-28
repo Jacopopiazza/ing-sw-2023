@@ -11,7 +11,7 @@ public class Coordinates implements Serializable {
     private final int COL;
 
     /**
-     * Constructs a Coordinates object with the specified row and column values.
+     * Constructs a new {@code Coordinates} object with the specified row and column values.
      *
      * @param r The row value.
      * @param c The column value.

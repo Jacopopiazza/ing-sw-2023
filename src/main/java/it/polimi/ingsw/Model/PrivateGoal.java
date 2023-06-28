@@ -11,7 +11,11 @@ public final class PrivateGoal {
     private int id; // id used by the GUI
     private Coordinates[] coords;   // The coordinates associated with the private goal
 
-
+    /**
+     * Constructs a new {@code PrivateGoal} object with the specified coordinates.
+     *
+     * @param coords the coordinates associated with the private goal
+     */
     private PrivateGoal(Coordinates[] coords,int id) {
         this.coords = coords.clone();
         this.id = id;

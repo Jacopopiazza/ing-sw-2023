@@ -10,7 +10,7 @@ public class Shelf implements Cloneable{
     private final Tile[][] SHELF;   // The matrix representing the shelf
 
     /**
-     * Constructs a new Shelf object from a given shelf.
+     * Constructs a new {@code Shelf} object from a given matrix of tiles.
      */
     private Shelf(Tile[][] shelf) {
         this.SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
@@ -21,7 +21,7 @@ public class Shelf implements Cloneable{
         }
     }
     /**
-     * Constructs a new Shelf object with an empty shelf.
+     * Constructs a new {@code Shelf} object with an empty shelf.
      */
     public Shelf() {
         // initialize the matrix with null values

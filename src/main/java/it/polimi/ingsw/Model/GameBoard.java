@@ -14,7 +14,7 @@ public class GameBoard {
     private Map<Coordinates, Tile> board;  // The tiles on the game board
 
     /**
-     * Constructs a game board with the specified number of players.
+     * Constructs a new {@code GameBoard} object for the specified number of players.
      *
      * @param numberOfPlayers the number of players in the game
      * @throws InvalidNumberOfPlayersException if the number of players is invalid
@@ -31,7 +31,7 @@ public class GameBoard {
     }
 
     /**
-     * Gets the view representation of the game board.
+     * Gets the ModelView representation of the game board.
      *
      * @return the game board view
      */
@@ -40,7 +40,7 @@ public class GameBoard {
     }
 
     /**
-     * Gets the coordinates on the game board.
+     * Gets the set of coordinates on the game board.
      *
      * @return a set of coordinates
      */

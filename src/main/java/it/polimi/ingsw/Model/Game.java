@@ -28,7 +28,7 @@ public class Game {
 
 
     /**
-     * Creates a new Game instance with the specified number of players.
+     * Creates a new {@code Game} object for the specified number of players.
      *
      * @param numOfPlayers The number of players in the game.
      * @throws InvalidNumberOfPlayersException if the number of players is invalid.
@@ -49,16 +49,16 @@ public class Game {
     }
 
     /**
-     * Returns the GameView representation of the current game state.
+     * Returns the ModelView representation of the current game state.
      *
-     * @return The GameView object representing the current game state.
+     * @return The {@code GameView} object representing the current game state.
      */
     public GameView getView() {
         return new GameView(this);
     }
 
     /**
-     * Initializes the game by setting up private goals, creating the game board, shuffling players and listeners,
+     * Initializes the game by setting up private goals, creating the game board, randomly choosing the first player,
      * picking global goals, and marking the game as started.
      */
     public void init() {
@@ -94,7 +94,8 @@ public class Game {
     }
 
     /**
-     * Adds a player to the game with the specified username and listener.
+     * Adds a player to the game with the specified username, set his listener and notifies
+     * all the other listeners.
      *
      * @param username The username of the player.
      * @param listener The listener for the player.
@@ -111,7 +112,8 @@ public class Game {
     }
 
     /**
-     * Reconnects a player to the game with the specified username and listener.
+     * Reconnects the player with the specified username, sets his listener,
+     * and notifies all the other listeners of the reconnection.
      *
      * @param username The username of the player.
      * @param listener The listener for the player.
@@ -132,7 +134,8 @@ public class Game {
     }
 
     /**
-     * Disconnects a player from the game with the specified username.
+     * Disconnects the player with the specified username from the game and notifies
+     * all the other listeners of the game.
      *
      * @param username The username of the player to disconnect.
      * @throws UsernameNotFoundException if the username is not found in the game.
@@ -149,7 +152,7 @@ public class Game {
     }
 
     /**
-     * Kicks a player from the game with the specified username.
+     * Kicks the player the specified username from the lobby.
      *
      * @param username The username of the player to kick.
      * @throws UsernameNotFoundException if the username is not found in the game.
@@ -267,6 +270,13 @@ public class Game {
 
     }
 
+    /**
+     * Returns the listener of the player with the specified username.
+     *
+     * @param username The username of the player to retrieve.
+     * @return The listener of the player with the specified username.
+     * @throws UsernameNotFoundException if the username is not found in the game.
+     */
     public GameListener getListener(String username) throws UsernameNotFoundException{
         synchronized (players){
             int i;

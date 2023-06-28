@@ -8,7 +8,7 @@ public class Tile implements Cloneable{
     private final int id;           // The ID of the tile
 
     /**
-     * Constructs a new Tile object with the specified color and ID.
+     * Constructs a new {@code Tile} object with the specified color and ID.
      *
      * @param color the color of the tile
      * @param id    the ID of the tile

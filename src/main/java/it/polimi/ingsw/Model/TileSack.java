@@ -14,7 +14,7 @@ public class TileSack {
     private final static int LEN = TileColor.values().length;   // length of the array
 
     /**
-     * Constructs a new TileSack object with the initial number of tiles per color.
+     * Constructs a new {@code TileSack} object with the initial number of tiles per color.
      */
     public TileSack() {
         remaining = new int[LEN];

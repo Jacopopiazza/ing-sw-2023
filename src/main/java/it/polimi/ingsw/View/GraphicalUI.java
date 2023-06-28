@@ -1027,8 +1027,13 @@ public class GraphicalUI extends UserInterface {
             startWindow.showLobby(((LobbyMessage) m).getPlayers());
         }
         else if( m instanceof UpdateViewMessage ){
-            if( gameWindow == null )
+            if( gameWindow == null ){
+                startWindow.request.removeAll();
+                startWindow.request.add(startWindow.getStandardLabel("The game is starting..."));
+                startWindow.request.revalidate();
+                startWindow.request.repaint();
                 gameWindow = new GameWindow(((UpdateViewMessage)m).getGameView());
+            }
             else if(!gameWindow.isGameFinished)
                 gameWindow.update(((UpdateViewMessage)m).getGameView());
         }

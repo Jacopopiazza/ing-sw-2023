@@ -198,7 +198,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     protected void disconnect(String username, GameServer gameServer) {
         logger.log(Level.INFO, "Player " + username + " disconnected");
         synchronized (playingUsernames) {
-            //TODO: FIX HERE
             if( !playingUsernames.contains(username) ) return;
             playingUsernames.remove(username);
         }

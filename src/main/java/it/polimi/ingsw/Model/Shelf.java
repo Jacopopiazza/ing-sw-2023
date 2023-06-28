@@ -7,16 +7,16 @@ import it.polimi.ingsw.Model.Utilities.Config;
  * The Shelf class represents a shelf in the game where tiles can be placed.
  */
 public class Shelf implements Cloneable{
-    private final Tile[][] SHELF;   // The matrix representing the shelf
+    private final Tile[][] shelf;   // The matrix representing the shelf
 
     /**
      * Constructs a new {@code Shelf} object from a given matrix of tiles.
      */
     private Shelf(Tile[][] shelf) {
-        this.SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
+        this.shelf = new Tile[Shelf.getRows()][Shelf.getColumns()];
         for( int i = 0; i<Shelf.getRows(); i++ ) {
             for( int j = 0; j<Shelf.getColumns(); j++ ) {
-                this.SHELF[i][j] = shelf[i][j] == null ? null : shelf[i][j].clone();
+                this.shelf[i][j] = shelf[i][j] == null ? null : shelf[i][j].clone();
             }
         }
     }
@@ -25,7 +25,7 @@ public class Shelf implements Cloneable{
      */
     public Shelf() {
         // initialize the matrix with null values
-        SHELF = new Tile[Shelf.getRows()][Shelf.getColumns()];
+        shelf = new Tile[Shelf.getRows()][Shelf.getColumns()];
     }
 
     /**
@@ -46,16 +46,16 @@ public class Shelf implements Cloneable{
         }
 
         // If the first row is already filled with a tile, the column is fully filled
-        if( SHELF[0][column] != null ) {
+        if( shelf[0][column] != null ) {
             throw new IllegalColumnInsertionException();
         }
 
         // start analysing from the bottom
         int row = Shelf.getRows() - 1;
 
-        while( ( SHELF[row][column] != null ) && ( row >= 0 ) ) row--;
+        while( ( shelf[row][column] != null ) && ( row >= 0 ) ) row--;
 
-        SHELF[row][column] = t.clone();
+        shelf[row][column] = t.clone();
     }
 
     /**
@@ -69,7 +69,7 @@ public class Shelf implements Cloneable{
         if( ( c.getROW() < 0 ) || ( c.getCOL() < 0 ) || ( c.getROW() >= Shelf.getRows() ) || ( c.getCOL() >= Shelf.getColumns() ) ) {
             throw new ColumnOutOfBoundsException();
         }
-        return SHELF[c.getROW()][c.getCOL()];
+        return shelf[c.getROW()][c.getCOL()];
     }
 
     /**
@@ -83,7 +83,7 @@ public class Shelf implements Cloneable{
         if(column<0 || column>=Shelf.getColumns()) throw new ColumnOutOfBoundsException();
 
         int result = 0;
-        for(int i=0;i<Shelf.getRows() && this.SHELF[i][column]!=null; i++) {
+        for(int i = 0; i<Shelf.getRows() && this.shelf[i][column]!=null; i++) {
             result++;
         }
         return Shelf.getRows()-result;
@@ -114,7 +114,7 @@ public class Shelf implements Cloneable{
      */
     @Override
     public Shelf clone() {
-        return new Shelf(this.SHELF);
+        return new Shelf(this.shelf);
     }
 
     /**
@@ -124,7 +124,7 @@ public class Shelf implements Cloneable{
      */
     public boolean isFull() {
         for(int i = 0; i < getColumns(); i++) {
-            if(SHELF[0][i] == null)
+            if(shelf[0][i] == null)
                 return false;
         }
         return true;

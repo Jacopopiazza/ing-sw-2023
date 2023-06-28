@@ -242,7 +242,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
                 if( playingUsernames.contains(username) ) {
-                    logger.log(Level.INFO, "A player with username:  " + username + " is already loggedin");
+                    logger.log(Level.INFO, "A player with username:  " + username + " is already logged in");
                     listener.update(new TakenUsernameMessage());
                     return;
                 }

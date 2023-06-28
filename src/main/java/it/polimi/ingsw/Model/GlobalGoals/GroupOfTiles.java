@@ -7,6 +7,7 @@ import it.polimi.ingsw.Model.Tile;
 /**
  * The GroupOfTiles class represents a global goal that requires creating a certain number of groups of tiles on the shelf.
  * The groups are formed by tiles of the same color adjacent to each other.
+ * It extends the {@code GlobalGaol} abstract class.
  */
 public class GroupOfTiles extends GlobalGoal {
     private final int groupDim;
@@ -27,7 +28,7 @@ public class GroupOfTiles extends GlobalGoal {
     }
 
     /**
-     * Constructs a GroupOfTiles instance with the specified number of players, group dimension, and number of groups.
+     * Constructs a new {@code GroupOfTiles} global goal with the specified number of players, group dimension, and number of groups.
      *
      * @param people           the number of players in the game
      * @param groupDim         the required size of each group of tiles

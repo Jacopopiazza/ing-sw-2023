@@ -8,8 +8,9 @@ import it.polimi.ingsw.ModelView.GlobalGoalView;
 import java.util.*;
 
 /**
- * The GlobalGoal class represents a global goal in the game MyShelfie.
- * Global goals define objectives that players need to achieve during the game.
+ * The GlobalGoal class represents a global goal of the game.
+ * Global goals define objectives that players can achieve during the game to increase their score.
+ * It implements the {@code Cloneable} interface.
  */
 public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;

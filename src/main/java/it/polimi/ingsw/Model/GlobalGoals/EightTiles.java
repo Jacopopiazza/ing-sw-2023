@@ -6,12 +6,13 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.TileColor;
 
 /**
- * The EightTiles class represents a global goal called "Eight Tiles" in the game MyShelfie.
+ * The EightTiles class represents a global goal called "Eight Tiles" of the game.
  * This goal checks if a specified number of tiles of the same color are present on the shelf.
+ * It extends the {@code GlobalGaol} abstract class.
  */
 public class EightTiles extends GlobalGoal {
     /**
-     * Constructs an EightTiles global goal with the specified parameters.
+     * Constructs a new {@code EightTiles} global goal with the specified parameters.
      *
      * @param people the number of players.
      * @throws InvalidNumberOfPlayersException if the number of players is invalid.

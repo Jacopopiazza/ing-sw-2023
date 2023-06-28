@@ -8,10 +8,11 @@ import it.polimi.ingsw.Exceptions.*;
  * The Stair class represents a global goal that requires having five columns with ascending or descending heights on the shelf.
  * Each column must have one more tile than the previous column.
  * The tiles can have different colors.
+ * It extends the {@code GlobalGaol} abstract class.
  */
 public class Stair extends GlobalGoal {
     /**
-     * Constructs a Stair instance with the specified number of players.
+     * Constructs a new {@code Stair} global goal with the specified number of players.
      *
      * @param people the number of players in the game
      * @throws InvalidNumberOfPlayersException if the number of players is invalid

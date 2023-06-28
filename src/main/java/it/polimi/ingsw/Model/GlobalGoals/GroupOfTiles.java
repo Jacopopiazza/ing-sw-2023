@@ -9,9 +9,22 @@ import it.polimi.ingsw.Model.Tile;
  * The groups are formed by tiles of the same color adjacent to each other.
  */
 public class GroupOfTiles extends GlobalGoal {
-
     private final int groupDim;
     private final int numOfGroups;
+
+    /**
+     * Returns the ID of the global goal based on the group dimension.
+     *
+     * @param g the group dimension
+     * @return the ID of the global goal
+     */
+    private static int myId(int g){
+        if( g == 2 )
+            return 4;
+        if( g == 4 )
+            return 3;
+        return -1;
+    }
 
     /**
      * Constructs a GroupOfTiles instance with the specified number of players, group dimension, and number of groups.
@@ -23,14 +36,14 @@ public class GroupOfTiles extends GlobalGoal {
      */
     public GroupOfTiles(int people, int groupDim, int numOfGroups) throws InvalidNumberOfPlayersException {
         super(people, myId(groupDim));
-        this.groupDim=groupDim;
-        this.numOfGroups=numOfGroups;
-        if(myId(groupDim) == 4) this.description = "Six groups each containing at least " +
+        this.groupDim = groupDim;
+        this.numOfGroups = numOfGroups;
+        if( myId(groupDim) == 4 ) this.description = "Six groups each containing at least " +
                 "2 tiles of the same type (not necessarily " +
                 "in the depicted shape). " +
                 "The tiles of one group can be different " +
                 "from those of another group.";
-        if(myId(groupDim) == 3) this.description = "Four groups each containing at least " +
+        if( myId(groupDim) == 3 ) this.description = "Four groups each containing at least " +
                 "4 tiles of the same type (not necessarily " +
                 "in the depicted shape). " +
                 "The tiles of one group can be different " +
@@ -114,19 +127,5 @@ public class GroupOfTiles extends GlobalGoal {
 
         return res;
     }
-
-    /**
-     * Returns the ID of the global goal based on the group dimension.
-     *
-     * @param g the group dimension
-     * @return the ID of the global goal
-     */
-    private static int myId(int g ){
-        if(g == 2) return 4;
-        if(g == 4) return 3;
-        return -1;
-    }
-
-
 
 }

@@ -30,13 +30,14 @@ public class Shape extends GlobalGoal {
         List<Coordinates> shape;
         for( List<Coordinates> l : s ){
             shape = new ArrayList<Coordinates>();
-            for( Coordinates c : l ){
+            for( Coordinates c : l )
                 shape.add(c);
-            }
             shapes.add(shape);
         }
-        if(myId(s) == 10) this.description = "Five tiles of the same type forming an X.";
-        if(myId(s) == 11) this.description = "Five tiles of the same type forming a diagonal.";
+        if( myId(s) == 10 )
+            this.description = "Five tiles of the same type forming an X.";
+        if( myId(s) == 11 )
+            this.description = "Five tiles of the same type forming a diagonal.";
     }
 
     /**
@@ -66,7 +67,7 @@ public class Shape extends GlobalGoal {
                     if( ( ( i + shape.get(0).getROW() ) < rows ) && ( ( j + shape.get(0).getCOL() ) < columns) ){
                         //if at that coordinates there is effectively a tile
                         Tile tile = s.getTile(new Coordinates( i + shape.get(0).getROW(), j + shape.get(0).getCOL()) );
-                        if(tile != null){
+                        if( tile != null ){
                             // get its color
                             color = tile.getColor();
                             // and check if every shape's tile is inside the shelf and has the same color

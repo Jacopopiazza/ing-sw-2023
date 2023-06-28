@@ -233,7 +233,7 @@ public class TextualUI extends UserInterface {
             out.println("Insert username:");
             this.username = in.nextLine();
             if(this.username.contains(" ")) out.println("Spaces are not allowed in the username");
-        }while(this.username.contains(" "));
+        }while(this.username.contains(" ") || this.username.equals(""));
 
         ClientImplementation.logger.log(Level.INFO,"The user chose the username: " + this.username);
         doReconnect(this.username);

@@ -197,9 +197,8 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * Adds a message and its associated client to the message queue.
      *
      * @param m The message to be added to the queue.
-     * @param c The client associated with the message.
      */
-    private void addToMessagesQueue(Message m, Client c) {
+    private void addToMessagesQueue(Message m) {
         synchronized (receivedMessages) {
             receivedMessages.add(m);
         }
@@ -258,13 +257,13 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * Handles the incoming message from the client and adds it to the Queue.
      *
      * @param m the message received from the client
-     * @param client  the client sending the message
+     * @param client unused
      * @throws RemoteException if a remote communication error occurs
      */
     @Override
     public void handleMessage(Message m, Client client) throws RemoteException {
         ServerImplementation.logger.log(Level.INFO, "Received message from client: " + m.getClass());
-        addToMessagesQueue(m,client);
+        addToMessagesQueue(m);
     }
 
     /**

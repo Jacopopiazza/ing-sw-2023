@@ -731,7 +731,7 @@ public class GraphicalUI extends UserInterface {
             chosenTiles = new Coordinates[maxNumOfChosenTiles];
             chosenOrder = new Integer[chosenTiles.length];
             orderNumbers = new JLabel[chosenTiles.length];
-            numOfActivePlayers = 0;
+            numOfActivePlayers = gameView.getNumOfActivePlayers();
             isGameFinished = false;
 
             // Set up the background
@@ -850,6 +850,7 @@ public class GraphicalUI extends UserInterface {
             middlePanel.add(text);
             if( myId == currentPlayer )
                 text.setText("It is your turn, choose your tiles from the board");
+            else text.setText("Wait for your turn");
             errorText = new JLabel(){
                 @Override
                 public void setText(String s){
@@ -983,16 +984,14 @@ public class GraphicalUI extends UserInterface {
                     text.setText("Wait for your turn");
             }
             if( gw.getNumOfActivePlayers() != null ){
-                if( numOfActivePlayers != 0 ){
-                    if( gw.getNumOfActivePlayers() == 1 )
-                        errorText.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
-                    else if( ( gw.getNumOfActivePlayers() == 2 ) && ( numOfActivePlayers == 1 ) )
-                        errorText.setText("a player reconnected, the game can go on");
-                    else if( gw.getNumOfActivePlayers() > numOfActivePlayers )
-                        errorText.setText("a player reconnected");
-                    else if( gw.getNumOfActivePlayers() < numOfActivePlayers )
-                        errorText.setText("a player disconnected");
-                }
+                if( gw.getNumOfActivePlayers() == 1 )
+                    errorText.setText("Other players disconnected, wait for them to reconnect or wait to win by forfeit");
+                else if( ( gw.getNumOfActivePlayers() == 2 ) && ( numOfActivePlayers == 1 ) )
+                    errorText.setText("a player reconnected, the game can go on");
+                else if( gw.getNumOfActivePlayers() > numOfActivePlayers )
+                    errorText.setText("a player reconnected");
+                else if( gw.getNumOfActivePlayers() < numOfActivePlayers )
+                    errorText.setText("a player disconnected");
                 numOfActivePlayers = gw.getNumOfActivePlayers();
             }
             if( gw.getGlobalGoals() != null ){

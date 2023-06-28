@@ -25,12 +25,12 @@ public class ClientSkeleton implements Client {
     /**
      * Constructs a new ClientSkeleton instance.
      *
-     * @param s      the server instance
+     * @param server      the server instance
      * @param socket the socket representing the client's connection
      * @throws RemoteException if an error occurs during the creation of input/output streams
      */
-    public ClientSkeleton(Server s, Socket socket) throws RemoteException {
-        this.server = s;
+    public ClientSkeleton(Server server, Socket socket) throws RemoteException {
+        this.server = server;
         this.socket = socket;
 
         try {

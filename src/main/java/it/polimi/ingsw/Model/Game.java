@@ -267,6 +267,22 @@ public class Game {
 
     }
 
+    public GameListener getListener(String username) throws UsernameNotFoundException{
+        synchronized (players){
+            int i;
+            for(i = 0;i<players.length;i++){
+                if(players[i] != null && players[i].getUsername().equals(username)) break;
+            }
+
+            if(i >= players.length){
+                throw new UsernameNotFoundException();
+            }
+
+            return listeners[i];
+        }
+
+    }
+
     /**
      * Checks the global goals for the current player and updates their score accordingly.
      *
@@ -299,7 +315,6 @@ public class Game {
         return sack;
     }
 
-
     /**
      * Returns the game board of the game.
      *
@@ -308,7 +323,6 @@ public class Game {
     public GameBoard getGameBoard() {
         return board;
     }
-
 
     /**
      * Picks tiles from the game board at the specified coordinates.
@@ -383,7 +397,6 @@ public class Game {
         notifyAllListeners(new GameView(username));
     }
 
-
     /**
      * Sets the winner of the game at the specified index.
      *
@@ -436,7 +449,6 @@ public class Game {
         return returned;
     }
 
-
     /**
      * Notifies all the game listeners with the provided game view.
      *
@@ -472,22 +484,6 @@ public class Game {
                 }
             }
         }
-    }
-
-    public GameListener getListener(String username) throws UsernameNotFoundException{
-        synchronized (players){
-            int i;
-            for(i = 0;i<players.length;i++){
-                if(players[i] != null && players[i].getUsername().equals(username)) break;
-            }
-
-            if(i >= players.length){
-                throw new UsernameNotFoundException();
-            }
-
-            return listeners[i];
-        }
-
     }
 
 }

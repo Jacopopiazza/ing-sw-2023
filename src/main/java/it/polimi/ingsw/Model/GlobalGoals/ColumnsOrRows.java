@@ -6,7 +6,7 @@ import it.polimi.ingsw.Exceptions.*;
 import java.util.HashSet;
 
 /**
- * The ColumnsOrRows class represents the global goals related to Columns and Rows in the game MyShelfie.
+ * The ColumnsOrRows class represents the global goals related to Columns and Rows of the game.
  * This goal checks if a specified number of columns/rows on a shelf meet certain conditions based on the tile colors.
  */
 public class ColumnsOrRows extends GlobalGoal {
@@ -21,12 +21,12 @@ public class ColumnsOrRows extends GlobalGoal {
     }
 
     /**
-     * Constructs a ColumnsOrRows global goal with the specified parameters.
+     * Constructs a new {@code ColumnsOrRows} global goal with the specified parameters.
      *
-     * @param p                  the number of players.
-     * @param eq                   a flag indicating if the columns/rows should have an equal or different number of tile colors.
-     * @param cc            a flag indicating whether this global goal is related to columns or to rows
-     * @param num              the number of columns/rows that should meet the condition.
+     * @param p the number of players.
+     * @param eq a flag indicating if the columns/rows should have an equal or different number of tile colors.
+     * @param cc a flag indicating whether this global goal is related to columns or to rows
+     * @param num the number of columns/rows that should meet the condition.
      * @param diff the number of different tile colors required per column/row (for equal=true) or the minimum number of different tile colors allowed per column/row (for equal=false).
      * @throws InvalidNumberOfPlayersException if the number of players is invalid.
      */

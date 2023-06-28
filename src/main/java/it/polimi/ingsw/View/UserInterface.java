@@ -99,6 +99,8 @@ public abstract class UserInterface implements Runnable, View
             throw new InvalidIPAddress("Invalid IP/URL address");
         }
 
+        ClientImplementation.logger.log(Level.INFO,"Coonecting to RMI server : " + ip + " on port " + Config.getInstance().getRmiPort() + "...");
+
         Registry registry = LocateRegistry.getRegistry(ip, Config.getInstance().getRmiPort());
         Server server = (Server) registry.lookup("G26-MyShelfie-Server");
 

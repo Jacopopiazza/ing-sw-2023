@@ -160,38 +160,121 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Handles the ping response, it resets the ping timer for the player who sent the response
+     * Handles the incoming message from the client and adds it to the Queue.
      *
-     * @param message the ping message to be handled
+     * @param m the message received from the client
+     * @param client unused
+     * @throws RemoteException if a remote communication error occurs
      */
-    public void handlePingResponse(PingMessage message){
-        //get index of element in idPingToBeAnswered with value message.getpingNumber()
-        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getPingNumber());
-        synchronized (playingUsernames){
-            int index = -1;
-            for(int i = 0; i < idPingToBeAnswered.length; i++){
-                boolean resCheck = idPingToBeAnswered[i] == message.getPingNumber();
-                if(resCheck){
-                    index = i;
-                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getPingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
+    @Override
+    public void handleMessage(Message m, Client client) throws RemoteException {
+        ServerImplementation.logger.log(Level.INFO, "Received message from client: " + m.getClass());
+        addToMessagesQueue(m);
+    }
+
+    /**
+     * Deletes the game associated with the specified players.
+     *
+     * @param players the list of players in the game
+     * @param listeners the listeners to notify
+     */
+    public void deleteGame(List<String> players,List<GameListener> listeners) {
+        this.serverImplementation.deleteGame(players);
+        for(GameListener listener : listeners) listener.update(new GameServerMessage(serverImplementation));
+    }
+
+    /**
+     * Reconnects the player with the specified username and assigns him the specified listener.
+     *
+     * @param username the username of the player reconnecting
+     * @param listener the listener to assign to the game
+     */
+    protected void reconnect(String username, GameListener listener) {
+        this.controller.reconnect(username, listener);
+        synchronized (playingUsernames) {
+            for(int i = 0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] == null){
+                    playingUsernames[i] = username;
                     break;
                 }
             }
+        }
+        synchronized (disconnectedUsernames) {
+            disconnectedUsernames.remove(username);
+        }
+    }
 
-            if(index == -1) return;
+    /**
+     * Adds a player with the specified username and assigns him the given listener.
+     *
+     * @param username the username of the player to add
+     * @param listener the listener to assign to the game
+     * @return true if the player is added successfully, false otherwise
+     */
+    protected boolean addPlayer(String username, GameListener listener) {
+        boolean res;
+        synchronized (playingUsernames) {
+            res = this.controller.addPlayer(username, listener);
+            listener.update(new GameServerMessage(this));
+            for(int i = 0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] == null){
+                    playingUsernames[i] = username;
+                    break;
+                }
+            }
+        }
+        return res;
+    }
 
+    /**
+     * Gets the number of active players in the game.
+     *
+     * @return the number of active players
+     */
+    protected int getNumOfActivePlayers() {
 
-            if(playersTimers[index] != null){
-                ServerImplementation.logger.log(Level.INFO,"Reset timer and ping for player " + playingUsernames[index] + " (player index i="+index + ")");
-                playersTimersTasks[index].cancel();
-                playersTimers[index].cancel();
+        return this.controller.getNumOfActivePlayers();
+    }
+
+    /**
+     * Disconnects the player with the specified username.
+     *
+     * @param username the username of the player to disconnect
+     */
+    private void disconnect(String username) {
+        synchronized (playingUsernames) {
+            int i = 0;
+            for(i=0;i<playingUsernames.length;i++){
+                if(playingUsernames[i] != null && playingUsernames[i].equals(username)){
+                    playingUsernames[i] = null;
+                    break;
+                }
+            }
+            if(i == playingUsernames.length) return; // username not found
+            if( isGameStarted() ) {
+                synchronized (disconnectedUsernames) {
+                    disconnectedUsernames.add(username);
+                    controller.disconnect(username);
+                }
+                serverImplementation.disconnect(username, this);
+            }
+            else {
+                GameListener disconnected_listener = controller.kick(username);
+                serverImplementation.kick(username, this);
+                disconnected_listener.update(new GameServerMessage(serverImplementation));
             }
 
         }
-
     }
 
-
+    /**
+     * Checks if the game has started.
+     *
+     * @return true if the game has started, false otherwise
+     */
+    private boolean isGameStarted() {
+        return this.controller.isGameStarted();
+    }
 
     /**
      * Adds a message and its associated client to the message queue.
@@ -254,121 +337,35 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Handles the incoming message from the client and adds it to the Queue.
+     * Handles the ping response, it resets the ping timer for the player who sent the response
      *
-     * @param m the message received from the client
-     * @param client unused
-     * @throws RemoteException if a remote communication error occurs
+     * @param message the ping message to be handled
      */
-    @Override
-    public void handleMessage(Message m, Client client) throws RemoteException {
-        ServerImplementation.logger.log(Level.INFO, "Received message from client: " + m.getClass());
-        addToMessagesQueue(m);
-    }
-
-    /**
-     * Checks if the game has started.
-     *
-     * @return true if the game has started, false otherwise
-     */
-    public boolean isGameStarted() {
-        return this.controller.isGameStarted();
-    }
-
-    /**
-     * Deletes the game associated with the specified players.
-     *
-     * @param players the list of players in the game
-     * @param listeners the listeners to notify
-     */
-    public void deleteGame(List<String> players,List<GameListener> listeners) {
-        this.serverImplementation.deleteGame(players);
-        for(GameListener listener : listeners) listener.update(new GameServerMessage(serverImplementation));
-    }
-
-    /**
-     * Reconnects the player with the specified username and assigns him the specified listener.
-     *
-     * @param username the username of the player reconnecting
-     * @param listener the listener to assign to the game
-     */
-    public void reconnect(String username, GameListener listener) {
-        this.controller.reconnect(username, listener);
-        synchronized (playingUsernames) {
-            for(int i = 0;i<playingUsernames.length;i++){
-                if(playingUsernames[i] == null){
-                    playingUsernames[i] = username;
+    private void handlePingResponse(PingMessage message){
+        //get index of element in idPingToBeAnswered with value message.getpingNumber()
+        ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getPingNumber());
+        synchronized (playingUsernames){
+            int index = -1;
+            for( int i=0; i<idPingToBeAnswered.length; i++ ){
+                boolean resCheck = idPingToBeAnswered[i] == message.getPingNumber();
+                if( resCheck ){
+                    index = i;
+                    ServerImplementation.logger.log(Level.INFO,"Ping #" + message.getPingNumber() + " of player " + playingUsernames[i] + "(player index i=" + i + ")");
                     break;
                 }
             }
-        }
-        synchronized (disconnectedUsernames) {
-            disconnectedUsernames.remove(username);
-        }
-    }
 
-    /**
-     * Adds a player with the specified username and assigns him the given listener.
-     *
-     * @param username the username of the player to add
-     * @param listener the listener to assign to the game
-     * @return true if the player is added successfully, false otherwise
-     */
-    public boolean addPlayer(String username, GameListener listener) {
-        boolean res;
-        synchronized (playingUsernames) {
-            res = this.controller.addPlayer(username, listener);
-            listener.update(new GameServerMessage(this));
-            for(int i = 0;i<playingUsernames.length;i++){
-                if(playingUsernames[i] == null){
-                    playingUsernames[i] = username;
-                    break;
-                }
-            }
-        }
-        return res;
-    }
+            if( index == -1 )
+                return;
 
-    /**
-     * Gets the number of active players in the game.
-     *
-     * @return the number of active players
-     */
-    public int getNumOfActivePlayers() {
-
-        return this.controller.getNumOfActivePlayers();
-    }
-
-
-    /**
-     * Disconnects the player with the specified username.
-     *
-     * @param username the username of the player to disconnect
-     */
-    private void disconnect(String username) {
-        synchronized (playingUsernames) {
-            int i = 0;
-            for(i=0;i<playingUsernames.length;i++){
-                if(playingUsernames[i] != null && playingUsernames[i].equals(username)){
-                    playingUsernames[i] = null;
-                    break;
-                }
-            }
-            if(i == playingUsernames.length) return; // username not found
-            if( isGameStarted() ) {
-                synchronized (disconnectedUsernames) {
-                    disconnectedUsernames.add(username);
-                    controller.disconnect(username);
-                }
-                serverImplementation.disconnect(username, this);
-            }
-            else {
-                GameListener disconnected_listener = controller.kick(username);
-                serverImplementation.kick(username, this);
-                disconnected_listener.update(new GameServerMessage(serverImplementation));
+            if( playersTimers[index] != null ){
+                ServerImplementation.logger.log(Level.INFO,"Reset timer and ping for player " + playingUsernames[index] + " (player index i="+index + ")");
+                playersTimersTasks[index].cancel();
+                playersTimers[index].cancel();
             }
 
         }
+
     }
 
     /**

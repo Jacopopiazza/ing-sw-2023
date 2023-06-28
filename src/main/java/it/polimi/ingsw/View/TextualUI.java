@@ -138,20 +138,28 @@ public class TextualUI extends UserInterface {
     }
 
     private int readChoiceFromInput(String option_1, String option_2){
+        String inputRead;
         int choice = -1;
 
-        do{
+        while(true){
             out.println("1 - " + option_1);
             out.println("2 - " + option_2 + "\n");
             try{
-                choice = in.nextInt();
-                in.nextLine();
+                inputRead = in.nextLine();
             }catch ( InputMismatchException ex){
-                choice = -1;
+                out.println("Invalid selection!");
+                continue;
             }
-            if(choice<1 || choice>2) out.println("Invalid selection!");
-        }while (choice<1 || choice>2);
 
+            try{
+                choice = Integer.parseInt(inputRead);
+            } catch (NumberFormatException e) {
+                out.println("Invalid selection!");
+                continue;
+            }
+            if(choice != 1 && choice != 2) out.println("Invalid selection!");
+            else break;
+        }
         return choice;
     }
 
@@ -486,89 +494,87 @@ public class TextualUI extends UserInterface {
 
             if (choice == 1) {
                 // Pick a tile
-                while(true){
-                    //checks that one more tile can be picked
-                    if(coords.size() == maxNumOfChosenTiles ){
-                        out.println("You can not select more than " + String.valueOf(maxNumOfChosenTiles) + " tiles" );
-                        break;
-                    }
-                    //checks that one more tile can fit in the shelf
-                    if(maxFreeSpacesInMyShelf == coords.size()){
-                        out.println("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
-                        break;
-                    }
 
-                    out.println("Insert the coordinates [ROW] [COLUMN]: ");
-                    input = in.nextLine();
-                    String[] readCoords;
-                    readCoords = input.split("\\s+");    // split with one or multiple spaces
-                    if( (readCoords.length > 2) || (readCoords.length < 2)
-                            || readCoords[0].length() > 1 || readCoords[0].length() <= 0
-                            || readCoords[1].length() > 1 || readCoords[1].length() <= 0
-                            || !checkUserInput('A', numRows + 'A', readCoords[0].toUpperCase().charAt(0))
-                            || !checkUserInput(0, numCols, readCoords[1].charAt(0) - '0'))
-                    {
-                        out.println("Insert a row [A - " + (char)(numRows + 'A') + "]" +
-                                "and a column [0 - " + numCols +"]");
-                        continue;
-                    }
-
-                    chosenRow = (readCoords[0].toUpperCase().charAt(0)) - 'A' + rowOffset;
-                    chosenColumn = readCoords[1].charAt(0) - '0' + colOffset;
-                    singleTileCoord = new Coordinates(chosenRow, chosenColumn);
-
-                    //check that the coordinates correspond to a tile on the board
-                    if(!gameBoardView.getCoords().contains(singleTileCoord) || gameBoardView.getTile(singleTileCoord) == null){
-                        out.println("These coordinates are not valid");
-                        continue;
-                    }
-
-                    //checks that the chosen tile is pickable
-                    if(!gameBoardView.isPickable(singleTileCoord)){
-                        out.println("You can not pick this tile");
-                        continue;
-                    }
-
-                    //checks that this tile has not been already picked and that is next to one of the previously picked ones
-                    boolean nextTo = false;
-                    boolean alreadyPicked = false;
-                    int i;
-                    for(i = 0; i < coords.size(); i++){
-                        if(coords.get(i).getROW() == chosenRow && coords.get(i).getCOL() == chosenColumn){
-                            alreadyPicked = true;
-                            break;
-                        }
-                        if(( ( coords.get(i).getCOL() + 1 == chosenColumn || coords.get(i).getCOL() - 1 == chosenColumn ) && coords.get(i).getROW() == chosenRow )
-                                || ( ( coords.get(i).getROW() + 1 == chosenRow || coords.get(i).getROW() - 1 == chosenRow ) && coords.get(i).getCOL() == chosenColumn ))
-                            nextTo = true;
-                    }
-                    if(alreadyPicked){
-                        out.println("You have already selected this tile");
-                        continue;
-                    }
-                    if(!nextTo && coords.size() > 0){
-                        out.println("This tile is not next to one of the others you selected");
-                        continue;
-                    }
-                    //checks that this tile is on the same column or on the same row with the previously picked ones
-                    boolean sameRow = true;
-                    boolean sameColumn = true;
-                    for(i = 0; i < coords.size()-1 && (sameRow || sameColumn); i++) {
-                        if(coords.get(i).getROW() != coords.get(i+1).getROW()) sameRow = false;
-                        if(coords.get(i).getCOL() != coords.get(i+1).getCOL()) sameColumn = false;
-                    }
-                    //coords size can be 0 or 1
-                    if( !(sameRow && sameColumn) ){
-                        // qui c'è un errore nell'if
-                        if( (sameRow && coords.get(0).getROW() != chosenRow) || (sameColumn && coords.get(0).getCOL() != chosenColumn)){
-                            out.println("The selected tiles must be on the same line");
-                            continue;
-                        }
-                    }
-                    // all the checks are done, it can be added to the list of coords
-                    coords.add(new Coordinates(chosenRow, chosenColumn));
+                //checks that one more tile can be picked
+                if(coords.size() == maxNumOfChosenTiles ){
+                    out.println("You can not select more than " + String.valueOf(maxNumOfChosenTiles) + " tiles" );
                     break;
                 }
+                //checks that one more tile can fit in the shelf
+                if(maxFreeSpacesInMyShelf == coords.size()){
+                    out.println("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
+                    break;
+                }
+
+                out.println("Insert the coordinates [ROW] [COLUMN]: ");
+                input = in.nextLine();
+                String[] readCoords;
+                readCoords = input.split("\\s+");    // split with one or multiple spaces
+                if( (readCoords.length > 2) || (readCoords.length < 2)
+                        || readCoords[0].length() > 1 || readCoords[0].length() <= 0
+                        || readCoords[1].length() > 1 || readCoords[1].length() <= 0
+                        || !checkUserInput('A', numRows + 'A', readCoords[0].toUpperCase().charAt(0))
+                        || !checkUserInput(0, numCols, readCoords[1].charAt(0) - '0'))
+                {
+                    out.println("Insert a row [A - " + (char)(numRows + 'A') + "]" +
+                            "and a column [0 - " + numCols +"]");
+                    continue;
+                }
+
+                chosenRow = (readCoords[0].toUpperCase().charAt(0)) - 'A' + rowOffset;
+                chosenColumn = readCoords[1].charAt(0) - '0' + colOffset;
+                singleTileCoord = new Coordinates(chosenRow, chosenColumn);
+
+                //check that the coordinates correspond to a tile on the board
+                if(!gameBoardView.getCoords().contains(singleTileCoord) || gameBoardView.getTile(singleTileCoord) == null){
+                    out.println("These coordinates are not valid");
+                    continue;
+                }
+
+                //checks that the chosen tile is pickable
+                if(!gameBoardView.isPickable(singleTileCoord)){
+                    out.println("You can not pick this tile");
+                    continue;
+                }
+
+                //checks that this tile has not been already picked and that is next to one of the previously picked ones
+                boolean nextTo = false;
+                boolean alreadyPicked = false;
+                int i;
+                for(i = 0; i < coords.size(); i++){
+                    if(coords.get(i).getROW() == chosenRow && coords.get(i).getCOL() == chosenColumn){
+                        alreadyPicked = true;
+                        break;
+                    }
+                    if(( ( coords.get(i).getCOL() + 1 == chosenColumn || coords.get(i).getCOL() - 1 == chosenColumn ) && coords.get(i).getROW() == chosenRow )
+                            || ( ( coords.get(i).getROW() + 1 == chosenRow || coords.get(i).getROW() - 1 == chosenRow ) && coords.get(i).getCOL() == chosenColumn ))
+                        nextTo = true;
+                }
+                if(alreadyPicked){
+                    out.println("You have already selected this tile");
+                    continue;
+                }
+                if(!nextTo && coords.size() > 0){
+                    out.println("This tile is not next to one of the others you selected");
+                    continue;
+                }
+                //checks that this tile is on the same column or on the same row with the previously picked ones
+                boolean sameRow = true;
+                boolean sameColumn = true;
+                for(i = 0; i < coords.size()-1 && (sameRow || sameColumn); i++) {
+                    if(coords.get(i).getROW() != coords.get(i+1).getROW()) sameRow = false;
+                    if(coords.get(i).getCOL() != coords.get(i+1).getCOL()) sameColumn = false;
+                }
+                //coords size can be 0 or 1
+                if( !(sameRow && sameColumn) ){
+                    // qui c'è un errore nell'if
+                    if( (sameRow && coords.get(0).getROW() != chosenRow) || (sameColumn && coords.get(0).getCOL() != chosenColumn)){
+                        out.println("The selected tiles must be on the same line");
+                        continue;
+                    }
+                }
+                // all the checks are done, it can be added to the list of coords
+                coords.add(new Coordinates(chosenRow, chosenColumn));
             } else {
                 break;
             }

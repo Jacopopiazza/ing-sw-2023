@@ -7,9 +7,11 @@ import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Tuple;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.rmi.UnknownHostException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -78,20 +80,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      */
     public static void main(String[] args){
 
-        Thread rmiThread = new Thread() {
-            @Override
-            public void run() {
-                logger.log(Level.INFO, "Start RMI service on port " + Config.getInstance().getRmiPort());
-                try {
-                    startRMI();
-                } catch (RemoteException e) {
-                    System.err.println("Cannot start RMI. This protocol will be disabled.");
-                }
-            }
-        };
-
-        rmiThread.start();
-
         Thread socketThread = new Thread() {
             @Override
             public void run() {
@@ -106,7 +94,23 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             }
         };
         socketThread.start();
+        Thread rmiThread = new Thread() {
+            @Override
+            public void run() {
+                logger.log(Level.INFO, "Start RMI service on port " + Config.getInstance().getRmiPort());
+                try {
+                    startRMI();
+                } catch (RemoteException e) {
+                    System.err.println("Cannot start RMI. This protocol will be disabled.");
+                }
+            }
+        };
         logger.log(Level.INFO, "Start server");
+
+        System.setProperty("java.rmi.server.hostname", Config.getInstance().getIpServer());
+
+        rmiThread.start();
+
     }
 
     /**
@@ -135,7 +139,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private ServerImplementation() throws RemoteException {
         super();
         setUpLogger();
-        //System.setProperty("java.rmi.server.hostname","0.0.0.0");
+
         playingUsernames = new ArrayList<>();
         disconnectedUsernames = new HashMap<>();
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();

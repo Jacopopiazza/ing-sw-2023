@@ -56,11 +56,10 @@ public class GameServer extends UnicastRemoteObject implements Server {
     /**
      * Constructs a GameServer instance with the specified ServerImplementation and number of players.
      *
-     * @param serverImplementation the server implementation handling game-related operations
      * @param numOfPlayers         the number of players in the game
      * @throws RemoteException if a remote communication error occurs
      */
-    public GameServer(ServerImplementation serverImplementation, int numOfPlayers) throws RemoteException {
+    public GameServer(int numOfPlayers) throws RemoteException {
         super();
         this.serverImplementation = ServerImplementation.getInstance();
         this.controller = new Controller(new Game(numOfPlayers), this);
@@ -277,6 +276,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * Deletes the game associated with the specified players.
      *
      * @param players the list of players in the game
+     * @param listeners the listeners to notify
      */
     public void deleteGame(List<String> players,List<GameListener> listeners) {
         this.serverImplementation.deleteGame(players);
@@ -284,7 +284,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Reconnects the player with the specified username and assigns the specified listener to the game.
+     * Reconnects the player with the specified username and assigns him the specified listener.
      *
      * @param username the username of the player reconnecting
      * @param listener the listener to assign to the game
@@ -305,7 +305,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     }
 
     /**
-     * Adds a player with the specified username and assigns the specified listener to the game.
+     * Adds a player with the specified username and assigns him the given listener.
      *
      * @param username the username of the player to add
      * @param listener the listener to assign to the game

@@ -337,7 +337,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             }
             synchronized (lobbiesWaitingToStart){
                 if( numOfPlayers != 1 ){
-                    GameServer lobby = new GameServer(this,numOfPlayers);
+                    GameServer lobby = new GameServer(numOfPlayers);
                     lobby.addPlayer(username, listener);
                     playingUsernames.add(username);
                     lobbiesWaitingToStart.add(lobby);

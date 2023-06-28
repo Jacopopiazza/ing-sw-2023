@@ -23,25 +23,25 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.*;
 
 /**
- * The `ServerImplementation` class represents the server implementation for the game. It handles the communication
+ * The {@code ServerImplementation} class represents the server implementation for the game. It handles the communication
  * with clients using both RMI (Remote Method Invocation) and socket protocols.
  *
- * The class implements the `Server` interface, which defines the communication methods that clients can invoke.
- * It extends the `UnicastRemoteObject` class to enable remote method invocation (RMI) functionality.
+ * The class implements the {@link Server} interface, which defines the communication methods that clients can invoke.
+ * It extends the {@link UnicastRemoteObject} class to enable remote method invocation (RMI) functionality.
  *
- * The `ServerImplementation` class maintains a list of connected players (`playingUsernames`) and a map of disconnected
+ * The {@code ServerImplementation} class maintains a list of connected players (`playingUsernames`) and a map of disconnected
  * players (`disconnectedUsernames`). It also keeps a queue of lobbies waiting to start (`lobbiesWaitingToStart`).
  *
  * The class provides methods to handle incoming messages from clients. The `handleMessage` method processes register
  * messages to connect clients to their respective `GameServer` instances and reconnect messages to reconnect clients
- * to their previous `GameServer` instances.
+ * to their previous {@link GameServer} instances.
  *
  * The class also provides methods to delete a game, disconnect a player, kick a player from a lobby, and handle player
  * reconnection. These methods ensure the appropriate management of players and game instances.
  *
- * The `ServerImplementation` class supports both RMI and socket communication protocols. The `startRMI` method starts
+ * The {@code ServerImplementation} class supports both RMI and socket communication protocols. The `startRMI` method starts
  * the RMI server, while the `startSocket` method starts the socket server. Incoming socket connections are handled
- * by the `ClientSkeleton` class.
+ * by the {@link ClientSkeleton} class.
  *
  * The class includes a singleton pattern to ensure that only one instance of the server exists. The `getInstance`
  * method returns the singleton instance of the server.
@@ -49,7 +49,7 @@ import java.util.logging.*;
  * The `main` method starts the server by creating the singleton instance and starting the RMI and socket server threads.
  * It also sets up the logger to log server activities.
  *
- * Note: The `ServerImplementation` class assumes that the game logic and state are managed by the `GameServer` class,
+ * Note: The {@code ServerImplementation} class assumes that the game logic and state are managed by the {@link GameServer} class,
  * which is responsible for handling the game lobby and the game itself.
  */
 public class ServerImplementation extends UnicastRemoteObject implements Server {

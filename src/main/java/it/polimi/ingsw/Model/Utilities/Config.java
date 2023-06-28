@@ -49,6 +49,12 @@ public class Config {
     private final List<List<Coordinates>> XShapeFromJSON;
     private final List<List<Coordinates>> DiagonalsFromJSON;
 
+    private final String ipServer;
+
+    public String getIpServer() {
+        return ipServer;
+    }
+
     public Integer getRmiPort() {
         return rmiPort;
     }
@@ -96,6 +102,13 @@ public class Config {
         if(tempSocketPort == tempSocketPort){
             tempRmiPort = 1099;
             tempSocketPort = 1234;
+        }
+
+        if(!IPAddressValidator.isValidIPAddress(jsonConfig.get("ipServer").getAsString())){
+            ipServer = "127.0.0.1";
+        }
+        else{
+            ipServer = jsonConfig.get("ipServer").getAsString();
         }
 
         rmiPort = tempRmiPort;

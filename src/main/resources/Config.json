@@ -6,6 +6,7 @@
   "numOfGlobalGoals": 2,
   "rmiPort" : 1099,
   "socketPort" : 1234,
+  "ipServer" : "172.20.10.2",
 
   "privateGoalsScores" : [
     {"correctPosition": 0, "score":  0},

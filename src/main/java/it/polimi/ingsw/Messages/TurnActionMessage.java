@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * The TurnActionMessage class represents a message containing the details of a turn action.
- * It implements the Message and Serializable interfaces.
+ * It extends the Message abstract class and is serializable.
  */
 public class TurnActionMessage extends Message {
     private String username;
@@ -14,7 +14,7 @@ public class TurnActionMessage extends Message {
     private int column;
 
     /**
-     * Constructs a TurnActionMessage object with the specified parameters.
+     * Constructs a new {@code TurnActionMessage} object with the specified parameters.
      *
      * @param u     The username of the player performing the turn action.
      * @param chosenTiles  The array of coordinates representing the chosen tiles.

@@ -9,13 +9,13 @@ import java.io.Serializable;
 
 /**
  * The ReconnectMessage class represents a message indicating a player's intention to reconnect.
- * It implements the Message interface and is serializable.
+ * It extends the Message abstract class and is serializable.
  */
 public class ReconnectMessage extends Message {
     private String username;
 
     /**
-     * Constructs a ReconnectMessage object with the specified username.
+     * Constructs a new {@code ReconnectMessage} object with the specified username.
      *
      * @param username The username of the player reconnecting.
      */
@@ -24,7 +24,7 @@ public class ReconnectMessage extends Message {
     }
 
     /**
-     * Returns the username of the player reconnecting.
+     * Returns the username of the player who is trying to reconnect.
      *
      * @return The username.
      */

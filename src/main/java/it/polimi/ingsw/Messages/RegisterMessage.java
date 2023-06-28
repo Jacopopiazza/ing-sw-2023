@@ -2,14 +2,14 @@ package it.polimi.ingsw.Messages;
 
 /**
  * The RegisterMessage class represents a message for registering a player.
- * It implements the Message interface.
+ * It extends the Message abstract class and is serializable.
  */
 public class RegisterMessage extends Message {
     private String username;
     private int numOfPlayers;
 
     /**
-     * Constructs a RegisterMessage object with the specified username and number of players.
+     * Constructs a new {@code RegisterMessage} object with the specified username and number of players.
      *
      * @param username     The username of the player to register.
      * @param numOfPlayers The number of players for the game.

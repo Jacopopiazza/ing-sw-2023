@@ -1,10 +1,14 @@
 package it.polimi.ingsw.Messages;
 
+/**
+ * Represents a ping message sent to test the connection with a player.
+ * This kind of messages contains a ping number to identify the player's client who is answering.
+ */
 public class PingMessage extends Message {
     private final int pingNumber;
 
     /**
-     * Constructs a PingMessage with the specified message.
+     * Constructs a new {@code PingMessage} with the specified pingNumber.
      *
      * @param pingNumber the message
      */

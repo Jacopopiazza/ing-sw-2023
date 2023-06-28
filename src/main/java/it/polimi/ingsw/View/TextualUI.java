@@ -202,9 +202,9 @@ public class TextualUI extends UserInterface {
         String ip;
         String port;
         do {
-            out.println("Please provide the IP address of the server:");
+            out.println("Please provide the IP address or the URL of the server:");
             ip = in.nextLine();
-        }while(!IPAddressValidator.isValidIPAddress(ip));
+        }while(!IPAddressValidator.isValidIPAddress(ip) && !IPAddressValidator.isValidURL(ip));
 
         if(choice == 1){
 

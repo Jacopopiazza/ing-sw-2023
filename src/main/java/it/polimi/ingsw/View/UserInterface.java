@@ -82,8 +82,8 @@ public abstract class UserInterface implements Runnable, View
      */
     protected void setUpRMIClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress {
 
-        if(ip == null || ip.isEmpty() || !IPAddressValidator.isValidIPAddress(ip)) {
-            throw new InvalidIPAddress("Invalid IP address");
+        if(ip == null || ip.isEmpty() || (!IPAddressValidator.isValidIPAddress(ip) && !IPAddressValidator.isValidURL(ip))) {
+            throw new InvalidIPAddress("Invalid IP/URL address");
         }
 
         Registry registry = LocateRegistry.getRegistry(ip, Config.getInstance().getRmiPort());
@@ -116,8 +116,8 @@ public abstract class UserInterface implements Runnable, View
 
     protected void setUpSocketClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress{
 
-        if(ip == null || ip.isEmpty() || !IPAddressValidator.isValidIPAddress(ip)) {
-            throw new InvalidIPAddress("Invalid IP address");
+        if(ip == null || ip.isEmpty() || (!IPAddressValidator.isValidIPAddress(ip) && !IPAddressValidator.isValidURL(ip))) {
+            throw new InvalidIPAddress("Invalid IP/URL address");
         }
 
         ServerStub serverStub = new ServerStub(ip, Config.getInstance().getSocketPort());

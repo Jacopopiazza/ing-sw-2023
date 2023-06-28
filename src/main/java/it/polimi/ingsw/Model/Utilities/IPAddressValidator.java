@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Model.Utilities;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +61,15 @@ public abstract class IPAddressValidator {
 
     public static boolean isValidPort(Integer portNumber){
         if(portNumber < 0 || portNumber > 65535){
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidURL(String url){
+        try{
+            URL localurl = new URL(url);
+        } catch (MalformedURLException e) {
             return false;
         }
         return true;

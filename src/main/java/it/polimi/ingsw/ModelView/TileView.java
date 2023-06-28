@@ -6,8 +6,8 @@ import it.polimi.ingsw.Model.TileColor;
 import java.io.Serializable;
 
 /**
- * The TileView class represents a view of a tile in the game.
- * It provides a snapshot of the tile's color and ID in a serializable format.
+ * The {@code TileView} class represents the immutable version of the {@link it.polimi.ingsw.Model.Tile}.
+ * It provides a snapshot of a tile in a serializable format.
  */
 public class TileView implements Serializable {
     private static final long serialVersionUID=1L;
@@ -15,9 +15,9 @@ public class TileView implements Serializable {
     private final int id;
 
     /**
-     * Constructs a new TileView object based on the given Tile object.
+     * Constructs a new {@code TileView} object based on the given {@link it.polimi.ingsw.Model.Tile} object.
      *
-     * @param tile the Tile object to create the view from
+     * @param tile the {@link it.polimi.ingsw.Model.Tile} object to create the view from
      */
 
     public TileView(Tile tile){
@@ -28,7 +28,7 @@ public class TileView implements Serializable {
     /**
      * Retrieves the color of the tile.
      *
-     * @return the color of the tile
+     * @return the {@link TileColor} of the tile
      */
 
     public TileColor getColor() {
@@ -47,6 +47,7 @@ public class TileView implements Serializable {
 
     /**
      * Checks if this TileView is equal to another object.
+     * A tile is equal to another tile if they have the same ID and color.
      *
      * @param o the object to compare to
      * @return true if the objects are equal, false otherwise

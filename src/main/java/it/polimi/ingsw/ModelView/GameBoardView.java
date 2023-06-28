@@ -7,15 +7,19 @@ import it.polimi.ingsw.Model.GameBoard;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * The {@code GameBoardView} class represents the immutable version of the {@link it.polimi.ingsw.Model.GameBoard}.
+ * It provides a snapshot of the game board's attributes in a serializable format.
+ */
 public class GameBoardView implements Serializable {
     private static final long serialVersionUID=1L;
     private final Map<Coordinates, TileView> board;
     private final Set<Coordinates> pickables;
 
     /**
-     * Constructs a GameBoardView object based on the provided GameBoard.
+     * Constructs a new {@code GameBoardView} object based on the provided GameBoard.
      *
-     * @param gameBoard the game board from which to create the view
+     * @param gameBoard the {@link it.polimi.ingsw.Model.GameBoard} from which it creates the ModelView
      */
     public GameBoardView(GameBoard gameBoard){
         this.board = new HashMap<>();

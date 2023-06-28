@@ -7,17 +7,17 @@ import it.polimi.ingsw.Model.Shelf;
 import java.io.Serializable;
 
 /**
- * The ShelfView class represents a view of a player's shelf in the game.
- * It provides a snapshot of the shelf's attributes in a serializable format.
+ * The {@code ShelfView} class represents the immutable version of the {@link it.polimi.ingsw.Model.Shelf}.
+ * It provides a snapshot of the player's shelf in a serializable format.
  */
 public class ShelfView implements Serializable {
     private static final long serialVersionUID=1L;
     private final TileView[][] shelf;
 
     /**
-     * Constructs a new ShelfView object based on the given Shelf object.
+     * Constructs a new {@code ShelfView} object based on the given {@link it.polimi.ingsw.Model.Shelf} object.
      *
-     * @param shelf the Shelf object to create the view from
+     * @param shelf the {@link it.polimi.ingsw.Model.Shelf} object to create the view from
      */
     public ShelfView(Shelf shelf){
         this.shelf = new TileView[Shelf.getRows()][Shelf.getColumns()];
@@ -29,10 +29,10 @@ public class ShelfView implements Serializable {
     }
 
     /**
-     * Retrieves the TileView object at the specified coordinates on the shelf.
+     * Retrieves the {@link TileView} object at the specified coordinates on the shelf.
      *
      * @param c the coordinates of the tile to retrieve
-     * @return the TileView object at the specified coordinates
+     * @return the {@link TileView} object at the specified coordinates
      * @throws ColumnOutOfBoundsException if the specified coordinates are out of bounds
      */
     public TileView getTile(Coordinates c) throws ColumnOutOfBoundsException {

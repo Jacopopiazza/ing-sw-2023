@@ -9,8 +9,8 @@ import java.util.Stack;
 
 
 /**
- * The GameView class represents the view of the game in the model-view architecture.
- * It provides a simplified representation of the game state for the client-side view.
+ * The {@code GameView} class represents the immutable version of the {@link it.polimi.ingsw.Model.Game}.
+ * It provides a snapshot of the game state in a serializable format.
  */
 public class GameView implements Serializable {
 
@@ -22,9 +22,9 @@ public class GameView implements Serializable {
     private final String cheater;
 
     /**
-     * Constructs a GameView object based on the provided Game.
+     * Constructs a {@code GameView} object based on the provided Game.
      *
-     * @param game the game from which to create the view
+     * @param game the {@link it.polimi.ingsw.Model.Game} from which to create the view
      */
     public GameView(Game game) {
         if(game != null){
@@ -54,9 +54,9 @@ public class GameView implements Serializable {
     }
 
     /**
-     * Constructs a GameView object based on the provided GameBoard.
+     * Constructs a {@code GameView} object based on the provided GameBoard.
      *
-     * @param board the game board to include in the view
+     * @param board the {@link it.polimi.ingsw.Model.GameBoard} to include in the view
      */
     public GameView(GameBoard board) {
         if (board != null ) this.board = board.getView();
@@ -69,9 +69,9 @@ public class GameView implements Serializable {
     }
 
     /**
-     * Constructs a GameView object based on the provided Player array.
+     * Constructs a {@code GameView} object based on the provided Player array.
      *
-     * @param players the array of players to include in the view
+     * @param players the array of {@link it.polimi.ingsw.Model.Player} to include in the view
      */
     public GameView(Player[] players) {
         this.board = null;
@@ -89,11 +89,11 @@ public class GameView implements Serializable {
     }
 
     /**
-     * Constructs a GameView object based on the provided Player, index, and GlobalGoal array.
+     * Constructs a {@code GameView} object based on the provided Player, index, and GlobalGoal array.
      *
-     * @param p     the player to include in the view
+     * @param p     the {@link it.polimi.ingsw.Model.Player} to include in the view
      * @param index the index of the player in the view
-     * @param goals the array of global goals to include in the view
+     * @param goals the array of {@link it.polimi.ingsw.Model.GlobalGoals.GlobalGoal} to include in the view
      */
     public GameView(Player p, int index, GlobalGoal[] goals) {
         this.board = null;
@@ -114,7 +114,7 @@ public class GameView implements Serializable {
     }
 
     /**
-     * Constructs a GameView object with a cheater string.
+     * Constructs a {@code GameView} object with a cheater string.
      *
      * @param cheater the cheater string to include in the view
      */
@@ -128,7 +128,7 @@ public class GameView implements Serializable {
     }
 
     /**
-     * Constructs a GameView object with the current player and number of active players.
+     * Constructs a {@code GameView} object with the current player and number of active players.
      *
      * @param currentPlayer      the index of the current player
      * @param numOfActivePlayers the number of active players

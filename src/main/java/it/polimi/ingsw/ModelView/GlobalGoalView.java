@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.EmptyStackException;
 
 /**
- * The GlobalGoalView class represents the view of a global goal in the model-view architecture.
- * It provides a simplified representation of the global goal state for the client-side view.
+ * The {@code GlobalGoalView} class represents the immutable version of the {@link it.polimi.ingsw.Model.GlobalGoals.GlobalGoal}.
+ * It provides a snapshot of the global goal state in a serializable format.
  */
 public class GlobalGoalView implements Serializable {
 
@@ -16,9 +16,9 @@ public class GlobalGoalView implements Serializable {
     private final String description;
 
     /**
-     * Constructs a GlobalGoalView object based on the provided GlobalGoal.
+     * Constructs a {@code GlobalGoalView} object based on the provided GlobalGoal.
      *
-     * @param gg the GlobalGoal object to include in the view
+     * @param gg the {@link it.polimi.ingsw.Model.GlobalGoals.GlobalGoal} object to include in the view
      */
     public GlobalGoalView(GlobalGoal gg){
         int temp;

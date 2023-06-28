@@ -6,8 +6,8 @@ import it.polimi.ingsw.Model.PrivateGoal;
 import java.io.Serializable;
 
 /**
- * The PlayerView class represents the view of a player in the model-view architecture.
- * It provides a simplified representation of the player's state for the client-side view.
+ * The {@code PlayerView} class represents the immutable version of the {@link it.polimi.ingsw.Model.Player}.
+ * It provides a snapshot of the player's state in a serializable format.
  */
 public class PlayerView implements Serializable {
     private static final long serialVersionUID=1L;
@@ -18,9 +18,9 @@ public class PlayerView implements Serializable {
     private final boolean winner;
 
     /**
-     * Constructs a new PlayerView object based on the given Player object.
+     * Constructs a new {@code PlayerView} object based on the given {@link it.polimi.ingsw.Model.Player} object.
      *
-     * @param player the Player object to create the view from
+     * @param player the {@link it.polimi.ingsw.Model.Player} object to create the view from
      */
 
     public PlayerView(Player player){
@@ -43,7 +43,7 @@ public class PlayerView implements Serializable {
     /**
      * Retrieves the view of the player's shelf.
      *
-     * @return the ShelfView object representing the player's shelf
+     * @return the {@link it.polimi.ingsw.ModelView.ShelfView} object representing the player's shelf
      */
 
     public ShelfView getShelf() {
@@ -53,7 +53,7 @@ public class PlayerView implements Serializable {
     /**
      * Retrieves the view of the player's private goal.
      *
-     * @return the PrivateGoalView object representing the player's private goal
+     * @return the {@link it.polimi.ingsw.ModelView.PrivateGoalView} object representing the player's private goal
      */
 
     public PrivateGoalView getPrivateGoal() {

@@ -6,19 +6,18 @@ import it.polimi.ingsw.Model.PrivateGoal;
 import java.io.Serializable;
 
 /**
- * The PrivateGoalView class represents a view of a private goal in the game.
- * It provides a snapshot of the private goal's attributes in a serializable format.
+ * The {@code PrivateGoalView} class represents the immutable version of the {@link it.polimi.ingsw.Model.PrivateGoal}.
+ * It provides a snapshot of the player's private goal in a serializable format.
  */
-
 public class PrivateGoalView implements Serializable {
 
     private final int id;
     private final Coordinates[] coords;
 
     /**
-     * Constructs a new PrivateGoalView object based on the given PrivateGoal object.
+     * Constructs a new {@code PrivateGoalView} object based on the given {@link it.polimi.ingsw.Model.PrivateGoal} object.
      *
-     * @param goal the PrivateGoal object to create the view from
+     * @param goal the {@link it.polimi.ingsw.Model.PrivateGoal} object to create the view from
      */
 
     public PrivateGoalView(PrivateGoal goal){
@@ -29,7 +28,7 @@ public class PrivateGoalView implements Serializable {
     /**
      * Retrieves the array of coordinates associated with the private goal.
      *
-     * @return an array of Coordinates representing the associated coordinates
+     * @return an array of {@link it.polimi.ingsw.Model.Coordinates} representing the associated coordinates
      */
 
     public Coordinates[] getCoordinates(){

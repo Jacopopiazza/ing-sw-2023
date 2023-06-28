@@ -48,23 +48,10 @@ public class Config {
     private final Integer socketPort;
     private final List<List<Coordinates>> XShapeFromJSON;
     private final List<List<Coordinates>> DiagonalsFromJSON;
-
     private final String ipServer;
 
-    public String getIpServer() {
-        return ipServer;
-    }
-
-    public Integer getRmiPort() {
-        return rmiPort;
-    }
-
-    public Integer getSocketPort() {
-        return socketPort;
-    }
-
     /**
-     * Private constructor to enforce singleton pattern. Loads the configuration data from JSON files.
+     * Private constructor, used for the singleton pattern. This method loads the configuration data from JSON files.
      */
     private Config(){
         Gson gson = new Gson();
@@ -228,7 +215,6 @@ public class Config {
      * @return an array of BoardGoalScore objects representing the sorted board goals.
      */
     public BoardGoalScore[] getSortedBoardGoals() {
-        //return (BoardGoalScore[]) Arrays.stream(boardGoals).sorted((t1,t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList()).toArray();
         List<BoardGoalScore> l = Arrays.stream(boardGoals).sorted((t1, t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList());
         return l.toArray(new BoardGoalScore[l.size()]);
     }
@@ -286,5 +272,32 @@ public class Config {
     public static synchronized Config getInstance(){
         if( instance == null ) instance = new Config();
         return instance;
+    }
+
+    /**
+     * Returns the IP address of the server.
+     *
+     * @return the IP address of the server
+     */
+    public String getIpServer() {
+        return ipServer;
+    }
+
+    /**
+     * Returns the RMI port of the server.
+     *
+     * @return the RMI port of the server
+     */
+    public Integer getRmiPort() {
+        return rmiPort;
+    }
+
+    /**
+     * Returns the socket port of the server.
+     *
+     * @return the socket port of the server
+     */
+    public Integer getSocketPort() {
+        return socketPort;
     }
 }

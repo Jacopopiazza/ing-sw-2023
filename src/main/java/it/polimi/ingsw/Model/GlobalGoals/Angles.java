@@ -5,14 +5,15 @@ import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Exceptions.*;
 
 /**
- * The Angles class represents a global goal called "Angles" in the game MyShelfie.
+ * The Angles class represents a global goal called "Angles" of the game.
  * This goal checks if the tiles placed at the four corners of a shelf have the same color.
  * If all four corner tiles have the same color, the goal is satisfied.
+ * It extends the {@code GlobalGaol} abstract class.
  */
 public class Angles extends GlobalGoal {
 
     /**
-     * Constructs an Angles global goal with the specified number of players.
+     * Constructs a new {@code Angles} global goal with the specified number of players.
      *
      * @param people the number of players.
      * @throws InvalidNumberOfPlayersException if the number of players is invalid.
@@ -24,7 +25,7 @@ public class Angles extends GlobalGoal {
     }
 
     /**
-     * Checks if the given shelf satisfies the Angles global goal.
+     * Checks if the given shelf satisfies the {@code Angles} global goal.
      *
      * @param s the shelf to check.
      * @return true if the shelf satisfies the Angles global goal, false otherwise.

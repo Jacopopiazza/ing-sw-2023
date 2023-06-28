@@ -12,13 +12,14 @@ import java.util.List;
 
 /**
  * The Shape class represents a global goal that requires matching a specific shape of tiles on the shelf.
+ * It extends the {@code GlobalGaol} abstract class.
  */
 public class Shape extends GlobalGoal {
 
     List<List<Coordinates>> shapes;
 
     /**
-     * Constructs a Shape instance with the specified number of players and shape.
+     * Constructs a new {@code Shape} global goal with the specified number of players and shape.
      *
      * @param people the number of players in the game
      * @param s      the shape to match

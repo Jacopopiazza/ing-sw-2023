@@ -5,8 +5,16 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The IPAddressValidator class provides methods to validate IP addresses, ports and URLs.
+ */
 public abstract class IPAddressValidator {
 
+    /**
+     * Checks if the specified IP address is valid.
+     * @param ip the IP address to check
+     * @return true if the IP address is valid, false otherwise
+     */
     public static boolean isValidIPAddress(String ip)
     {
 
@@ -46,7 +54,11 @@ public abstract class IPAddressValidator {
         return m.matches();
     }
 
-
+    /**
+     * Checks if the specified port is valid.
+     * @param port the port to check
+     * @return true if the port is valid, false otherwise
+     */
     public static boolean isValidPort(String port){
         try{
             int portNumber = Integer.parseInt(port);
@@ -59,6 +71,11 @@ public abstract class IPAddressValidator {
         return true;
     }
 
+    /**
+     * Checks if the specified port is valid.
+     * @param portNumber the port to check
+     * @return true if the port is valid, false otherwise
+     */
     public static boolean isValidPort(Integer portNumber){
         if(portNumber < 0 || portNumber > 65535){
             return false;
@@ -66,6 +83,11 @@ public abstract class IPAddressValidator {
         return true;
     }
 
+    /**
+     * Checks if the specified URL is valid.
+     * @param url the URL to check
+     * @return true if the URL is valid, false otherwise
+     */
     public static boolean isValidURL(String url){
         try{
             URL localurl = new URL(url);

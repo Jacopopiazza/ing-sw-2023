@@ -179,13 +179,14 @@ public class GraphicalUI extends UserInterface {
             //set up the question
             request.add(getStandardLabel("Set up the connection you want to use"));
 
-            //set up the text fields for server IP and Port
+            //set up the text field for server IP
             JPanel wrapper = new JPanel();
             wrapper.setOpaque(false);
             wrapper.setLayout(new FlowLayout());
             wrapper.setMaximumSize(new Dimension(450,60));
             request.add(wrapper);
 
+            //TODO: Fix position of IP: label in menu
             JPanel ipPanel = new JPanel();
             ipPanel.setOpaque(false);
             ipPanel.setLayout(new BoxLayout(ipPanel,BoxLayout.PAGE_AXIS));
@@ -194,19 +195,9 @@ public class GraphicalUI extends UserInterface {
             ip.setFont(ip.getFont().deriveFont(14f));
             ip.setForeground(Color.decode("14929049"));
             ipPanel.add(ip);
-            JTextField ipTextField = getStandardTextField(150,25,14f);
+            JTextField ipTextField = getStandardTextField(260,25,14f);
             ipPanel.add(ipTextField);
 
-            JPanel portPanel = new JPanel();
-            portPanel.setOpaque(false);
-            portPanel.setLayout(new BoxLayout(portPanel,BoxLayout.PAGE_AXIS));
-            wrapper.add(portPanel);
-            JLabel port = new JLabel("Port:");
-            port.setFont(port.getFont().deriveFont(14f));
-            port.setForeground(Color.decode("14929049"));
-            portPanel.add(port);
-            JTextField portTextField = getStandardTextField(150,25,14f);
-            portPanel.add(portTextField);
 
             //set up the options
             JPanel choices = new JPanel();
@@ -217,15 +208,12 @@ public class GraphicalUI extends UserInterface {
             rmi.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton){
                     try{
-                        setUpRMIClient(ipTextField.getText(),portTextField.getText());
+                        setUpRMIClient(ipTextField.getText());
                     }catch (RemoteException | NotBoundException ex ){
                         error.setText("Unable to connect with RMI");
                         return;
                     } catch (InvalidIPAddress ex) {
                         error.setText("IP not found");
-                        return;
-                    } catch (InvalidPort ex) {
-                        error.setText("Port not valid");
                         return;
                     }
                     askUsername();
@@ -236,15 +224,12 @@ public class GraphicalUI extends UserInterface {
             socket.addActionListener((e) -> {
                 if(e.getSource() instanceof JButton){
                     try{
-                        setUpSocketClient(ipTextField.getText(),portTextField.getText());
+                        setUpSocketClient(ipTextField.getText());
                     }catch (RemoteException | NotBoundException ex ){
                         error.setText("Unable to connect with Socket");
                         return;
                     } catch (InvalidIPAddress ex) {
                         error.setText("IP not found");
-                        return;
-                    } catch (InvalidPort ex) {
-                        error.setText("Port not valid");
                         return;
                     }
                     askUsername();

@@ -56,4 +56,11 @@ public abstract class IPAddressValidator {
         }
         return true;
     }
+
+    public static boolean isValidPort(Integer portNumber){
+        if(portNumber < 0 || portNumber > 65535){
+            return false;
+        }
+        return true;
+    }
 }

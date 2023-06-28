@@ -205,27 +205,23 @@ public class TextualUI extends UserInterface {
             out.println("Please provide the IP address of the server:");
             ip = in.nextLine();
         }while(!IPAddressValidator.isValidIPAddress(ip));
-        do{
-            out.println("Please provide the port of the " + (choice == 1 ? "RMI" : "Socket") + " server:");
-            port = in.nextLine();
-        }while(!IPAddressValidator.isValidPort(port));
 
         if(choice == 1){
 
             out.println("Connecting with RMI...");
             try{
-                this.setUpRMIClient(ip, port);
-            }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
-                out.println("Cannot connect with RMI. Make sure the IP and Port provided are valid and try again later...");
+                this.setUpRMIClient(ip);
+            }catch (RemoteException | NotBoundException | InvalidIPAddress ex ){
+                out.println("Cannot connect with RMI. Make sure the IP provided is valid and try again later...");
                 return false;
             }
         }else{
 
             out.println("Connecting with socket...");
             try{
-                this.setUpSocketClient(ip, port);
-            }catch (RemoteException | NotBoundException | InvalidIPAddress | InvalidPort ex ){
-                out.println("Cannot connect with socket. Make sure the IP and Port provided are valid and try again later...");
+                this.setUpSocketClient(ip);
+            }catch (RemoteException | NotBoundException | InvalidIPAddress ex ){
+                out.println("Cannot connect with socket. Make sure the IP provided is valid and try again later...");
                 return false;
             }
         }

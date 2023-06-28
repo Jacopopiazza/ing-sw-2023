@@ -44,9 +44,18 @@ public class Config {
     private final PrivateGoalScore[] privateGoalsScores;
     private final GlobalGoalScore[] globalGoals;
     private final BoardGoalScore[] boardGoals;
-
+    private final Integer rmiPort;
+    private final Integer socketPort;
     private final List<List<Coordinates>> XShapeFromJSON;
     private final List<List<Coordinates>> DiagonalsFromJSON;
+
+    public Integer getRmiPort() {
+        return rmiPort;
+    }
+
+    public Integer getSocketPort() {
+        return socketPort;
+    }
 
     /**
      * Private constructor to enforce singleton pattern. Loads the configuration data from JSON files.
@@ -63,6 +72,34 @@ public class Config {
         numOfTilesPerColor = jsonConfig.get("numOfTilesPerColor").getAsInt();
         maxNumberOfPlayers = jsonConfig.get("maxNumberOfPlayers").getAsInt();
         numOfGlobalGoals = jsonConfig.get("numOfGlobalGoals").getAsInt();
+        int tempRmiPort, tempSocketPort;
+        try{
+            tempRmiPort = jsonConfig.get("rmiPort").getAsInt();
+
+            if(!IPAddressValidator.isValidPort(tempRmiPort)){
+                tempRmiPort = 1099;
+            }
+
+        }catch (NumberFormatException ex){
+            tempRmiPort = 1099;
+        }
+
+        try{
+            tempSocketPort = jsonConfig.get("socketPort").getAsInt();
+            if(!IPAddressValidator.isValidPort(tempSocketPort)){
+                tempSocketPort = 1234;
+            }
+        }catch (NumberFormatException ex){
+            tempSocketPort = 1234;
+        }
+
+        if(tempSocketPort == tempSocketPort){
+            tempRmiPort = 1099;
+            tempSocketPort = 1234;
+        }
+
+        rmiPort = tempRmiPort;
+        socketPort = tempSocketPort;
 
         Reader readerPG = new InputStreamReader(this.getClass().getResourceAsStream("/PrivateGoals.json"));
         JsonArray baseArray = gson.fromJson(readerPG, JsonArray.class);

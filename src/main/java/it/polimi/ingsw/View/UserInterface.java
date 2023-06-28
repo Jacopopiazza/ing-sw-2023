@@ -6,6 +6,7 @@ import it.polimi.ingsw.Messages.DisconnectMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.ReconnectMessage;
 import it.polimi.ingsw.Messages.RegisterMessage;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Model.Utilities.IPAddressValidator;
 import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.Network.ClientImplementation;
@@ -50,14 +51,14 @@ public abstract class UserInterface implements Runnable, View
      */
     protected void setUpRMIClient() throws RemoteException, NotBoundException {
         try{
-            setUpRMIClient("localhost","1099");
+            setUpRMIClient("localhost");
         }catch (RemoteException ex){
             throw ex;
         }
         catch (NotBoundException ex){
             throw ex;
         }
-        catch (InvalidIPAddress | InvalidPort ex){
+        catch (InvalidIPAddress ex){
             //Do nothing, impossible to happen
             throw new RuntimeException("Impossible to happen, but it somehow happened");
         }
@@ -71,8 +72,6 @@ public abstract class UserInterface implements Runnable, View
 
      @param ip the IP address of the RMI registry
 
-     @param port the port number of the RMI registry
-
      @throws RemoteException if a remote communication error occurs
 
      @throws NotBoundException if the RMI registry is not bound
@@ -81,16 +80,13 @@ public abstract class UserInterface implements Runnable, View
 
      @throws InvalidPort if the provided port number is invalid
      */
-    protected void setUpRMIClient(String ip, String port) throws RemoteException, NotBoundException, InvalidIPAddress, InvalidPort {
+    protected void setUpRMIClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress {
 
         if(ip == null || ip.isEmpty() || !IPAddressValidator.isValidIPAddress(ip)) {
             throw new InvalidIPAddress("Invalid IP address");
         }
-        if(port == null || port.isEmpty() || !IPAddressValidator.isValidPort(port)) {
-            throw new InvalidPort("Invalid port");
-        }
 
-        Registry registry = LocateRegistry.getRegistry(ip, Integer.parseInt(port));
+        Registry registry = LocateRegistry.getRegistry(ip, Config.getInstance().getRmiPort());
         Server server = (Server) registry.lookup("G26-MyShelfie-Server");
 
         this.client = ClientImplementation.getInstance(this, server);
@@ -103,14 +99,14 @@ public abstract class UserInterface implements Runnable, View
 
 
         try{
-            setUpSocketClient("localhost","1234");
+            setUpSocketClient("localhost");
         }catch (RemoteException ex){
             throw ex;
         }
         catch (NotBoundException ex){
             throw ex;
         }
-        catch (InvalidIPAddress | InvalidPort ex){
+        catch (InvalidIPAddress ex){
             //Do nothing, impossible to happen
             throw new RuntimeException("Impossible to happen, but it somehow happened");
         }
@@ -118,16 +114,13 @@ public abstract class UserInterface implements Runnable, View
 
     }
 
-    protected void setUpSocketClient(String ip, String port) throws RemoteException, NotBoundException, InvalidIPAddress, InvalidPort{
+    protected void setUpSocketClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress{
 
         if(ip == null || ip.isEmpty() || !IPAddressValidator.isValidIPAddress(ip)) {
             throw new InvalidIPAddress("Invalid IP address");
         }
-        if(port == null || port.isEmpty() || !IPAddressValidator.isValidPort(port)) {
-            throw new InvalidPort("Invalid port");
-        }
 
-        ServerStub serverStub = new ServerStub(ip, Integer.parseInt(port));
+        ServerStub serverStub = new ServerStub(ip, Config.getInstance().getSocketPort());
         this.client = ClientImplementation.getInstance(this, serverStub);
         new Thread() {
             @Override

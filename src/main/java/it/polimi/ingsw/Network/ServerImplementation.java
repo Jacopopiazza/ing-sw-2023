@@ -2,6 +2,7 @@ package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Tuple;
 
@@ -80,7 +81,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         Thread rmiThread = new Thread() {
             @Override
             public void run() {
-                logger.log(Level.INFO, "Start RMI service");
+                logger.log(Level.INFO, "Start RMI service on port " + Config.getInstance().getRmiPort());
                 try {
                     startRMI();
                 } catch (RemoteException e) {
@@ -94,7 +95,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         Thread socketThread = new Thread() {
             @Override
             public void run() {
-                logger.log(Level.INFO, "Start Socket service");
+                logger.log(Level.INFO, "Start Socket service on port " + Config.getInstance().getSocketPort());
 
                 try {
                     startSocket();
@@ -363,7 +364,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @throws RemoteException if there is an error in remote method invocation
      */
     private static void startRMI() throws RemoteException {
-        LocateRegistry.createRegistry(1099);
+        LocateRegistry.createRegistry(Config.getInstance().getRmiPort());
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind("G26-MyShelfie-Server", getInstance());
     }
@@ -375,7 +376,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @throws RemoteException if there is an error in remote method invocation
      */
     public static void startSocket() throws RemoteException {
-        try (ServerSocket serverSocket = new ServerSocket(1234)) {
+        try (ServerSocket serverSocket = new ServerSocket(Config.getInstance().getSocketPort())) {
             while(true) {
                 logger.log(Level.INFO, "Waiting for a new socket...");
                 Socket socket = serverSocket.accept();

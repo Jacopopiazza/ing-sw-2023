@@ -4,6 +4,8 @@
   "shelfColumns" : 5,
   "numOfTilesPerColor": 22,
   "numOfGlobalGoals": 2,
+  "rmiPort" : 1099,
+  "socketPort" : 1234,
 
   "privateGoalsScores" : [
     {"correctPosition": 0, "score":  0},

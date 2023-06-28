@@ -3,13 +3,13 @@ import java.io.Serializable;
 
 /**
  * The DisconnectMessage class represents a message indicating that a player has disconnected from the game.
- * It implements the Message interface and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class DisconnectMessage extends Message {
     private String username;
 
     /**
-     * Constructs a DisconnectMessage with the specified username.
+     * Constructs a {@code DisconnectMessage} with the specified username.
      *
      * @param username the username of the player who has disconnected
      */

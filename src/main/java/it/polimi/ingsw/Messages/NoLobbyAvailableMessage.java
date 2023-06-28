@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 /**
  * The NoLobbyAvailableMessage class represents a message indicating that no lobby is available.
- * It implements the Message interface and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class NoLobbyAvailableMessage extends Message {
     private final String message = "No lobby available";
 
     /**
-     * Returns the string representation of the message.
+     * Returns the string {@link NoLobbyAvailableMessage#message}.
      *
      * @return The message string.
      */

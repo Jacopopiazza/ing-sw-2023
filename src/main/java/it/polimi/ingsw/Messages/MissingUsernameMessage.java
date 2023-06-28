@@ -1,16 +1,14 @@
 package it.polimi.ingsw.Messages;
 
-import java.io.Serializable;
-
 /**
  * The MissingUsernameMessage class represents a message indicating that the username is missing or null.
- * It implements the Message interface and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class MissingUsernameMessage extends Message {
     private final String message = "Username is null";
 
     /**
-     * Returns the string representation of the message.
+     * Returns the string {@link MissingUsernameMessage#message}.
      *
      * @return The message string.
      */

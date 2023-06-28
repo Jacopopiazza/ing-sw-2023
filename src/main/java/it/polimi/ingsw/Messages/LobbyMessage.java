@@ -8,14 +8,14 @@ import java.util.List;
 
 /**
  * The LobbyMessage class represents a message containing the list of players in the lobby.
- * It implements the Message interface and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class LobbyMessage extends Message {
 
     private List<String> players;
 
     /**
-     * Constructs a LobbyMessage object with the specified list of players.
+     * Constructs a new {@code LobbyMessage} with the specified list of players.
      *
      * @param players The list of players in the lobby.
      */

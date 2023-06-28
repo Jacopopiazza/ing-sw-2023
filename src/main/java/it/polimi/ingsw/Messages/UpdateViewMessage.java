@@ -6,13 +6,13 @@ import java.io.Serializable;
 
 /**
  * The UpdateViewMessage class represents a message containing an updated game view.
- * It implements the Message and Serializable interfaces.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class UpdateViewMessage extends Message {
     private GameView gameView;
 
     /**
-     * Constructs an UpdateViewMessage object with the specified game view.
+     * Constructs a new {@code UpdateViewMessage} object with the specified game view.
      *
      * @param gv The updated game view.
      */
@@ -22,7 +22,7 @@ public class UpdateViewMessage extends Message {
     }
 
     /**
-     * Returns the updated game view.
+     * Returns the game view.
      *
      * @return The game view.
      */

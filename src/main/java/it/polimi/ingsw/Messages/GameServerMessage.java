@@ -3,13 +3,13 @@ import it.polimi.ingsw.Network.Server;
 
 /**
  * The GameServerMessage class represents a message containing the game server information.
- * It implements the Message interface.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class GameServerMessage extends Message {
     private Server server;
 
     /**
-     * Constructs a GameServerMessage with the specified server.
+     * Constructs a {@code GameServerMessage} with the specified server.
      *
      * @param server the game server
      */

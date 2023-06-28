@@ -16,6 +16,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 
 public class TextualUI extends UserInterface {
@@ -165,15 +166,14 @@ public class TextualUI extends UserInterface {
 
     private int readNumberFromInput(Integer lowerBound, Integer upperBound){
         String input;
-        boolean valid = false;
+        boolean valid;
         int number = -1;
 
         do{
             input = in.nextLine();
-
             try {
                 number = Integer.parseInt(input);
-                valid = number >= lowerBound && number <= upperBound;
+                valid = (number >= lowerBound && number <= upperBound);
             }catch (NumberFormatException ex){
                 valid = false;
             }
@@ -593,18 +593,26 @@ public class TextualUI extends UserInterface {
         while (true) {
             List<Coordinates> coords = pickTiles(maxRow - minRow, maxCol - minCol, minRow, minCol);
 
-            // Once I have the Tiles to pick, print those Tiles and ask for their order
-            out.println("Insert the numbers corresponding to the tiles in the order according to which you want them:");
-            for (int i = 0; i < coords.size(); i++) {
-                TileView t = gameBoardView.getTile(coords.get(i));
-                out.print((i + 1) + ": ");
-                printTile(t);
-                out.print("\n");
-            }
-
-            int[] order = new int[coords.size()];
-            for (int i = 0; i < order.length; i++) {
-                order[i] = readNumberFromInput(1, coords.size()) - 1;
+            // can select the order for just 1 out of 3, the order of the other two tiles remains the same (relatively)
+            // or must select the order <-
+            Integer[] order = new Integer[coords.size()];
+            while(true){
+                // Once I have the Tiles to pick, print those Tiles and ask for their order
+                out.println("Insert the numbers corresponding to the tiles in the order according to which you want them:");
+                for (int i = 0; i < coords.size(); i++) {
+                    TileView t = gameBoardView.getTile(coords.get(i));
+                    out.print((i + 1) + ": ");
+                    printTile(t);
+                    out.print("\n");
+                }
+                for (int i = 0; i < order.length; i++) {
+                    order[i] = readNumberFromInput(1, coords.size()) - 1;
+                }
+                // checks that the given order actually contains different numbers (no duplicates)
+                if(Arrays.stream(order).collect(Collectors.toSet()).size() == order.length){
+                    break;
+                }
+                out.println("Invalid order!");
             }
 
             int column = -1;

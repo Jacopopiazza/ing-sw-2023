@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Exceptions.InvalidIPAddress;
-import it.polimi.ingsw.Exceptions.InvalidPort;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.Utilities.Config;
@@ -60,6 +59,16 @@ public class TextualUI extends UserInterface {
         init();
     }
 
+    @Override
+    public void update(Message m){
+        ClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
+
+        addMessageToQueue(m);
+        synchronized (lockLogin) {
+            lockLogin.notifyAll();
+        }
+    }
+
     private void init(){
         username = null;
         freeSpacesInMyShelf = new int[Shelf.getColumns()];
@@ -74,23 +83,13 @@ public class TextualUI extends UserInterface {
         receivedMessages = new LinkedList<>();
     }
 
-    @Override
-    public void update(Message m){
-        ClientImplementation.logger.log(Level.INFO,"CLI Received " + m.toString());
-
-        addMessageToQueue(m);
-        synchronized (lockLogin) {
-            lockLogin.notifyAll();
-        }
-    }
-
     private boolean isMessagesQueueEmpty(){
         synchronized (lockQueue){
             return this.receivedMessages.isEmpty();
         }
     }
 
-    private Message getFirstMessageFromQueue(){
+    private Message popMessageFromQueue(){
         synchronized (lockQueue){
             return this.receivedMessages.poll();
         }
@@ -114,7 +113,7 @@ public class TextualUI extends UserInterface {
     }
 
     private String getColorCode(TileView tile){
-        TileColor tc = tile.getCOLOR();
+        TileColor tc = tile.getColor();
         switch(tc) {
             case WHITE: {
                 return ConsoleColors.WHITE_BACKGROUND_BRIGHT.getCode();
@@ -254,7 +253,7 @@ public class TextualUI extends UserInterface {
 
         switch (choice){
             case 1:
-                askPlayerNumOfPlayerForLobby();
+                askNumOfPlayers();
                 break;
             case 2:
                 doConnect(this.username, 1);
@@ -263,7 +262,7 @@ public class TextualUI extends UserInterface {
         waitForLoginResponse();
     }
 
-    private void askPlayerNumOfPlayerForLobby(){
+    private void askNumOfPlayers(){
         out.println("Insert the number of players for the game:");
         int numOfPlayers = readNumberFromInput(2,Config.getInstance().getMaxNumberOfPlayers());
         doConnect(this.username, numOfPlayers);
@@ -280,7 +279,7 @@ public class TextualUI extends UserInterface {
 
         while(true)
         {
-            Message m = this.getFirstMessageFromQueue();
+            Message m = this.popMessageFromQueue();
 
             if(m instanceof UsernameNotFoundMessage){
                 ClientImplementation.logger.log(Level.INFO,"The chosen username is not taken");
@@ -299,6 +298,11 @@ public class TextualUI extends UserInterface {
             else if(m instanceof LobbyMessage){
                 ClientImplementation.logger.log(Level.INFO,"Players in lobby message");
                 printPlayersInLobby((LobbyMessage) m);
+                break;
+            }
+            else if(m instanceof UpdateViewMessage){
+                ClientImplementation.logger.log(Level.INFO,"Update view message");
+                addMessageToQueue(m);
                 break;
             }
             else{
@@ -672,7 +676,7 @@ public class TextualUI extends UserInterface {
                             continue;
                         }
 
-                        Message m = getFirstMessageFromQueue();
+                        Message m = popMessageFromQueue();
                         ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
 
                         if(m instanceof  LobbyMessage){

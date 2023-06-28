@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Exceptions.InvalidIPAddress;
-import it.polimi.ingsw.Exceptions.InvalidPort;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
@@ -117,7 +116,7 @@ public class GraphicalUI extends UserInterface {
         }
 
         private static JLabel getTileLabel(TileView tile, int width, int height){
-            ImageIcon ic = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
+            ImageIcon ic = ImageManager.getTileImage(tile.getColor(),tile.getId()%3,false);
             return new JLabel(ImageManager.resizeImageIcon(ic,width,height));
         }
 
@@ -420,7 +419,7 @@ public class GraphicalUI extends UserInterface {
             }
 
             private JButton getTileButton(TileView tile, int row, int col){
-                ImageIcon icon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,true);
+                ImageIcon icon = ImageManager.getTileImage(tile.getColor(),tile.getId()%3,true);
                 JButton button = new JButton(ImageManager.resizeImageIcon(icon,(int)(width/10.59),(int)(height/10.59)));
                 button.setBorderPainted(false);
                 button.setOpaque(false);
@@ -535,7 +534,7 @@ public class GraphicalUI extends UserInterface {
                         numberWrapper.add(orderNumbers[myOrderId]);
 
                         // Create the order button
-                        ImageIcon orderButtonIcon = ImageManager.getTileImage(tile.getCOLOR(),tile.getID()%3,false);
+                        ImageIcon orderButtonIcon = ImageManager.getTileImage(tile.getColor(),tile.getId()%3,false);
                         JButton orderButton =  new JButton(ImageManager.resizeImageIcon(orderButtonIcon,(int)(width/10.59),(int)(height/10.59)));
                         orderButton.setPreferredSize(new Dimension((int)(width/10.59),(int)(height/10.59)));
                         orderButton.setBorderPainted(false);

@@ -11,8 +11,8 @@ import java.io.Serializable;
  */
 public class TileView implements Serializable {
     private static final long serialVersionUID=1L;
-    private final TileColor COLOR;
-    private final int ID;
+    private final TileColor color;
+    private final int id;
 
     /**
      * Constructs a new TileView object based on the given Tile object.
@@ -21,8 +21,8 @@ public class TileView implements Serializable {
      */
 
     public TileView(Tile tile){
-        this.ID = tile.getId();
-        this.COLOR = tile.getColor();
+        this.id = tile.getId();
+        this.color = tile.getColor();
     }
 
     /**
@@ -31,8 +31,8 @@ public class TileView implements Serializable {
      * @return the color of the tile
      */
 
-    public TileColor getCOLOR() {
-        return COLOR;
+    public TileColor getColor() {
+        return color;
     }
 
     /**
@@ -41,8 +41,8 @@ public class TileView implements Serializable {
      * @return the ID of the tile
      */
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
     /**
@@ -59,7 +59,7 @@ public class TileView implements Serializable {
         if( ( o == null ) || ( this.getClass() != o.getClass() ) )
             return false;
         TileView tile = (TileView) o;
-        return ( tile.ID == this.ID ) && ( tile.COLOR == this.COLOR );
+        return ( tile.id == this.id) && ( tile.color == this.color);
     }
 
 }

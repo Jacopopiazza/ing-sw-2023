@@ -302,6 +302,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                             while( lobbiesWaitingToStart.peek() != null && lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
+                        playingUsernames.add(username);
                     }
                     else listener.update(new NoLobbyAvailableMessage());
                 }

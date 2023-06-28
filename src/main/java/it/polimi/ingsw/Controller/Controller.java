@@ -18,7 +18,7 @@ public class Controller  {
     private final Timer timer = new Timer();
 
     /**
-     * A TimerTask that runs when the timer expires. It cancels the timer, sets the current player as the winner,
+     * A {@code TimerTask} that runs when the timer expires. It cancels the timer, sets the current player as the winner,
      * retrieves the list of player usernames, and notifies the server to delete the game.
      */
     private final TimerTask task = new TimerTask(){
@@ -54,7 +54,7 @@ public class Controller  {
      * Adds a player to the game lobby.
      *
      * @param username The username of the player.
-     * @param listener The GameListener for the player.
+     * @param listener The {@link GameListener} for the player.
      * @return true if the lobby is full and the game is ready to start, false otherwise.
      */
     public boolean addPlayer(String username, GameListener listener){
@@ -67,10 +67,10 @@ public class Controller  {
     }
 
     /**
-     * Retrieves the GameListener associated with the specified username.
+     * Retrieves the {@code GameListener} associated with the specified username.
      *
      * @param username the username of the player whose GameListener is to be retrieved
-     * @return the GameListener associated with the specified username
+     * @return the {@link GameListener} associated with the specified username
      * @throws UsernameNotFoundException if the specified username is not found
      */
     public GameListener getListener(String username) throws UsernameNotFoundException{
@@ -90,7 +90,7 @@ public class Controller  {
      * Kicks a player from the game.
      *
      * @param username The username of the player to kick.
-     * @return The GameListener object of the kicked player, null if the game is not started yet.
+     * @return The {@link GameListener} object of the kicked player, null if the game is not started yet.
      */
     public GameListener kick(String username){
         if( !model.isGameStarted() ){
@@ -107,7 +107,7 @@ public class Controller  {
      * Reconnects a player to the game.
      *
      * @param username The username of the player.
-     * @param listener The GameListener object for the player.
+     * @param listener The {@link GameListener} object for the player.
      */
     public void reconnect(String username, GameListener listener){
         try {
@@ -166,7 +166,7 @@ public class Controller  {
      * Executes a player's turn.
      *
      * @param username     The username of the player.
-     * @param chosenTiles  The coordinates of the tiles the player wants to choose.
+     * @param chosenTiles  The {@link Coordinates} of the tiles the player wants to choose.
      * @param col          The column index where the player wants to insert the chosen tiles.
      */
     public void doTurn(String username, Coordinates[] chosenTiles, int col){

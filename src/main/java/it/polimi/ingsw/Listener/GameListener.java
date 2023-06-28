@@ -12,7 +12,7 @@ public interface GameListener {
     /**
      * This method is called when a game update occurs.
      *
-     * @param message The message containing the game update information.
+     * @param message The {@link Message} containing the game update information.
      */
     void update(Message message);
 }

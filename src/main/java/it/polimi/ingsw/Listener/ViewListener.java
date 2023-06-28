@@ -12,7 +12,7 @@ public interface ViewListener {
      /**
       * This method is called when a view message is received.
       *
-      * @param m The view message to be handled.
+      * @param m The view {@link Message} to be handled.
       */
      void handleMessage(Message m);
 

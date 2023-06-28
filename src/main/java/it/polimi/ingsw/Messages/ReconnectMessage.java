@@ -1,18 +1,11 @@
 package it.polimi.ingsw.Messages;
 
-import it.polimi.ingsw.Network.Client;
-
-import java.io.Serializable;
-
-
-import java.io.Serializable;
-
 /**
  * The ReconnectMessage class represents a message indicating a player's intention to reconnect.
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class ReconnectMessage extends Message {
-    private String username;
+    private final String username;
 
     /**
      * Constructs a new {@code ReconnectMessage} object with the specified username.

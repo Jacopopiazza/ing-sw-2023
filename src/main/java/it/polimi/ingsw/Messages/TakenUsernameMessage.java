@@ -1,8 +1,5 @@
 package it.polimi.ingsw.Messages;
 
-import java.io.Serializable;
-
-import java.io.Serializable;
 
 /**
  * The TakenUsernameMessage class represents a message indicating that a username is already taken.

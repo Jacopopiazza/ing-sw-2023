@@ -11,8 +11,8 @@ import java.util.*;
  * The Controller class handles the game logic and manages player actions.
  */
 public class Controller  {
-    private GameServer gameServer;
-    private Game model;
+    private final GameServer gameServer;
+    private final Game model;
     private final int timerLength = 30; // in seconds
     private boolean onlyLastPlayerIsDone;
     private final Timer timer = new Timer();
@@ -222,27 +222,14 @@ public class Controller  {
         // Insert the tiles in the shelf
         try {
             model.playerInsertion(currPlayer, effectiveTiles, col);
-        } catch (NoTileException e) {
+        } catch (NoTileException | ColumnOutOfBoundsException | IllegalColumnInsertionException e) {
             e.printStackTrace();
-        } catch (ColumnOutOfBoundsException e1) {
-            e1.printStackTrace();
-        } catch (IllegalColumnInsertionException e2) {
-            e2.printStackTrace();
         }
-
         // Compute the global goals' points
         try {
             model.checkGlobalGoals();
-        } catch (InvalidIndexException e) {
+        } catch (InvalidIndexException | InvalidScoreException | EmptyStackException | MissingShelfException e) {
             e.printStackTrace();
-        } catch (InvalidScoreException e1 ){
-            e1.printStackTrace();
-        } catch (EmptyStackException e2) {
-            e2.printStackTrace();
-        } catch (MissingShelfException e3) {
-            e3.printStackTrace();
-        } catch (ColumnOutOfBoundsException e4) {
-            e4.printStackTrace();
         }
 
         // Eventually refill the board
@@ -268,8 +255,8 @@ public class Controller  {
     private void endGame(){
         model.endGame();
         // Get list of usernames for server's method
-        List<String> players = new ArrayList<String>();
-        List<GameListener> listeners = new ArrayList<GameListener>();
+        List<String> players = new ArrayList<>();
+        List<GameListener> listeners = new ArrayList<>();
         for( int i=0; i<model.getNumOfPlayers(); i++ ){
             players.add(model.getPlayer(i).getUsername());
             if(model.getListener(i) != null)

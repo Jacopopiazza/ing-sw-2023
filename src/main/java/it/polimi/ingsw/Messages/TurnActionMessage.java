@@ -2,16 +2,14 @@ package it.polimi.ingsw.Messages;
 
 import it.polimi.ingsw.Model.Coordinates;
 
-import java.io.Serializable;
-
 /**
  * The TurnActionMessage class represents a message containing the details of a turn action.
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class TurnActionMessage extends Message {
-    private String username;
-    private Coordinates[] chosenTiles;
-    private int column;
+    private final String username;
+    private final Coordinates[] chosenTiles;
+    private final int column;
 
     /**
      * Constructs a new {@code TurnActionMessage} object with the specified parameters.

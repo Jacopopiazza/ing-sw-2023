@@ -2,14 +2,12 @@ package it.polimi.ingsw.Messages;
 
 import it.polimi.ingsw.ModelView.GameView;
 
-import java.io.Serializable;
-
 /**
  * The UpdateViewMessage class represents a message containing an updated game view.
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class UpdateViewMessage extends Message {
-    private GameView gameView;
+    private final GameView gameView;
 
     /**
      * Constructs a new {@code UpdateViewMessage} object with the specified game view.

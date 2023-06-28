@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Listener;
 
 import it.polimi.ingsw.Messages.Message;
-import it.polimi.ingsw.Network.Client;
 
 /**
  * The ViewListener interface represents a listener for view messages.

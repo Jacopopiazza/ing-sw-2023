@@ -5,8 +5,8 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class RegisterMessage extends Message {
-    private String username;
-    private int numOfPlayers;
+    private final String username;
+    private final int numOfPlayers;
 
     /**
      * Constructs a new {@code RegisterMessage} object with the specified username and number of players.

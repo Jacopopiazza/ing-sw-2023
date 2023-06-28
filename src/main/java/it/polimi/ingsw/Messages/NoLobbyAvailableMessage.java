@@ -1,6 +1,5 @@
 package it.polimi.ingsw.Messages;
 
-import java.io.Serializable;
 
 /**
  * The NoLobbyAvailableMessage class represents a message indicating that no lobby is available.

@@ -1,9 +1,5 @@
 package it.polimi.ingsw.Messages;
 
-import java.io.Serializable;
-import java.util.List;
-
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +8,7 @@ import java.util.List;
  */
 public class LobbyMessage extends Message {
 
-    private List<String> players;
+    private final List<String> players;
 
     /**
      * Constructs a new {@code LobbyMessage} with the specified list of players.

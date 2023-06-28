@@ -1,12 +1,11 @@
 package it.polimi.ingsw.Messages;
-import java.io.Serializable;
 
 /**
  * The DisconnectMessage class represents a message indicating that a player has disconnected from the game.
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class DisconnectMessage extends Message {
-    private String username;
+    private final String username;
 
     /**
      * Constructs a {@code DisconnectMessage} with the specified username.

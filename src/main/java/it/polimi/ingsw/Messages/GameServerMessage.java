@@ -6,7 +6,7 @@ import it.polimi.ingsw.Network.Server;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class GameServerMessage extends Message {
-    private Server server;
+    private final Server server;
 
     /**
      * Constructs a {@code GameServerMessage} with the specified server.

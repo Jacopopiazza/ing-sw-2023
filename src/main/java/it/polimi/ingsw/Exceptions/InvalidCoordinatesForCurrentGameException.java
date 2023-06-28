@@ -8,7 +8,7 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidCoordinatesForCurrentGameException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidCoordinatesForCurrentGameException with no error message.
+     * Constructs a new {@code InvalidCoordinatesForCurrentGameException} with no error message.
      */
 
     public InvalidCoordinatesForCurrentGameException() {

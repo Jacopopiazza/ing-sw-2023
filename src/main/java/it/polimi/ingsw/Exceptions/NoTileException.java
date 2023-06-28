@@ -8,7 +8,7 @@ package it.polimi.ingsw.Exceptions;
 public class NoTileException extends Exception{
 
     /**
-     * Constructs a new NoTileException with the specified error message.
+     * Constructs a new {@code NoTileException} with the specified error message.
      *
      * @param errorMessage the error message describing the exception
      */
@@ -18,7 +18,7 @@ public class NoTileException extends Exception{
     }
 
     /**
-     * Constructs a new NoTileException with no error message.
+     * Constructs a new {@code NoTileException} with no error message.
      */
 
     public NoTileException() {

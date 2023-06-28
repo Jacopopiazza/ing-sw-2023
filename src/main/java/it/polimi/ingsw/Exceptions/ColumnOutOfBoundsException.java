@@ -7,7 +7,7 @@ package it.polimi.ingsw.Exceptions;
 public class ColumnOutOfBoundsException extends RuntimeException{
 
     /**
-     * Constructs a new ColumnOutOfBoundsException with no error message.
+     * Constructs a new {@code ColumnOutOfBoundsException} with no error message.
      */
     public ColumnOutOfBoundsException() {
 

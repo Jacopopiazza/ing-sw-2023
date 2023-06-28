@@ -8,7 +8,7 @@ package it.polimi.ingsw.Exceptions;
 public class MissingShelfException extends RuntimeException{
 
     /**
-     * Constructs a new MissingShelfException with the specified error message.
+     * Constructs a new {@code MissingShelfException} with the specified error message.
      *
      * @param errorMessage the error message describing the exception
      */
@@ -18,7 +18,7 @@ public class MissingShelfException extends RuntimeException{
     }
 
     /**
-     * Constructs a new MissingShelfException with no error message.
+     * Constructs a new {@code MissingShelfException} with no error message.
      */
 
     public MissingShelfException() {

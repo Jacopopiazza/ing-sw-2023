@@ -30,7 +30,7 @@ public class Controller  {
     };
 
     /**
-     * Constructs a new Controller object with the specified Game model and GameServer.
+     * Constructs a new {@code Controller} object with the specified Game model and GameServer.
      *
      * @param model  the Game model to associate with the controller
      * @param server the GameServer to communicate with
@@ -54,8 +54,8 @@ public class Controller  {
      * Adds a player to the game lobby.
      *
      * @param username The username of the player.
-     * @param listener The GameListener object for the player.
-     * @return True if the lobby is full and the game is ready to start, false otherwise.
+     * @param listener The GameListener for the player.
+     * @return true if the lobby is full and the game is ready to start, false otherwise.
      */
     public boolean addPlayer(String username, GameListener listener){
         model.addPlayer(username,listener);
@@ -66,6 +66,13 @@ public class Controller  {
         return false;
     }
 
+    /**
+     * Retrieves the GameListener associated with the specified username.
+     *
+     * @param username the username of the player whose GameListener is to be retrieved
+     * @return the GameListener associated with the specified username
+     * @throws UsernameNotFoundException if the specified username is not found
+     */
     public GameListener getListener(String username) throws UsernameNotFoundException{
         return model.getListener(username);
     }
@@ -83,6 +90,7 @@ public class Controller  {
      * Kicks a player from the game.
      *
      * @param username The username of the player to kick.
+     * @return The GameListener object of the kicked player, null if the game is not started yet.
      */
     public GameListener kick(String username){
         if( !model.isGameStarted() ){

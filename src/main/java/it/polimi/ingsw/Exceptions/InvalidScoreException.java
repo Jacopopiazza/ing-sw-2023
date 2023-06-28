@@ -8,7 +8,7 @@ package it.polimi.ingsw.Exceptions;
 public class InvalidScoreException extends RuntimeException{
 
     /**
-     * Constructs a new InvalidScoreException with no error message.
+     * Constructs a new {@code InvalidScoreException} with no error message.
      */
 
     public InvalidScoreException() {

@@ -198,6 +198,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     protected void disconnect(String username, GameServer gameServer) {
         logger.log(Level.INFO, "Player " + username + " disconnected");
         synchronized (playingUsernames) {
+            //TODO: FIX HERE
             if( !playingUsernames.contains(username) ) return;
             playingUsernames.remove(username);
         }
@@ -302,6 +303,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                             while( lobbiesWaitingToStart.peek() != null && lobbiesWaitingToStart.peek().getNumOfActivePlayers() == 0 )
                                 lobbiesWaitingToStart.poll();
                         }
+                        playingUsernames.add(username);
                     }
                     else listener.update(new NoLobbyAvailableMessage());
                 }

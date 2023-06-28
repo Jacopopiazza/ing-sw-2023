@@ -354,6 +354,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                     break;
                 }
             }
+            //TODO: CHECK WHY PLAYERS NOT APPEARS AMONG DISCONNECTED
             if(i == playingUsernames.length) return; // username not found
             if( isGameStarted() ) {
                 synchronized (disconnectedUsernames) {

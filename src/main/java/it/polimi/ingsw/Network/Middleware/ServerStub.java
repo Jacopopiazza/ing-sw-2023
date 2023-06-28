@@ -17,8 +17,6 @@ import java.util.logging.Level;
  * It is responsible for establishing a connection to the server, sending and receiving messages.
  */
 public class ServerStub implements Server {
-    String ip;
-    int port;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private Socket socket;
@@ -31,9 +29,6 @@ public class ServerStub implements Server {
      * @throws RemoteException if an error occurs while connecting to the server
      */
     public ServerStub(String ip, int port) throws RemoteException {
-        this.ip = ip;
-        this.port = port;
-
         try {
             this.socket = new Socket(ip, port);
 
@@ -50,19 +45,6 @@ public class ServerStub implements Server {
             this.ois = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             throw new RemoteException("Cannot create input stream", e);
-        }
-    }
-
-    /**
-     * Closes the connection to the server.
-     *
-     * @throws RemoteException if an error occurs while closing the socket
-     */
-    public void close() throws RemoteException {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot close socket", e);
         }
     }
 
@@ -107,8 +89,8 @@ public class ServerStub implements Server {
 
         if( m instanceof GameServerMessageTicket)
             client.update(new GameServerMessage(this));
-        else client.update(m);
-
+        else
+            client.update(m);
     }
 
 

@@ -143,40 +143,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Adds a message and its associated client to the message queue.
-     *
-     * @param m The message to be added to the queue.
-     * @param c The client associated with the message.
-     */
-    private void addToMessagesQueue(Message m, Client c) {
-        synchronized (receivedMessages) {
-            receivedMessages.add(new Tuple<>(m, c));
-        }
-    }
-
-    /**
-     * Checks if the message queue is empty.
-     *
-     * @return {@code true} if the message queue is empty, {@code false} otherwise.
-     */
-    private boolean isMessagesQueueEmpty() {
-        synchronized (receivedMessages) {
-            return receivedMessages.isEmpty();
-        }
-    }
-
-    /**
-     * Removes and returns a message from the message queue.
-     *
-     * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
-     */
-    private Tuple<Message, Client> popFromMessagesQueue() {
-        synchronized (receivedMessages) {
-            return receivedMessages.poll();
-        }
-    }
-
-    /**
      * Handles the incoming message from a client. It adds the message to the queue of messages to be processed.
      *
      * @param m      the incoming message
@@ -189,44 +155,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
-     * Handles a received message and performs appropriate actions based on its type.
-     * This method is called to process messages received by the server.
-     *
-     * @param m      The message to be effectively handled.
-     * @param client The client associated with the message.
-     * @throws RemoteException If a remote exception occurs during message handling.
-     */
-    private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {
-        if( m instanceof RegisterMessage ) {
-            register( ((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers(), ( (message) -> {
-                try {
-                    client.update(message);
-                } catch (RemoteException e) {
-                    System.err.println("Cannot send message to client of: " + ((RegisterMessage)m).getUsername());
-                    System.err.println("Error: " + e.getMessage());
-                }
-            }) );
-        }
-        else if( m instanceof ReconnectMessage) {
-            reconnect( ((ReconnectMessage) m).getUsername(), ( (message) -> {
-                try {
-                    client.update(message);
-                } catch (RemoteException e) {
-                    System.err.println("Cannot send message to client of: " + ((ReconnectMessage) m).getUsername());
-                    System.err.println("Error: " + e.getMessage());
-                }
-            }) );
-        }
-        else System.err.println("Message not recognized; ignoring it");
-    }
-
-    /**
      * Deletes the game associated with the given list of players. Removes the players from the playingUsernames and
      * disconnectedUsernames collections.
      *
      * @param players the list of players to be removed from the game
      */
-    public void deleteGame(List<String> players) {
+    protected void deleteGame(List<String> players) {
         logger.log(Level.INFO, "Deleting game");
         synchronized (playingUsernames) {
             synchronized (disconnectedUsernames) {
@@ -244,7 +178,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @param username   the username of the player to disconnect
      * @param gameServer the GameServer object associated with the player
      */
-    public void disconnect(String username, GameServer gameServer) {
+    protected void disconnect(String username, GameServer gameServer) {
         logger.log(Level.INFO, "Player " + username + " disconnected");
         synchronized (playingUsernames) {
             if( !playingUsernames.contains(username) ) return;
@@ -262,7 +196,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @param username the username of the player to kick
      * @param lobby    the GameServer object representing the lobby
      */
-    public void kick(String username, GameServer lobby) {
+    protected void kick(String username, GameServer lobby) {
         logger.log(Level.INFO, "Player " + username + " kicked");
         synchronized (playingUsernames) {
             playingUsernames.remove(username);
@@ -356,6 +290,71 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 }
             }
         }
+    }
+    /**
+     * Adds a message and its associated client to the message queue.
+     *
+     * @param m The message to be added to the queue.
+     * @param c The client associated with the message.
+     */
+    private void addToMessagesQueue(Message m, Client c) {
+        synchronized (receivedMessages) {
+            receivedMessages.add(new Tuple<>(m, c));
+        }
+    }
+
+    /**
+     * Checks if the message queue is empty.
+     *
+     * @return {@code true} if the message queue is empty, {@code false} otherwise.
+     */
+    private boolean isMessagesQueueEmpty() {
+        synchronized (receivedMessages) {
+            return receivedMessages.isEmpty();
+        }
+    }
+
+    /**
+     * Removes and returns a message from the message queue.
+     *
+     * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
+     */
+    private Tuple<Message, Client> popFromMessagesQueue() {
+        synchronized (receivedMessages) {
+            return receivedMessages.poll();
+        }
+    }
+
+    /**
+     * Handles a received message and performs appropriate actions based on its type.
+     * This method is called to process messages received by the server.
+     *
+     * @param m      The message to be effectively handled.
+     * @param client The client associated with the message.
+     * @throws RemoteException If a remote exception occurs during message handling.
+     */
+    private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {
+        if( m instanceof RegisterMessage ) {
+            register( ((RegisterMessage) m).getUsername(), ((RegisterMessage) m).getNumOfPlayers(), ( (message) -> {
+                try {
+                    client.update(message);
+                } catch (RemoteException e) {
+                    System.err.println("Cannot send message to client of: " + ((RegisterMessage)m).getUsername());
+                    System.err.println("Error: " + e.getMessage());
+                }
+            }) );
+        }
+        else if( m instanceof ReconnectMessage) {
+            reconnect( ((ReconnectMessage) m).getUsername(), ( (message) -> {
+                try {
+                    client.update(message);
+                } catch (RemoteException e) {
+                    System.err.println("Cannot send message to client of: " + ((ReconnectMessage) m).getUsername());
+                    System.err.println("Error: " + e.getMessage());
+                }
+            }) );
+        }
+        else System.err.println("Message not recognized; ignoring it");
     }
 
     /**

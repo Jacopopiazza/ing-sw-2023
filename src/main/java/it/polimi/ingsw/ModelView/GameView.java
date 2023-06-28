@@ -118,10 +118,10 @@ public class GameView implements Serializable {
      *
      * @param cheater the cheater string to include in the view
      */
-    public GameView(String cheater) {
+    public GameView(String cheater, int currentPlayer) {
         this.board = null;
         this.players = null;
-        this.currentPlayer = null;
+        this.currentPlayer = currentPlayer;
         this.numOfActivePlayers = null;
         this.cheater = cheater;
         this.goals = null;

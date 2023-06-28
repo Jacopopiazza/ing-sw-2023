@@ -29,9 +29,9 @@ public class Shelf implements Cloneable{
     }
 
     /**
-     * Adds a tile to the specified column of the shelf.
+     * Adds a {@code Tile} to the specified column of the shelf.
      *
-     * @param t      the tile to be added
+     * @param t      the {@link Tile} to be added
      * @param column the column where the tile should be added
      * @throws NoTileException                if the tile is null
      * @throws IllegalColumnInsertionException if the column is already fully filled with a tile in the top row
@@ -59,10 +59,10 @@ public class Shelf implements Cloneable{
     }
 
     /**
-     * Retrieves the tile at the specified coordinates from the shelf.
+     * Retrieves the {@code Tile} at the specified {@code Coordinates} from the shelf.
      *
-     * @param c the coordinates of the tile to retrieve
-     * @return the tile at the specified coordinates
+     * @param c the {@link Coordinates} of the tile to retrieve
+     * @return the {@link Tile} at the specified coordinates
      * @throws ColumnOutOfBoundsException if the coordinates are out of bounds
      */
     public Tile getTile(Coordinates c) throws ColumnOutOfBoundsException{
@@ -108,9 +108,9 @@ public class Shelf implements Cloneable{
     }
 
     /**
-     * Creates and returns a copy of the Shelf object.
+     * Creates and returns a copy of the {@code Shelf} object.
      *
-     * @return a new Shelf object that is a copy of this shelf
+     * @return a new {@link Shelf} object that is a copy of this shelf
      */
     @Override
     public Shelf clone() {

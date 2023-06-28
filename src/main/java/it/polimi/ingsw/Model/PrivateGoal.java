@@ -12,9 +12,9 @@ public final class PrivateGoal {
     private Coordinates[] coords;   // The coordinates associated with the private goal
 
     /**
-     * Constructs a new {@code PrivateGoal} object with the specified coordinates.
+     * Constructs a new {@code PrivateGoal} object with the specified {@code Coordinates}.
      *
-     * @param coords the coordinates associated with the private goal
+     * @param coords the array of {@link Coordinates} associated with the private goal
      */
     private PrivateGoal(Coordinates[] coords,int id) {
         this.coords = coords.clone();
@@ -22,9 +22,9 @@ public final class PrivateGoal {
     }
 
     /**
-     * Gets the coordinates associated with the private goal.
+     * Gets the {@code Coordinates} associated with the private goal.
      *
-     * @return an array of coordinates representing the private goal
+     * @return an array of {@link Coordinates} representing the private goal
      */
     public Coordinates[] getCoordinates() {
         Coordinates[] temp = new Coordinates[coords.length];
@@ -42,10 +42,10 @@ public final class PrivateGoal {
     }
 
     /**
-     * Generates and returns an array of private goals based on the number of players.
+     * Generates and returns an array of {@code PrivateGoal}s based on the number of players.
      *
      * @param people the number of players
-     * @return an array of private goals
+     * @return an array of {@link PrivateGoal}
      * @throws InvalidNumberOfPlayersException if the number of players is invalid
      */
     public static PrivateGoal[] getPrivateGoals(int people) throws InvalidNumberOfPlayersException {
@@ -65,9 +65,9 @@ public final class PrivateGoal {
     }
 
     /**
-     * Checks the tiles on the shelf for this private goal.
+     * Checks the tiles on the {@code Shelf} for this private goal.
      *
-     * @param shelf the shelf to check
+     * @param shelf the {@link Shelf} to check
      * @return the score based on the correctness of the tiles
      * @throws MissingShelfException       if the shelf is missing
      * @throws ColumnOutOfBoundsException if the column index is out of bounds

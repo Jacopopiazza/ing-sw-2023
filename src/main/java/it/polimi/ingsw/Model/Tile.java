@@ -8,9 +8,9 @@ public class Tile implements Cloneable{
     private final int id;           // The ID of the tile
 
     /**
-     * Constructs a new {@code Tile} object with the specified color and ID.
+     * Constructs a new {@code Tile} object with the specified {@code TileColor} and ID.
      *
-     * @param color the color of the tile
+     * @param color the {@link TileColor} of the tile
      * @param id    the ID of the tile
      */
     public Tile(TileColor color, int id) {
@@ -19,9 +19,9 @@ public class Tile implements Cloneable{
     }
 
     /**
-     * Gets the color of the tile.
+     * Gets the {@code TileColor} of the tile.
      *
-     * @return the color of the tile
+     * @return the {@link TileColor} of the tile
      */
     public TileColor getColor() {
         return color;
@@ -37,9 +37,9 @@ public class Tile implements Cloneable{
     }
 
     /**
-     * Creates and returns a copy of the Tile object.
+     * Creates and returns a copy of the {@code Tile} object.
      *
-     * @return a new Tile object that is a copy of this tile
+     * @return a new {@code Tile} object that is a copy of this tile
      */
     @Override
     public Tile clone() {

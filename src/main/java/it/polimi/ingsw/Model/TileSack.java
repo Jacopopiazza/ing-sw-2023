@@ -23,9 +23,9 @@ public class TileSack {
     }
 
     /**
-     * Generates a random tile color and removes it from the sack.
+     * Generates a random {@code TileColor} and removes it from the sack.
      *
-     * @return the Tile object with the random color, or null if the sack is empty.
+     * @return the {@link Tile} object with the random color, or null if the sack is empty.
      */
     public Tile pop() {
         int random_color_index = 0;

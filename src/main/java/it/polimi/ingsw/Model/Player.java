@@ -32,7 +32,7 @@ public class Player{
     /**
      * Gets the ModelView representation of the player.
      *
-     * @return the player view
+     * @return a {@link PlayerView}
      */
     public PlayerView getView() {
         return new PlayerView(this);
@@ -41,7 +41,7 @@ public class Player{
     /**
      * Initializes the player with a private goal.
      *
-     * @param privateGoal the private goal for the player
+     * @param privateGoal the {@link PrivateGoal} for the player
      */
     public void init(PrivateGoal privateGoal) {
         shelf = new Shelf();
@@ -50,9 +50,9 @@ public class Player{
     }
 
     /**
-     * Inserts the specified tiles into the player's shelf column.
+     * Inserts the specified {@code Tiles} into the player's shelf column.
      *
-     * @param t       the tiles to insert
+     * @param t       the array of {@link Tile} to insert
      * @param column  the column index
      * @throws NoTileException                 if no tile is provided
      * @throws ColumnOutOfBoundsException     if the column index is out of bounds
@@ -130,9 +130,9 @@ public class Player{
     }
 
     /**
-     * Sets the player's shelf.
+     * Sets the player's {@code Shelf}.
      *
-     * @param shelf the shelf to set
+     * @param shelf the {@link Shelf} to set
      * @throws MissingShelfException if the shelf is missing
      */
     public void setShelf(Shelf shelf) throws MissingShelfException{
@@ -141,18 +141,18 @@ public class Player{
     }
 
     /**
-     * Gets the private goal of the player.
+     * Gets the {@code PrivateGoal} of the player.
      *
-     * @return the private goal
+     * @return the {@link PrivateGoal}
      */
     public PrivateGoal getGoal() {
         return goal;
     }
 
     /**
-     * Sets the private goal of the player.
+     * Sets the {@code PrivateGoal} of the player.
      *
-     * @param goal the private goal to set
+     * @param goal the {@link PrivateGoal} to set
      */
     public void setGoal(PrivateGoal goal) {
         this.goal = goal;
@@ -182,9 +182,9 @@ public class Player{
     }
 
     /**
-     * Gets the player's private goal.
+     * Gets the player's {@code PrivateGoal}.
      *
-     * @return the private goal
+     * @return the {@link PrivateGoal}
      */
     public PrivateGoal getPrivateGoal() {
         return goal;

@@ -33,7 +33,7 @@ public class GameBoard {
     /**
      * Gets the ModelView representation of the game board.
      *
-     * @return the game board view
+     * @return the {@link GameBoardView} object representing the game board
      */
     public GameBoardView getView() {
         return new GameBoardView(this);
@@ -42,7 +42,7 @@ public class GameBoard {
     /**
      * Gets the set of coordinates on the game board.
      *
-     * @return a set of coordinates
+     * @return the set of {@link Coordinates} representing the coordinates on the game board
      */
     public Set<Coordinates> getCoords() {
         return Collections.unmodifiableSet(board.keySet());
@@ -51,8 +51,8 @@ public class GameBoard {
     /**
      * Gets the tile at the specified coordinates on the game board.
      *
-     * @param coordinates the coordinates of the tile
-     * @return the tile at the specified coordinates, or null if there is no tile
+     * @param coordinates the {@link Coordinates} of the tile
+     * @return the {@link Tile} at the specified coordinates, or null if there is no tile
      * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid
      */
     public Tile getTile(Coordinates coordinates) throws InvalidCoordinatesForCurrentGameException{
@@ -63,10 +63,10 @@ public class GameBoard {
     }
 
     /**
-     * Sets the tile at the specified coordinates on the game board.
+     * Sets the {@code Tile} at the specified {@code Coordinates} on the game board.
      *
-     * @param coordinates the coordinates of the tile
-     * @param tile        the tile to set
+     * @param coordinates the {@link Coordinates} of the tile
+     * @param tile        the {@link Tile} to set
      * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid
      */
     public void setTile(Coordinates coordinates, Tile tile) throws InvalidCoordinatesForCurrentGameException{
@@ -109,7 +109,7 @@ public class GameBoard {
     /**
      * Checks the score for the board goals based on the tiles in the player's shelf.
      *
-     * @param shelf the player's shelf
+     * @param shelf the player's {@link Shelf}
      * @return the total score based on the board goals
      * @throws MissingShelfException       if the shelf is missing
      * @throws ColumnOutOfBoundsException if the column index is out of bounds
@@ -151,10 +151,10 @@ public class GameBoard {
     }
 
     /**
-     * Recursively checks the number of tiles connected to the given tile on the player's shelf.
+     * Recursively checks the number of {@code Tile}s connected to the given tile on the player's {@code Shelf}.
      *
-     * @param shelf   the player's shelf
-     * @param coord   the coordinates of the tile to check
+     * @param shelf   the player's {@link Shelf}
+     * @param coord   the {@link Coordinates} of the tile to check
      * @param checked a 2D boolean array to keep track of checked tiles
      * @return the number of connected tiles
      */
@@ -198,9 +198,9 @@ public class GameBoard {
     }
 
     /**
-     * Checks if a tile at the given coordinates is pickable.
+     * Checks if a tile at the given {@code Coordinates} is pickable.
      *
-     * @param coordinates the coordinates of the tile
+     * @param coordinates the {@link Coordinates} of the tile
      * @return true if the tile is pickable, false otherwise
      * @throws InvalidCoordinatesForCurrentGameException if the coordinates are invalid
      */
@@ -228,7 +228,7 @@ public class GameBoard {
     /**
      * Checks if the chosen tiles meet the required conditions.
      *
-     * @param chosenTiles the coordinates of the chosen tiles
+     * @param chosenTiles the {@link Coordinates} of the chosen tiles
      * @return true if the chosen tiles are valid, false otherwise
      */
     public boolean checkChosenTiles(Coordinates[] chosenTiles) {

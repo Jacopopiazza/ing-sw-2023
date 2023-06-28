@@ -113,7 +113,7 @@ public class TextualUI extends UserInterface {
     }
 
     private String getColorCode(TileView tile){
-        TileColor tc = tile.getCOLOR();
+        TileColor tc = tile.getColor();
         switch(tc) {
             case WHITE: {
                 return ConsoleColors.WHITE_BACKGROUND_BRIGHT.getCode();

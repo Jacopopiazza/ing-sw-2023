@@ -124,7 +124,7 @@ public class Game {
             if( i == numOfPlayers )
                 throw new UsernameNotFoundException();
 
-            notifyAllListeners(new GameView(null,getNumOfActivePlayers()+1));
+            notifyAllListeners(new GameView((Integer)(null),getNumOfActivePlayers()+1));
             listeners[i] = listener;
             listener.update(new UpdateViewMessage(new GameView(this)));
         }
@@ -143,7 +143,7 @@ public class Game {
             for( i=0; ( i<numOfPlayers ) && !players[i].getUsername().equals(username); i++ );
             if( i == numOfPlayers ) throw new UsernameNotFoundException();
             listeners[i] = null;
-            notifyAllListeners(new GameView(null,getNumOfActivePlayers()));
+            notifyAllListeners(new GameView((Integer)(null),getNumOfActivePlayers()));
         }
 
     }
@@ -394,7 +394,7 @@ public class Game {
      */
     public void addCheater(String username){
         cheaters.add(username);
-        notifyAllListeners(new GameView(username));
+        notifyAllListeners(new GameView(username,currentPlayer));
     }
 
     /**

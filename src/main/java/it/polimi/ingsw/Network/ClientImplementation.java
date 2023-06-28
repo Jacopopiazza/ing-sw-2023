@@ -21,9 +21,10 @@ import java.util.logging.SimpleFormatter;
  */
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private static ClientImplementation instance;
+    public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
     private View view;
     private Server server;
-    public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
+
     /**
      * Constructs a ClientImplementation instance with the specified view and server.
      *
@@ -31,6 +32,14 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
      * @param server the server handling the client's messages
      * @throws RemoteException if a remote communication error occurs
      */
+
+    public static ClientImplementation getInstance(View view, Server server) throws SingletonException, RemoteException {
+        if( instance == null )
+            instance = new ClientImplementation(view, server);
+        if( ( instance.view != view ) || ( instance.server != server ) )
+            throw new SingletonException();
+        return instance;
+    }
 
     /**
      * The main entry point of the client application.
@@ -43,12 +52,25 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         ui.run();
     }
 
-    public static ClientImplementation getInstance(View view, Server server) throws SingletonException, RemoteException {
-        if( instance == null )
-            instance = new ClientImplementation(view, server);
-        if( ( instance.view != view ) || ( instance.server != server ) )
-            throw new SingletonException();
-        return instance;
+    /**
+     * Sets up the logger for the client application.
+     * Configures the logger level, creates log file handler and console handler,
+     * and adds the handlers to the logger.
+     */
+    private static void setUpLogger(){
+        logger.setLevel(Level.ALL);
+
+        FileHandler fileHandler;
+
+        try {
+            fileHandler = new FileHandler("client.log");
+        } catch (IOException ex) {
+            System.err.println("Cannot create log file. Halting...");
+            return;
+        }
+        fileHandler.setFormatter(new SimpleFormatter());
+        fileHandler.setLevel(Level.SEVERE);
+        logger.addHandler(fileHandler);
     }
 
     private ClientImplementation(View view, Server server) throws RemoteException{
@@ -57,7 +79,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         this.server = server;
         view.addListener((message) -> {
             try {
-                server.handleMessage(message, (Client)this);
+                server.handleMessage(message, this);
             } catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());
@@ -105,42 +127,13 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
         view.addListener((message) -> {
             try {
-                server.handleMessage(message, (Client)this);
+                server.handleMessage(message, this);
             } catch (RemoteException e) {
                 System.err.println(e.getMessage());
                 System.err.println(e.getCause());
-                return;
             }
-
-
         });
 
-
     }
-
-    /**
-     * Sets up the logger for the client application.
-     * Configures the logger level, creates log file handler and console handler,
-     * and adds the handlers to the logger.
-     */
-    private static void setUpLogger(){
-        logger.setLevel(Level.ALL); // Imposta il livello di logging desiderato
-
-        FileHandler fileHandler;
-
-        // Crea un gestore di log su file
-        try {
-            fileHandler = new FileHandler("client.log");
-        } catch (IOException ex) {
-            System.err.println("Cannot create log file. Halting...");
-            return;
-        }
-        fileHandler.setFormatter(new SimpleFormatter());
-        // Imposta il livello di logging dei gestori
-        fileHandler.setLevel(Level.SEVERE);
-        // Aggiungi i gestori al logger
-        logger.addHandler(fileHandler);
-    }
-
 
 }

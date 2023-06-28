@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -26,12 +27,23 @@ public class GraphicalUI extends UserInterface {
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
 
+    private static URL getResourcePath(String relativePath){
+        // Get the URL of the image file
+        if(relativePath.startsWith("/")){
+            return GraphicalUI.class.getResource(relativePath);
+        }
+        else{
+            return GraphicalUI.class.getResource("/" + relativePath);
+        }
+
+    }
+
     private class Background extends JPanel {
         private Image backgroundImage;
 
         private Background(String imagePath){
             super();
-            backgroundImage = new ImageIcon(imagePath).getImage();
+            backgroundImage = new ImageIcon(getResourcePath(imagePath)).getImage();
         }
 
         private Background(Image image){
@@ -48,7 +60,7 @@ public class GraphicalUI extends UserInterface {
 
     private class ImageManager {
         private static final List<ImageIcon>[] tilesIcons = new ArrayList[TileColor.values().length];
-        private static final ImageIcon goldenRing = new ImageIcon("visual_components/item tiles/bordo oro.png");
+        private static final ImageIcon goldenRing = new ImageIcon(getResourcePath("visual_components/item tiles/bordo oro.png"));
 
         private static ImageIcon getTileImage(TileColor color,int id,boolean pickable){
             //initialize the container of the images
@@ -56,7 +68,7 @@ public class GraphicalUI extends UserInterface {
                 for(TileColor tc : TileColor.values()){
                     tilesIcons[tc.ordinal()] = new ArrayList<>();
                     for(int i=0; i<3; i++){
-                        tilesIcons[tc.ordinal()].add(new ImageIcon("visual_components/item tiles/"+tc.name().toLowerCase()+String.valueOf(i+1)+".png"));
+                        tilesIcons[tc.ordinal()].add(new ImageIcon(getResourcePath("visual_components/item tiles/"+tc.name().toLowerCase()+String.valueOf(i+1)+".png")));
                     }
                 }
             }
@@ -143,7 +155,7 @@ public class GraphicalUI extends UserInterface {
             content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
             //add the title
-            Image titleImage = new ImageIcon("visual_components/Publisher material/Title 2000x618px.png").getImage();
+            Image titleImage = new ImageIcon(getResourcePath("visual_components/Publisher material/Title 2000x618px.png")).getImage();
             ImageIcon titleIcon = new ImageIcon(titleImage.getScaledInstance(1000,309,Image.SCALE_DEFAULT));
             JLabel title = new JLabel(titleIcon);
             title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -400,8 +412,8 @@ public class GraphicalUI extends UserInterface {
 
     private class GameWindow extends JFrame{
         private class GameBoardPanel extends Background {
-            private final static ImageIcon victoryToken = new ImageIcon("visual_components/scoring tokens/end game.jpg");
-            private final static ImageIcon boardIcon = new ImageIcon("visual_components/boards/livingroom.png");
+            private final static ImageIcon victoryToken = new ImageIcon(getResourcePath("visual_components/scoring tokens/end game.jpg"));
+            private final static ImageIcon boardIcon = new ImageIcon(getResourcePath("visual_components/boards/livingroom.png"));
             private int width;
             private int height;
             private static final int gameBoardDim = 9;
@@ -611,7 +623,7 @@ public class GraphicalUI extends UserInterface {
         private class ShelfPanel extends Background {
             private static final int rows = Shelf.getRows();
             private static final int cols = Shelf.getColumns();
-            private static final String imagePath = "visual_components/boards/bookshelf_orth.png";
+            private static final String imagePath = getResourcePath("visual_components/boards/bookshelf_orth.png").toString();
             private int width;
             private int height;
 
@@ -656,7 +668,7 @@ public class GraphicalUI extends UserInterface {
 
         private class PrivateGoalPanel extends JLabel {
             private PrivateGoalPanel(int pvtGoalIndex, int width, int height){
-                super(ImageManager.resizeImageIcon(new ImageIcon("visual_components/personal goal cards/Personal_Goals" + pvtGoalIndex + ".png"),width,height));
+                super(ImageManager.resizeImageIcon(new ImageIcon(getResourcePath("visual_components/personal goal cards/Personal_Goals" + pvtGoalIndex + ".png")),width,height));
                 setToolTipText("Private goal");
                 setPreferredSize(new Dimension(width,height));
             }
@@ -668,11 +680,11 @@ public class GraphicalUI extends UserInterface {
             private int width;
             private int height;
             private GlobalGoalPanel(GlobalGoalView ggv, int width, int height){
-                super("visual_components/common goal cards/" + ggv.getId() + ".jpg");
+                super(getResourcePath("visual_components/common goal cards/" + ggv.getId() + ".jpg").toString());
                 this.width = width;
                 this.height = height;
                 if( ggv.getCurrentScore()>0 )
-                    scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg");
+                    scoreIcon = new ImageIcon(getResourcePath("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg"));
                 else
                     scoreIcon = null;
                 setPreferredSize(new Dimension(this.width, this.height));
@@ -694,7 +706,7 @@ public class GraphicalUI extends UserInterface {
                 if(ggv.getCurrentScore() == 0)
                     scoreIcon = null;
                 else
-                    scoreIcon = new ImageIcon("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg");
+                    scoreIcon = new ImageIcon(getResourcePath("visual_components/scoring tokens/scoring_" + ggv.getCurrentScore() + ".jpg"));
             }
         }
 

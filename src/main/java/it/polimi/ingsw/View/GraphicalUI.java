@@ -265,8 +265,13 @@ public class GraphicalUI extends UserInterface {
                     if (username.contains(" ")){
                         error.setText("Spaces are not allowed in the username");
                         username = null;
+                        return;
                     }
-                    else doReconnect(username);
+                    if(username.equals("")){
+                        username = null;
+                        return;
+                    }
+                    doReconnect(username);
                 }
             });
 
@@ -385,6 +390,7 @@ public class GraphicalUI extends UserInterface {
         private JTextField getStandardTextField(int width, int height, float font){
             JTextField textField = new JTextField();
             textField.setMaximumSize(new Dimension(width,height));
+            textField.setPreferredSize(new Dimension(width,height));
             textField.setFont(textField.getFont().deriveFont(font));
             textField.setBackground(Color.decode("14929049"));
             textField.setForeground(Color.decode("5776384"));
@@ -941,6 +947,7 @@ public class GraphicalUI extends UserInterface {
                         shelves[i].update(gw.getPlayers()[i].getShelf(), ( i == myId ));
                         scores[i].setText(String.valueOf(gw.getPlayers()[i].getScore()));
                         if( gw.getPlayers()[i].isWinner() ){
+                            errorText.setText("");
                             if( myId == i )
                                 text.setText("YOU WON!");
                             else
@@ -968,6 +975,7 @@ public class GraphicalUI extends UserInterface {
                 }
             }
             if( gw.getCurrentPlayer() != null ){
+                errorText.setText("");
                 currentPlayer = gw.getCurrentPlayer();
                 if( myId == currentPlayer )
                     text.setText("It is your turn, choose your tiles from the board");

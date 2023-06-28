@@ -474,7 +474,7 @@ public class TextualUI extends UserInterface {
     private void showGlobalGoals(){
         out.println("Global goals: ");
         for(int i = 0; i < globalGoals.length; i++){
-            out.println((i + 1) + globalGoals[i].getDescription() + "[" + globalGoals[i].getCurrentScore() + "]");
+            out.println((i + 1) + ": " + globalGoals[i].getDescription() + "[" + globalGoals[i].getCurrentScore() + "]");
         }
     }
 
@@ -517,7 +517,7 @@ public class TextualUI extends UserInterface {
                         || !checkUserInput(0, numCols, readCoords[1].charAt(0) - '0'))
                 {
                     out.println("Insert a row [A - " + (char)(numRows + 'A') + "]" +
-                            "and a column [0 - " + numCols +"]");
+                            " and a column [0 - " + numCols +"]");
                     continue;
                 }
 

@@ -2,7 +2,6 @@ package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
-import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Network.GameServer;
 
@@ -15,7 +14,7 @@ public class Controller  {
     private GameServer gameServer;
     private Game model;
     private final int timerLength = 30; // in seconds
-    private boolean lastPlayerHasAlreadyDoneTheTurn;
+    private boolean onlyLastPlayerIsDone;
     private final Timer timer = new Timer();
 
     /**
@@ -36,10 +35,10 @@ public class Controller  {
      * @param model  the Game model to associate with the controller
      * @param server the GameServer to communicate with
      */
-    public Controller (Game model, GameServer server){
+    public Controller(Game model, GameServer server){
         gameServer = server;
         this.model = model;
-        lastPlayerHasAlreadyDoneTheTurn = false;
+        onlyLastPlayerIsDone = false;
     }
 
     /**
@@ -65,6 +64,19 @@ public class Controller  {
             return true;
         }
         return false;
+    }
+
+    public GameListener getListener(String username) throws UsernameNotFoundException{
+        return model.getListener(username);
+    }
+
+    /**
+     * Returns the number of active players in the game.
+     *
+     * @return The number of active players.
+     */
+    public int getNumOfActivePlayers(){
+        return model.getNumOfActivePlayers();
     }
 
     /**
@@ -100,11 +112,12 @@ public class Controller  {
             timer.cancel();
             // If a player reconnects after the last remaining player has performed their turn,
             // the currentPlayer must be updated because it was not changed at the end of that turn
-            if( lastPlayerHasAlreadyDoneTheTurn ) {
+            if( onlyLastPlayerIsDone ){
                 // This flag must be set back to false
-                lastPlayerHasAlreadyDoneTheTurn = false;
+                onlyLastPlayerIsDone = false;
                 // Therefore the nextPlayer is set
-                if(!model.nextPlayer()) endGame();
+                if( !model.nextPlayer() )
+                    endGame();
             }
         }
     }
@@ -139,15 +152,6 @@ public class Controller  {
                     endGame();
             }
         }
-    }
-
-    /**
-     * Returns the number of active players in the game.
-     *
-     * @return The number of active players.
-     */
-    public int getNumOfActivePlayers(){
-        return model.getNumOfActivePlayers();
     }
 
     /**
@@ -241,13 +245,12 @@ public class Controller  {
         }
 
         // Set the next player and if the game is over the game ends
-        if( ( model.getNumOfActivePlayers() > 1 ) && !model.nextPlayer() ){
+        if( ( model.getNumOfActivePlayers() > 1 ) && !model.nextPlayer() )
             endGame();
-        }
 
         // In case it's the turn of the remaining player, he was free to do it
         if( model.getNumOfActivePlayers() == 1 )
-            lastPlayerHasAlreadyDoneTheTurn = true;
+            onlyLastPlayerIsDone = true;
     }
 
     /**
@@ -261,13 +264,11 @@ public class Controller  {
         List<GameListener> listeners = new ArrayList<GameListener>();
         for( int i=0; i<model.getNumOfPlayers(); i++ ){
             players.add(model.getPlayer(i).getUsername());
-            if(model.getListener(i) != null) listeners.add(model.getListener(i));
+            if(model.getListener(i) != null)
+                listeners.add(model.getListener(i));
         }
         // Delete game from server
         gameServer.deleteGame(players,listeners);
     }
 
-    public GameListener getListener(String username) throws UsernameNotFoundException{
-        return model.getListener(username);
-    }
 }

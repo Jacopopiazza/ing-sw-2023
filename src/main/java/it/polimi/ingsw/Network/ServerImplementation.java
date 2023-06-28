@@ -110,6 +110,23 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     }
 
     /**
+     * Sets up the logger for the server. It configures the logger's level, creates a file handler for logging to a file,
+     * sets up a formatter for the file handler, creates a console handler, and adds the handlers to the logger.
+     */
+    private static void setUpLogger(){
+        FileHandler fileHandler;
+        try{
+            fileHandler = new FileHandler("server.log");
+        } catch (IOException ex){
+            System.err.println("Cannot create log file. Halting...");
+            return;
+        }
+        fileHandler.setFormatter(new SimpleFormatter());
+        fileHandler.setLevel(Level.SEVERE);
+        logger.addHandler(fileHandler);
+    }
+
+    /**
      * Constructs a new instance of the ServerImplementation class. It initializes the playingUsernames, disconnectedUsernames,
      * and lobbiesWaitingToStart collections.
      *
@@ -400,23 +417,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         } catch (IOException e) {
             throw new RemoteException("Cannot start socket server", e);
         }
-    }
-
-    /**
-     * Sets up the logger for the server. It configures the logger's level, creates a file handler for logging to a file,
-     * sets up a formatter for the file handler, creates a console handler, and adds the handlers to the logger.
-     */
-    private static void setUpLogger(){
-        FileHandler fileHandler;
-        try{
-            fileHandler = new FileHandler("server.log");
-        } catch (IOException ex){
-            System.err.println("Cannot create log file. Halting...");
-            return;
-        }
-        fileHandler.setFormatter(new SimpleFormatter());
-        fileHandler.setLevel(Level.SEVERE);
-        logger.addHandler(fileHandler);
     }
 
 }

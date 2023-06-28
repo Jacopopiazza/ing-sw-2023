@@ -99,7 +99,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 try {
                     startSocket();
                 } catch (RemoteException e) {
-                    System.err.println("Cannot start RMI server");
+                    System.err.println("Cannot start socket server, this protocol will be disabled");
                     System.err.println(e.getMessage());
                 }
             }
@@ -117,7 +117,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private ServerImplementation() throws RemoteException {
         super();
         setUpLogger();
-        System.setProperty("java.rmi.server.hostname","0.0.0.0");
+        //System.setProperty("java.rmi.server.hostname","0.0.0.0");
         playingUsernames = new ArrayList<>();
         disconnectedUsernames = new HashMap<>();
         lobbiesWaitingToStart = new LinkedBlockingQueue<>();

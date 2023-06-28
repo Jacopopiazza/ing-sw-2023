@@ -46,7 +46,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
     private ServerImplementation serverImplementation = null;
     private String[] playingUsernames;
     private List<String> disconnectedUsernames;
-    private Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
+    private Queue<Message> receivedMessages = new LinkedList<>();
     private int nextIdPing = 0;
     private int[] idPingToBeAnswered;
     private Timer[] playersTimers;
@@ -54,7 +54,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
 
     /**
-     * Constructs a GameServer instance with the specified ServerImplementation and number of players.
+     * Constructs a GameServer instance with the specified number of players.
      *
      * @param numOfPlayers         the number of players in the game
      * @throws RemoteException if a remote communication error occurs
@@ -74,9 +74,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
 
                     if( isMessagesQueueEmpty() ) continue;
 
-                    Tuple<Message,Client> tuple = popFromMessagesQueue();
+                    Message message = popFromMessagesQueue();
                     try {
-                        effectivelyHandleMessage(tuple.getFirst(), tuple.getSecond());
+                        effectivelyHandleMessage(message);
                     }catch (RemoteException ex){
                         ServerImplementation.logger.log(Level.SEVERE, "Failed to handle message of client: " + ex.getMessage());
                     }
@@ -159,7 +159,12 @@ public class GameServer extends UnicastRemoteObject implements Server {
         }.start();
     }
 
-    public void resetTimerAndPing(PingMessage message){
+    /**
+     * Handles the ping response, it resets the ping timer for the player who sent the response
+     *
+     * @param message the ping message to be handled
+     */
+    public void handlePingResponse(PingMessage message){
         //get index of element in idPingToBeAnswered with value message.getpingNumber()
         ServerImplementation.logger.log(Level.INFO,"Started to handle ping #" + message.getPingNumber());
         synchronized (playingUsernames){
@@ -196,7 +201,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      */
     private void addToMessagesQueue(Message m, Client c) {
         synchronized (receivedMessages) {
-            receivedMessages.add(new Tuple<>(m, c));
+            receivedMessages.add(m);
         }
     }
 
@@ -216,7 +221,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
      *
      * @return The message and associated client as a tuple, or {@code null} if the queue is empty.
      */
-    private Tuple<Message, Client> popFromMessagesQueue() {
+    private Message popFromMessagesQueue() {
         synchronized (receivedMessages) {
             return receivedMessages.poll();
         }
@@ -227,10 +232,9 @@ public class GameServer extends UnicastRemoteObject implements Server {
      * This method is called to process messages received by the server.
      *
      * @param m      The message to be effectively handled.
-     * @param client The client associated with the message.
      * @throws RemoteException If a remote exception occurs during message handling.
      */
-    private void effectivelyHandleMessage(Message m, Client client) throws RemoteException {
+    private void effectivelyHandleMessage(Message m) throws RemoteException {
         if( m instanceof TurnActionMessage ) {
             TurnActionMessage message = (TurnActionMessage) m;
             ServerImplementation.logger.log(Level.INFO, "Started to handle TurnMessage");
@@ -243,7 +247,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
             disconnect(message.getUsername());
         }
         else if(m instanceof PingMessage){
-            resetTimerAndPing((PingMessage) m);
+            handlePingResponse((PingMessage) m);
         }
         else{
             System.err.println("Message not recognized; ignoring it");

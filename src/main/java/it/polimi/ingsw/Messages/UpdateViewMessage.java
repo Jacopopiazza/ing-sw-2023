@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * The UpdateViewMessage class represents a message containing an updated game view.
- * It extends the Message abstract class and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class UpdateViewMessage extends Message {
     private GameView gameView;

@@ -2,7 +2,7 @@ package it.polimi.ingsw.Messages;
 
 /**
  * The RegisterMessage class represents a message for registering a player.
- * It extends the Message abstract class and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class RegisterMessage extends Message {
     private String username;

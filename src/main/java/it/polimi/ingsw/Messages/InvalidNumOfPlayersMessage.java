@@ -3,7 +3,7 @@ package it.polimi.ingsw.Messages;
 import java.io.Serializable;
 /**
  * The InvalidNumOfPlayersMessage class represents a message indicating an invalid number of players.
- * It extends the Message abstract class and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class InvalidNumOfPlayersMessage extends Message {
     private final String message = "Invalid number of players";

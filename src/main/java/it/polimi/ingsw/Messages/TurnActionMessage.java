@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * The TurnActionMessage class represents a message containing the details of a turn action.
- * It extends the Message abstract class and is serializable.
+ * It extends the {@code Message} abstract class and is serializable.
  */
 public class TurnActionMessage extends Message {
     private String username;

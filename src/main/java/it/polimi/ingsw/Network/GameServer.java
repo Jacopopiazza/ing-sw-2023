@@ -6,6 +6,7 @@ import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.Tuple;
 
 import java.rmi.RemoteException;
@@ -98,7 +99,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                 //noinspection InfiniteLoopStatement
                 while(true){
                     try {
-                        Thread.sleep(6500);
+                        Thread.sleep(1000 * Config.getInstance().getPingInterval() * 3 / 2);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -141,7 +142,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                 }
                             };
 
-                            playersTimers[index].schedule(playersTimersTasks[index], 5000);
+                            playersTimers[index].schedule(playersTimersTasks[index], 1000 * Config.getInstance().getPingInterval());
 
                             try{
                                 listener.update(pingMessage);

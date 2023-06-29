@@ -43,7 +43,7 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
     > java -jar MyShelfie_Client.jar
     ```
     - This command sets the Client on Graphical User Interface (GUI) mode, but it can be followed by **-cli** if the Command Line Interface (CLI) is preferred.
-    - The Server's IP and port to connect to can be specified during the execution.
+    - The Server's IP to connect to can be specified during the execution.
     
 
 ## Utilized Software

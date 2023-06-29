@@ -17,7 +17,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-
+/**
+ * Class representing the TUI, thus a {@link UserInterface} implementing the {@link View}.
+ */
 @SuppressWarnings("ALL")
 public class TextualUI extends UserInterface {
 
@@ -50,6 +52,9 @@ public class TextualUI extends UserInterface {
     private final Object lockQueue;
     private final Object lockMainThread;
 
+    /**
+     * Constructor of a {@code TextualUI}.
+     */
     public TextualUI() {
         super();
         in = new Scanner(System.in);
@@ -445,6 +450,9 @@ public class TextualUI extends UserInterface {
         }
     }
 
+    /**
+     * Displays the game shelves.
+     */
     public void showShelves(){
         int r = Shelf.getRows();
         int c = Shelf.getColumns();
@@ -724,6 +732,9 @@ public class TextualUI extends UserInterface {
         }
     }
 
+    /**
+     * Clears the console.
+     */
     public void clearConsole() {
         try{
             if( System.getProperty("os.name").contains("Windows") )

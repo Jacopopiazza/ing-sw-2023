@@ -5,7 +5,15 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class RegisterMessage extends Message {
+
+    /**
+     * Username of the player to be registered.
+     */
     private final String username;
+
+    /**
+     * Indicates how many players will participate in the game (or join an existing one if equals 1).
+     */
     private final int numOfPlayers;
 
     /**

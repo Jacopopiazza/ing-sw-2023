@@ -60,10 +60,29 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      */
     public static final Logger logger = Logger.getLogger("ServerImplementation");
 
+    /**
+     * ExecutorService for parallel programming.
+     */
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    private final List<String> playingUsernames; // to disconnect
+
+    /**
+     * List containing the active players' usernames (not disconnected)
+     */
+    private final List<String> playingUsernames;
+
+    /**
+     * For each disconnected player's username, stores the GameServer of the game that they were participating in.
+     */
     private final Map<String, GameServer> disconnectedUsernames;
+
+    /**
+     * Queue of opened lobbies. Players who join an existing lobby will be added to the oldest one.
+     */
     private final Queue<GameServer> lobbiesWaitingToStart;
+
+    /**
+     * Queue storing the messages until they're effectively handled.
+     */
     private final Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
 
     /**

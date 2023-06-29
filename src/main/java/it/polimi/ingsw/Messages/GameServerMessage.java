@@ -6,6 +6,9 @@ import it.polimi.ingsw.Network.Server;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class GameServerMessage extends Message {
+    /**
+     * Reference to the new server to replace the old server with.
+     */
     private final Server server;
 
     /**

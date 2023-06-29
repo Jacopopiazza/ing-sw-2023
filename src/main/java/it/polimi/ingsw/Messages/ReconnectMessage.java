@@ -5,6 +5,10 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class ReconnectMessage extends Message {
+
+    /**
+     * Username of the player to be reconnected.
+     */
     private final String username;
 
     /**

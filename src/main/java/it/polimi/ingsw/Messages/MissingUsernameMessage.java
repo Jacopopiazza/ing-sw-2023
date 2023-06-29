@@ -5,6 +5,10 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class MissingUsernameMessage extends Message {
+
+    /**
+     * Message to be displayed.
+     */
     private final String message = "Username is null";
 
     /**

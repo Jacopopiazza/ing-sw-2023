@@ -13,7 +13,15 @@ import java.io.Serializable;
 public class TileView implements Serializable {
     @Serial
     private static final long serialVersionUID=1L;
+
+    /**
+     * Colour of the tile.
+     */
     private final TileColor color;
+
+    /**
+     * Used to display the tile image.
+     */
     private final int id;
 
     /**

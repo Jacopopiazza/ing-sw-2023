@@ -5,7 +5,17 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class UsernameNotFoundMessage extends Message {
+
+    /**
+     * Message to be displayed.
+     */
     private final String message = "No Username to reconnect";
+
+    /**
+     * Default constructor of {@code UsernameNotFoundMessage}.
+     */
+    public UsernameNotFoundMessage() {
+    }
 
     /**
      * Returns the string {@link UsernameNotFoundMessage#message}.

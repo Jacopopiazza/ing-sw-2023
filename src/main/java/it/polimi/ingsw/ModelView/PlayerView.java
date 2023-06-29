@@ -13,10 +13,30 @@ import java.io.Serializable;
 public class PlayerView implements Serializable {
     @Serial
     private static final long serialVersionUID=1L;
+
+    /**
+     * Current player's score.
+     */
     private final int score;
+
+    /**
+     * Reference to the player's shelf.
+     */
     private final ShelfView shelf;
+
+    /**
+     * Reference to the PrivateGoal.
+     */
     private final PrivateGoalView privateGoal;
+
+    /**
+     * Player's username.
+     */
     private final String username;
+
+    /**
+     * Tells if the player was the first to fill its shelf.
+     */
     private final boolean winner;
 
     /**

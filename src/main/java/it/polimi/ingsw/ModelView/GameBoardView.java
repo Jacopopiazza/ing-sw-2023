@@ -16,7 +16,15 @@ import java.util.*;
 public class GameBoardView implements Serializable {
     @Serial
     private static final long serialVersionUID=1L;
+
+    /**
+     * GameBoard internal representation.
+     */
     private final Map<Coordinates, TileView> board;
+
+    /**
+     * Set of coordinates which correspond to pickable tiles.
+     */
     private final Set<Coordinates> pickables;
 
     /**

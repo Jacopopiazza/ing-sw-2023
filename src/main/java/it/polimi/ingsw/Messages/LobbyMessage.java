@@ -8,6 +8,9 @@ import java.util.List;
  */
 public class LobbyMessage extends Message {
 
+    /**
+     * Usernames which are currently in the lobby.
+     */
     private final List<String> players;
 
     /**

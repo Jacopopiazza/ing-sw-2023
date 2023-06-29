@@ -35,6 +35,42 @@ public class ControllerTest extends TestCase {
     }
 
     @Test
+    public void testGetNumOfActivePlayers() {
+        assertEquals(0, controller.getNumOfActivePlayers());
+        controller.addPlayer("Picci", (message) -> {System.out.print("Picci");});
+        assertEquals(1, controller.getNumOfActivePlayers());
+        controller.addPlayer("Roma", (message) -> {System.out.print("Roma");});
+        assertEquals(2, controller.getNumOfActivePlayers());
+        controller.disconnect("Picci");
+        assertEquals(1, controller.getNumOfActivePlayers());
+    }
+
+    @Test
+    public void testReconnect() {
+        assertEquals(0, controller.getNumOfActivePlayers());
+        controller.addPlayer("Picci", (message) -> {System.out.print("Picci");});
+        assertEquals(1, controller.getNumOfActivePlayers());
+        controller.addPlayer("Roma", (message) -> {System.out.print("Roma");});
+        assertEquals(2, controller.getNumOfActivePlayers());
+        controller.disconnect("Picci");
+        assertEquals(1, controller.getNumOfActivePlayers());
+        controller.reconnect("Picci", (message) -> {System.out.print("New Picci");});
+        assertEquals(2, controller.getNumOfActivePlayers());
+    }
+
+    @Test
+    public void testGetListener(){
+        controller.addPlayer("Picci", (message) -> {System.out.print("Picci");});
+        controller.addPlayer("Roma", (message) -> {System.out.print("Roma");});
+        try{
+            assertNotNull(controller.getListener("Picci"));
+        }catch (Exception e){
+            fail();
+        }
+
+    }
+
+    @Test
     public void testDoTurn_wrongPlayer() throws IllegalColumnInsertionException, InterruptedException {
 
           class BooleanForTest{

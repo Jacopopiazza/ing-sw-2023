@@ -16,19 +16,7 @@ public class Controller  {
     @SuppressWarnings("FieldCanBeLocal")
     private final int timerLength = 30; // in seconds
     private boolean onlyLastPlayerIsDone;
-    private final Timer timer = new Timer();
-
-    /**
-     * A {@code TimerTask} that runs when the timer expires. It cancels the timer, sets the current player as the winner,
-     * retrieves the list of player usernames, and notifies the server to delete the game.
-     */
-    private final TimerTask task = new TimerTask(){
-        public void run(){
-            timer.cancel();
-            model.setWinner(model.getCurrentPlayer());
-            endGame();
-        }
-    };
+    private Timer timer = new Timer();
 
     /**
      * Constructs a new {@code Controller} object with the specified Game model and GameServer.
@@ -119,6 +107,7 @@ public class Controller  {
         }
         if( model.getNumOfActivePlayers() == 2 ){
             timer.cancel();
+            timer = new Timer();
             // If a player reconnects after the last remaining player has performed their turn,
             // the currentPlayer must be updated because it was not changed at the end of that turn
             if( onlyLastPlayerIsDone ){
@@ -151,7 +140,16 @@ public class Controller  {
                         return;
                     }
                 }
-                timer.schedule(task,timerLength*1000);
+                //start the timer
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run(){
+                        timer.cancel();
+                        model.setWinner(model.getCurrentPlayer());
+                        endGame();
+                    }
+                }, timerLength * 1000);
+
                 return;
             }
             if( model.getNumOfActivePlayers() == 0 )

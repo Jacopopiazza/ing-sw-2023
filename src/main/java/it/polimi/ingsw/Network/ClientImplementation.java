@@ -4,7 +4,7 @@ import it.polimi.ingsw.Exceptions.SingletonException;
 import it.polimi.ingsw.Messages.GameServerMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.PingMessage;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import it.polimi.ingsw.View.GraphicalUI;
 import it.polimi.ingsw.View.TextualUI;
 import it.polimi.ingsw.View.View;

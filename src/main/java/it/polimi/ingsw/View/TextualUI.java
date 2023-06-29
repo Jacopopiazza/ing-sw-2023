@@ -144,7 +144,7 @@ public class TextualUI extends UserInterface {
 
         while(true){
             out.println("1 - " + option_1);
-            out.println("2 - " + option_2 + "\n");
+            out.println("2 - " + option_2);
             try{
                 inputRead = in.nextLine();
             }catch ( InputMismatchException ex){
@@ -365,6 +365,7 @@ public class TextualUI extends UserInterface {
                 winnerIndex = i;
         }
 
+        clearConsole();
         showBoard();
         showGlobalGoals();
         showShelves();
@@ -676,7 +677,6 @@ public class TextualUI extends UserInterface {
                         if(isMessagesQueueEmpty()){
                             continue;
                         }
-                        clearConsole();
                         Message m = popMessageFromQueue();
                         ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
 
@@ -719,6 +719,7 @@ public class TextualUI extends UserInterface {
             out.println("Insert 0 to go back to the starting menù: ");
             readNumberFromInput(0,0);
             init();
+            clearConsole();
             showTitle();
         }
     }

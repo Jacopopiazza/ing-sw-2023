@@ -674,7 +674,7 @@ public class TextualUI extends UserInterface {
                         if(isMessagesQueueEmpty()){
                             continue;
                         }
-
+                        clearConsole();
                         Message m = popMessageFromQueue();
                         ClientImplementation.logger.log(Level.INFO, "Inizio gestione messaggio: " + m.getClass());
 
@@ -721,9 +721,14 @@ public class TextualUI extends UserInterface {
         }
     }
 
-    public static void clearConsole() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+    public void clearConsole() {
+        try{
+            if( System.getProperty("os.name").contains("Windows") )
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                out.println("\033\143");
+        }catch (Exception ignored){
+        }
     }
 
 }

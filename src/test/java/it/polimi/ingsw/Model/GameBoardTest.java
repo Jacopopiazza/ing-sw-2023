@@ -23,18 +23,27 @@ import java.util.Set;
 public class GameBoardTest extends TestCase {
     GameBoard gameBoard3;
     GameBoard gameBoard2;
+    GameBoard gameBoardToRefill;
     Game game2;
+    Game game3;
 
     @Before
     public void setUp() throws FileNotFoundException {
-        gameBoard3 = new GameBoard(3);
+        game3 = new Game(3);
         game2 = new Game(2);
         game2.addPlayer("Picci",(Message message)->{});
         game2.addPlayer("Roma",(Message message)->{});
+        game3.addPlayer("Picci",(Message message)->{});
+        game3.addPlayer("Roma",(Message message)->{});
+        game3.addPlayer("J",(Message message)->{});
         game2.init();
+        game3.init();
+        gameBoard3 = game3.getGameBoard();
         gameBoard2 = game2.getGameBoard();
+        gameBoardToRefill = new GameBoard(3);
         try {
             game2.refillGameBoard();
+            game3.refillGameBoard();
         } catch (EmptySackException e) {}
     }
 
@@ -99,17 +108,17 @@ public class GameBoardTest extends TestCase {
 
     @Test
     public void testToRefill() throws InvalidCoordinatesForCurrentGameException {
-        assertTrue(gameBoard3.toRefill());
-        for ( Coordinates c: gameBoard3.getCoords() ) {
-            gameBoard3.setTile(c,new Tile(TileColor.BLUE,0));
+        assertTrue(gameBoardToRefill.toRefill());
+        for ( Coordinates c: gameBoardToRefill.getCoords() ) {
+            gameBoardToRefill.setTile(c,new Tile(TileColor.BLUE,0));
         }
-        assertFalse(gameBoard3.toRefill());
+        assertFalse(gameBoardToRefill.toRefill());
         boolean flag = true;
-        for ( Coordinates c: gameBoard3.getCoords() ) {
-            if(!flag) gameBoard3.setTile(c,null);
+        for ( Coordinates c: gameBoardToRefill.getCoords() ) {
+            if(!flag) gameBoardToRefill.setTile(c,null);
             if(flag) flag = false;
         }
-        assertTrue(gameBoard3.toRefill());
+        assertTrue(gameBoardToRefill.toRefill());
     }
 
     @Test

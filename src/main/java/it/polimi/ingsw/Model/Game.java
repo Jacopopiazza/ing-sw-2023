@@ -61,13 +61,18 @@ public class Game {
     /**
      * Initializes the game by setting up private goals, creating the game board, randomly choosing the first player,
      * picking global goals, and marking the game as started.
+     *
+     * @throws InvalidNumberOfPlayersException if a players is null.
      */
-    public void init() {
+    public void init() throws NullPlayersException{
 
         synchronized (players) {
             PrivateGoal[] privateGoals = PrivateGoal.getPrivateGoals(numOfPlayers);
-            for (int i = 0; i < numOfPlayers; i++)
+            for (int i = 0; i < numOfPlayers; i++){
+                if(players[i] == null) throw new NullPlayersException();
                 players[i].init(privateGoals[i]);
+            }
+
             board = new GameBoard(numOfPlayers);
             sack = new TileSack();
             try {

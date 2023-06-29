@@ -11,10 +11,9 @@ import it.polimi.ingsw.View.View;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.*;
+
+import static java.util.logging.Level.OFF;
 
 /**
  * The ClientImplementation class is an implementation of the {@link Client} interface.
@@ -59,9 +58,9 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
      * and adds the handlers to the logger.
      */
     private static void setUpLogger(){
-        logger.setLevel(Level.ALL);
-
         FileHandler fileHandler;
+        LogManager.getLogManager().reset();
+        logger.setLevel(java.util.logging.Level.OFF);
 
         try {
             fileHandler = new FileHandler("client.log");
@@ -70,7 +69,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             return;
         }
         fileHandler.setFormatter(new SimpleFormatter());
-        fileHandler.setLevel(Level.SEVERE);
+        fileHandler.setLevel(Level.INFO);
         logger.addHandler(fileHandler);
     }
 

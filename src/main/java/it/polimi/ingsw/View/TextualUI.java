@@ -306,6 +306,7 @@ public class TextualUI extends UserInterface {
                 break;
             }
             else{
+                ClientImplementation.logger.log(Level.INFO,"Waiting for response...");
                 addMessageToQueue(m);
                 waitForLoginResponse();
             }
@@ -726,7 +727,7 @@ public class TextualUI extends UserInterface {
             if( System.getProperty("os.name").contains("Windows") )
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             else
-                out.println("\033\143");
+                out.println("\033[H\033[2J");
         }catch (Exception ignored){
         }
     }

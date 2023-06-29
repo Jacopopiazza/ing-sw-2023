@@ -174,7 +174,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             return;
         }
         fileHandler.setFormatter(new SimpleFormatter());
-        fileHandler.setLevel(Level.SEVERE);
+        fileHandler.setLevel(Level.INFO);
         logger.addHandler(fileHandler);
     }
 

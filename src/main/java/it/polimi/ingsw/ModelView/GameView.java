@@ -61,8 +61,7 @@ public class GameView implements Serializable {
             try {
                 for(int i = 0; i < game.getGoals().length; i++)
                     this.goals[i] = game.getGoals()[i].getView();
-            } catch (CloneNotSupportedException e){
-                e.printStackTrace();
+            } catch (CloneNotSupportedException ignored){
             }
         }
         else{

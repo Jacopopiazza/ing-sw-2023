@@ -85,8 +85,7 @@ public class Controller  {
         if( !model.isGameStarted() ){
             try {
                return model.kick(username);
-            } catch (UsernameNotFoundException e) {
-                e.printStackTrace();
+            } catch (UsernameNotFoundException ignored) {
             }
         }
         return null;
@@ -101,8 +100,7 @@ public class Controller  {
     public void reconnect(String username, GameListener listener){
         try {
             model.reconnect(username,listener);
-        } catch (UsernameNotFoundException e) {
-            e.printStackTrace();
+        } catch (UsernameNotFoundException ignored) {
             return;
         }
         if( model.getNumOfActivePlayers() == 2 ){
@@ -129,8 +127,7 @@ public class Controller  {
         if( model.isGameStarted() ) {
             try {
                 model.disconnect(username);
-            } catch (UsernameNotFoundException e) {
-                e.printStackTrace();
+            } catch (UsernameNotFoundException ignored) {
                 return;
             }
             if( model.getNumOfActivePlayers() == 1 ){
@@ -179,8 +176,7 @@ public class Controller  {
         Player currPlayer = null;
         try {
             currPlayer = model.getPlayer(model.getCurrentPlayer());
-        } catch (InvalidIndexException e) {
-            e.printStackTrace();
+        } catch (InvalidIndexException ignored) {
         }
         // ...and check if such player is the one who sent the request
         if( !( currPlayer.getUsername().equals(username)) ){
@@ -206,36 +202,31 @@ public class Controller  {
                 model.addCheater(username);
                 return;
             }
-        } catch (ColumnOutOfBoundsException e){
-            e.printStackTrace();
+        } catch (ColumnOutOfBoundsException ignored){
         }
 
         // Pick the given Tiles
         Tile[] effectiveTiles = null;
             try{
                 effectiveTiles = model.pickTilesFromBoard(chosenTiles);
-            } catch (InvalidCoordinatesForCurrentGameException e) {
-                e.printStackTrace();
+            } catch (InvalidCoordinatesForCurrentGameException ignored) {
             }
 
         // Insert the tiles in the shelf
         try {
             model.playerInsertion(currPlayer, effectiveTiles, col);
-        } catch (NoTileException | ColumnOutOfBoundsException | IllegalColumnInsertionException e) {
-            e.printStackTrace();
+        } catch (NoTileException | ColumnOutOfBoundsException | IllegalColumnInsertionException ignored) {
         }
         // Compute the global goals' points
         try {
             model.checkGlobalGoals();
-        } catch (InvalidIndexException | InvalidScoreException | EmptyStackException | MissingShelfException e) {
-            e.printStackTrace();
+        } catch (InvalidIndexException | InvalidScoreException | EmptyStackException | MissingShelfException ignored) {
         }
 
         // Eventually refill the board
         try {
             model.refillGameBoard();
-        } catch (EmptySackException e) {
-            e.printStackTrace();
+        } catch (EmptySackException ignored) {
         }
 
         // Set the next player and if the game is over the game ends

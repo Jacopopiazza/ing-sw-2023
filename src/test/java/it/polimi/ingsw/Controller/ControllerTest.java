@@ -6,12 +6,14 @@ import it.polimi.ingsw.Messages.UpdateViewMessage;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
+import it.polimi.ingsw.Network.GameServer;
 import it.polimi.ingsw.Utilities.Config;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ControllerTest extends TestCase {
@@ -77,6 +79,18 @@ public class ControllerTest extends TestCase {
         assertEquals(null, controller1);
         controller1 = new Controller(new Game(2), null);
         assertNotNull(controller1);
+
+    }
+
+    @Test
+    public void testEndGame() throws RemoteException, InterruptedException {
+        GameServer gameServer = new GameServer(2);
+        Controller controller1 = new Controller(new Game(2), gameServer);
+        controller1.addPlayer("Picci", (message) -> {System.out.print("Picci");});
+        controller1.addPlayer("Roma", (message) -> {System.out.print("Roma");});
+        controller1.disconnect("Picci");
+        Thread.sleep(35000);
+        assertEquals(1, controller1.getNumOfActivePlayers());
 
     }
 

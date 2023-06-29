@@ -82,9 +82,7 @@ public abstract class GlobalGoal implements Cloneable {
     public GlobalGoalView getView(){
         try {
             return new GlobalGoalView(this.clone());
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        } catch (CloneNotSupportedException ignored) { }
         return null;
     }
 

@@ -132,8 +132,7 @@ public abstract class UserInterface implements Runnable, View {
                     try {
                         serverStub.receive(client);
                     } catch (RemoteException e) {
-                        System.err.println("Cannot receive from server. Stopping...");
-                        e.printStackTrace();
+                        ClientImplementation.logger.log(Level.SEVERE,"Cannot receive from server. Stopping...");
                         System.exit(1);
                     }
                 }

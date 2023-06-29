@@ -81,8 +81,7 @@ public class Game {
             sack = new TileSack();
             try {
                 refillGameBoard();
-            } catch (EmptySackException e) {
-                e.printStackTrace();
+            } catch (EmptySackException ignored) {
             }
 
             //Randomly select first player
@@ -400,8 +399,7 @@ public class Game {
                     this.board.setTile(c, this.sack.pop());
                     if( noTileAdded ) noTileAdded = false;
                 }
-            } catch (InvalidCoordinatesForCurrentGameException e) {
-                e.printStackTrace();
+            } catch (InvalidCoordinatesForCurrentGameException ignored) {
             }
         }
         notifyAllListeners(new GameView(board));

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Utilities;
+package it.polimi.ingsw.Utilities;
 
 import org.junit.Before;
 import org.junit.Test;

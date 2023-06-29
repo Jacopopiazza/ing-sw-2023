@@ -6,6 +6,9 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class PingMessage extends Message {
+    /**
+     * Id of the message.
+     */
     private final int pingNumber;
 
     /**

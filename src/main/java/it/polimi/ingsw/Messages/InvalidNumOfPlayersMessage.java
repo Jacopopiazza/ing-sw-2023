@@ -5,6 +5,9 @@ package it.polimi.ingsw.Messages;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class InvalidNumOfPlayersMessage extends Message {
+    /**
+     * Message to be displayed.
+     */
     private final String message = "Invalid number of players";
 
     /**

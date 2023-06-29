@@ -11,8 +11,19 @@ import java.util.EmptyStackException;
  */
 public class GlobalGoalView implements Serializable {
 
+    /**
+     * Next score to be assigned for this GlobalGoal.
+     */
     private final int score;
+
+    /**
+     * Id of the GlobalGoal.
+     */
     private final int id;
+
+    /**
+     * Description of the GlobalGoal to be displayed.
+     */
     private final String description;
 
     /**

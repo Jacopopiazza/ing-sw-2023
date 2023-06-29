@@ -29,9 +29,15 @@ import java.util.logging.Level;
  * It implements the {@code Runnable} interface, allowing it to be run as a thread; and the {@link View} interface,
  * allowing it to be used as the base class for view implementations.
  */
-public abstract class UserInterface implements Runnable, View
-{
+public abstract class UserInterface implements Runnable, View {
+    /**
+     * Reference to the client to be filled when the Network Protocol is chosen.
+     */
     protected Client client;
+
+    /**
+     * Listeners of the {@code View} to be updated.
+     */
     protected final List<ViewListener> listeners;
 
     /**

@@ -14,11 +14,34 @@ import java.util.Stack;
  */
 public class GameView implements Serializable {
 
+    /**
+     * Reference to the GameBoardView.
+     */
     private final GameBoardView board;
+
+    /**
+     * Number of active players.
+     */
     private final Integer numOfActivePlayers;
+
+    /**
+     * Array of references to the PlayerViews.
+     */
     private final PlayerView[] players;
+
+    /**
+     * Reference to the GlobalGoals.
+     */
     private final GlobalGoalView[] goals;
+
+    /**
+     * Index of the current player.
+     */
     private final Integer currentPlayer;
+
+    /**
+     * Username of the player who cheated.
+     */
     private final String cheater;
 
     /**

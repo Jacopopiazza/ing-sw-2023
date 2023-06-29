@@ -28,8 +28,19 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
      */
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
 
+    /**
+     * Reference to the view.
+     */
     private final View view;
+
+    /**
+     * Timer to
+     */
     private Timer timer = new Timer();
+
+    /**
+     * Reference to the server to send messages to.
+     */
     private Server server;
 
     /**

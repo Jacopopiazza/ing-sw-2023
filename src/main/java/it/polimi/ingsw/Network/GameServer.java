@@ -42,13 +42,45 @@ import java.util.logging.Level;
  * The {@link ServerImplementation} class is responsible for managing the server-side logic and communication protocols.
  */
 public class GameServer extends UnicastRemoteObject implements Server {
+
+    /**
+     * Reference to the controller.
+     */
     private final Controller controller;
-    private ServerImplementation serverImplementation = null;
+
+    /**
+     * Reference to the Singleton instance of {@link ServerImplementation}
+     */
+    private ServerImplementation serverImplementation;
+
+    /**
+     * Array of active players' usernames (not disconnected ones).
+     */
     private final String[] playingUsernames;
+
+    /**
+     * Queue storing the received messages, until they're effectively handled.
+     */
     private final Queue<Message> receivedMessages = new LinkedList<>();
+
+    /**
+     * Auto-increment next ping message id.
+     */
     private int nextIdPing = 0;
+
+    /**
+     * Array storing for each player the id of the next expected ping message ACK.
+     */
     private final int[] idPingToBeAnswered;
+
+    /**
+     * Array which stores for each player their timer.
+     */
     private final Timer[] playersTimers;
+
+    /**
+     * Array which stores for each player their timer task.
+     */
     private final TimerTask[] playersTimersTasks;
 
 

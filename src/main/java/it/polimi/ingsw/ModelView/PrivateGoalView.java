@@ -11,7 +11,14 @@ import java.io.Serializable;
  */
 public class PrivateGoalView implements Serializable {
 
+    /**
+     * Id of the PrivateGoal.
+     */
     private final int id;
+
+    /**
+     * Array of the Coordinates in the Shelf where the Tiles should be placed.
+     */
     private final Coordinates[] coords;
 
     /**

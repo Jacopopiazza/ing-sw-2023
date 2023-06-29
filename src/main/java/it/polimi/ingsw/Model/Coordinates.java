@@ -7,7 +7,15 @@ import java.util.Objects;
  * Represents the coordinates of a position on a {@link GameBoard}.
  */
 public class Coordinates implements Serializable {
+
+    /**
+     * Row index.
+     */
     private final int ROW;
+
+    /**
+     * Column index.
+     */
     private final int COL;
 
     /**

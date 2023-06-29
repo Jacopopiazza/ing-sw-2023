@@ -7,8 +7,20 @@ import it.polimi.ingsw.Model.Coordinates;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class TurnActionMessage extends Message {
+
+    /**
+     * Username of the player who sent the action.
+     */
     private final String username;
+
+    /**
+     * Coordinates on the map of the chosen Tiles.
+     */
     private final Coordinates[] chosenTiles;
+
+    /**
+     * Chosen column.
+     */
     private final int column;
 
     /**

@@ -7,6 +7,10 @@ import it.polimi.ingsw.ModelView.GameView;
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class UpdateViewMessage extends Message {
+
+    /**
+     * GameView to be displayed.
+     */
     private final GameView gameView;
 
     /**

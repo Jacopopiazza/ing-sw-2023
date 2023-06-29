@@ -50,6 +50,7 @@ public class Config {
     private final List<List<Coordinates>> XShapeFromJSON;
     private final List<List<Coordinates>> DiagonalsFromJSON;
     private final String ipServer;
+    private final Integer pingInterval;
 
     /**
      * Private constructor, used for the singleton pattern. This method loads the configuration data from JSON files.
@@ -66,6 +67,7 @@ public class Config {
         numOfTilesPerColor = jsonConfig.get("numOfTilesPerColor").getAsInt();
         maxNumberOfPlayers = jsonConfig.get("maxNumberOfPlayers").getAsInt();
         numOfGlobalGoals = jsonConfig.get("numOfGlobalGoals").getAsInt();
+        pingInterval = jsonConfig.get("pingInterval").getAsInt();
         int tempRmiPort, tempSocketPort;
         try{
             tempRmiPort = jsonConfig.get("rmiPort").getAsInt();
@@ -217,6 +219,15 @@ public class Config {
      */
     public BoardGoalScore[] getSortedBoardGoals() {
         return Arrays.stream(boardGoals).sorted((t1, t2) -> t1.tiles() - t2.tiles()).toArray(BoardGoalScore[]::new);
+    }
+
+    /**
+     * Returns the ping interval in seconds
+     *
+     * @return the pingInterval
+     */
+    public Integer getPingInterval() {
+        return pingInterval;
     }
 
     /**

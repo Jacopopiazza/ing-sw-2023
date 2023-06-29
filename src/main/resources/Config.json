@@ -6,6 +6,7 @@
   "numOfGlobalGoals": 2,
   "rmiPort" : 1099,
   "socketPort" : 1234,
+  "pingInterval": 5,
   "ipServer" : "127.0.0.1",
 
   "privateGoalsScores" : [

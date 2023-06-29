@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.SingletonException;
 import it.polimi.ingsw.Messages.GameServerMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.PingMessage;
+import it.polimi.ingsw.Model.Utilities.Config;
 import it.polimi.ingsw.View.GraphicalUI;
 import it.polimi.ingsw.View.TextualUI;
 import it.polimi.ingsw.View.View;
@@ -11,6 +12,8 @@ import it.polimi.ingsw.View.View;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.*;
 
 import static java.util.logging.Level.OFF;
@@ -23,6 +26,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     private static ClientImplementation instance;
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
     private final View view;
+    private Timer timer = new Timer();
     private Server server;
 
     /**
@@ -112,6 +116,11 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
 
         if(m instanceof PingMessage){
+
+            timer.cancel();
+            timer = new Timer();
+
+
             ClientImplementation.logger.log(Level.INFO, "Ping #" + ((PingMessage) m).getPingNumber() + " received");
             try{
                 this.server.handleMessage(new PingMessage(((PingMessage) m).getPingNumber()), this);
@@ -119,6 +128,12 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
                 ClientImplementation.logger.log(Level.SEVERE, "RemoteException occurred while sending message to server");
                 return;
             }
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 1000 * Config.getInstance().getPingInterval() * 3 / 2);
             return;
         }
 

@@ -30,7 +30,7 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 
 ## Setup
 
-- In the [Deliverables](Deliverables) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
+- In the [Releases](https://github.com/Jacopopiazza/ing-sw-2023-piazzalunga-romano-piccinato-rita/releases/latest) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
 - The Server can be run with the following command, as default it runs on port 1234:
     ```shell
     > java -jar MyShelfie_Server.jar

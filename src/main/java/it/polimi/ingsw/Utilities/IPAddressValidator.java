@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Utilities;
+package it.polimi.ingsw.Utilities;
 
 import java.net.MalformedURLException;
 import java.net.URL;

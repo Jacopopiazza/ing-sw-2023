@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Utilities;
+package it.polimi.ingsw.Utilities;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -10,9 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The Config class is responsible for loading and providing configuration data for the game.

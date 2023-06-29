@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Utilities;
+package it.polimi.ingsw.Utilities;
 
 /**
  * The NumberToWord class provides a method to convert a numeric array into its corresponding word representation.

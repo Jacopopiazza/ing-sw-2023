@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Utilities;
+package it.polimi.ingsw.Utilities;
 
 /**
  * The ConsoleColors enum provides ANSI escape codes for coloring console output.

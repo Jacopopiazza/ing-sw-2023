@@ -6,8 +6,7 @@ import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
-import it.polimi.ingsw.Model.Utilities.Config;
-import it.polimi.ingsw.Tuple;
+import it.polimi.ingsw.Utilities.Config;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

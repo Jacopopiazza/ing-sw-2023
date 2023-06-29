@@ -366,6 +366,7 @@ public class TextualUI extends UserInterface {
         }
 
         clearConsole();
+        while(in.hasNextLine()) in.nextLine();
         showBoard();
         showGlobalGoals();
         showShelves();

@@ -2,7 +2,7 @@ package it.polimi.ingsw.ModelView;
 
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 
 import java.io.Serializable;
 import java.util.Stack;

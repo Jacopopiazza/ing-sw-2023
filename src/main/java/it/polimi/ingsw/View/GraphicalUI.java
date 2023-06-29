@@ -5,7 +5,7 @@ import it.polimi.ingsw.Messages.*;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.TileColor;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import it.polimi.ingsw.ModelView.*;
 import it.polimi.ingsw.Network.ClientImplementation;
 

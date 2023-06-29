@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import it.polimi.ingsw.ModelView.GameBoardView;
 
 import java.util.*;

@@ -5,7 +5,7 @@ import it.polimi.ingsw.Model.Shelf;
 import it.polimi.ingsw.Model.Tile;
 import it.polimi.ingsw.Model.TileColor;
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 
 import java.util.ArrayList;
 import java.util.List;

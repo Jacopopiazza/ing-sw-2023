@@ -6,7 +6,7 @@ import it.polimi.ingsw.Messages.LobbyMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.UpdateViewMessage;
 import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import it.polimi.ingsw.ModelView.GameView;
 
 import java.lang.String;

@@ -3,7 +3,7 @@ package it.polimi.ingsw.Network;
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.*;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import it.polimi.ingsw.Network.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Tuple;
 

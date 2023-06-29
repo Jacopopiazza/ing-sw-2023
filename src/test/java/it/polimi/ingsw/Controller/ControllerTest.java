@@ -6,6 +6,7 @@ import it.polimi.ingsw.Messages.UpdateViewMessage;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
+import it.polimi.ingsw.Utilities.Config;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -68,6 +69,25 @@ public class ControllerTest extends TestCase {
             fail();
         }
 
+    }
+
+    @Test
+    public void testConstructor(){
+        Controller controller1 = null;
+        assertEquals(null, controller1);
+        controller1 = new Controller(new Game(2), null);
+        assertNotNull(controller1);
+
+    }
+
+
+    @Test
+    public void testKick(){
+        assertEquals(0, controller.getNumOfActivePlayers());
+        controller.addPlayer("Picci", (message) -> {System.out.print("Picci");});
+        assertEquals(1, controller.getNumOfActivePlayers());
+        controller.kick("Picci");
+        assertEquals(0, controller.getNumOfActivePlayers());
     }
 
     @Test

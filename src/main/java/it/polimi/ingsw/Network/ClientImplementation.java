@@ -133,7 +133,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
                 public void run() {
                     System.exit(0);
                 }
-            }, 1000 * Config.getInstance().getPingInterval() * 3 / 2);
+            }, 1000 * Config.getInstance().getPingInterval() * 2);
             return;
         }
 

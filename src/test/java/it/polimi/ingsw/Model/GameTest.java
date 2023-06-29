@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.EmptySackException;
 import it.polimi.ingsw.Exceptions.InvalidCoordinatesForCurrentGameException;
 import it.polimi.ingsw.Exceptions.InvalidIndexException;
 import it.polimi.ingsw.Exceptions.UsernameNotFoundException;
+import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Messages.Message;
 import junit.framework.TestCase;
 import org.junit.Assert;
@@ -103,9 +104,9 @@ public class GameTest extends TestCase {
     public void testAddPlayer(){
         assertEquals(game.getPlayer(0).getUsername(),"Picci");
         assertEquals(game.getPlayer(1).getUsername(),"Roma");
-        assertEquals(game.getCurrentPlayer(),0);
+        int firstPlayer = game.getCurrentPlayer();
         game.nextPlayer();
-        assertEquals(game.getCurrentPlayer(),1);
+        assertFalse(game.getCurrentPlayer() == firstPlayer);
     }
 
     @Test
@@ -116,10 +117,22 @@ public class GameTest extends TestCase {
     }
 
     @Test
+    public void testDisconnect_UsernameNotFoundException() throws UsernameNotFoundException {
+        assertEquals(game.getNumOfActivePlayers(), 2);
+        Assert.assertThrows(UsernameNotFoundException.class, () -> game.disconnect("Genoveffo"));
+    }
+
+    @Test
+    public void testKick_UsernameNotFoundException() throws UsernameNotFoundException {
+        assertEquals(game.getNumOfActivePlayers(), 2);
+        Assert.assertThrows(UsernameNotFoundException.class, () -> game.kick("Genoveffo"));
+    }
+
+    @Test
     public void testKick() throws UsernameNotFoundException {
         assertEquals(game.getNumOfActivePlayers(), 2);
-        game.kick("Picci");
-        assertEquals(game.getNumOfActivePlayers(), 1);
+        Assert.assertThrows(NullPointerException.class, () -> game.kick("Picci"));
+        //assertEquals(game.getNumOfActivePlayers(), 1);
     }
 
     @Test

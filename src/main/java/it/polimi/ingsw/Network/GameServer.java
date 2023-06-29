@@ -98,7 +98,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                 //noinspection InfiniteLoopStatement
                 while(true){
                     try {
-                        Thread.sleep(4000);
+                        Thread.sleep(6500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -141,7 +141,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
                                 }
                             };
 
-                            playersTimers[index].schedule(playersTimersTasks[index], 3000);
+                            playersTimers[index].schedule(playersTimersTasks[index], 5000);
 
                             try{
                                 listener.update(pingMessage);

@@ -5,7 +5,6 @@ import it.polimi.ingsw.Model.GlobalGoals.GlobalGoal;
 import it.polimi.ingsw.Utilities.Config;
 
 import java.io.Serializable;
-import java.util.Stack;
 
 
 /**

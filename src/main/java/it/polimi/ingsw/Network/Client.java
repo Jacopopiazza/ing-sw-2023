@@ -2,7 +2,6 @@ package it.polimi.ingsw.Network;
 
 import it.polimi.ingsw.Messages.Message;
 
-import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

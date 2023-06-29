@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Exceptions.InvalidIPAddress;
-import it.polimi.ingsw.Exceptions.InvalidPort;
 import it.polimi.ingsw.Messages.DisconnectMessage;
 import it.polimi.ingsw.Messages.Message;
 import it.polimi.ingsw.Messages.ReconnectMessage;

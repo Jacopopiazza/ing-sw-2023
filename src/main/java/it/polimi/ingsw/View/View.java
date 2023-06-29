@@ -2,7 +2,6 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Listener.ViewListener;
 import it.polimi.ingsw.Messages.Message;
-import it.polimi.ingsw.Network.GameServer;
 
 /**
  * The View interface represents the view component of the client application.

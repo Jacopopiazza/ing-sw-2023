@@ -36,7 +36,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     /**
      * Timer to
      */
-    private Timer timer = new Timer();
+    private Timer timer;
 
     /**
      * Reference to the server to send messages to.
@@ -103,6 +103,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
         super();
         this.view = view;
         this.server = server;
+        this.timer = null;
         view.addListener((message) -> {
             try {
                 server.handleMessage(message, this);
@@ -125,17 +126,17 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
     public void update(Message m) throws RemoteException {
 
         if(m instanceof GameServerMessage){
+            if(timer == null) timer = new Timer();
+            else{
+                timer.cancel();
+                timer = null;
+            }
             changeServer(((GameServerMessage) m).getServer());
             return;
         }
 
 
         if(m instanceof PingMessage){
-
-            timer.cancel();
-            timer = new Timer();
-
-
             ClientImplementation.logger.log(Level.INFO, "Ping #" + ((PingMessage) m).getPingNumber() + " received");
             try{
                 this.server.handleMessage(new PingMessage(((PingMessage) m).getPingNumber()), this);
@@ -143,12 +144,19 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
                 ClientImplementation.logger.log(Level.SEVERE, "RemoteException occurred while sending message to server");
                 return;
             }
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.exit(0);
-                }
-            }, 1000 * Config.getInstance().getPingInterval() * 2);
+
+            if(timer != null) {
+                timer.cancel();
+                timer = new Timer();
+
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        System.exit(0);
+                    }
+                }, 1000 * Config.getInstance().getPingInterval() * 2);
+            }
+
             return;
         }
 

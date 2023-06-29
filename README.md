@@ -27,6 +27,27 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 [![GREEN](https://placehold.it/15/44bb44/44bb44)](#)
 -->
 
+
+## Setup
+
+- In the [Deliverables](Deliverables) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
+- The Server can be run with the following command, as default it runs on port 1234:
+    ```shell
+    > java -jar MyShelfie_Server.jar
+    ```
+  This command can be followed by these arguments:
+  - **-port**: followed by the desired port number between MIN_PORT (1024) and MAX_PORT (65535) as argument;
+  - **-log**: to save the log in a file;
+  - **-help**: to get help.
+
+- The Client can be run with the following command:
+    ```shell
+    > java -jar MyShelfie_Client.jar
+    ```
+    - This command sets the Client on Graphical User Interface (GUI) mode, but it can be followed by **-cli** if the Command Line Interface (CLI) is preferred.
+    - The Server's IP and port to connect to can be specified during the execution.
+    
+
 ## Utilized Software
 
 * [Draw.io - Diagrams.net](https://app.diagrams.net/): UML and sequence diagrams.

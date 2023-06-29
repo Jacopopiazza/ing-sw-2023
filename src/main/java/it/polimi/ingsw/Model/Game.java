@@ -23,9 +23,11 @@ public class Game {
     private final GameListener[] listeners;
     private GlobalGoal[] goals;
     private int currentPlayer;
+    private int firstPlayer;
     private TileSack sack;
     private Stack<String> cheaters;
     private boolean started;
+    private boolean lastTurn;
 
 
     /**
@@ -44,9 +46,11 @@ public class Game {
         players = new Player[numOfPlayers];
         goals = null;
         currentPlayer = -1;
+        firstPlayer = -1;
         sack = null;
         cheaters = null;
         started = false;
+        lastTurn = false;
     }
 
     /**
@@ -82,7 +86,8 @@ public class Game {
             }
 
             //Randomly select first player
-            currentPlayer = new Random().nextInt(numOfPlayers);
+            firstPlayer = new Random().nextInt(numOfPlayers);
+            currentPlayer = firstPlayer;
             goals = this.pickTwoGlobalGoals();
             cheaters = new Stack<String>();
             started = true;
@@ -221,10 +226,10 @@ public class Game {
      */
     public boolean nextPlayer() {
         synchronized (players){
-            currentPlayer = (currentPlayer+1) % players.length;
-            while( listeners[currentPlayer] == null ) currentPlayer = (currentPlayer+1) % players.length;
-            if( players[currentPlayer].getShelf().isFull() )
-                return false;
+            do{
+                currentPlayer = (currentPlayer+1) % players.length;
+                if(currentPlayer == firstPlayer && lastTurn) return false;
+            }while( listeners[currentPlayer] == null );
             notifyAllListeners(new GameView(currentPlayer,null));
         }
         return true;
@@ -369,6 +374,7 @@ public class Game {
      */
     public void playerInsertion(Player p, Tile[] t, int column) throws IllegalColumnInsertionException, NoTileException {
         p.insert(t, column);
+        if(p.getShelf().isFull()) lastTurn = true;
     }
 
     /**

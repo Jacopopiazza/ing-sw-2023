@@ -237,6 +237,7 @@ public class GameBoard {
 
         //checking there are no duplicates and that they are all pickable
         for(Coordinates c : chosenTiles) {
+            if(c == null) return false;
             try {
                 if(Arrays.stream(chosenTiles).filter(x -> x.equals(c)).collect(Collectors.toList()).size() > 1
                         || !(isPickable(c)) ) {

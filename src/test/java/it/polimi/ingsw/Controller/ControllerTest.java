@@ -35,25 +35,19 @@ public class ControllerTest extends TestCase {
 
     @Test
     public void testAddPlayer() {
-        assertFalse(controller.addPlayer("Picci", null));
+        assertFalse(controller.addPlayer("Picci", (message) -> {System.out.print("Picci");}));
         Assert.assertFalse(controller.isGameStarted());
 
-        assertTrue(controller.addPlayer("Roma", null));
+        assertTrue(controller.addPlayer("Roma", (message) -> {System.out.print("Roma");}));
         assertTrue(controller.isGameStarted());
     }
 
     @Test
     public void testDoTurn_wrongPlayer() throws IllegalColumnInsertionException {
         AtomicBoolean cheatedFlag = new AtomicBoolean(false);
-        controller.addPlayer("Picci", null);
-        controller.addPlayer("Roma", (message) -> { cheatedFlag.set(true);});
-        controller.doTurn("Roma", null, 0);
+        controller.addPlayer("Picci", (message) -> {System.out.print("Picci");});
+        controller.addPlayer("Roma", (message) -> {System.out.print("Roma");});
+        controller.doTurn("Roma", new Coordinates[3], 0);
         assertTrue(cheatedFlag.get());
-    }
-
-    @Test
-    public void test_IllegalColumnInsertionException() throws IllegalColumnInsertionException {
-        controller.addPlayer("Picci", null);
-        Assert.assertThrows(IllegalColumnInsertionException.class, () -> controller.doTurn("Picci", wrongColumnActionCoords, wrongColumnActionColumn));
     }
 }

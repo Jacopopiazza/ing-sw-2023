@@ -80,6 +80,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      * @param args the command line arguments
      */
     public static void main(String[] args){
+        String hostname = Config.getInstance().getIpServer();
+        if(args.length > 0){
+            if(args[0].equals("-hostname")){
+                hostname = args[1];
+            }
+        }
 
         Thread socketThread = new Thread() {
             @Override
@@ -108,7 +114,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
         };
         logger.log(Level.INFO, "Start server");
 
-        System.setProperty("java.rmi.server.hostname", Config.getInstance().getIpServer());
+        System.setProperty("java.rmi.server.hostname", hostname);
 
         rmiThread.start();
 

@@ -366,7 +366,6 @@ public class TextualUI extends UserInterface {
         }
 
         clearConsole();
-        while(in.hasNextLine()) in.nextLine();
         showBoard();
         showGlobalGoals();
         showShelves();
@@ -676,6 +675,7 @@ public class TextualUI extends UserInterface {
                     super.run();
                     while(true){
                         if(isMessagesQueueEmpty()){
+                            in.nextLine();
                             continue;
                         }
                         Message m = popMessageFromQueue();

@@ -48,7 +48,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
      */
     public static void main(String[] args) {
         setUpLogger();
-        View ui = ( ( args.length>0 ) && args[0].equals("cli") ) ? new TextualUI() : new GraphicalUI();
+        View ui = ( ( args.length>0 ) && args[0].equals("-cli") ) ? new TextualUI() : new GraphicalUI();
         ui.run();
     }
 

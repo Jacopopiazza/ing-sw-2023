@@ -79,19 +79,14 @@ public abstract class UserInterface implements Runnable, View
     }
 
     /**
-
-     Sets up the RMI client by connecting to the RMI registry located at the specified IP and port.
-     Throws exceptions if the IP address or port is invalid or if the RMI registry is not bound.
-
-     @param ip the IP address of the RMI registry
-
-     @throws RemoteException if a remote communication error occurs
-
-     @throws NotBoundException if the RMI registry is not bound
-
-     @throws InvalidIPAddress if the provided IP address is invalid
-
-     @throws InvalidPort if the provided port number is invalid
+     *
+     * Sets up the RMI client by connecting to the RMI registry located at the specified IP and port.
+     * Throws exceptions if the IP address or port is invalid or if the RMI registry is not bound.
+     *
+     * @param ip the IP address of the RMI registry.
+     * @throws RemoteException if a remote communication error occurs.
+     * @throws InvalidIPAddress if the provided IP address is invalid.
+     * @throws NotBoundException if an attempt is made to lookup or unbind in the registry a name that has no associated binding.
      */
     protected void setUpRMIClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress {
 
@@ -113,15 +108,9 @@ public abstract class UserInterface implements Runnable, View
      * Sets up the socket client by connecting to the socket server located at the specified IP and port.
      * Throws exceptions if the IP address or port is invalid or if the socket server is not bound.
      *
-     * @param ip the IP address of the socket server
-     *
-     * @throws RemoteException if a remote communication error occurs
-     *
-     * @throws NotBoundException if the socket server is not bound
-     *
-     * @throws InvalidIPAddress if the provided IP address is invalid
-     *
-     * @throws InvalidPort if the provided port number is invalid
+     * @param ip the IP address of the socket server.
+     * @throws RemoteException if a remote communication error occurs.
+     * @throws InvalidIPAddress if the provided IP address is invalid.
      */
     protected void setUpSocketClient(String ip) throws RemoteException, InvalidIPAddress{
 

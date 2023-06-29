@@ -16,27 +16,31 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.*;
 
-import static java.util.logging.Level.OFF;
-
 /**
  * The ClientImplementation class is an implementation of the {@link Client} interface.
  * It extends the {@link UnicastRemoteObject} class and provides methods for updating the client with a {@link Message}.
  */
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private static ClientImplementation instance;
+
+    /**
+     * Logger used to log Client actions.
+     */
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
+
     private final View view;
     private Timer timer = new Timer();
     private Server server;
 
     /**
-     * Constructs a new {@code ClientImplementation} object with the specified {@code View} and {@code Server}.
+     * Returns the Singleton instance of {@code ClientImplementation}.
      *
      * @param view   the {@link View} associated with the client
      * @param server the {@link Server} handling the client's messages
      * @throws RemoteException if a remote communication error occurs
+     * @throws SingletonException if instance != null and view != instance.view or server != instance.server
+     * @return returns the existing Singleton instance of {@code ClientImplementation} or the new created instance.
      */
-
     public static ClientImplementation getInstance(View view, Server server) throws SingletonException, RemoteException {
         if( instance == null )
             instance = new ClientImplementation(view, server);

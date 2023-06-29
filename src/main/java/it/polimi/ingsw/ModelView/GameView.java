@@ -116,7 +116,8 @@ public class GameView implements Serializable {
     /**
      * Constructs a {@code GameView} object with a cheater string.
      *
-     * @param cheater the cheater string to include in the view
+     * @param cheater the cheater string to include in the view.
+     * @param currentPlayer the current player.
      */
     public GameView(String cheater, int currentPlayer) {
         this.board = null;
@@ -163,7 +164,7 @@ public class GameView implements Serializable {
     /**
      * Returns the array of player views.
      *
-     * @return the array of {@link PlayerView
+     * @return the array of {@link PlayerView}s.
      */
     public PlayerView[] getPlayers() {
         return players;

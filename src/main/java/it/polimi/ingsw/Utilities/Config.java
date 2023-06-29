@@ -20,16 +20,25 @@ public class Config {
 
     /**
      * Represents the score for a private goal.
+     *
+     * @param correctPosition number of Tiles in the correct position.
+     * @param score score obtained in such case.
      */
     public record PrivateGoalScore(int correctPosition, int score) { }
 
     /**
-     * Represents the score for a global goal.
+     * Represents the score for a GlobalGoal token.
+     *
+     * @param players number of players in the game
+     * @param score score of the GlobalGoal token.
      */
     public record GlobalGoalScore(int players, int score) { }
 
     /**
      * Represents the score for a board goal.
+     *
+     * @param tiles number of tiles in the group.
+     * @param score score obtained in such case.
      */
     public record BoardGoalScore(int tiles, int score) { }
     private static Config instance;

@@ -8,6 +8,12 @@ public class InvalidNumOfPlayersMessage extends Message {
     private final String message = "Invalid number of players";
 
     /**
+     * Default constructor for {@code InvalidNumOfPlayersMessage}.
+     */
+    public InvalidNumOfPlayersMessage() {
+    }
+
+    /**
      * Returns the string {@link InvalidNumOfPlayersMessage#message}.
      *
      * @return The message string.

@@ -9,6 +9,12 @@ public class TakenUsernameMessage extends Message {
     private final String message = "Username already taken";
 
     /**
+     * Default constructor for {@code TakenUsernameMessage}.
+     */
+    public TakenUsernameMessage() {
+    }
+
+    /**
      * Returns the string {@link TakenUsernameMessage#message}.
      *
      * @return The message.

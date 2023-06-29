@@ -14,7 +14,15 @@ import java.util.*;
  */
 public abstract class GlobalGoal implements Cloneable {
     private Stack<Integer> scores;
+
+    /**
+     * The id of the GlobalGoal.
+     */
     protected final int id;
+
+    /**
+     * The description of the GlobalGoal to be shown.
+     */
     protected String description;
 
     /**

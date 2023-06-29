@@ -22,11 +22,20 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.List;
 
+/**
+ * Class representing the GUI, thus a {@link UserInterface} implementing the {@link View}.
+ */
 @SuppressWarnings("ALL")
 public class GraphicalUI extends UserInterface {
     private String username;
     private StartWindow startWindow = null;
     private GameWindow gameWindow = null;
+
+    /**
+     * Default constructor for {@code GraphicalUI}.
+     */
+    public GraphicalUI() {
+    }
 
     private static URL getResourcePath(String relativePath){
         // Get the URL of the image file

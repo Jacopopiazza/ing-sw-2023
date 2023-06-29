@@ -8,6 +8,12 @@ public class MissingUsernameMessage extends Message {
     private final String message = "Username is null";
 
     /**
+     * Default constructor for {@code MissingUsernameMessage}.
+     */
+    public MissingUsernameMessage() {
+    }
+
+    /**
      * Returns the string {@link MissingUsernameMessage#message}.
      *
      * @return The message string.

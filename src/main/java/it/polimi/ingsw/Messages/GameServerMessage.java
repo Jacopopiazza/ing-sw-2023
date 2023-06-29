@@ -2,7 +2,7 @@ package it.polimi.ingsw.Messages;
 import it.polimi.ingsw.Network.Server;
 
 /**
- * The GameServerMessage class represents a message containing the game server information.
+ * The GameServerMessage class represents a message telling the Client that the server it should communicate with has changed.
  * It extends the {@code Message} abstract class and is serializable.
  */
 public class GameServerMessage extends Message {

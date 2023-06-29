@@ -54,7 +54,12 @@ import java.util.logging.*;
  */
 public class ServerImplementation extends UnicastRemoteObject implements Server {
     private static ServerImplementation instance;
+
+    /**
+     * Logger used to log Server actions.
+     */
     public static final Logger logger = Logger.getLogger("ServerImplementation");
+
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final List<String> playingUsernames; // to disconnect
     private final Map<String, GameServer> disconnectedUsernames;
@@ -64,7 +69,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     /**
      * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
      *
-     * @return the singleton instance of the {@code ServerImplementation}
+     * @throws RemoteException if a Remote Exception occurred.
+     * @return the singleton instance of the {@code ServerImplementation}.
      */
     public static ServerImplementation getInstance() throws RemoteException{
         if( instance == null ) {

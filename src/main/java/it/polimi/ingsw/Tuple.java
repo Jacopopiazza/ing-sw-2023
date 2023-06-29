@@ -1,8 +1,12 @@
 package it.polimi.ingsw;
 
 /**
- * This class is used to create a tuple of two elements
+ * This class is used to create a tuple of two elements.
+ *
+ * @param <T1> first element of the tuple.
+ * @param <T2> second element of the tuple.
  */
+@SuppressWarnings("ALL")
 public class Tuple <T1, T2>{
     private final T1 first;
     private final T2 second;

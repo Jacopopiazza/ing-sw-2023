@@ -157,6 +157,7 @@ public class Game {
      *
      * @param username The username of the player to kick.
      * @throws UsernameNotFoundException if the username is not found in the game.
+     * @return the {@link GameListener} of the kicked player
      */
     public GameListener kick(String username) throws UsernameNotFoundException {
         synchronized (players){

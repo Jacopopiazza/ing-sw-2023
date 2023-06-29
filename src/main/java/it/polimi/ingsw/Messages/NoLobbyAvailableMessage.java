@@ -9,6 +9,12 @@ public class NoLobbyAvailableMessage extends Message {
     private final String message = "No lobby available";
 
     /**
+     * Default constructor for {@code NoLobbyAvailableMessage}.
+     */
+    public NoLobbyAvailableMessage() {
+    }
+
+    /**
      * Returns the string {@link NoLobbyAvailableMessage#message}.
      *
      * @return The message string.

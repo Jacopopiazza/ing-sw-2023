@@ -623,7 +623,7 @@ public class GraphicalUI extends UserInterface {
         private class ShelfPanel extends Background {
             private static final int rows = Shelf.getRows();
             private static final int cols = Shelf.getColumns();
-            private static final String imagePath = getResourcePath("visual_components/boards/bookshelf_orth.png").toString();
+            private static final String imagePath = "visual_components/boards/bookshelf_orth.png";
             private int width;
             private int height;
 
@@ -680,7 +680,7 @@ public class GraphicalUI extends UserInterface {
             private int width;
             private int height;
             private GlobalGoalPanel(GlobalGoalView ggv, int width, int height){
-                super(getResourcePath("visual_components/common goal cards/" + ggv.getId() + ".jpg").toString());
+                super("visual_components/common goal cards/" + ggv.getId() + ".jpg");
                 this.width = width;
                 this.height = height;
                 if( ggv.getCurrentScore()>0 )

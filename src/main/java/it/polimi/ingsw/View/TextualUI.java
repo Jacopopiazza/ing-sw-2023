@@ -623,7 +623,7 @@ public class TextualUI extends UserInterface {
             while (column == -1) {
                 out.print("If you want to redo the turn insert 0, otherwise select in which column you want to insert the selected tiles [1 - " + Shelf.getColumns() + "]: ");
                 String input = in.nextLine();
-                if (!checkUserInput(0, Shelf.getColumns(), input.charAt(0) - '0')) {
+                if (input == null || input.length() == 0 || !checkUserInput(0, Shelf.getColumns(), input.charAt(0) - '0')) {
                     out.println("Insert a valid input");
                     continue;
                 }

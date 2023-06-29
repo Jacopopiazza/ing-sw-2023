@@ -65,6 +65,7 @@ public class GameTest extends TestCase {
             gameToRefillButNotEnoughTiles.getTileSack().pop();
     }
 
+
     @Test
     public void testRefillGameBoard_ToRefill() throws EmptySackException {
         assertTrue( gameToRefill.getGameBoard().toRefill() );
@@ -174,5 +175,7 @@ public class GameTest extends TestCase {
     public void testGameConstructorAndPrivateMethods(){
         assertTrue( game != null );
     }
+
+
 
 }

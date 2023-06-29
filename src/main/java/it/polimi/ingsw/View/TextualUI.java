@@ -658,6 +658,7 @@ public class TextualUI extends UserInterface {
 
     @Override
     public void run() {
+        clearConsole();
         showTitle();
         while(!chooseConnection());
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");

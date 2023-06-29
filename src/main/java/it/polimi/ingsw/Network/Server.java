@@ -17,5 +17,5 @@ public interface Server extends Remote {
      * @param client  the {@link Client} sending the message
      * @throws RemoteException if a remote communication error occurs
      */
-    public void handleMessage( Message m, Client client) throws RemoteException;
+    void handleMessage( Message m, Client client) throws RemoteException;
 }

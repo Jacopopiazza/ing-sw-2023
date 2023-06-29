@@ -18,7 +18,6 @@ import java.util.logging.Level;
  */
 public class ClientSkeleton implements Client {
     private Server server;
-    private Socket socket;
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
 
@@ -31,7 +30,6 @@ public class ClientSkeleton implements Client {
      */
     public ClientSkeleton(Server server, Socket socket) throws RemoteException {
         this.server = server;
-        this.socket = socket;
 
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
@@ -63,20 +61,7 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send message", e);
         }
 
-        ServerImplementation.logger.log(Level.INFO, "ClientSkeleton sent " + m.toString() + " message successfully.");
-    }
-
-    /**
-     * Closes the connection to the client.
-     *
-     * @throws RemoteException if an error occurs while closing the socket
-     */
-    public void close() throws RemoteException {
-        try {
-            this.socket.close();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot close socket", e);
-        }
+        ServerImplementation.logger.log(Level.INFO, "ClientSkeleton sent " + m + " message successfully.");
     }
 
     /**

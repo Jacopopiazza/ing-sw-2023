@@ -4,6 +4,7 @@ package it.polimi.ingsw.Exceptions;
  * Custom exception class to handle invalid IP Port errors.
  * Subclass of Exception class.
  */
+@SuppressWarnings("ALL")
 public class InvalidPort extends Exception{
 
     /**

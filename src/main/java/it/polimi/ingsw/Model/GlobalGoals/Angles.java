@@ -46,12 +46,9 @@ public class Angles extends GlobalGoal {
                 || ( s.getTile(new Coordinates(r-1,c-1)) == null )
         ) return false;
 
-        if( s.getTile(new Coordinates(0,0)).getColor().equals(s.getTile(new Coordinates(0,c-1)).getColor())
-                && s.getTile(new Coordinates(0,c-1)).getColor().equals(s.getTile(new Coordinates(r-1,0)).getColor())
-                && s.getTile(new Coordinates(r-1,0)).getColor().equals(s.getTile(new Coordinates(r-1,c-1)).getColor())
-        ) return true;
-
-        return false;
+        return s.getTile(new Coordinates(0, 0)).getColor().equals(s.getTile(new Coordinates(0, c - 1)).getColor())
+                && s.getTile(new Coordinates(0, c - 1)).getColor().equals(s.getTile(new Coordinates(r - 1, 0)).getColor())
+                && s.getTile(new Coordinates(r - 1, 0)).getColor().equals(s.getTile(new Coordinates(r - 1, c - 1)).getColor());
     }
 
 }

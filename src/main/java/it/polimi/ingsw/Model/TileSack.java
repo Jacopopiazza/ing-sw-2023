@@ -10,7 +10,7 @@ import java.util.Random;
  * It keeps track of the remaining tiles of each color and provides methods to retrieve and remove tiles from the sack.
  */
 public class TileSack {
-    private int[] remaining;                                    // Index is the corresponding color in TileColor
+    private final int[] remaining;                                    // Index is the corresponding color in TileColor
     private final static int LEN = TileColor.values().length;   // length of the array
 
     /**

@@ -13,6 +13,7 @@ import java.util.*;
 public class Controller  {
     private final GameServer gameServer;
     private final Game model;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int timerLength = 30; // in seconds
     private boolean onlyLastPlayerIsDone;
     private final Timer timer = new Timer();

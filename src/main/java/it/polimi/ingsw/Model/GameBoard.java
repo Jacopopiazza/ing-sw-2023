@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * The GameBoard class represents the game board in the game.
  */
 public class GameBoard {
-    private Map<Coordinates, Tile> board;  // The tiles on the game board
+    private final Map<Coordinates, Tile> board;  // The tiles on the game board
 
     /**
      * Constructs a new {@code GameBoard} object for the specified number of players.
@@ -87,6 +87,7 @@ public class GameBoard {
         for( Coordinates c : board.keySet() ) {
             try {
                 if(isPickable(c)) {
+                    //noinspection DuplicatedCode
                     up = new Coordinates(c.getROW(), c.getCOL() - 1);
                     down = new Coordinates(c.getROW(), c.getCOL() + 1);
                     right = new Coordinates(c.getROW() + 1, c.getCOL());
@@ -135,7 +136,7 @@ public class GameBoard {
         totalScore = 0;
         for( int i = 0; i < r; i++ ) {
             for( int j = 0; j < c; j++ ) {
-                if( checked[i][j] == false ) {
+                if(!checked[i][j]) {
                     currentGroup = checkFromThisTile(shelf, new Coordinates(i,j), checked);
                     for( Config.BoardGoalScore t : Config.getInstance().getSortedBoardGoals() ) {
                         if( currentGroup == t.tiles() ) totalScore += t.score();
@@ -171,25 +172,25 @@ public class GameBoard {
         if( t == null ) return 0;
 
         //checking the Tile above this one
-        if( i>0 && ( checked[i-1][j] == false ) ) {
+        if( i>0 && (!checked[i - 1][j]) ) {
             temp = shelf.getTile(new Coordinates(i-1,j));
             if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i-1,j),checked);
         }
 
         //checking the Tile under this one
-        if( ( i < r-1 ) && ( checked[i+1][j] == false ) ) {
+        if( ( i < r-1 ) && (!checked[i + 1][j]) ) {
             temp = shelf.getTile(new Coordinates(i+1,j));
             if( temp!=null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i+1,j),checked);
         }
 
         //checking the Tile to the left of this one
-        if( j>0 && checked[i][j-1] == false ) {
+        if( j>0 && !checked[i][j - 1]) {
             temp = shelf.getTile(new Coordinates(i,j-1));
             if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i,j-1),checked);
         }
 
         //checking the Tile to the right of this one
-        if( ( j < c-1 ) && ( checked[i][j+1] == false ) ) {
+        if( ( j < c-1 ) && (!checked[i][j + 1]) ) {
             temp = shelf.getTile(new Coordinates(i,j+1));
             if( temp != null && temp.getColor().equals(t.getColor()) ) res+=checkFromThisTile(shelf,new Coordinates(i,j+1),checked);
         }
@@ -210,6 +211,7 @@ public class GameBoard {
         }
 
         Coordinates up, down, right, left;
+        //noinspection DuplicatedCode
         up = new Coordinates(coordinates.getROW(), coordinates.getCOL() - 1);
         down = new Coordinates(coordinates.getROW(), coordinates.getCOL() + 1);
         right = new Coordinates(coordinates.getROW() + 1, coordinates.getCOL());
@@ -220,9 +222,7 @@ public class GameBoard {
         if( !board.containsKey(up) || ( board.get(up) == null ) ) return true;
         if( !board.containsKey(down) || ( board.get(down) == null ) ) return true;
         if( !board.containsKey(right) || ( board.get(right) == null ) ) return true;
-        if( !board.containsKey(left) || ( board.get(left) == null ) ) return true;
-
-        return false;
+        return !board.containsKey(left) || (board.get(left) == null);
     }
 
     /**

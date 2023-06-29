@@ -5,6 +5,7 @@ package it.polimi.ingsw.Exceptions;
  * It is a subclass of the Exception class.
  */
 
+@SuppressWarnings("ALL")
 public class NoTileException extends Exception{
 
     /**

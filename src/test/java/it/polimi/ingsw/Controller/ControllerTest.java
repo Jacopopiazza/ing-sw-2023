@@ -14,28 +14,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ControllerTest extends TestCase {
     private Controller controller;
 
-    Coordinates wrongNumberOfTilesActionCoords[];
+    Coordinates[] wrongNumberOfTilesActionCoords;
     int wrongNumberOfTilesActionColumn = 1;
 
-    Coordinates wrongRowsAndColumnsActionCoords[];
+    Coordinates[] wrongRowsAndColumnsActionCoords;
 
-    Coordinates wrongColumnActionCoords[];
-    int wrongColumnActionColumn = -1;
+    Coordinates[] wrongColumnActionCoords;
+    final int wrongColumnActionColumn = -1;
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         controller = new Controller(new Game(2), null);
-
-        Coordinates wrongNumberOfTilesActionCoords[] = { new Coordinates(1,3), new Coordinates(1, 4), null, null };
-        int wrongNumberOfTilesActionColumn = 1;
-
-        Coordinates rightActionCoords[] = { new Coordinates(1,3), new Coordinates(1, 4) };
-
-        Coordinates wrongRowsAndColumnsActionCoords[] = { new Coordinates(1,3), new Coordinates(1, 4), new Coordinates(2,3) };
-
-        int wrongColumnActionColumn = -1;
-
     }
 
     @Test

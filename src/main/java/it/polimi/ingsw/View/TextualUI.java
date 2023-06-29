@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 
+@SuppressWarnings("ALL")
 public class TextualUI extends UserInterface {
 
     private final Scanner in;
@@ -36,14 +37,14 @@ public class TextualUI extends UserInterface {
     private Queue<Message> receivedMessages;
 
     // Write this title in a config file
-    String r1 = " __    __           ______ _           _  __  _";
-    String r2 = "|  \\  /  |         /  ____| |         | |/ _|(_)";
-    String r3 = "| \\ \\/ / |_   _   |  (___ | |__   ___ | | |_  _  ___";
-    String r4 = "| |\\__/| | | | |   \\___  \\|  _ \\ / _ \\| |  _|| |/ _ \\";
-    String r5 = "| |    | | |_| |    ___)  | | | |  __/| | |  | |  __/";
-    String r6 = "|_|    |_|\\__, |   |_____/|_| |_|\\___/|_|_|  |_|\\___/";
-    String r7 = "            _/ |";
-    String r8 = "           |__/";
+    final String r1 = " __    __           ______ _           _  __  _";
+    final String r2 = "|  \\  /  |         /  ____| |         | |/ _|(_)";
+    final String r3 = "| \\ \\/ / |_   _   |  (___ | |__   ___ | | |_  _  ___";
+    final String r4 = "| |\\__/| | | | |   \\___  \\|  _ \\ / _ \\| |  _|| |/ _ \\";
+    final String r5 = "| |    | | |_| |    ___)  | | | |  __/| | |  | |  __/";
+    final String r6 = "|_|    |_|\\__, |   |_____/|_| |_|\\___/|_|_|  |_|\\___/";
+    final String r7 = "            _/ |";
+    final String r8 = "           |__/";
 
     private final Object lockLogin;
     private final Object lockQueue;
@@ -207,7 +208,6 @@ public class TextualUI extends UserInterface {
         int choice = readChoiceFromInput("RMI","SOCKET");
 
         String ip;
-        String port;
         do {
             out.println("Please provide the IP address or the URL of the server:");
             ip = in.nextLine();
@@ -227,7 +227,7 @@ public class TextualUI extends UserInterface {
             out.println("Connecting with socket...");
             try{
                 this.setUpSocketClient(ip);
-            }catch (RemoteException | NotBoundException | InvalidIPAddress ex ){
+            }catch (RemoteException | InvalidIPAddress ex ){
                 out.println("Cannot connect with socket. Make sure the IP provided is valid and try again later...");
                 return false;
             }
@@ -273,7 +273,7 @@ public class TextualUI extends UserInterface {
         m.getPlayers().stream().forEach(x -> out.println(x));
     }
 
-    private boolean doLogin() {
+    private void doLogin() {
 
         readUsername();
 
@@ -310,8 +310,6 @@ public class TextualUI extends UserInterface {
                 waitForLoginResponse();
             }
         }
-
-        return true;
     }
 
     private void update(GameView gv){
@@ -501,12 +499,12 @@ public class TextualUI extends UserInterface {
 
                 //checks that one more tile can be picked
                 if(coords.size() == maxNumOfChosenTiles ){
-                    out.println("You can not select more than " + String.valueOf(maxNumOfChosenTiles) + " tiles" );
+                    out.println("You can not select more than " + maxNumOfChosenTiles + " tiles" );
                     break;
                 }
                 //checks that one more tile can fit in the shelf
                 if(maxFreeSpacesInMyShelf == coords.size()){
-                    out.println("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
+                    out.println("In your shelf there is space for at most " + maxFreeSpacesInMyShelf + " tiles");
                     break;
                 }
 
@@ -637,7 +635,7 @@ public class TextualUI extends UserInterface {
                 //in case the user wants to redo the turn
                 if (column == -1) break;
                 if (this.freeSpacesInMyShelf[column] < coords.size()) {
-                    out.println("The chosen tiles can not fit in the column number " + String.valueOf(column + 1));
+                    out.println("The chosen tiles can not fit in the column number " + (column + 1));
                     column = -1;
                     continue;
                 }
@@ -663,9 +661,10 @@ public class TextualUI extends UserInterface {
         while(!chooseConnection());
         ClientImplementation.logger.log(Level.INFO,"Connected to server!");
 
+        //noinspection InfiniteLoopStatement
         while(true){
 
-            while(!doLogin());
+            doLogin();
 
             new Thread(){
                 @Override
@@ -722,27 +721,9 @@ public class TextualUI extends UserInterface {
         }
     }
 
-    public final static void clearConsole() {
+    public static void clearConsole() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
-        /*
-        try
-        {
-            final String os = System.getProperty("os.name");
-            if (os.contains("Windows"))
-            {
-                Runtime.getRuntime().exec("cls");
-            }
-            else
-            {
-                Runtime.getRuntime().exec("clear");
-            }
-
-        }
-        catch (final Exception e)
-        {
-            e.printStackTrace();
-        }*/
     }
 
 }

@@ -8,8 +8,8 @@ import java.util.*;
  * The PrivateGoal class represents a private goal card in the game.
  */
 public final class PrivateGoal {
-    private int id; // id used by the GUI
-    private Coordinates[] coords;   // The coordinates associated with the private goal
+    private final int id; // id used by the GUI
+    private final Coordinates[] coords;   // The coordinates associated with the private goal
 
     /**
      * Constructs a new {@code PrivateGoal} object with the specified {@code Coordinates}.
@@ -33,7 +33,7 @@ public final class PrivateGoal {
     }
 
     /**
-     * Gets Id associated with the private goal.
+     * Gets id associated with the private goal.
      *
      * @return an integer representing the private goal
      */

@@ -42,15 +42,14 @@ import java.util.logging.Level;
  * The {@link ServerImplementation} class is responsible for managing the server-side logic and communication protocols.
  */
 public class GameServer extends UnicastRemoteObject implements Server {
-    private Controller controller;
+    private final Controller controller;
     private ServerImplementation serverImplementation = null;
-    private String[] playingUsernames;
-    private List<String> disconnectedUsernames;
-    private Queue<Message> receivedMessages = new LinkedList<>();
+    private final String[] playingUsernames;
+    private final Queue<Message> receivedMessages = new LinkedList<>();
     private int nextIdPing = 0;
-    private int[] idPingToBeAnswered;
-    private Timer[] playersTimers;
-    private TimerTask[] playersTimersTasks;
+    private final int[] idPingToBeAnswered;
+    private final Timer[] playersTimers;
+    private final TimerTask[] playersTimersTasks;
 
 
     /**
@@ -65,12 +64,12 @@ public class GameServer extends UnicastRemoteObject implements Server {
         this.serverImplementation = ServerImplementation.getInstance();
         this.controller = new Controller(new Game(numOfPlayers), this);
         this.playingUsernames = new String[numOfPlayers];
-        this.disconnectedUsernames = new ArrayList<>();
 
         new Thread(){
             @Override
             public void run(){
 
+                //noinspection InfiniteLoopStatement
                 while(true){
 
                     if( isMessagesQueueEmpty() ) continue;
@@ -96,6 +95,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
         new Thread(){
             @Override
             public void run() {
+                //noinspection InfiniteLoopStatement
                 while(true){
                     try {
                         Thread.sleep(20000);
@@ -200,9 +200,6 @@ public class GameServer extends UnicastRemoteObject implements Server {
                 }
             }
         }
-        synchronized (disconnectedUsernames) {
-            disconnectedUsernames.remove(username);
-        }
     }
 
     /**
@@ -253,10 +250,7 @@ public class GameServer extends UnicastRemoteObject implements Server {
             }
             if(i == playingUsernames.length) return; // username not found
             if( isGameStarted() ) {
-                synchronized (disconnectedUsernames) {
-                    disconnectedUsernames.add(username);
-                    controller.disconnect(username);
-                }
+                controller.disconnect(username);
                 serverImplementation.disconnect(username, this);
             }
             else {

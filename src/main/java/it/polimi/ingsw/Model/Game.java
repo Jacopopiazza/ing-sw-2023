@@ -15,11 +15,12 @@ import java.util.*;
 /**
  * The Game class represents a game session of MyShelfie.
  */
+@SuppressWarnings("ALL")
 public class Game {
     private GameBoard board;
     private final int numOfPlayers;
-    private Player[] players;
-    private GameListener[] listeners;
+    private final Player[] players;
+    private final GameListener[] listeners;
     private GlobalGoal[] goals;
     private int currentPlayer;
     private TileSack sack;
@@ -375,7 +376,6 @@ public class Game {
             return false;
 
         boolean noTileAdded = true;
-        int remain[] = new int[TileColor.values().length];
 
         // For each Coordinate in the board
         for( Coordinates c : this.board.getCoords() ) {

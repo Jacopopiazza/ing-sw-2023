@@ -3,6 +3,7 @@ package it.polimi.ingsw.ModelView;
 import it.polimi.ingsw.Model.Tile;
 import it.polimi.ingsw.Model.TileColor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * It provides a snapshot of a tile in a serializable format.
  */
 public class TileView implements Serializable {
+    @Serial
     private static final long serialVersionUID=1L;
     private final TileColor color;
     private final int id;

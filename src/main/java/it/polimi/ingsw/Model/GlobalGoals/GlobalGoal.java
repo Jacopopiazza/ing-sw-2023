@@ -123,6 +123,7 @@ public abstract class GlobalGoal implements Cloneable {
      * @return a clone of the global goal.
      * @throws CloneNotSupportedException if cloning is not supported.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public GlobalGoal clone() throws CloneNotSupportedException {
         GlobalGoal gg = (GlobalGoal) super.clone();

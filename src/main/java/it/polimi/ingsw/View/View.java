@@ -9,6 +9,7 @@ import it.polimi.ingsw.Network.GameServer;
  * It defines methods for updating the view with incoming messages,
  * notifying listeners about new messages, adding listeners, and running the view.
  */
+@SuppressWarnings("ALL")
 public interface View {
 
     /**

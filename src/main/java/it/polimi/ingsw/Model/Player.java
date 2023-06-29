@@ -7,6 +7,7 @@ import it.polimi.ingsw.ModelView.PlayerView;
  * The Player class represents a player in the game.
  */
 
+@SuppressWarnings("ALL")
 public class Player{
     private int score;                          // The score of the player
     private Shelf shelf;                        // The shelf of the player
@@ -58,7 +59,7 @@ public class Player{
      * @throws ColumnOutOfBoundsException     if the column index is out of bounds
      * @throws IllegalColumnInsertionException if the column insertion is illegal
      */
-    public void insert(Tile t[], int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
+    public void insert(Tile[] t, int column) throws NoTileException, ColumnOutOfBoundsException, IllegalColumnInsertionException {
         if( ( t == null ) || ( t.length == 0 ) ) {
             throw new NoTileException();
         }
@@ -200,8 +201,7 @@ public class Player{
     public boolean checkPrivateGoal() throws MissingShelfException, ColumnOutOfBoundsException {
         int res = goal.check(shelf.clone());
         score += res;
-        if( res > 0 ) return true;
-        return false;
+        return res > 0;
     }
 
 }

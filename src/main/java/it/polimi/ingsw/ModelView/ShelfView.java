@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.ColumnOutOfBoundsException;
 import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.Shelf;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * It provides a snapshot of the player's shelf in a serializable format.
  */
 public class ShelfView implements Serializable {
+    @Serial
     private static final long serialVersionUID=1L;
     private final TileView[][] shelf;
 

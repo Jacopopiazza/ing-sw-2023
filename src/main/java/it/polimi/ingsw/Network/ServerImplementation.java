@@ -56,10 +56,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
     private static ServerImplementation instance;
     public static final Logger logger = Logger.getLogger("ServerImplementation");
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    private List<String> playingUsernames; // to disconnect
-    private Map<String, GameServer> disconnectedUsernames;
-    private Queue<GameServer> lobbiesWaitingToStart;
-    private Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
+    private final List<String> playingUsernames; // to disconnect
+    private final Map<String, GameServer> disconnectedUsernames;
+    private final Queue<GameServer> lobbiesWaitingToStart;
+    private final Queue<Tuple<Message, Client>> receivedMessages = new LinkedList<>();
 
     /**
      * Returns the singleton instance of the server. If the instance does not exist, it creates a new one.
@@ -133,6 +133,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
      */
     private static void startSocket() throws RemoteException {
         try (ServerSocket serverSocket = new ServerSocket(Config.getInstance().getSocketPort())) {
+            //noinspection InfiniteLoopStatement
             while(true) {
                 logger.log(Level.INFO, "Waiting for a new socket...");
                 Socket socket = serverSocket.accept();
@@ -140,6 +141,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
                 getInstance().executorService.execute(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(getInstance(), socket);
+                        //noinspection InfiniteLoopStatement
                         while(true)
                             clientSkeleton.receive();
                     } catch (RemoteException e) {
@@ -194,6 +196,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
             @Override
             public void run(){
 
+                //noinspection InfiniteLoopStatement
                 while(true){
                     if( isMessagesQueueEmpty() )
                         continue;

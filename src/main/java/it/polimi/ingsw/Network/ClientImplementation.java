@@ -23,7 +23,7 @@ import java.util.logging.SimpleFormatter;
 public class ClientImplementation extends UnicastRemoteObject implements Client {
     private static ClientImplementation instance;
     public static final Logger logger = Logger.getLogger(ClientImplementation.class.getName());
-    private View view;
+    private final View view;
     private Server server;
 
     /**
@@ -89,8 +89,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             try {
                 server.handleMessage(message, this);
             } catch (RemoteException e) {
-                System.err.println(e.getMessage());
-                System.err.println(e.getCause());
+                ClientImplementation.logger.log(Level.SEVERE, "RemoteException occurred while sending message to server");
             }
 
         });
@@ -118,8 +117,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             try{
                 this.server.handleMessage(new PingMessage(((PingMessage) m).getPingNumber()), this);
             }catch (RemoteException e) {
-                System.err.println(e.getMessage());
-                System.err.println(e.getCause());
+                ClientImplementation.logger.log(Level.SEVERE, "RemoteException occurred while sending message to server");
                 return;
             }
             return;
@@ -142,8 +140,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
             try {
                 server.handleMessage(message, this);
             } catch (RemoteException e) {
-                System.err.println(e.getMessage());
-                System.err.println(e.getCause());
+                ClientImplementation.logger.log(Level.SEVERE, "RemoteException occurred while sending message to server");
             }
         });
 

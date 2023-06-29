@@ -4,6 +4,7 @@ package it.polimi.ingsw.Model.Utilities;
  * The ConsoleColors enum provides ANSI escape codes for coloring console output.
  * Those codes are used to color the output in the {@link it.polimi.ingsw.View.TextualUI}.
  */
+@SuppressWarnings("ALL")
 public enum ConsoleColors {
     RESET("\033[m"),
     BLACK("\033[0;30m"),

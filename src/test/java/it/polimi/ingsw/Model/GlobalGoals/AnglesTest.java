@@ -49,10 +49,6 @@ public class AnglesTest extends TestCase {
     }
 
     @Test
-    public void popScore() {
-    }
-
-    @Test
     public void testCheck() {
         Angles angles = new Angles(2);
         assertTrue(angles.check(passShelf));

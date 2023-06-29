@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 /**
  * The Config class is responsible for loading and providing configuration data for the game.
  */
+@SuppressWarnings("ALL")
 public class Config {
 
     /**
@@ -86,7 +87,7 @@ public class Config {
             tempSocketPort = 1234;
         }
 
-        if(tempSocketPort == tempSocketPort){
+        if(tempSocketPort == tempRmiPort){
             tempRmiPort = 1099;
             tempSocketPort = 1234;
         }
@@ -215,8 +216,7 @@ public class Config {
      * @return an array of BoardGoalScore objects representing the sorted board goals.
      */
     public BoardGoalScore[] getSortedBoardGoals() {
-        List<BoardGoalScore> l = Arrays.stream(boardGoals).sorted((t1, t2)->t1.tiles()-t2.tiles()).collect(Collectors.toList());
-        return l.toArray(new BoardGoalScore[l.size()]);
+        return Arrays.stream(boardGoals).sorted((t1, t2) -> t1.tiles() - t2.tiles()).toArray(BoardGoalScore[]::new);
     }
 
     /**

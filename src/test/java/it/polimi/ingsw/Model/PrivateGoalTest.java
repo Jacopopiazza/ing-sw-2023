@@ -17,11 +17,7 @@ import static org.junit.Assert.*;
 
 public class PrivateGoalTest {
 
-    PrivateGoal privateGoals[];
-
-    @Before
-    public void setUp() throws FileNotFoundException {
-    }
+    PrivateGoal[] privateGoals;
 
     public static boolean hasDuplicates(Coordinates[] arr) {
         HashSet<Coordinates> set = new HashSet<Coordinates>();

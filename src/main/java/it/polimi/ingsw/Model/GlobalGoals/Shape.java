@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class Shape extends GlobalGoal {
 
-    List<List<Coordinates>> shapes;
+    final List<List<Coordinates>> shapes;
 
     /**
      * Constructs a new {@code Shape} global goal with the specified number of players and shape.

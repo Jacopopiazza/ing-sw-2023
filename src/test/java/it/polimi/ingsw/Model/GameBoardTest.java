@@ -110,11 +110,6 @@ public class GameBoardTest extends TestCase {
     }
 
     @Test
-    public void testPickTile() {
-        // Need to know how the board is composed
-    }
-
-    @Test
     public void testCheckBoardGoal_ThrowsMissingShelfException(){
         Assert.assertThrows(MissingShelfException.class, () -> { GameBoard.checkBoardGoal(null); });
     }
@@ -126,7 +121,7 @@ public class GameBoardTest extends TestCase {
             for( int j=0; j<Shelf.getRows(); j++ ) {
                 s.addTile(new Tile(TileColor.values()[i], 0), i);
             }
-        };
+        }
         assertEquals(40, GameBoard.checkBoardGoal(s) );
     }
 }

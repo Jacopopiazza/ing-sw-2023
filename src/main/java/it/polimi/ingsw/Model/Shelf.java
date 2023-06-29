@@ -53,7 +53,7 @@ public class Shelf implements Cloneable{
         // start analysing from the bottom
         int row = Shelf.getRows() - 1;
 
-        while( ( shelf[row][column] != null ) && ( row >= 0 ) ) row--;
+        while(shelf[row][column] != null) row--;
 
         shelf[row][column] = t.clone();
     }

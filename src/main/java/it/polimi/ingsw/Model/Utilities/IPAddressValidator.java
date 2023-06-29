@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 /**
  * The IPAddressValidator class provides methods to validate IP addresses, ports and URLs.
  */
+@SuppressWarnings("ALL")
 public abstract class IPAddressValidator {
 
     /**
@@ -77,10 +78,7 @@ public abstract class IPAddressValidator {
      * @return true if the port is valid, false otherwise
      */
     public static boolean isValidPort(Integer portNumber){
-        if(portNumber < 0 || portNumber > 65535){
-            return false;
-        }
-        return true;
+        return portNumber >= 0 && portNumber <= 65535;
     }
 
     /**
@@ -90,7 +88,7 @@ public abstract class IPAddressValidator {
      */
     public static boolean isValidURL(String url){
         try{
-            URL localurl = new URL(url);
+            new URL(url);
         } catch (MalformedURLException e) {
             return false;
         }

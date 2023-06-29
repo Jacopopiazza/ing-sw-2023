@@ -32,7 +32,7 @@ import java.util.logging.Level;
 public abstract class UserInterface implements Runnable, View
 {
     protected Client client;
-    protected List<ViewListener> listeners;
+    protected final List<ViewListener> listeners;
 
     /**
      * Constructs a new {@code UserInterface} object.
@@ -123,7 +123,7 @@ public abstract class UserInterface implements Runnable, View
      *
      * @throws InvalidPort if the provided port number is invalid
      */
-    protected void setUpSocketClient(String ip) throws RemoteException, NotBoundException, InvalidIPAddress{
+    protected void setUpSocketClient(String ip) throws RemoteException, InvalidIPAddress{
 
         if(ip == null || ip.isEmpty() || (!IPAddressValidator.isValidIPAddress(ip) && !IPAddressValidator.isValidURL(ip))) {
             throw new InvalidIPAddress("Invalid IP/URL address");

@@ -26,7 +26,6 @@ public class TileSackTest extends TestCase {
 
     @Test
     public void testPop() {
-        int tmp = 0;
         int[] remaining = sack.getRemaining();
         int tot = Arrays.stream(remaining).sum();
         Map<TileColor, List<Tile>> popped = new HashMap<TileColor, List<Tile>>();

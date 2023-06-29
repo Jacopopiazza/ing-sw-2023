@@ -17,9 +17,9 @@ import java.util.logging.Level;
  * It is responsible for establishing a connection to the server, sending and receiving messages.
  */
 public class ServerStub implements Server {
-    private ObjectOutputStream oos;
-    private ObjectInputStream ois;
-    private Socket socket;
+    private final ObjectOutputStream oos;
+    private final ObjectInputStream ois;
+    private final Socket socket;
 
     /**
      * Constructs a ServerStub object with the specified IP address and port number.

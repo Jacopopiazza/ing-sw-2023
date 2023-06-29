@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class GraphicalUI extends UserInterface {
     private String username;
     private StartWindow startWindow = null;
@@ -39,7 +40,7 @@ public class GraphicalUI extends UserInterface {
     }
 
     private class Background extends JPanel {
-        private Image backgroundImage;
+        private final Image backgroundImage;
 
         private Background(String imagePath){
             super();
@@ -59,6 +60,7 @@ public class GraphicalUI extends UserInterface {
     }
 
     private class ImageManager {
+        @SuppressWarnings("unchecked")
         private static final List<ImageIcon>[] tilesIcons = new ArrayList[TileColor.values().length];
         private static final ImageIcon goldenRing = new ImageIcon(getResourcePath("visual_components/item tiles/bordo oro.png"));
 
@@ -68,7 +70,7 @@ public class GraphicalUI extends UserInterface {
                 for(TileColor tc : TileColor.values()){
                     tilesIcons[tc.ordinal()] = new ArrayList<>();
                     for(int i=0; i<3; i++){
-                        tilesIcons[tc.ordinal()].add(new ImageIcon(getResourcePath("visual_components/item tiles/"+tc.name().toLowerCase()+String.valueOf(i+1)+".png")));
+                        tilesIcons[tc.ordinal()].add(new ImageIcon(getResourcePath("visual_components/item tiles/"+tc.name().toLowerCase()+ (i + 1) +".png")));
                     }
                 }
             }
@@ -135,8 +137,8 @@ public class GraphicalUI extends UserInterface {
     }
 
     private class StartWindow extends JFrame{
-        private JPanel request;
-        private JLabel error;
+        private final JPanel request;
+        private final JLabel error;
 
         private StartWindow(){
             super("My Shelfie");
@@ -236,7 +238,7 @@ public class GraphicalUI extends UserInterface {
                 if(e.getSource() instanceof JButton){
                     try{
                         setUpSocketClient(ipTextField.getText());
-                    }catch (RemoteException | NotBoundException ex ){
+                    }catch (RemoteException ex ){
                         error.setText("Unable to connect with Socket");
                         return;
                     } catch (InvalidIPAddress ex) {
@@ -411,11 +413,12 @@ public class GraphicalUI extends UserInterface {
     }
 
     private class GameWindow extends JFrame{
+        @SuppressWarnings("SameParameterValue")
         private class GameBoardPanel extends Background {
             private final static ImageIcon victoryToken = new ImageIcon(getResourcePath("visual_components/scoring tokens/end game.jpg"));
             private final static ImageIcon boardIcon = new ImageIcon(getResourcePath("visual_components/boards/livingroom.png"));
-            private int width;
-            private int height;
+            private final int width;
+            private final int height;
             private static final int gameBoardDim = 9;
 
             private GameBoardPanel(GameBoardView gameBoard, int width, int height){
@@ -445,12 +448,12 @@ public class GraphicalUI extends UserInterface {
                         }
                         //checks that one more tile can be picked
                         if(chosenTiles[chosenTiles.length - 1] != null){
-                            errorText.setText("You can not select more than " + String.valueOf(chosenTiles.length) + " tiles" );
+                            errorText.setText("You can not select more than " + chosenTiles.length + " tiles" );
                             return;
                         }
                         //checks that one more tile can fit in the shelf
                         if(maxFreeSpacesInMyShelf < chosenTiles.length && chosenTiles[maxFreeSpacesInMyShelf - 1] != null){
-                            errorText.setText("In your shelf there is space for at most " + String.valueOf(maxFreeSpacesInMyShelf) + " tiles");
+                            errorText.setText("In your shelf there is space for at most " + maxFreeSpacesInMyShelf + " tiles");
                             return;
                         }
                         //checks that this tile has not been already picked and that is next to one of the previously picked ones
@@ -624,8 +627,8 @@ public class GraphicalUI extends UserInterface {
             private static final int rows = Shelf.getRows();
             private static final int cols = Shelf.getColumns();
             private static final String imagePath = "visual_components/boards/bookshelf_orth.png";
-            private int width;
-            private int height;
+            private final int width;
+            private final int height;
 
             private ShelfPanel(PlayerView playerView, String toolTip, int width, int height){
                 super(imagePath);
@@ -666,6 +669,7 @@ public class GraphicalUI extends UserInterface {
 
         }
 
+        @SuppressWarnings("SameParameterValue")
         private class PrivateGoalPanel extends JLabel {
             private PrivateGoalPanel(int pvtGoalIndex, int width, int height){
                 super(ImageManager.resizeImageIcon(new ImageIcon(getResourcePath("visual_components/personal goal cards/Personal_Goals" + pvtGoalIndex + ".png")),width,height));
@@ -675,10 +679,11 @@ public class GraphicalUI extends UserInterface {
 
         }
 
+        @SuppressWarnings("SameParameterValue")
         private class GlobalGoalPanel extends Background {
             private ImageIcon scoreIcon;
-            private int width;
-            private int height;
+            private final int width;
+            private final int height;
             private GlobalGoalPanel(GlobalGoalView ggv, int width, int height){
                 super("visual_components/common goal cards/" + ggv.getId() + ".jpg");
                 this.width = width;
@@ -716,19 +721,19 @@ public class GraphicalUI extends UserInterface {
         private int numOfActivePlayers;
         private boolean isGameFinished;
         int maxFreeSpacesInMyShelf;
-        private int[] freeSpacesInMyShelf;
-        private int maxNumOfChosenTiles = 3;
-        private Coordinates[] chosenTiles;
-        private Integer[] chosenOrder;
-        private JLabel[] orderNumbers;
+        private final int[] freeSpacesInMyShelf;
+        private final int maxNumOfChosenTiles = 3;
+        private final Coordinates[] chosenTiles;
+        private final Integer[] chosenOrder;
+        private final JLabel[] orderNumbers;
         // Attributes related to the view
-        private GameBoardPanel gameBoardPanel;
-        private ShelfPanel[] shelves;
-        private JLabel[] scores;
-        private GlobalGoalPanel[] globalGoalPanel;
-        private JLabel text;
-        private JLabel errorText;
-        private JPanel pickedTilesPanel;
+        private final GameBoardPanel gameBoardPanel;
+        private final ShelfPanel[] shelves;
+        private final JLabel[] scores;
+        private final GlobalGoalPanel[] globalGoalPanel;
+        private final JLabel text;
+        private final JLabel errorText;
+        private final JPanel pickedTilesPanel;
         private JPanel columnChoicePanel;
         private GameWindow(GameView gameView){
             super("My Shelfie");
@@ -916,7 +921,7 @@ public class GraphicalUI extends UserInterface {
                             if( j+1 > freeSpacesInMyShelf[chosenColumn] ){
                                 errorText.setText("There is not enough space in the selected column");
                                 return;
-                            };
+                            }
                         }
                         Coordinates[] finalChosenTiles = new Coordinates[chosenTiles.length];
                         for( int j=0; ( j<chosenOrder.length ) && ( chosenOrder[j] != null ); j++ ){
@@ -938,7 +943,7 @@ public class GraphicalUI extends UserInterface {
                         text.setText("");
                         new SwingWorker<Void,Void>(){
                             @Override
-                            protected Void doInBackground() throws Exception {
+                            protected Void doInBackground() {
                                 notifyListeners(new TurnActionMessage(username,temp,chosenColumn));
                                 return null;
                             }

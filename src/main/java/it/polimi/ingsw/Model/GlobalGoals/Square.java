@@ -44,10 +44,9 @@ public class Square extends GlobalGoal {
             for( int j = 0; j <= c-squareSide; j++ ){
                 Coordinates coord = new Coordinates(i, j);
                 Tile temp = s.getTile(coord);
-                boolean isASquare = true;
+                boolean isASquare = temp != null;
                 //here I will check if there is a Tile at [i][j] and, if this is the case,
                 //I will check whether that Tile is not contained in the first found square (if it was already found)
-                if( temp == null ) isASquare = false;
                 if( isASquare && ( firstSquare != null ) ){
                     for( int k = 0; ( k < squareSide ) && isASquare; k++ ){
                         for( int h = 0; ( h < squareSide ) && isASquare; h++ ){

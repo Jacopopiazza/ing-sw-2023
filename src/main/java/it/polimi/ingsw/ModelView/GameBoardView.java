@@ -5,6 +5,7 @@ import it.polimi.ingsw.Model.Coordinates;
 import it.polimi.ingsw.Model.GameBoard;
 import it.polimi.ingsw.Model.Player;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -13,6 +14,7 @@ import java.util.*;
  * It provides a snapshot of the game board's attributes in a serializable format.
  */
 public class GameBoardView implements Serializable {
+    @Serial
     private static final long serialVersionUID=1L;
     private final Map<Coordinates, TileView> board;
     private final Set<Coordinates> pickables;

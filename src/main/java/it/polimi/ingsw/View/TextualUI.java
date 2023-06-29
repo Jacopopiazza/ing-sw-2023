@@ -675,7 +675,7 @@ public class TextualUI extends UserInterface {
                     super.run();
                     while(true){
                         if(isMessagesQueueEmpty()){
-                            in.nextLine();
+                            if(currentPlayer < 0 || !players[currentPlayer].getUsername().equals(username)) in.nextLine();
                             continue;
                         }
                         Message m = popMessageFromQueue();

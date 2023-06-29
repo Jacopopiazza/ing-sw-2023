@@ -1046,6 +1046,7 @@ public class GraphicalUI extends UserInterface {
         else if( m instanceof UpdateViewMessage ){
             if( gameWindow == null ){
                 startWindow.request.removeAll();
+                startWindow.error.setText("");
                 startWindow.request.add(startWindow.getStandardLabel("The game is starting..."));
                 startWindow.request.revalidate();
                 startWindow.request.repaint();

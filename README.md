@@ -36,12 +36,9 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
     > java -jar MyShelfie_Server.jar
     ```
   This command can be followed by these arguments:
-  - **-port**: followed by the desired port number between MIN_PORT (1024) and MAX_PORT (65535) as argument;
-  - **-log**: to save the log in a file;
-  - **-help**: to get help.
+  - **-hostname**: followed by the desired hostname for the RMI server as argument (usually the IP of the network interface);
 
-- The Client can be run with the following command:
-    ```shell
+- The Client can be run with the following command:    ```shell
     > java -jar MyShelfie_Client.jar
     ```
     - This command sets the Client on Graphical User Interface (GUI) mode, but it can be followed by **-cli** if the Command Line Interface (CLI) is preferred.

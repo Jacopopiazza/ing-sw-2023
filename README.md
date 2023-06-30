@@ -30,13 +30,13 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 
 ## Setup
 
-- In the [Deliverables](Deliverables) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
+- In the [Deliverables](deliverables) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
 - The Server can be run with the following command, as default it runs on port 1234:
     ```shell
     > java -jar MyShelfie_Server.jar
     ```
   This command can be followed by these arguments:
-  - **-hostname**: followed by the desired hostname for the RMI server as argument (usually the IP of the network interface);
+    - **-hostname**: followed by the desired hostname for the RMI server as argument (usually the IP of the network interface);
 
 - The Client can be run with the following command:
     ```shell
@@ -44,7 +44,7 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
     ```
     - This command sets the Client on Graphical User Interface (GUI) mode, but it can be followed by **-cli** if the Command Line Interface (CLI) is preferred.
     - The Server's IP to connect to can be specified during the execution.
-    
+
 
 ## Utilized Software
 

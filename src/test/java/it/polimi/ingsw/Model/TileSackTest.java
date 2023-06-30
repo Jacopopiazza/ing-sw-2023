@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Model;
 
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +26,6 @@ public class TileSackTest extends TestCase {
 
     @Test
     public void testPop() {
-        int tmp = 0;
         int[] remaining = sack.getRemaining();
         int tot = Arrays.stream(remaining).sum();
         Map<TileColor, List<Tile>> popped = new HashMap<TileColor, List<Tile>>();

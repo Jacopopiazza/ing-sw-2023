@@ -1,10 +1,15 @@
 package it.polimi.ingsw.Exceptions;
 
-public class InvalidIndexException extends Exception{
+/**
+ * The InvalidIndexException is an exception that is thrown when an invalid index is encountered.
+ * It is a subclass of the RuntimeException class.
+ */
 
-    public InvalidIndexException(String errorMessage) {
-        super(errorMessage);
-    }
+public class InvalidIndexException extends RuntimeException{
+
+    /**
+     * Constructs a new {@code InvalidIndexException} with no error message.
+     */
 
     public InvalidIndexException() {
 

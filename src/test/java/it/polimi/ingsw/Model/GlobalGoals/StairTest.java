@@ -49,9 +49,6 @@ public class StairTest extends TestCase {
         }
 
     }
-    @Test
-    public void popScore() {
-    }
 
     @Test
     public void testCheck() {

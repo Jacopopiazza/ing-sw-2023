@@ -16,13 +16,14 @@ public class PlayerTest extends TestCase {
     @Before
     public void setUp(){
         pg = PrivateGoal.getPrivateGoals(2)[0];
-        p = new Player(pg, "nickname");
+        p = new Player("username");
+        p.init(pg);
         randomToken = 1000;
     }
 
     @Test
     public void testGettersAndSetScore() throws InvalidIndexException, NoTileException, IllegalColumnInsertionException {
-        assertEquals(p.getNickname(),"nickname");
+        assertEquals(p.getUsername(),"username");
         assertEquals(p.getScore(),0);
 
         assertEquals(p.getPrivateGoal(),pg);
@@ -33,14 +34,9 @@ public class PlayerTest extends TestCase {
         p.setScore(10);
         assertEquals(p.getScore(),10);
 
-
-        assertTrue(p.isActive());
         assertFalse(p.isWinner());
 
-        p.setActive(false);
-        assertFalse(p.isActive());
-
-        p.setWinner(true);
+        p.setWinner();
         assertTrue(p.isWinner());
 
        for( int i = 0; i < p.getAccomplishedGlobalGoals().length; i++ ) {
@@ -150,4 +146,6 @@ public class PlayerTest extends TestCase {
         p.setShelf(shelfToTest);
         assertEquals(p.checkPrivateGoal(), true);
     }
+
+
 }

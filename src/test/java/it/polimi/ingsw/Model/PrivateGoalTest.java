@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import it.polimi.ingsw.Exceptions.*;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,11 +17,7 @@ import static org.junit.Assert.*;
 
 public class PrivateGoalTest {
 
-    PrivateGoal privateGoals[];
-
-    @Before
-    public void setUp() throws FileNotFoundException {
-    }
+    PrivateGoal[] privateGoals;
 
     public static boolean hasDuplicates(Coordinates[] arr) {
         HashSet<Coordinates> set = new HashSet<Coordinates>();

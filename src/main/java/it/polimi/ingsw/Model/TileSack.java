@@ -1,22 +1,33 @@
 package it.polimi.ingsw.Model;
 
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * The TileSack class represents a sack of tiles in the game.
+ * It keeps track of the remaining tiles of each color and provides methods to retrieve and remove tiles from the sack.
+ */
 public class TileSack {
-    private int[] remaining;                                    // Index is the corresponding color in TileColor
+    private final int[] remaining;                                    // Index is the corresponding color in TileColor
     private final static int LEN = TileColor.values().length;   // length of the array
 
-    public TileSack(){
+    /**
+     * Constructs a new {@code TileSack} object with the initial number of tiles per color.
+     */
+    public TileSack() {
         remaining = new int[LEN];
         // initialize the array with the maximum value for every element
         for( int i = 0; i < LEN; i++ ) remaining[i] = Config.getInstance().getNumOfTilesPerColor();
     }
 
-    // Generate a Tile with a random color and pops it from the sack
-    public Tile pop(){
+    /**
+     * Generates a random {@code TileColor} and removes it from the sack.
+     *
+     * @return the {@link Tile} object with the random color, or null if the sack is empty.
+     */
+    public Tile pop() {
         int random_color_index = 0;
 
         if(Arrays.stream(remaining).sum() == 0) return null;
@@ -25,9 +36,9 @@ public class TileSack {
         random_color_index = new Random().nextInt(Arrays.stream(remaining).sum());
 
         int top_bound = 0, bottom_bound = 0;
-        for( int i = 0; i < LEN; i++ ){
+        for( int i = 0; i < LEN; i++ ) {
             top_bound += remaining[i];
-            if( ( random_color_index >= bottom_bound ) && ( random_color_index < top_bound ) ){
+            if( ( random_color_index >= bottom_bound ) && ( random_color_index < top_bound ) ) {
                 // Pop that color from the tileSack
                 remaining[i]--;
                 // Return the corresponding Tile
@@ -38,7 +49,12 @@ public class TileSack {
         return null;
     }
 
-    public int[] getRemaining(){
+    /**
+     * Gets the array of remaining tiles for each color.
+     *
+     * @return an array of integers representing the remaining tiles for each color.
+     */
+    public int[] getRemaining() {
         return this.remaining;
     }
 

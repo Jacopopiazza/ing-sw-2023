@@ -11,22 +11,6 @@ public class ShelfTest extends TestCase {
     private Shelf shelf;
 
     @Test
-    public void addTile() {
-    }
-
-    @Test
-    public void getTile() {
-    }
-
-    @Test
-    public void getColumns() {
-    }
-
-    @Test
-    public void getRows() {
-    }
-
-    @Test
     public void testIsFull() throws IllegalColumnInsertionException, NoTileException {
         int c = Shelf.getColumns();
         int r = Shelf.getRows();

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Model.*;
-import it.polimi.ingsw.Model.Utilities.Config;
+import it.polimi.ingsw.Utilities.Config;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -69,10 +69,6 @@ public class ShapeTest extends TestCase {
             }
         }
 
-    }
-
-    @Test
-    public void popScore(){
     }
 
     @Test

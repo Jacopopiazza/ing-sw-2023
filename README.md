@@ -31,7 +31,7 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
 ## Setup
 
 - In the [Deliverables](deliverables) folder there are two multi-platform jar files, one to set the Server up, and the other one to start the Client.
-- The Server can be run with the following command, as default it runs on port 1234:
+- The Server can be run with the following command, the RMI port is 1099, the socket port is 1234:
     ```shell
     > java -jar MyShelfie_Server.jar
     ```

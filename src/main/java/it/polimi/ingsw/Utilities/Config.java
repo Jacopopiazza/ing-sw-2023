@@ -58,6 +58,7 @@ public class Config {
     private final List<List<Coordinates>> DiagonalsFromJSON;
     private final String ipServer;
     private final Integer pingInterval;
+    private final List<String> cliTitle;
 
     /**
      * Private constructor, used for the singleton pattern. This method loads the configuration data from JSON files.
@@ -148,6 +149,12 @@ public class Config {
             DiagonalsFromJSON.get(1).add(new Coordinates(coords.getAsJsonObject().get("r").getAsInt(), coords.getAsJsonObject().get("c").getAsInt()));
         }
 
+        cliTitle = new ArrayList<>();
+        JsonArray cliTitleJson = jsonConfig.get("cliTitle").getAsJsonArray();
+        for(JsonElement rowTitle : cliTitleJson){
+            cliTitle.add(rowTitle.getAsString());
+        }
+
     }
 
     /**
@@ -157,6 +164,15 @@ public class Config {
      */
     public PrivateGoalScore[] getPrivateGoalsScores() {
         return privateGoalsScores;
+    }
+
+    /**
+     * Returns the list containing the cli title.
+     *
+     * @return a list of String representing the cli title.
+     */
+    public List<String> getCliTitle() {
+        return cliTitle;
     }
 
     /**

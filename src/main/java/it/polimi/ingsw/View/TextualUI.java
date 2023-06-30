@@ -37,17 +37,6 @@ public class TextualUI extends UserInterface {
     private GlobalGoalView[] globalGoals;
     private boolean gameEnded;
     private Queue<Message> receivedMessages;
-
-    // Write this title in a config file
-    final String r1 = " __    __           ______ _           _  __  _";
-    final String r2 = "|  \\  /  |         /  ____| |         | |/ _|(_)";
-    final String r3 = "| \\ \\/ / |_   _   |  (___ | |__   ___ | | |_  _  ___";
-    final String r4 = "| |\\__/| | | | |   \\___  \\|  _ \\ / _ \\| |  _|| |/ _ \\";
-    final String r5 = "| |    | | |_| |    ___)  | | | |  __/| | |  | |  __/";
-    final String r6 = "|_|    |_|\\__, |   |_____/|_| |_|\\___/|_|_|  |_|\\___/";
-    final String r7 = "            _/ |";
-    final String r8 = "           |__/";
-
     private final Object lockLogin;
     private final Object lockQueue;
     private final Object lockMainThread;
@@ -108,14 +97,9 @@ public class TextualUI extends UserInterface {
     }
 
     private void showTitle(){
-        out.println(r1);
-        out.println(r2);
-        out.println(r3);
-        out.println(r4);
-        out.println(r5);
-        out.println(r6);
-        out.println(r7);
-        out.println(r8);
+        for(String row : Config.getInstance().getCliTitle()){
+            out.println(row);
+        }
     }
 
     private String getColorCode(TileView tile){

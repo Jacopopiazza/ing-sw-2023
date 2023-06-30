@@ -8,6 +8,7 @@
   "socketPort" : 1234,
   "pingInterval": 5,
   "lastPlayerTimeout" : 30,
+  "maxNumOfChosenTiles": 3,
   "ipServer" : "127.0.0.1",
 
   "privateGoalsScores" : [

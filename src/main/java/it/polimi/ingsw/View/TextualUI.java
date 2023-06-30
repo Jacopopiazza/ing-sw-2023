@@ -29,7 +29,6 @@ public class TextualUI extends UserInterface {
 
     private int[] freeSpacesInMyShelf;
     private int maxFreeSpacesInMyShelf;
-    private final int maxNumOfChosenTiles = 3;
     private GameBoardView gameBoardView;
     private PlayerView[] players;
     private int numOfActivePlayers;
@@ -492,8 +491,8 @@ public class TextualUI extends UserInterface {
                 // Pick a tile
 
                 //checks that one more tile can be picked
-                if(coords.size() == maxNumOfChosenTiles ){
-                    out.println("You can not select more than " + maxNumOfChosenTiles + " tiles" );
+                if(coords.size() == Config.getInstance().getMaxNumOfChosenTiles() ){
+                    out.println("You can not select more than " + Config.getInstance().getMaxNumOfChosenTiles() + " tiles" );
                     break;
                 }
                 //checks that one more tile can fit in the shelf

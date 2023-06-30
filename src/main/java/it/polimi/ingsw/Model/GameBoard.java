@@ -232,8 +232,8 @@ public class GameBoard {
      * @return true if the chosen tiles are valid, false otherwise
      */
     public boolean checkChosenTiles(Coordinates[] chosenTiles) {
-        //checking that the length of the array is at most 3
-        if(chosenTiles.length > 3) return false;
+        //checking that the length of the array is at most MaxNumOfChosenTiles
+        if(chosenTiles.length > Config.getInstance().getMaxNumOfChosenTiles()) return false;
 
         //checking there are no duplicates and that they are all pickable
         for(Coordinates c : chosenTiles) {

@@ -59,8 +59,8 @@ public class Config {
     private final String ipServer;
     private final Integer pingInterval;
     private final List<String> cliTitle;
-
     private final Integer lastPlayerTimeout;
+    private final Integer maxNumOfChosenTiles;
 
     /**
      * Private constructor, used for the singleton pattern. This method loads the configuration data from JSON files.
@@ -79,6 +79,7 @@ public class Config {
         numOfGlobalGoals = jsonConfig.get("numOfGlobalGoals").getAsInt();
         pingInterval = jsonConfig.get("pingInterval").getAsInt();
         lastPlayerTimeout = jsonConfig.get("lastPlayerTimeout").getAsInt();
+        maxNumOfChosenTiles = jsonConfig.get("maxNumOfChosenTiles").getAsInt();
 
         int tempRmiPort, tempSocketPort;
         try{
@@ -168,6 +169,15 @@ public class Config {
      */
     public PrivateGoalScore[] getPrivateGoalsScores() {
         return privateGoalsScores;
+    }
+
+    /**
+     * Returns the maximum number of tiles that a player cn pick during his turn.
+     *
+     * @return an Integer representing the maximum number of tiles that a player cn pick during his turn.
+     */
+    public Integer getMaxNumOfChosenTiles() {
+        return maxNumOfChosenTiles;
     }
 
     /**

@@ -731,7 +731,6 @@ public class GraphicalUI extends UserInterface {
         private boolean isGameFinished;
         int maxFreeSpacesInMyShelf;
         private final int[] freeSpacesInMyShelf;
-        private final int maxNumOfChosenTiles = 3;
         private final Coordinates[] chosenTiles;
         private final Integer[] chosenOrder;
         private final JLabel[] orderNumbers;
@@ -753,7 +752,7 @@ public class GraphicalUI extends UserInterface {
             // Initialize private parameters
             currentPlayer = gameView.getCurrentPlayer();
             freeSpacesInMyShelf = new int[Shelf.getColumns()];
-            chosenTiles = new Coordinates[maxNumOfChosenTiles];
+            chosenTiles = new Coordinates[Config.getInstance().getMaxNumOfChosenTiles()];
             chosenOrder = new Integer[chosenTiles.length];
             orderNumbers = new JLabel[chosenTiles.length];
             numOfActivePlayers = gameView.getNumOfActivePlayers();

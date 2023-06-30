@@ -36,7 +36,7 @@ Simone Romanò [@Simone1602](https://github.com/Simone1602)<br>
     > java -jar MyShelfie_Server.jar
     ```
   This command can be followed by these arguments:
-    - **-hostname**: followed by the desired hostname for the RMI server as argument (usually the IP of the network interface);
+    - **-hostname**: followed by the desired hostname for the RMI server as argument (usually the IP of the network interface, when RMI has to work with other devices in LAN);
 
 - The Client can be run with the following command:
     ```shell

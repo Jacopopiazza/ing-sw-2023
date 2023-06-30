@@ -60,6 +60,8 @@ public class Config {
     private final Integer pingInterval;
     private final List<String> cliTitle;
 
+    private final Integer lastPlayerTimeout;
+
     /**
      * Private constructor, used for the singleton pattern. This method loads the configuration data from JSON files.
      */
@@ -76,6 +78,8 @@ public class Config {
         maxNumberOfPlayers = jsonConfig.get("maxNumberOfPlayers").getAsInt();
         numOfGlobalGoals = jsonConfig.get("numOfGlobalGoals").getAsInt();
         pingInterval = jsonConfig.get("pingInterval").getAsInt();
+        lastPlayerTimeout = jsonConfig.get("lastPlayerTimeout").getAsInt();
+
         int tempRmiPort, tempSocketPort;
         try{
             tempRmiPort = jsonConfig.get("rmiPort").getAsInt();
@@ -173,6 +177,15 @@ public class Config {
      */
     public List<String> getCliTitle() {
         return cliTitle;
+    }
+
+    /**
+     * Returns the duration for the timeout of the last player in seconds.
+     *
+     * @return an Integer representing the duration for the timeout of the last player.
+     */
+    public Integer getLastPlayerTimeout(){
+        return lastPlayerTimeout;
     }
 
     /**

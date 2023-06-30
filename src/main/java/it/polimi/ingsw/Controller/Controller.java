@@ -4,6 +4,7 @@ import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listener.GameListener;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.Network.GameServer;
+import it.polimi.ingsw.Utilities.Config;
 
 import java.util.*;
 
@@ -13,8 +14,6 @@ import java.util.*;
 public class Controller  {
     private final GameServer gameServer;
     private final Game model;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int timerLength = 30; // in seconds
     private boolean onlyLastPlayerIsDone;
     private Timer timer = new Timer();
 
@@ -145,7 +144,7 @@ public class Controller  {
                         model.setWinner(model.getCurrentPlayer());
                         endGame();
                     }
-                }, timerLength * 1000);
+                }, Config.getInstance().getLastPlayerTimeout() * 1000);
 
                 return;
             }

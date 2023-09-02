@@ -1,5 +1,8 @@
 # MyShelfie but better
 
+## Voto
+Voto 30/30
+
 ## Team
 Jacopo Piazzalunga [@Jacopopiazza](https://github.com/Jacopopiazza)<br>
 Mattia Piccinato [@peetceenatoo](https://github.com/peetceenatoo)<br>
